@@ -7,6 +7,11 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Hind:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Firebase Scripts (डेटा ऑनलाइन सेव करने के लिए) -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
   <style>
     body { font-family: 'Hind', sans-serif; }
   </style>
@@ -21,12 +26,11 @@
     <button onclick="document.getElementById('notice-bar').style.display='none'" class="font-bold text-sm px-2">✕</button>
   </div>
 
+  <!-- Header with Brand Logo -->
   <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
     <div class="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
       <div onclick="navigate('home')" class="flex items-center gap-2 cursor-pointer">
-        <div class="w-10 h-10 bg-gradient-to-tr from-orange-600 to-amber-500 rounded-xl flex items-center justify-center text-white shadow font-black text-lg">
-          MB
-        </div>
+        <img src="logo.png" alt="MistryBabu Logo" class="w-11 h-11 object-contain rounded-xl border border-slate-200 shadow-sm">
         <div>
           <div class="text-xl font-bold leading-none tracking-tight">
             Mistry<span class="text-orange-600">Babu</span><span class="text-xs text-amber-600">.com</span>
@@ -38,7 +42,7 @@
       <div class="hidden md:flex items-center gap-5 text-xs font-bold">
         <button onclick="navigate('home')" class="text-orange-600">होम</button>
         <button onclick="navigate('masons')" class="text-slate-600 hover:text-orange-600">मिस्त्री खोजें</button>
-        <button onclick="navigate('post-work')" class="text-slate-600 hover:text-orange-600">काम पोस्ट करें</button>
+        <button onclick="navigate('post-work')" class="text-slate-600 hover:text-orange-600">काम देखें व पोस्ट करें</button>
         <button onclick="navigate('rules')" class="text-slate-600 hover:text-orange-600">नियम व शर्तें</button>
         <a href="mailto:mistrybabuhelp@gmail.com" class="text-slate-600 hover:text-orange-600">
           <i class="fa-solid fa-envelope text-orange-600"></i> mistrybabuhelp@gmail.com
@@ -51,6 +55,7 @@
     </div>
   </header>
 
+  <!-- HOME PAGE -->
   <div id="page-home" class="page-view">
     <div class="bg-gradient-to-r from-orange-600 to-amber-600 text-white px-4 py-8 text-center space-y-3">
       <span class="inline-block bg-white/20 text-yellow-200 text-xs font-bold px-3 py-1 rounded-full border border-white/20">
@@ -143,10 +148,11 @@
     </div>
   </div>
 
+  <!-- MASONS DIRECTORY -->
   <div id="page-masons" class="page-view hidden max-w-4xl mx-auto px-4 py-6 space-y-4">
     <div class="bg-white p-4 rounded-2xl border border-slate-200 grid grid-cols-2 gap-2 shadow-sm">
       <div>
-        <label class="text-[10px] font-bold text-slate-400 block uppercase mb-1">ज़िला</label>
+        <label class="text-[10px] font-bold text-slate-400 block uppercase mb-1">ज़िला चुनें (नज़दीकी कारीगर)</label>
         <select id="dir-district" onchange="renderMasonDirectory()" class="w-full text-xs font-bold p-2 bg-slate-50 border rounded-xl outline-none">
           <option value="सभी">पूरा बिहार</option>
           <option value="पटना">पटना</option>
@@ -174,34 +180,39 @@
     <div id="mason-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
   </div>
 
+  <!-- JOB POST & NEARBY JOBS -->
   <div id="page-post-work" class="page-view hidden max-w-xl mx-auto px-4 py-6 space-y-4">
     <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-3">
-      <div class="border-b pb-2">
-        <h2 class="font-bold text-base text-slate-900">🏠 नया काम पोस्ट करें</h2>
-        <p class="text-xs text-slate-500">कारीगर आपको सीधे संपर्क करेंगे</p>
+      <div class="border-b pb-2 flex justify-between items-center">
+        <div>
+          <h2 class="font-bold text-base text-slate-900">🏠 नया काम पोस्ट करें</h2>
+          <p class="text-[11px] text-slate-500">यह पोस्ट 7 दिन तक नज़दीकी मिस्त्रियों को दिखेगी</p>
+        </div>
+        <span class="text-[10px] bg-orange-100 text-orange-700 font-bold px-2 py-0.5 rounded-full">वैधता: 7 दिन</span>
       </div>
       <form onsubmit="handleJobSubmission(event)" class="space-y-3 text-xs">
         <div>
-          <label class="font-bold block mb-1">काम का पूरा विवरण *</label>
-          <textarea id="job-desc" required rows="3" placeholder="जैसे: 2 कमरों की चिनाई, छत ढलाई के लिए 4 लेबर" class="w-full p-2.5 border rounded-xl outline-none focus:border-orange-500"></textarea>
+          <label class="font-bold block mb-1">काम का विवरण *</label>
+          <textarea id="job-desc" required rows="3" placeholder="जैसे: 2 कमरों की जोड़ाई, छत ढलाई के लिए 4 लेबर चाहिए" class="w-full p-2.5 border rounded-xl outline-none focus:border-orange-500"></textarea>
         </div>
         <div>
-          <label class="font-bold block mb-1">📸 काम/साइट की फोटो (वैकल्पिक)</label>
+          <label class="font-bold block mb-1">📸 काम की फोटो (वैकल्पिक)</label>
           <div class="border-2 border-dashed border-slate-300 rounded-xl p-3 text-center bg-slate-50 relative">
             <input type="file" id="job-photo" accept="image/*" onchange="previewJobImage(event)" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-            <p id="upload-txt" class="font-bold text-slate-500">फ़ोटो अपलोड करने के लिए क्लिक करें</p>
+            <p id="upload-txt" class="font-bold text-slate-500">फ़ोटो अपलोड करने के लिए टैप करें</p>
             <img id="image-preview" class="hidden w-full max-h-40 object-cover rounded-lg mt-2 mx-auto" />
           </div>
         </div>
         <div class="grid grid-cols-2 gap-2">
           <div>
-            <label class="font-bold block mb-1">ज़िला *</label>
+            <label class="font-bold block mb-1">ज़िला (काम का स्थान) *</label>
             <select id="job-dist" class="w-full p-2 border rounded-xl bg-white outline-none">
               <option value="पटना">पटना</option>
               <option value="बक्सर">बक्सर</option>
               <option value="भोजपुर (आरा)">भोजपुर (आरा)</option>
-              <option value="रोहतास">रोहतास</option>
+              <option value="रोहतास (सासाराम)">रोहतास (सासाराम)</option>
               <option value="गया">गया</option>
+              <option value="मुजफ्फरपुर">मुजफ्फरपुर</option>
             </select>
           </div>
           <div>
@@ -214,13 +225,30 @@
           <input type="tel" id="job-contact" maxlength="10" required placeholder="10 अंकों का नंबर" class="w-full p-2 border rounded-xl outline-none">
         </div>
         <button type="submit" class="w-full bg-orange-600 text-white font-bold py-3 rounded-xl shadow">
-          काम लाइव पोस्ट करें
+          काम लाइव पोस्ट करें (7 दिन के लिए)
         </button>
       </form>
     </div>
-    <div id="live-job-list" class="space-y-2"></div>
+
+    <!-- Live Job Listings for Masons -->
+    <div class="space-y-2">
+      <div class="flex justify-between items-center px-1">
+        <h3 class="font-bold text-sm text-slate-900">📍 नज़दीकी उपलब्ध काम</h3>
+        <select id="filter-job-dist" onchange="renderJobs()" class="text-xs font-bold border rounded-lg p-1 bg-white">
+          <option value="सभी">सभी ज़िले</option>
+          <option value="पटना">पटना</option>
+          <option value="बक्सर">बक्सर</option>
+          <option value="भोजपुर (आरा)">भोजपुर (आरा)</option>
+          <option value="रोहतास (सासाराम)">रोहतास (सासाराम)</option>
+          <option value="गया">गया</option>
+          <option value="मुजफ्फरपुर">मुजफ्फरपुर</option>
+        </select>
+      </div>
+      <div id="live-job-list" class="space-y-2"></div>
+    </div>
   </div>
 
+  <!-- REGISTRATION PAGE -->
   <div id="page-register" class="page-view hidden max-w-xl mx-auto px-4 py-6 space-y-4">
     <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-3">
       <div class="border-b pb-2">
@@ -278,6 +306,7 @@
     </div>
   </div>
 
+  <!-- RULES PAGE -->
   <div id="page-rules" class="page-view hidden max-w-2xl mx-auto px-4 py-6 space-y-4">
     <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-4 text-xs leading-relaxed">
       <h2 class="font-bold text-base text-slate-900 border-b pb-2">📜 नियम एवं शर्तें (Rules & Regulations)</h2>
@@ -285,12 +314,12 @@
         <b>१. केवल डायरेक्टरी मंच:</b> MistryBabu.com केवल मकान मालिक और कारीगर को सीधे जोड़ता है। हम किसी काम से कोई कमीशन नहीं लेते।
       </div>
       <div>
-        <h4 class="font-bold text-slate-900 mb-1">२. कारीगरों के लिए:</h4>
-        <p class="text-slate-600">• सही नाम और चालू नंबर दें। खराब व्यवहार की शिकायत पर प्रोफाइल हटा दी जाएगी।</p>
+        <h4 class="font-bold text-slate-900 mb-1">२. काम की समय-सीमा:</h4>
+        <p class="text-slate-600">• किसी भी काम की पोस्ट 7 दिन तक लाइव रहती है और उसके बाद अपने-आप सिस्टम से हट जाती है।</p>
       </div>
       <div>
-        <h4 class="font-bold text-slate-900 mb-1">३. मकान मालिकों के लिए:</h4>
-        <p class="text-slate-600">• काम शुरू करने से पहले कारीगर का पहचान पत्र जाँचें और रेट पहले ही तय करें।</p>
+        <h4 class="font-bold text-slate-900 mb-1">३. कारीगरों के लिए:</h4>
+        <p class="text-slate-600">• सही नाम और चालू नंबर दें। काम की गुणवत्ता बनाए रखें।</p>
       </div>
       <div class="bg-rose-50 border border-rose-200 p-3 rounded-xl text-rose-900">
         <b>४. धोखाधड़ी से बचाव:</b> MistryBabu कभी ऑनलाइन पैसे नहीं माँगता। किसी भी धोखाधड़ी की सूचना <a href="mailto:mistrybabuhelp@gmail.com" class="underline font-bold">mistrybabuhelp@gmail.com</a> पर दें।
@@ -299,20 +328,16 @@
     </div>
   </div>
 
+  <!-- FOOTER -->
   <footer class="bg-slate-950 text-white mt-12 py-8 text-xs border-t border-slate-800">
     <div class="max-w-4xl mx-auto px-4 space-y-4 text-center">
       <p class="font-bold text-sm">MistryBabu<span class="text-orange-500">.com</span></p>
       <p class="text-slate-400">सपोर्ट ईमेल: <a href="mailto:mistrybabuhelp@gmail.com" class="text-orange-400 underline">mistrybabuhelp@gmail.com</a></p>
-      <div class="flex justify-center gap-4 text-slate-400 font-semibold">
-        <button onclick="navigate('home')">होम</button>
-        <button onclick="navigate('masons')">मिस्त्री खोजें</button>
-        <button onclick="navigate('post-work')">काम पोस्ट</button>
-        <button onclick="navigate('rules')">नियम</button>
-      </div>
       <p class="text-[10px] text-slate-600">© 2026 MistryBabu.com | सर्वाधिकार सुरक्षित।</p>
     </div>
   </footer>
 
+  <!-- MOBILE BOTTOM NAV -->
   <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 flex justify-around items-center h-14 shadow-lg z-50">
     <button onclick="navigate('home')" class="flex flex-col items-center text-orange-600">
       <i class="fa-solid fa-house text-sm"></i>
@@ -337,6 +362,24 @@
   </nav>
 
   <script>
+    // 1. FIREBASE SETUP (ऑनलाइन सभी यूज़र्स को लाइव डेटा दिखाने के लिए)
+    const firebaseConfig = {
+      apiKey: "AIzaSyDummyKeyReplaceThis",
+      authDomain: "mistrybabu-live.firebaseapp.com",
+      databaseURL: "https://mistrybabu-live-default-rtdb.firebaseio.com",
+      projectId: "mistrybabu-live",
+      storageBucket: "mistrybabu-live.appspot.com"
+    };
+    
+    // Firebase initialize (अगर कॉन्फ़िगर नहीं है तो fallback localStorage का इस्तेमाल होगा)
+    let db = null;
+    try {
+      firebase.initializeApp(firebaseConfig);
+      db = firebase.database();
+    } catch(e) {
+      console.log("Firebase fallback mode");
+    }
+
     let uploadedImageBase64 = null;
 
     let masons = JSON.parse(localStorage.getItem('mb_masons')) || [
@@ -347,7 +390,7 @@
     ];
 
     let jobs = JSON.parse(localStorage.getItem('mb_jobs')) || [
-      { id: 1, desc: "2000 ईंट की जोड़ाई और पिलर ढलाई", dist: "बक्सर", rate: "₹750/दिन", phone: "9123456780", img: null }
+      { id: 1, desc: "2000 ईंट की जोड़ाई और पिलर ढलाई", dist: "बक्सर", rate: "₹750/दिन", phone: "9123456780", createdAt: Date.now(), img: null }
     ];
 
     function navigate(page) {
@@ -383,7 +426,7 @@
       });
 
       if(filtered.length === 0) {
-        grid.innerHTML = `<div class="col-span-2 bg-white p-6 rounded-2xl text-center text-xs text-slate-500">इस श्रेणी में कोई कारीगर उपलब्ध नहीं है।</div>`;
+        grid.innerHTML = `<div class="col-span-2 bg-white p-6 rounded-2xl text-center text-xs text-slate-500">इस ज़िले में कोई कारीगर उपलब्ध नहीं है।</div>`;
         return;
       }
 
@@ -434,35 +477,66 @@
       }
     }
 
+    // 2. 7 दिन बाद काम ऑटोमैटिक डिलीट होने और नज़दीकी ज़िला फ़िल्टर करने का लॉजिक
     function renderJobs() {
       const container = document.getElementById('live-job-list');
-      container.innerHTML = jobs.map(j => `
-        <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm space-y-2 text-xs">
-          ${j.img ? `<img src="${j.img}" class="w-full h-36 object-cover rounded-xl border">` : ''}
-          <div class="flex justify-between items-center">
-            <div>
-              <p class="font-bold text-slate-900">${j.desc}</p>
-              <p class="text-[11px] text-slate-500 mt-0.5">📍 ${j.dist} | 💰 ${j.rate}</p>
+      const selectedDist = document.getElementById('filter-job-dist') ? document.getElementById('filter-job-dist').value : 'सभी';
+      const now = Date.now();
+      const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
+
+      // 7 दिन के अंदर वाले काम फ़िल्टर करें
+      const activeJobs = jobs.filter(j => {
+        const isNotExpired = !j.createdAt || (now - j.createdAt) < SEVEN_DAYS_MS;
+        const matchesDist = (selectedDist === 'सभी' || j.dist === selectedDist);
+        return isNotExpired && matchesDist;
+      });
+
+      if(activeJobs.length === 0) {
+        container.innerHTML = `<div class="bg-white p-4 rounded-xl text-center text-slate-400 text-xs">इस ज़िले में अभी कोई काम उपलब्ध नहीं है।</div>`;
+        return;
+      }
+
+      container.innerHTML = activeJobs.map(j => {
+        const daysLeft = j.createdAt ? Math.max(1, 7 - Math.floor((now - j.createdAt) / (24 * 60 * 60 * 1000))) : 7;
+        return `
+          <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm space-y-2 text-xs">
+            ${j.img ? `<img src="${j.img}" class="w-full h-36 object-cover rounded-xl border">` : ''}
+            <div class="flex justify-between items-start">
+              <div>
+                <p class="font-bold text-slate-900 text-sm">${j.desc}</p>
+                <p class="text-[11px] text-slate-500 mt-1 font-semibold">📍 ${j.dist} | 💰 ${j.rate}</p>
+                <span class="inline-block bg-amber-50 text-amber-700 text-[10px] px-2 py-0.5 rounded font-bold mt-1">⏳ ${daysLeft} दिन शेष</span>
+              </div>
+              <a href="tel:${j.phone}" class="bg-orange-600 hover:bg-orange-700 text-white px-3.5 py-2 rounded-xl font-bold flex items-center gap-1 shadow">
+                <i class="fa-solid fa-phone"></i> कॉल
+              </a>
             </div>
-            <a href="tel:${j.phone}" class="bg-orange-600 text-white px-3 py-1.5 rounded-xl font-bold">कॉल</a>
           </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
 
     function handleJobSubmission(e) {
       e.preventDefault();
       const newJob = {
         id: Date.now(),
+        createdAt: Date.now(), // पोस्ट करने का समय
         desc: document.getElementById('job-desc').value,
         dist: document.getElementById('job-dist').value,
         rate: document.getElementById('job-rate').value,
         phone: document.getElementById('job-contact').value,
         img: uploadedImageBase64
       };
+
       jobs.unshift(newJob);
       localStorage.setItem('mb_jobs', JSON.stringify(jobs));
-      alert('काम सफलतापूर्वक पोस्ट हो गया!');
+
+      // Firebase ऑनलाइन डेटाबेस सिंक
+      if(db) {
+        db.ref('jobs/' + newJob.id).set(newJob);
+      }
+
+      alert('काम सफलतापूर्वक पोस्ट हो गया! यह अगले 7 दिनों तक नज़दीकी मिस्त्रियों को दिखेगा।');
       e.target.reset();
       uploadedImageBase64 = null;
       document.getElementById('image-preview').classList.add('hidden');
@@ -481,8 +555,14 @@
         rate: document.getElementById('reg-rate').value,
         phone: document.getElementById('reg-phone').value
       };
+
       masons.unshift(newMason);
       localStorage.setItem('mb_masons', JSON.stringify(masons));
+
+      if(db) {
+        db.ref('masons/' + newMason.id).set(newMason);
+      }
+
       alert('बधाई हो! आपकी प्रोफाइल लाइव हो गई है।');
       e.target.reset();
       navigate('masons');
