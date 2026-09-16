@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MistryBabu.com | बिहार का सबसे भरोसेमंद मिस्त्री & लेबर नेटवर्क</title>
+  <title>MistryBabu.com | बिहार का नंबर-1 कारीगर & लेबर नेटवर्क | अब ऑनलाइन!</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Rozha+One&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
   <script>
     tailwind.config = {
       theme: {
@@ -18,106 +19,105 @@
               50: '#fff7ed',
               500: '#f97316',
               600: '#ea580c',
-              700: '#c2410c'
+              700: '#c2410c',
+              dark: '#1e293b'
             }
           },
           fontFamily: {
-            sans: ['Plus Jakarta Sans', 'sans-serif']
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+            serif: ['Rozha One', 'serif']
           }
         }
       }
     }
   </script>
+  <style>
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    @keyframes pulse-custom { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
+    .animate-pulse-custom { animation: pulse-custom 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+  </style>
 </head>
 <body class="bg-slate-50 text-slate-900 font-sans pb-20 md:pb-10 selection:bg-orange-500 selection:text-white">
 
-  <div id="top-announcement" class="bg-amber-400 text-slate-950 px-4 py-2 text-xs font-bold flex items-center justify-between border-b border-amber-500">
-    <div class="max-w-6xl mx-auto flex items-center gap-2 justify-center text-center w-full">
-      <span class="animate-bounce">📢</span>
-      <span>ज़रूरी सूचना: MistryBabu.com पर रजिस्ट्रेशन 100% मुफ़्त है। किसी भी व्यक्ति को रजिस्ट्रेशन के लिए पैसे न दें!</span>
-    </div>
-    <button onclick="document.getElementById('top-announcement').style.display='none'" class="font-black text-sm px-2">✕</button>
-  </div>
-
   <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
     <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-      
-      <div onclick="navigate('home')" class="flex items-center gap-2.5 cursor-pointer select-none">
-        <div class="relative w-11 h-11 bg-gradient-to-tr from-slate-900 via-orange-600 to-amber-500 rounded-2xl flex items-center justify-center shadow-lg shadow-orange-500/20 border-2 border-white">
-          <i class="fa-solid fa-helmet-safety text-white text-lg"></i>
-          <span class="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 border-2 border-white rounded-full flex items-center justify-center">
-            <i class="fa-solid fa-check text-[8px] text-white"></i>
-          </span>
+      <div onclick="navigate('home')" class="flex items-center gap-2.5 cursor-pointer">
+        <div class="w-11 h-11 bg-gradient-to-tr from-orange-600 to-amber-500 rounded-xl flex items-center justify-center text-white shadow-md shadow-orange-500/20 font-black text-xl tracking-tighter border-2 border-white">
+          <i class="fa-solid fa-helmet-safety text-lg"></i>
         </div>
         <div>
-          <div class="flex items-center">
-            <span class="text-xl font-extrabold tracking-tight text-slate-950">Mistry</span>
-            <span class="text-xl font-extrabold tracking-tight text-orange-600">Babu</span>
-            <span class="text-[10px] ml-1 px-1.5 py-0.5 bg-orange-100 text-orange-700 font-black rounded">.COM</span>
-          </div>
-          <p class="text-[10px] text-slate-500 font-semibold tracking-wide uppercase">बिहार का डिजिटल कारीगर नेटवर्क</p>
+          <span class="text-xl font-extrabold tracking-tight text-slate-900">Mistry<span class="text-orange-600">Babu</span><span class="text-xs text-amber-500">.com</span></span>
+          <p class="text-[10px] text-slate-500 font-semibold tracking-wide uppercase">बिहार के अपने मिस्त्री... अब ऑनलाइन!</p>
         </div>
       </div>
 
       <nav class="hidden md:flex items-center gap-6 font-semibold text-sm">
-        <button onclick="navigate('home')" class="nav-link text-orange-600" data-target="home">होम</button>
-        <button onclick="navigate('masons')" class="nav-link text-slate-600 hover:text-orange-600" data-target="masons">कारीगर खोजें</button>
-        <button onclick="navigate('post-work')" class="nav-link text-slate-600 hover:text-orange-600" data-target="post-work">काम पोस्ट करें</button>
-        <button onclick="navigate('rules')" class="nav-link text-slate-600 hover:text-orange-600" data-target="rules">नियम व शर्तें</button>
-        <a href="mailto:mistrybabuhelp@gmail.com" class="text-slate-600 hover:text-orange-600 flex items-center gap-1.5">
-          <i class="fa-solid fa-envelope text-orange-600"></i> mistrybabuhelp@gmail.com
-        </a>
+        <button onclick="navigate('home')" class="nav-link text-orange-600 hover:text-orange-600 transition" data-target="home">होम</button>
+        <button onclick="navigate('masons')" class="nav-link text-slate-600 hover:text-orange-600 transition" data-target="masons">कारीगर खोजें</button>
+        <button onclick="navigate('post-work')" class="nav-link text-slate-600 hover:text-orange-600 transition" data-target="post-work">काम पोस्ट करें</button>
+        <button onclick="navigate('about')" class="nav-link text-slate-600 hover:text-orange-600 transition" data-target="about">हमारे बारे में</button>
         <button onclick="navigate('register')" class="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow-md shadow-orange-500/20">
-          कारीगर रजिस्ट्रेशन
+          मिस्त्री रजिस्ट्रेशन
         </button>
       </nav>
 
-      <a href="mailto:mistrybabuhelp@gmail.com" class="md:hidden w-9 h-9 rounded-xl bg-orange-50 border border-orange-200 text-orange-600 flex items-center justify-center">
-        <i class="fa-solid fa-envelope text-sm"></i>
+      <a href="tel:9199999999" class="md:hidden w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-700 border border-slate-200">
+        <i class="fa-solid fa-headset text-sm"></i>
       </a>
     </div>
   </header>
 
   <div id="page-home" class="page-content">
-    <section class="bg-gradient-to-b from-orange-600 to-amber-600 text-white px-4 py-12 md:py-16 text-center">
-      <div class="max-w-3xl mx-auto space-y-4">
-        <span class="inline-block bg-white/20 px-3 py-1 rounded-full text-xs font-bold text-amber-200 border border-white/20">
-          🚩 पूरे बिहार के 38 ज़िलों के लिए
+    
+    <section class="bg-gradient-to-b from-orange-600 to-amber-600 text-white px-4 py-12 md:py-16 text-center relative overflow-hidden">
+      <div class="max-w-3xl mx-auto relative z-10 space-y-4">
+        <span class="inline-block bg-white/20 backdrop-blur-md px-3.5 py-1 rounded-full text-xs font-bold tracking-wider text-amber-200 border border-white/20 animate-pulse-custom">
+          🚩 बिहार के 38 ज़िलों में उपलब्ध
         </span>
         <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight leading-tight">
-          घर निर्माण या मरम्मत?<br>
-          <span class="text-yellow-300">भरोसेमंद मिस्त्री और लेबर</span> सीधा संपर्क करें
+          घर बनवाना या मरम्मत?<br>
+          <span class="text-yellow-300">भरोसेमंद मिस्त्री और लेबर</span> सीधे घर बुलाएँ
         </h1>
-        <p class="text-sm text-orange-100 max-w-xl mx-auto">बिना किसी दलाल या कमीशन के, सीधे फोन या WhatsApp पर कारीगर बुलाएँ।</p>
+        <p class="text-sm md:text-base text-orange-100 max-w-xl mx-auto font-medium">
+          बिना किसी बिचौलिए के सीधे राजमिस्त्री, पेंटर, कारपेंटर और मजदूरों से बात करें। कोई कमीशन नहीं!
+        </p>
+
+        <div class="flex items-center justify-center gap-6 pt-4 text-3xl">
+          <i class="fa-solid fa-house-user hover:scale-110 transition cursor-help" title="मकान निर्माण"></i>
+          <i class="fa-solid fa-shapes hover:scale-110 transition cursor-help" title="टाइल्स मार्बल"></i>
+          <i class="fa-solid fa-paint-roller hover:scale-110 transition cursor-help" title="पेंटर कारीगर"></i>
+          <i class="fa-solid fa-handshake hover:scale-110 transition cursor-help" title="लेबर मजदूर"></i>
+        </div>
 
         <div class="bg-white p-2 rounded-2xl shadow-xl max-w-xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-2 text-slate-800 text-left mt-6">
           <div class="md:col-span-5 px-3 py-1 border-b md:border-b-0 md:border-r border-slate-200">
-            <label class="text-[10px] font-bold text-slate-400 uppercase block">स्थान / ज़िला</label>
-            <select id="quick-district" class="w-full text-xs font-bold bg-transparent outline-none py-1">
+            <label class="text-[10px] uppercase font-extrabold text-slate-400 block">स्थान (ज़िला)</label>
+            <select id="quick-district" class="w-full text-xs font-bold bg-transparent outline-none cursor-pointer py-1">
               <option value="सभी">पूरा बिहार (सभी ज़िले)</option>
               <option value="पटना">पटना</option>
               <option value="बक्सर">बक्सर</option>
               <option value="भोजपुर (आरा)">भोजपुर (आरा)</option>
               <option value="रोहतास (सासाराम)">रोहतास (सासाराम)</option>
+              <option value="कैमूर (भभुआ)">कैमूर (भभुआ)</option>
               <option value="गया">गया</option>
               <option value="मुजफ्फरपुर">मुजफ्फरपुर</option>
-              <option value="भागलपुर">भागलपुर</option>
             </select>
           </div>
           <div class="md:col-span-5 px-3 py-1">
-            <label class="text-[10px] font-bold text-slate-400 uppercase block">कारीगर प्रकार</label>
-            <select id="quick-skill" class="w-full text-xs font-bold bg-transparent outline-none py-1">
-              <option value="सभी">सभी कामगार & लेबर</option>
-              <option value="राजमिस्त्री">राजमिस्त्री (चिनाई)</option>
-              <option value="टाइल्स & मार्बल">टाइल्स मिस्त्री</option>
-              <option value="पेंटर & पुट्टी">पेंटर कारीगर</option>
-              <option value="कारपेंटर">कारपेंटर (बढ़ई)</option>
-              <option value="प्लंबर">प्लंबर (नल मिस्त्री)</option>
-              <option value="इलेक्ट्रीशियन">इलेक्ट्रीशियन</option>
-              <option value="लेबर/हेल्पर">लेबर / मजदूर</option>
+            <label class="text-[10px] uppercase font-extrabold text-slate-400 block">काम का प्रकार</label>
+            <select id="quick-skill" class="w-full text-xs font-bold bg-transparent outline-none cursor-pointer py-1">
+              <option value="सभी">सभी कारीगर & लेबर</option>
+              <option value="राजमिस्त्री (चिनाई/प्लास्टर)">राजमिस्त्री (चिनाई)</option>
+              <option value="टाइल्स & मार्बल मिस्त्री">टाइल्स & मार्बल</option>
+              <option value="पेंटर & पुट्टी कारीगर">पेंटर कारीगर</option>
+              <option value="कारपेंटर (बढ़ई)">कारपेंटर (बढ़ई)</option>
+              <option value="प्लंबर (नल मिस्त्री)">प्लंबर (नल मिस्त्री)</option>
+              <option value="इलेक्ट्रीशियन (बिजली मिस्त्री)">इलेक्ट्रीशियन</option>
+              <option value="लेबर / हेल्पर (मजदूर)">लेबर / हेल्पर</option>
             </select>
           </div>
-          <button onclick="handleQuickSearch()" class="md:col-span-2 bg-slate-900 hover:bg-black text-white font-bold rounded-xl py-3 md:py-0 flex items-center justify-center">
+          <button onclick="handleQuickSearch()" class="md:col-span-2 bg-slate-900 hover:bg-black text-white font-bold rounded-xl py-3 md:py-0 flex items-center justify-center transition shadow-md">
             <i class="fa-solid fa-magnifying-glass"></i>
           </button>
         </div>
@@ -127,136 +127,210 @@
     <section class="max-w-6xl mx-auto px-4 py-10">
       <div class="flex justify-between items-end mb-6">
         <div>
-          <h2 class="text-xl font-extrabold text-slate-900">सेवा श्रेणियाँ</h2>
-          <p class="text-xs text-slate-500">ज़रूरत के मुताबिक सीधे कारीगर खोजें</p>
+          <h2 class="text-xl font-black tracking-tight text-slate-900">मुख्य सेवाएँ (Services)</h2>
+          <p class="text-xs text-slate-500 font-medium">अपनी आवश्यकता के अनुसार सही कारीगर चुनें</p>
         </div>
-        <button onclick="navigate('masons')" class="text-xs font-bold text-orange-600">सभी देखें &rarr;</button>
+        <button onclick="navigate('masons')" class="text-xs font-bold text-orange-600 hover:underline">सभी देखें &rarr;</button>
       </div>
 
-      <div class="grid grid-cols-3 md:grid-cols-6 gap-3">
-        <div onclick="filterBySkill('राजमिस्त्री')" class="bg-white p-4 rounded-2xl border border-slate-200 text-center cursor-pointer hover:border-orange-500 shadow-sm">
-          <div class="text-2xl mb-1">🧱</div>
-          <p class="text-xs font-bold">राजमिस्त्री</p>
+      <div class="grid grid-cols-4 md:grid-cols-6 gap-3 md:gap-4">
+        <div onclick="filterBySkill('राजमिस्त्री (चिनाई/प्लास्टर)')" class="bg-white p-4 rounded-2xl border border-slate-200 hover:border-orange-500 transition cursor-pointer text-center group shadow-sm">
+          <div class="w-12 h-12 mx-auto mb-2 bg-orange-50 text-orange-600 rounded-xl flex items-center justify-center text-xl group-hover:scale-110 transition">
+            🧱
+          </div>
+          <p class="text-xs font-bold text-slate-800 leading-tight">राजमिस्त्री</p>
         </div>
-        <div onclick="filterBySkill('टाइल्स & मार्बल')" class="bg-white p-4 rounded-2xl border border-slate-200 text-center cursor-pointer hover:border-orange-500 shadow-sm">
-          <div class="text-2xl mb-1">🏛️</div>
-          <p class="text-xs font-bold">टाइल्स मिस्त्री</p>
+        <div onclick="filterBySkill('टाइल्स & मार्बल मिस्त्री')" class="bg-white p-4 rounded-2xl border border-slate-200 hover:border-orange-500 transition cursor-pointer text-center group shadow-sm">
+          <div class="w-12 h-12 mx-auto mb-2 bg-orange-50 text-orange-600 rounded-xl flex items-center justify-center text-xl group-hover:scale-110 transition">
+            🏛️
+          </div>
+          <p class="text-xs font-bold text-slate-800 leading-tight">टाइल्स मिस्त्री</p>
         </div>
-        <div onclick="filterBySkill('पेंटर & पुट्टी')" class="bg-white p-4 rounded-2xl border border-slate-200 text-center cursor-pointer hover:border-orange-500 shadow-sm">
-          <div class="text-2xl mb-1">🎨</div>
-          <p class="text-xs font-bold">पेंटर</p>
+        <div onclick="filterBySkill('पेंटर & पुट्टी कारीगर')" class="bg-white p-4 rounded-2xl border border-slate-200 hover:border-orange-500 transition cursor-pointer text-center group shadow-sm">
+          <div class="w-12 h-12 mx-auto mb-2 bg-orange-50 text-orange-600 rounded-xl flex items-center justify-center text-xl group-hover:scale-110 transition">
+            🎨
+          </div>
+          <p class="text-xs font-bold text-slate-800 leading-tight">पेंटर</p>
         </div>
-        <div onclick="filterBySkill('कारपेंटर')" class="bg-white p-4 rounded-2xl border border-slate-200 text-center cursor-pointer hover:border-orange-500 shadow-sm">
-          <div class="text-2xl mb-1">🪚</div>
-          <p class="text-xs font-bold">कारपेंटर</p>
+        <div onclick="filterBySkill('कारपेंटर (बढ़ई)')" class="bg-white p-4 rounded-2xl border border-slate-200 hover:border-orange-500 transition cursor-pointer text-center group shadow-sm">
+          <div class="w-12 h-12 mx-auto mb-2 bg-orange-50 text-orange-600 rounded-xl flex items-center justify-center text-xl group-hover:scale-110 transition">
+            🪚
+          </div>
+          <p class="text-xs font-bold text-slate-800 leading-tight">बढ़ई</p>
         </div>
-        <div onclick="filterBySkill('प्लंबर')" class="bg-white p-4 rounded-2xl border border-slate-200 text-center cursor-pointer hover:border-orange-500 shadow-sm">
-          <div class="text-2xl mb-1">🔧</div>
-          <p class="text-xs font-bold">प्लंबर</p>
+        <div onclick="filterBySkill('प्लंबर (नल मिस्त्री)')" class="bg-white p-4 rounded-2xl border border-slate-200 hover:border-orange-500 transition cursor-pointer text-center group shadow-sm">
+          <div class="w-12 h-12 mx-auto mb-2 bg-orange-50 text-orange-600 rounded-xl flex items-center justify-center text-xl group-hover:scale-110 transition">
+            🔧
+          </div>
+          <p class="text-xs font-bold text-slate-800 leading-tight">प्लंबर</p>
         </div>
-        <div onclick="filterBySkill('लेबर/हेल्पर')" class="bg-white p-4 rounded-2xl border border-slate-200 text-center cursor-pointer hover:border-orange-500 shadow-sm">
-          <div class="text-2xl mb-1">👷</div>
-          <p class="text-xs font-bold">लेबर/हेल्पर</p>
+        <div onclick="filterBySkill('लेबर / हेल्पर (मजदूर)')" class="bg-white p-4 rounded-2xl border border-slate-200 hover:border-orange-500 transition cursor-pointer text-center group shadow-sm">
+          <div class="w-12 h-12 mx-auto mb-2 bg-orange-50 text-orange-600 rounded-xl flex items-center justify-center text-xl group-hover:scale-110 transition">
+            👷
+          </div>
+          <p class="text-xs font-bold text-slate-800 leading-tight">लेबर / हेल्पर</p>
         </div>
+      </div>
+    </section>
+
+    <section class="bg-white border-y border-slate-200 py-8">
+      <div class="max-w-6xl mx-auto px-4 grid grid-cols-3 gap-4 text-center">
+        <div>
+          <p class="text-2xl md:text-4xl font-extrabold text-orange-600">5,000+</p>
+          <p class="text-xs font-bold text-slate-500 mt-1">रजिस्टर्ड मिस्त्री</p>
+        </div>
+        <div>
+          <p class="text-2xl md:text-4xl font-extrabold text-slate-900">38</p>
+          <p class="text-xs font-bold text-slate-500 mt-1">बिहार के ज़िले</p>
+        </div>
+        <div>
+          <p class="text-2xl md:text-4xl font-extrabold text-emerald-600">0%</p>
+          <p class="text-xs font-bold text-slate-500 mt-1">कमीशन (बिल्कुल फ्री)</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="max-w-6xl mx-auto px-4 py-10">
+      <div class="bg-gradient-to-r from-slate-900 to-slate-800 rounded-3xl p-6 md:p-10 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl relative overflow-hidden">
+        <div class="space-y-2 text-center md:text-left relative z-10">
+          <span class="text-orange-400 font-bold text-xs uppercase tracking-widest">कारीगर भाइयों के लिए</span>
+          <h3 class="text-2xl md:text-3xl font-black">क्या आप मिस्त्री या हेल्पर हैं?</h3>
+          <p class="text-sm text-slate-300 max-w-md">रोज़ नया काम पाने के लिए अपनी फ़्री प्रोफाइल आज ही बनाएँ। हज़ारों मकान मालिक सीधा आपको फोन करेंगे।</p>
+        </div>
+        <button onclick="navigate('register')" class="bg-orange-500 hover:bg-orange-600 text-white font-extrabold px-8 py-3.5 rounded-xl shadow-lg transition whitespace-nowrap relative z-10">
+          मुफ्त रजिस्ट्रेशन करें &rarr;
+        </button>
+        <div class="absolute -right-20 -bottom-20 w-80 h-80 bg-orange-600/30 rounded-full blur-3xl"></div>
       </div>
     </section>
   </div>
 
   <div id="page-masons" class="page-content hidden">
-    <div class="max-w-5xl mx-auto px-4 py-6 space-y-4">
-      <div class="bg-white p-4 rounded-2xl border border-slate-200 flex flex-col md:flex-row gap-3">
+    <div class="max-w-6xl mx-auto px-4 py-6 space-y-4">
+      
+      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row gap-3 items-center justify-between">
         <div class="w-full md:w-1/2">
-          <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">ज़िला</label>
-          <select id="dir-district" onchange="renderMasonDirectory()" class="w-full text-xs font-bold p-2.5 bg-slate-50 border rounded-xl outline-none">
+          <label class="block text-[10px] font-extrabold uppercase text-slate-400 mb-1">ज़िला चुनें</label>
+          <select id="dir-district" onchange="renderMasonDirectory()" class="w-full text-xs font-bold p-2.5 bg-slate-50 border border-slate-300 rounded-xl outline-none focus:border-orange-500">
             <option value="सभी">पूरा बिहार (सभी ज़िले)</option>
             <option value="पटना">पटना</option>
             <option value="बक्सर">बक्सर</option>
             <option value="भोजपुर (आरा)">भोजपुर (आरा)</option>
             <option value="रोहतास (सासाराम)">रोहतास (सासाराम)</option>
+            <option value="कैमूर (भभुआ)">कैमूर (भभुआ)</option>
             <option value="गया">गया</option>
             <option value="मुजफ्फरपुर">मुजफ्फरपुर</option>
           </select>
         </div>
         <div class="w-full md:w-1/2">
-          <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">काम का प्रकार</label>
-          <select id="dir-skill" onchange="renderMasonDirectory()" class="w-full text-xs font-bold p-2.5 bg-slate-50 border rounded-xl outline-none">
-            <option value="सभी">सभी कारीगर</option>
-            <option value="राजमिस्त्री">राजमिस्त्री</option>
-            <option value="टाइल्स & मार्बल">टाइल्स & मार्बल</option>
-            <option value="पेंटर & पुट्टी">पेंटर</option>
-            <option value="कारपेंटर">कारपेंटर</option>
-            <option value="प्लंबर">प्लंबर</option>
-            <option value="इलेक्ट्रीशियन">इलेक्ट्रीशियन</option>
-            <option value="लेबर/हेल्पर">लेबर/हेल्पर</option>
+          <label class="block text-[10px] font-extrabold uppercase text-slate-400 mb-1">काम का प्रकार</label>
+          <select id="dir-skill" onchange="renderMasonDirectory()" class="w-full text-xs font-bold p-2.5 bg-slate-50 border border-slate-300 rounded-xl outline-none focus:border-orange-500">
+            <option value="सभी">सभी कारीगर & लेबर</option>
+            <option value="राजमिस्त्री (चिनाई/प्लास्टर)">राजमिस्त्री (चिनाई)</option>
+            <option value="टाइल्स & मार्बल मिस्त्री">टाइल्स & मार्बल</option>
+            <option value="पेंटर & पुट्टी कारीगर">पेंटर कारीगर</option>
+            <option value="कारपेंटर (बढ़ई)">कारपेंटर (बढ़ई)</option>
+            <option value="प्लंबर (नल मिस्त्री)">प्लंबर (नल मिस्त्री)</option>
+            <option value="इलेक्ट्रीशियन (बिजली मिस्त्री)">इलेक्ट्रीशियन</option>
+            <option value="लेबर / हेल्पर (मजदूर)">लेबर / हेल्पर</option>
           </select>
         </div>
       </div>
 
-      <div id="mason-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+      <div id="mason-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        </div>
     </div>
   </div>
 
   <div id="page-post-work" class="page-content hidden">
-    <div class="max-w-xl mx-auto px-4 py-8">
+    <div class="max-w-xl mx-auto px-4 py-8 space-y-6">
       <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-lg space-y-4">
         <div class="border-b pb-3">
           <h2 class="text-xl font-black text-slate-900">🏠 नया काम पोस्ट करें</h2>
-          <p class="text-xs text-slate-500">मकान मालिक/ठेकेदार अपने काम का विवरण और फ़ोटो अपलोड करें</p>
+          <p class="text-xs text-slate-500">ज़रूरत के अनुसार मिस्त्री या लेबर सीधे आपको संपर्क करेंगे</p>
         </div>
 
         <form onsubmit="handleJobSubmission(event)" class="space-y-4">
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1">काम का विवरण *</label>
-            <textarea id="job-desc" required rows="3" placeholder="जैसे: 3 कमरों की ईंट जोड़ाई और छत ढलाई के लिए 4 लेबर चाहिए..." class="w-full p-3 text-xs border border-slate-300 rounded-xl outline-none focus:ring-2 focus:ring-orange-500"></textarea>
+            <textarea id="job-desc" required rows="3" placeholder="जैसे: 2 कमरों की चिनाई और प्लास्टर करवानी है, छत ढलाई के लिए 4 लेबर चाहिए।" class="w-full p-3 text-xs border border-slate-300 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none no-scrollbar"></textarea>
           </div>
 
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">
-              📸 काम/साइट की फ़ोटो जोड़ें (वैकल्पिक)
-            </label>
-            <div class="border-2 border-dashed border-slate-300 hover:border-orange-500 rounded-2xl p-4 text-center cursor-pointer bg-slate-50 relative">
+            <label class="block text-xs font-bold text-slate-700 mb-1">📸 साइट/काम की फोटो (वैकल्पिक)</label>
+            <div class="border-2 border-dashed border-slate-300 hover:border-orange-500 rounded-2xl p-4 text-center cursor-pointer bg-slate-50 relative group">
               <input type="file" id="job-photo" accept="image/*" onchange="previewJobImage(event)" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
               <div id="upload-placeholder" class="space-y-1">
-                <i class="fa-solid fa-cloud-arrow-up text-2xl text-slate-400"></i>
-                <p class="text-xs font-bold text-slate-600">फ़ोटो चुनने के लिए क्लिक करें</p>
-                <p class="text-[10px] text-slate-400">JPG, PNG (अधिकतम 5MB)</p>
+                <i class="fa-solid fa-cloud-arrow-up text-3xl text-slate-400 group-hover:text-orange-500 transition"></i>
+                <p class="text-xs font-bold text-slate-600">फोटो चुनें</p>
+                <p class="text-[10px] text-slate-400">अधिकतम 5MB</p>
               </div>
-              <img id="image-preview" class="hidden w-full max-h-48 object-cover rounded-xl mt-2 mx-auto border" />
+              <img id="image-preview" class="hidden w-full h-auto max-h-48 object-contain rounded-xl mt-2 mx-auto border shadow-sm" />
             </div>
           </div>
 
           <div class="grid grid-cols-2 gap-3">
             <div>
               <label class="block text-xs font-bold text-slate-700 mb-1">ज़िला *</label>
-              <select id="job-dist" class="w-full p-2.5 text-xs border rounded-xl bg-white outline-none">
+              <select id="job-dist" class="w-full p-2.5 text-xs border border-slate-300 rounded-xl bg-white outline-none">
                 <option value="पटना">पटना</option>
                 <option value="बक्सर">बक्सर</option>
                 <option value="भोजपुर (आरा)">भोजपुर (आरा)</option>
-                <option value="रोहतास">रोहतास</option>
+                <option value="रोहतास (सासाराम)">रोहतास (सासाराम)</option>
                 <option value="गया">गया</option>
                 <option value="मुजफ्फरपुर">मुजफ्फरपुर</option>
               </select>
             </div>
             <div>
               <label class="block text-xs font-bold text-slate-700 mb-1">अनुमानित बजट / दिहाड़ी *</label>
-              <input type="text" id="job-rate" required placeholder="₹750/दिन या ठेका" class="w-full p-2.5 text-xs border rounded-xl outline-none">
+              <input type="text" id="job-budget" required placeholder="₹750/दिन या ठेका" class="w-full p-2.5 text-xs border border-slate-300 rounded-xl outline-none">
             </div>
           </div>
 
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1">आपका मोबाइल नंबर *</label>
-            <input type="tel" id="job-contact" maxlength="10" required placeholder="10 अंकों का मोबाइल नंबर" class="w-full p-3 text-xs border rounded-xl outline-none">
+            <input type="tel" id="job-phone" maxlength="10" required placeholder="मिस्त्री आपको सीधा फोन करेंगे" class="w-full p-3 text-xs border border-slate-300 rounded-xl outline-none">
           </div>
 
           <button type="submit" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-3.5 rounded-xl text-sm transition shadow-md shadow-orange-500/20">
-            काम पोस्ट करें
+            काम लाइव पोस्ट करें
           </button>
         </form>
       </div>
 
-      <div class="mt-8">
-        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">हाल में पोस्ट हुए काम</h3>
-        <div id="live-job-list" class="space-y-3"></div>
+      <div class="space-y-3">
+        <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-400 mb-2">हालिया पोस्ट किए गए काम</h3>
+        <div id="live-job-list" class="space-y-3">
+          </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="page-about" class="page-content hidden">
+    <div class="max-w-4xl mx-auto px-4 py-8 space-y-8">
+      <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm text-center space-y-4">
+        <img src="image_11.png" alt="MistryBabu Logo" class="w-32 h-32 mx-auto rounded-3xl border-4 border-slate-100 shadow-md">
+        <h2 class="text-2xl font-black text-slate-900">बिहार का अपना मिस्त्री नेटवर्क - MistryBabu.com</h2>
+        <p class="text-sm text-slate-600 leading-relaxed max-w-2xl mx-auto">
+          MistryBabu.com का एकमात्र उद्देश्य बिहार के हुनरमंद मिस्त्री भाइयों और मेहनती मजदूरों को डिजिटल पहचान दिलाना है, और मकान मालिकों को भरोसेमंद कारीगर सीधे बिना किसी दलाल या कमीशन के उपलब्ध कराना है। हम 'लोकल फॉर वोकल' के सपने को सच कर रहे हैं।
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex gap-4 items-start">
+          <div class="text-3xl text-orange-600"><i class="fa-solid fa-helmet-safety"></i></div>
+          <div>
+            <h4 class="font-bold text-slate-900">कारीगर भाइयों के लिए</h4>
+            <p class="text-xs text-slate-500 mt-1leading-relaxed">मुफ्त प्रोफाइल बनाएँ, सीधे मकान मालिक से काम पाएँ, कमीशन का झंझट खत्म।</p>
+          </div>
+        </div>
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex gap-4 items-start">
+          <div class="text-3xl text-orange-600"><i class="fa-solid fa-house-chimney"></i></div>
+          <div>
+            <h4 class="font-bold text-slate-900">मकान मालिकों के लिए</h4>
+            <p class="text-xs text-slate-500 mt-1 leading-relaxed">अपने ज़िले के वेरिफाइड मिस्त्री खोजें, फोटो देखें, सीधे कॉल करें।</p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -265,121 +339,73 @@
     <div class="max-w-xl mx-auto px-4 py-8">
       <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-lg space-y-4">
         <div class="border-b pb-3">
-          <span class="text-[10px] font-extrabold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded">100% मुफ़्त रजिस्ट्रेशन</span>
-          <h2 class="text-xl font-black text-slate-900 mt-1">👷 कारीगर / लेबर रजिस्ट्रेशन</h2>
+          <span class="text-[10px] font-extrabold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded">100% फ्री रजिस्ट्रेशन</span>
+          <h2 class="text-xl font-black text-slate-900 mt-1">👷 कारीगर / लेबर मुफ्त प्रोफाइल जोड़ें</h2>
           <p class="text-xs text-slate-500">रोज़ नया काम पाने के लिए अपनी सही जानकारी भरें</p>
         </div>
 
         <form onsubmit="handleRegistration(event)" class="space-y-4">
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1">पूरा नाम *</label>
-            <input type="text" id="reg-fullname" required placeholder="अपना पूरा नाम लिखें" class="w-full p-3 text-xs border rounded-xl outline-none">
+            <input type="text" id="reg-name" required placeholder="अपना पूरा नाम लिखें" class="w-full p-3 text-xs border border-slate-300 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none">
           </div>
 
           <div class="grid grid-cols-2 gap-3">
             <div>
-              <label class="block text-xs font-bold text-slate-700 mb-1">मुख्य हुनर *</label>
-              <select id="reg-trade" class="w-full p-2.5 text-xs border rounded-xl bg-white outline-none">
-                <option value="राजमिस्त्री">राजमिस्त्री (चिनाई)</option>
-                <option value="टाइल्स & मार्बल">टाइल्स & मार्बल</option>
-                <option value="पेंटर & पुट्टी">पेंटर</option>
-                <option value="कारपेंटर">कारपेंटर</option>
-                <option value="प्लंबर">प्लंबर</option>
-                <option value="इलेक्ट्रीशियन">इलेक्ट्रीशियन</option>
-                <option value="लेबर/हेल्पर">लेबर/हेल्पर</option>
+              <label class="block text-xs font-bold text-slate-700 mb-1">आपका हुनर / काम *</label>
+              <select id="reg-trade" class="w-full p-2.5 text-xs border border-slate-300 rounded-xl bg-white outline-none">
+                <option value="राजमिस्त्री (चिनाई/प्लास्टर)">राजमिस्त्री (चिनाई)</option>
+                <option value="टाइल्स & मार्बल मिस्त्री">टाइल्स & मार्बल</option>
+                <option value="पेंटर & पुट्टी कारीगर">पेंटर कारीगर</option>
+                <option value="कारपेंटर (बढ़ई)">कारपेंटर (बढ़ई)</option>
+                <option value="प्लंबर (नल मिस्त्री)">प्लंबर (नल मिस्त्री)</option>
+                <option value="इलेक्ट्रीशियन (बिजली मिस्त्री)">इलेक्ट्रीशियन (बिजली)</option>
+                <option value="लेबर / हेल्पर (मजदूर)">लेबर / हेल्पर (मजदूर)</option>
               </select>
             </div>
             <div>
               <label class="block text-xs font-bold text-slate-700 mb-1">ज़िला *</label>
-              <select id="reg-dist" class="w-full p-2.5 text-xs border rounded-xl bg-white outline-none">
+              <select id="reg-dist" class="w-full p-2.5 text-xs border border-slate-300 rounded-xl bg-white outline-none">
                 <option value="पटना">पटना</option>
                 <option value="बक्सर">बक्सर</option>
                 <option value="भोजपुर (आरा)">भोजपुर (आरा)</option>
                 <option value="रोहतास (सासाराम)">रोहतास (सासाराम)</option>
+                <option value="कैमूर (भभुआ)">कैमूर (भभुआ)</option>
                 <option value="गया">गया</option>
                 <option value="मुजफ्फरपुर">मुजफ्फरपुर</option>
-                <option value="अन्य">अन्य ज़िला</option>
               </select>
             </div>
           </div>
 
           <div class="grid grid-cols-2 gap-3">
             <div>
-              <label class="block text-xs font-bold text-slate-700 mb-1">अनुभव (साल) *</label>
-              <input type="text" id="reg-exp-years" required placeholder="जैसे: 6 साल" class="w-full p-3 text-xs border rounded-xl outline-none">
+              <label class="block text-xs font-bold text-slate-700 mb-1">अनुभव (कितने साल) *</label>
+              <input type="text" id="reg-exp" required placeholder="उदा. 8 साल" class="w-full p-3 text-xs border border-slate-300 rounded-xl outline-none">
             </div>
             <div>
               <label class="block text-xs font-bold text-slate-700 mb-1">प्रति दिन रेट (₹) *</label>
-              <input type="text" id="reg-daily-rate" required placeholder="उदा. ₹750/दिन" class="w-full p-3 text-xs border rounded-xl outline-none">
+              <input type="text" id="reg-rate" required placeholder="उदा. ₹750/दिन या ठेका" class="w-full p-3 text-xs border border-slate-300 rounded-xl outline-none">
             </div>
           </div>
 
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">मोबाइल नंबर (कॉल & WhatsApp) *</label>
-            <input type="tel" id="reg-contact-num" maxlength="10" required placeholder="10 अंकों का फोन नंबर" class="w-full p-3 text-xs border rounded-xl outline-none">
+            <label class="block text-xs font-bold text-slate-700 mb-1">मोबाइल नंबर (कॉल और WhatsApp) *</label>
+            <input type="tel" id="reg-phone" maxlength="10" required placeholder="10 अंकों का फोन नंबर" class="w-full p-3 text-xs border border-slate-300 rounded-xl outline-none">
           </div>
 
           <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-3.5 rounded-xl text-sm transition shadow-lg shadow-emerald-600/20">
-            मेरी प्रोफाइल लाइव करें
+            मेरी प्रोफाइल तुरंत लाइव करें
           </button>
         </form>
       </div>
     </div>
   </div>
 
-  <div id="page-rules" class="page-content hidden">
-    <div class="max-w-3xl mx-auto px-4 py-8 space-y-6">
-      <div class="bg-white p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6">
-        <div>
-          <span class="text-xs font-extrabold uppercase tracking-wider text-orange-600">MistryBabu नीतियां</span>
-          <h2 class="text-2xl font-black text-slate-900 mt-1">📜 नियम एवं दिशा-निर्देश (Rules & Regulations)</h2>
-          <p class="text-xs text-slate-500">सभी उपयोगकर्ताओं और कारीगरों के लिए यह नियम अनिवार्य हैं।</p>
-        </div>
-
-        <div class="space-y-4 text-xs md:text-sm text-slate-700 leading-relaxed border-t border-slate-100 pt-4">
-          <div class="bg-amber-50 border border-amber-200 p-4 rounded-2xl">
-            <h4 class="font-bold text-amber-900 mb-1">१. डायरेक्टरी प्लेटफ़ॉर्म</h4>
-            <p class="text-amber-800">MistryBabu.com केवल मकान मालिक और कारीगर को सीधे संपर्क कराने का माध्यम है। हम किसी भी काम से कोई कमिशन नहीं लेते।</p>
-          </div>
-
-          <div>
-            <h4 class="font-bold text-slate-900 text-sm mb-1">२. कारीगरों के लिए नियम:</h4>
-            <ul class="list-disc list-inside space-y-1 text-slate-600">
-              <li>रजिस्ट्रेशन में केवल सही नाम, अनुभव और चालू मोबाइल नंबर दर्ज करें।</li>
-              <li>ग्राहकों के साथ सम्मानजनक व्यवहार करें; किसी भी गलत शिकायत पर प्रोफाइल तुरंत हटा दी जाएगी।</li>
-              <li>समय पर काम पूरा करना और गुणवत्ता बनाए रखना आपकी ज़िम्मेदारी होगी।</li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 class="font-bold text-slate-900 text-sm mb-1">३. मकान मालिकों के लिए नियम:</h4>
-            <ul class="list-disc list-inside space-y-1 text-slate-600">
-              <li>काम शुरू करने से पहले कारीगर का आधार कार्ड या पहचान पत्र अवश्य चेक करें।</li>
-              <li>दिहाड़ी अथवा ठेके की राशि काम शुरू करने से पहले स्पष्ट रूप से तय करें।</li>
-              <li>पूरा काम संतोषजनक होने के बाद ही पूर्ण भुगतान करें।</li>
-            </ul>
-          </div>
-
-          <div class="bg-rose-50 border border-rose-200 p-4 rounded-2xl">
-            <h4 class="font-bold text-rose-900 mb-1">४. धोखाधड़ी से बचाव:</h4>
-            <p class="text-rose-800">MistryBabu.com किसी भी प्रकार का ऑनलाइन अग्रिम भुगतान नहीं लेता। यदि कोई व्यक्ति खुद को MistryBabu का एजेंट बताकर पैसे मांगे, तो सीधे <a href="mailto:mistrybabuhelp@gmail.com" class="font-bold underline">mistrybabuhelp@gmail.com</a> पर रिपोर्ट करें।</p>
-          </div>
-        </div>
-
-        <div class="pt-4 border-t flex justify-end">
-          <button onclick="navigate('home')" class="bg-slate-900 text-white px-6 py-2 rounded-xl text-xs font-bold">
-            होम पर वापस जाएँ
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <footer class="bg-slate-950 text-white mt-12 py-10 border-t border-slate-800">
+  <footer class="bg-slate-900 text-white mt-12 py-10 border-t border-slate-800">
     <div class="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8 text-xs">
       <div class="space-y-3">
         <div class="flex items-center gap-2">
-          <div class="w-8 h-8 bg-orange-600 rounded-lg flex items-center justify-center font-black text-sm">MB</div>
+          <div class="w-8 h-8 bg-orange-600 rounded-lg flex items-center justify-center font-black text-sm border">MB</div>
           <span class="text-lg font-black tracking-tight">Mistry<span class="text-orange-500">Babu</span>.com</span>
         </div>
         <p class="text-slate-400 leading-relaxed">बिहार के हुनरमंद कारीगरों और मेहनती मजदूरों का विश्वसनीय डिजिटल नेटवर्क।</p>
@@ -388,32 +414,29 @@
       <div>
         <h4 class="font-bold text-white mb-3 uppercase tracking-wider text-[11px]">क्विक लिंक्स</h4>
         <ul class="space-y-2 text-slate-400 font-medium">
-          <li><button onclick="navigate('home')" class="hover:text-white">होम</button></li>
-          <li><button onclick="navigate('masons')" class="hover:text-white">कारीगर डायरेक्टरी</button></li>
-          <li><button onclick="navigate('post-work')" class="hover:text-white">काम पोस्ट करें</button></li>
-          <li><button onclick="navigate('register')" class="hover:text-white">रजिस्ट्रेशन</button></li>
+          <li><button onclick="navigate('home')" class="hover:text-white transition">होम पेज</button></li>
+          <li><button onclick="navigate('masons')" class="hover:text-white transition">मिस्त्री डायरेक्टरी</button></li>
+          <li><button onclick="navigate('post-work')" class="hover:text-white transition">काम पोस्ट करें</button></li>
+          <li><button onclick="navigate('register')" class="hover:text-white transition">कारीगर रजिस्ट्रेशन</button></li>
         </ul>
       </div>
 
       <div>
-        <h4 class="font-bold text-white mb-3 uppercase tracking-wider text-[11px]">सुरक्षा & नीतियां</h4>
+        <h4 class="font-bold text-white mb-3 uppercase tracking-wider text-[11px]">सहयोग & नीतियां</h4>
         <ul class="space-y-2 text-slate-400 font-medium">
-          <li><button onclick="navigate('rules')" class="hover:text-white">नियम एवं शर्तें (Rules)</button></li>
-          <li><span class="text-slate-500">100% फ़्री सर्विस</span></li>
+          <li><button onclick="navigate('about')" class="hover:text-white transition">हमारे बारे में</button></li>
+          <li><span class="text-slate-500">नियम एवं शर्तें</span></li>
+          <li><span class="text-slate-500">गोपनीयता नीति</span></li>
         </ul>
       </div>
 
-      <div class="space-y-2">
-        <h4 class="font-bold text-white mb-3 uppercase tracking-wider text-[11px]">3. सहायता एवं संपर्क</h4>
-        <p class="text-slate-300 flex items-center gap-1.5">
-          <i class="fa-solid fa-envelope text-orange-500"></i>
-          <a href="mailto:mistrybabuhelp@gmail.com" class="hover:underline font-bold text-orange-400">mistrybabuhelp@gmail.com</a>
-        </p>
-        <p class="text-slate-400">स्थान: बिहार (भारत)</p>
+      <div>
+        <h4 class="font-bold text-white mb-3 uppercase tracking-wider text-[11px]">सपोर्ट</h4>
+        <p class="text-slate-400">बिहार, भारत</p>
+        <p class="text-orange-400 font-bold">हेल्पलाइन: उपलब्ध जल्द</p>
       </div>
     </div>
-
-    <div class="max-w-6xl mx-auto px-4 mt-8 pt-6 border-t border-slate-900 text-center text-slate-500 text-[11px]">
+    <div class="max-w-6xl mx-auto px-4 mt-8 pt-6 border-t border-slate-800 text-center text-slate-500 text-[10px]">
       © 2026 MistryBabu.com | सर्वाधिकार सुरक्षित।
     </div>
   </footer>
@@ -425,15 +448,15 @@
     </button>
     <button onclick="navigate('masons')" class="nav-item flex flex-col items-center justify-center text-slate-400" data-target="masons">
       <i class="fa-solid fa-users-gear text-sm"></i>
-      <span class="text-[10px] font-bold mt-0.5">मिस्त्री</span>
+      <span class="text-[10px] font-bold mt-0.5">मिस्त्री खोजें</span>
     </button>
     <button onclick="navigate('post-work')" class="nav-item flex flex-col items-center justify-center text-slate-400" data-target="post-work">
       <i class="fa-solid fa-camera text-sm"></i>
       <span class="text-[10px] font-bold mt-0.5">काम पोस्ट</span>
     </button>
-    <button onclick="navigate('rules')" class="nav-item flex flex-col items-center justify-center text-slate-400" data-target="rules">
-      <i class="fa-solid fa-shield-halved text-sm"></i>
-      <span class="text-[10px] font-bold mt-0.5">नियम</span>
+    <button onclick="navigate('about')" class="nav-item flex flex-col items-center justify-center text-slate-400" data-target="about">
+      <i class="fa-solid fa-circle-info text-sm"></i>
+      <span class="text-[10px] font-bold mt-0.5">बारे में</span>
     </button>
     <button onclick="navigate('register')" class="nav-item flex flex-col items-center justify-center text-slate-400" data-target="register">
       <i class="fa-solid fa-id-card text-sm"></i>
@@ -442,25 +465,31 @@
   </nav>
 
   <script>
-    let uploadedImageBase64 = null;
-
+    // डेटाबेस (लोकल स्टोरेज)
     const initialMasons = [
-      { id: 1, name: "विकास कुमार शर्मा", district: "पटना", skill: "टाइल्स & मार्बल", exp: "8 साल", rate: "₹800/दिन", phone: "9876543210", rating: "4.9" },
-      { id: 2, name: "रामसुंदर यादव", district: "बक्सर", skill: "राजमिस्त्री", exp: "12 साल", rate: "₹750/दिन", phone: "9876543211", rating: "5.0" },
-      { id: 3, name: "मुन्ना बढ़ई", district: "भोजपुर (आरा)", skill: "कारपेंटर", exp: "7 साल", rate: "₹800/दिन", phone: "9876543212", rating: "4.8" },
-      { id: 4, name: "सोनू मांझी", district: "गया", skill: "लेबर/हेल्पर", exp: "4 साल", rate: "₹450/दिन", phone: "9876543214", rating: "4.7" }
+      { id: 1, name: "विकास कुमार शर्मा", district: "पटना", skill: "टाइल्स & मार्बल मिस्त्री", exp: "6 साल", rate: "₹750/दिन", phone: "9876543210" },
+      { id: 2, name: "रामसुंदर यादव", district: "बक्सर", skill: "राजमिस्त्री (चिनाई/प्लास्टर)", exp: "10 साल", rate: "₹700/दिन", phone: "9876543211" },
+      { id: 3, name: "मुन्ना बढ़ई", district: "भोजपुर (आरा)", skill: "कारपेंटर (बढ़ई)", exp: "7 साल", rate: "₹800/दिन", phone: "9876543212" },
+      { id: 4, name: "संजय पासवान", district: "रोहतास (सासाराम)", skill: "पेंटर & पुट्टी कारीगर", exp: "5 साल", rate: "₹650/दिन", phone: "9876543213" },
+      { id: 5, name: "सोनू मांझी", district: "गया", skill: "लेबर / हेल्पर (मजदूर)", exp: "3 साल", rate: "₹450/दिन", phone: "9876543214" }
     ];
 
     let masons = JSON.parse(localStorage.getItem('mb_masons')) || initialMasons;
     let jobs = JSON.parse(localStorage.getItem('mb_jobs')) || [
-      { id: 1, title: "2000 ईंट की जोड़ाई और पिलर ढलाई", dist: "बक्सर", budget: "₹750/दिन", contact: "9123456780", image: null }
+      { id: 1, desc: "2000 ईंट की जोड़ाई और पिलर ढलाई करवानी है।", dist: "पटना", budget: "₹750/दिन", phone: "9123456780", photo: null },
+      { id: 2, desc: "3 बेडरूम में 2x2 टाइल्स लगवानी है, बक्सर में।", dist: "बक्सर", budget: "ठेका", phone: "9123456781", photo: null }
     ];
 
-    function navigate(pageId) {
-      document.querySelectorAll('.page-content').forEach(el => el.classList.add('hidden'));
-      const target = document.getElementById('page-' + pageId);
-      if(target) target.classList.remove('hidden');
+    let tempJobPhoto = null; // काम पोस्ट के लिए फोटो
 
+    // नेविगेशन फंक्शन (मल्टी-पेज अनुभव)
+    function navigate(pageId) {
+      // सभी पेज छुपाएं
+      document.querySelectorAll('.page-content').forEach(el => el.classList.add('hidden'));
+      // टारगेट पेज दिखाएं
+      document.getElementById('page-' + pageId).classList.remove('hidden');
+
+      // एक्टिव टैब स्टाइलिंग (डेस्कटॉप + मोबाइल)
       document.querySelectorAll('.nav-link').forEach(link => {
         if(link.getAttribute('data-target') === pageId) {
           link.classList.remove('text-slate-600');
@@ -481,23 +510,31 @@
         }
       });
 
+      // ऊपर स्क्रॉल करें
       window.scrollTo(0, 0);
+
+      // पेज-विशिष्ट लोडिंग
       if(pageId === 'masons') renderMasonDirectory();
       if(pageId === 'post-work') renderJobs();
     }
 
+    // होमपेज क्विक सर्च
     function handleQuickSearch() {
-      document.getElementById('dir-district').value = document.getElementById('quick-district').value;
-      document.getElementById('dir-skill').value = document.getElementById('quick-skill').value;
+      const dist = document.getElementById('quick-district').value;
+      const skill = document.getElementById('quick-skill').value;
+      document.getElementById('dir-district').value = dist;
+      document.getElementById('dir-skill').value = skill;
       navigate('masons');
     }
 
+    // कैटेगरी क्लिक फ़िल्टर
     function filterBySkill(skill) {
       document.getElementById('dir-district').value = 'सभी';
       document.getElementById('dir-skill').value = skill;
       navigate('masons');
     }
 
+    // मिस्त्री डायरेक्टरी रेंडर करें
     function renderMasonDirectory() {
       const dist = document.getElementById('dir-district').value;
       const skill = document.getElementById('dir-skill').value;
@@ -510,114 +547,124 @@
       });
 
       if(filtered.length === 0) {
-        grid.innerHTML = `<div class="col-span-2 bg-white p-8 rounded-2xl text-center border text-slate-500 text-xs">इस श्रेणी में अभी कोई कारीगर उपलब्ध नहीं है।</div>`;
+        grid.innerHTML = `<div class="col-span-2 bg-white p-8 rounded-2xl text-center border border-slate-200 text-slate-500 text-xs">इस ज़िले या श्रेणी में अभी कोई कारीगर उपलब्ध नहीं है। आप सीधे काम पोस्ट कर सकते हैं।</div>`;
         return;
       }
 
       grid.innerHTML = filtered.map(m => `
-        <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-4">
-          <div class="flex justify-between items-start">
+        <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-4 relative overflow-hidden group">
+          <div class="flex justify-between items-start relative z-10">
             <div class="flex gap-3 items-center">
-              <div class="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center font-black text-slate-700 text-lg border">
+              <div class="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center font-black text-slate-700 text-xl border">
                 ${m.name.charAt(0)}
               </div>
               <div>
-                <h4 class="font-extrabold text-slate-900 text-sm">${m.name}</h4>
-                <p class="text-[11px] font-bold text-orange-600">📍 ${m.district}</p>
+                <h4 class="font-extrabold text-slate-900 text-sm leading-none">${m.name}</h4>
+                <p class="text-[11px] font-bold text-orange-600 mt-1">📍 ज़िला: ${m.district}</p>
               </div>
             </div>
-            <span class="bg-amber-50 text-amber-800 text-[10px] font-extrabold px-2 py-1 rounded-md border border-amber-200">
-              ★ ${m.rating || '5.0'}
+            <span class="bg-orange-50 text-orange-700 text-xs px-2 py-0.5 rounded font-bold border border-orange-200">
+              वेरिफाइड
             </span>
           </div>
 
-          <div class="bg-slate-50 p-3 rounded-xl grid grid-cols-2 gap-2 text-xs">
-            <div><span class="text-slate-400 block text-[10px]">हुनर:</span> <b>${m.skill}</b></div>
-            <div><span class="text-slate-400 block text-[10px]">रेट:</span> <b class="text-emerald-600">${m.rate}</b></div>
+          <div class="bg-slate-50 p-3 rounded-xl grid grid-cols-2 gap-2 text-xs relative z-10">
+            <div><span class="text-slate-400 font-semibold block text-[10px]">हुनर:</span> <b class="text-slate-800">${m.skill}</b></div>
+            <div><span class="text-slate-400 font-semibold block text-[10px]">रेट / दिहाड़ी:</span> <b class="text-emerald-600">${m.rate}</b></div>
           </div>
 
-          <div class="grid grid-cols-2 gap-2">
-            <a href="tel:${m.phone}" class="bg-slate-900 text-white text-center py-2.5 rounded-xl text-xs font-bold">
-              📞 कॉल करें
+          <div class="grid grid-cols-2 gap-2 relative z-10">
+            <a href="tel:${m.phone}" class="bg-slate-900 hover:bg-black text-white text-center py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition shadow-sm">
+              <span>📞</span> कॉल करें
             </a>
-            <a href="https://wa.me/91${m.phone}" target="_blank" class="bg-emerald-600 text-white text-center py-2.5 rounded-xl text-xs font-bold">
-              💬 WhatsApp
+            <a href="https://wa.me/91${m.phone}?text=नमस्ते ${m.name} जी, मुझे MistryBabu.com से आपका नंबर मिला। मुझे काम के लिए बात करनी है।" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white text-center py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition shadow-sm">
+              <span>💬</span> WhatsApp
             </a>
           </div>
+          <div class="absolute -right-10 -bottom-10 w-28 h-28 bg-orange-100 rounded-full group-hover:scale-110 transition"></div>
         </div>
       `).join('');
     }
 
-    // 4. PHOTO PREVIEW HANDLER
+    // काम पोस्ट के लिए फोटो प्रीव्यू
     function previewJobImage(event) {
       const file = event.target.files[0];
-      if(file) {
+      if(file && file.size <= 5 * 1024 * 1024) { // 5MB चेक
         const reader = new FileReader();
         reader.onload = function(e) {
-          uploadedImageBase64 = e.target.result;
-          const img = document.getElementById('image-preview');
-          img.src = uploadedImageBase64;
-          img.classList.remove('hidden');
+          tempJobPhoto = e.target.result; // Base64 फोटो
+          document.getElementById('image-preview').src = tempJobPhoto;
+          document.getElementById('image-preview').classList.remove('hidden');
           document.getElementById('upload-placeholder').classList.add('hidden');
         };
         reader.readAsDataURL(file);
+      } else if (file) {
+        alert('फोटो का साइज 5MB से कम होना चाहिए।');
+        event.target.value = ""; // फाइल रिसेट
       }
     }
 
+    // काम की लिस्ट रेंडर करें
     function renderJobs() {
       const container = document.getElementById('live-job-list');
       container.innerHTML = jobs.map(j => `
-        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3 text-xs">
-          ${j.image ? `<img src="${j.image}" class="w-full h-40 object-cover rounded-xl border">` : ''}
-          <div class="flex justify-between items-start">
-            <div>
-              <p class="font-bold text-slate-900">${j.title}</p>
-              <p class="text-[11px] text-slate-500 mt-0.5">📍 ${j.dist} | 💰 ${j.budget}</p>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center text-xs gap-3">
+          <div class="flex items-center gap-3">
+            ${j.photo ? `<img src="${j.photo}" class="w-12 h-12 object-cover rounded-lg border">` : `<div class="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center text-slate-400 text-xl border"><i class="fa-solid fa-camera"></i></div>`}
+            <div class="space-y-0.5">
+              <p class="font-bold text-slate-900 leading-snug">${j.desc}</p>
+              <p class="text-[11px] text-slate-500 font-medium">📍 ज़िला: ${j.dist} | 💰 रेट: ${j.budget}</p>
             </div>
-            <a href="tel:${j.contact}" class="bg-orange-600 text-white px-3 py-1.5 rounded-xl font-bold">कॉल करें</a>
           </div>
+          <a href="tel:${j.phone}" class="bg-orange-600 text-white px-4 py-2.5 rounded-xl font-bold whitespace-nowrap whitespace-nowrap md:w-auto w-full text-center">कॉल करें</a>
         </div>
       `).join('');
     }
 
+    // नया काम पोस्ट करने का हैंडलर
     function handleJobSubmission(e) {
       e.preventDefault();
       const newJob = {
         id: Date.now(),
-        title: document.getElementById('job-desc').value,
+        desc: document.getElementById('job-desc').value,
         dist: document.getElementById('job-dist').value,
-        budget: document.getElementById('job-rate').value,
-        contact: document.getElementById('job-contact').value,
-        image: uploadedImageBase64
+        budget: document.getElementById('job-budget').value,
+        phone: document.getElementById('job-phone').value,
+        photo: tempJobPhoto
       };
       jobs.unshift(newJob);
       localStorage.setItem('mb_jobs', JSON.stringify(jobs));
-      alert('काम सफलतापूर्वक पोस्ट हो गया!');
-      e.target.reset();
-      uploadedImageBase64 = null;
+      alert('बधाई हो! आपका काम MistryBabu.com पर सफलतापूर्वक पोस्ट हो गया है। स्थानीय कारीगर आपसे सीधे संपर्क करेंगे।');
+      e.target.reset(); // फॉर्म रिसेट
+      // फोटो प्रीव्यू रिसेट
+      tempJobPhoto = null;
       document.getElementById('image-preview').classList.add('hidden');
       document.getElementById('upload-placeholder').classList.remove('hidden');
       renderJobs();
     }
 
+    // नया मिस्त्री रजिस्ट्रेशन हैंडलर
     function handleRegistration(e) {
       e.preventDefault();
       const newMason = {
         id: Date.now(),
-        name: document.getElementById('reg-fullname').value,
+        name: document.getElementById('reg-name').value,
         district: document.getElementById('reg-dist').value,
         skill: document.getElementById('reg-trade').value,
-        exp: document.getElementById('reg-exp-years').value,
-        rate: document.getElementById('reg-daily-rate').value,
-        phone: document.getElementById('reg-contact-num').value,
-        rating: "5.0"
+        exp: document.getElementById('reg-exp').value,
+        rate: document.getElementById('reg-rate').value,
+        phone: document.getElementById('reg-phone').value
       };
       masons.unshift(newMason);
       localStorage.setItem('mb_masons', JSON.stringify(masons));
-      alert('बधाई हो! आपकी प्रोफाइल लाइव हो गई है।');
+      alert('बधाई हो! आपकी प्रोफाइल MistryBabu.com पर जुड़ गई है। अब ग्राहक आपको कॉल कर सकते हैं।');
       e.target.reset();
-      navigate('masons');
+      switchTab('find-mason');
+      renderMasons();
     }
+
+    // शुरुआती पेज लोडिंग
+    renderMasons();
   </script>
 </body>
 </html>
