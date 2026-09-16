@@ -7,11 +7,6 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Hind:wght@400;600;700&display=swap" rel="stylesheet">
-  
-  <!-- Firebase Scripts (डेटा ऑनलाइन सेव करने के लिए) -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
   <style>
     body { font-family: 'Hind', sans-serif; }
   </style>
@@ -26,11 +21,13 @@
     <button onclick="document.getElementById('notice-bar').style.display='none'" class="font-bold text-sm px-2">✕</button>
   </div>
 
-  <!-- Header with Brand Logo -->
+  <!-- Header with original MB Logo -->
   <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
     <div class="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
       <div onclick="navigate('home')" class="flex items-center gap-2 cursor-pointer">
-        <img src=https://ibb.co/bMGkXPsR"logo.png" alt="MistryBabu Logo" class="w-11 h-11 object-contain rounded-xl border border-slate-200 shadow-sm">
+        <div class="w-10 h-10 bg-gradient-to-tr from-orange-600 to-amber-500 rounded-xl flex items-center justify-center text-white shadow font-black text-lg">
+          MB
+        </div>
         <div>
           <div class="text-xl font-bold leading-none tracking-tight">
             Mistry<span class="text-orange-600">Babu</span><span class="text-xs text-amber-600">.com</span>
@@ -72,14 +69,7 @@
       <div class="bg-white p-3 rounded-2xl shadow-lg max-w-lg mx-auto text-slate-800 text-left grid grid-cols-1 md:grid-cols-2 gap-2 mt-4">
         <div>
           <label class="text-[10px] font-bold text-slate-400 block uppercase">स्थान / ज़िला</label>
-          <select id="quick-district" class="w-full text-xs font-bold p-1 border-b border-slate-200 bg-transparent outline-none">
-            <option value="सभी">पूरा बिहार (सभी ज़िले)</option>
-            <option value="पटना">पटना</option>
-            <option value="बक्सर">बक्सर</option>
-            <option value="भोजपुर (आरा)">भोजपुर (आरा)</option>
-            <option value="रोहतास (सासाराम)">रोहतास (सासाराम)</option>
-            <option value="गया">गया</option>
-            <option value="मुजफ्फरपुर">मुजफ्फरपुर</option>
+          <select id="quick-district" class="w-full text-xs font-bold p-1 border-b border-slate-200 bg-transparent outline-none district-select-all">
           </select>
         </div>
         <div>
@@ -153,14 +143,7 @@
     <div class="bg-white p-4 rounded-2xl border border-slate-200 grid grid-cols-2 gap-2 shadow-sm">
       <div>
         <label class="text-[10px] font-bold text-slate-400 block uppercase mb-1">ज़िला चुनें (नज़दीकी कारीगर)</label>
-        <select id="dir-district" onchange="renderMasonDirectory()" class="w-full text-xs font-bold p-2 bg-slate-50 border rounded-xl outline-none">
-          <option value="सभी">पूरा बिहार</option>
-          <option value="पटना">पटना</option>
-          <option value="बक्सर">बक्सर</option>
-          <option value="भोजपुर (आरा)">भोजपुर (आरा)</option>
-          <option value="रोहतास (सासाराम)">रोहतास (सासाराम)</option>
-          <option value="गया">गया</option>
-          <option value="मुजफ्फरपुर">मुजफ्फरपुर</option>
+        <select id="dir-district" onchange="renderMasonDirectory()" class="w-full text-xs font-bold p-2 bg-slate-50 border rounded-xl outline-none district-select-all">
         </select>
       </div>
       <div>
@@ -206,13 +189,7 @@
         <div class="grid grid-cols-2 gap-2">
           <div>
             <label class="font-bold block mb-1">ज़िला (काम का स्थान) *</label>
-            <select id="job-dist" class="w-full p-2 border rounded-xl bg-white outline-none">
-              <option value="पटना">पटना</option>
-              <option value="बक्सर">बक्सर</option>
-              <option value="भोजपुर (आरा)">भोजपुर (आरा)</option>
-              <option value="रोहतास (सासाराम)">रोहतास (सासाराम)</option>
-              <option value="गया">गया</option>
-              <option value="मुजफ्फरपुर">मुजफ्फरपुर</option>
+            <select id="job-dist" class="w-full p-2 border rounded-xl bg-white outline-none district-select-pure">
             </select>
           </div>
           <div>
@@ -234,14 +211,7 @@
     <div class="space-y-2">
       <div class="flex justify-between items-center px-1">
         <h3 class="font-bold text-sm text-slate-900">📍 नज़दीकी उपलब्ध काम</h3>
-        <select id="filter-job-dist" onchange="renderJobs()" class="text-xs font-bold border rounded-lg p-1 bg-white">
-          <option value="सभी">सभी ज़िले</option>
-          <option value="पटना">पटना</option>
-          <option value="बक्सर">बक्सर</option>
-          <option value="भोजपुर (आरा)">भोजपुर (आरा)</option>
-          <option value="रोहतास (सासाराम)">रोहतास (सासाराम)</option>
-          <option value="गया">गया</option>
-          <option value="मुजफ्फरपुर">मुजफ्फरपुर</option>
+        <select id="filter-job-dist" onchange="renderJobs()" class="text-xs font-bold border rounded-lg p-1 bg-white district-select-all">
         </select>
       </div>
       <div id="live-job-list" class="space-y-2"></div>
@@ -275,13 +245,7 @@
           </div>
           <div>
             <label class="font-bold block mb-1">ज़िला *</label>
-            <select id="reg-dist" class="w-full p-2 border rounded-xl bg-white outline-none">
-              <option value="पटना">पटना</option>
-              <option value="बक्सर">बक्सर</option>
-              <option value="भोजपुर (आरा)">भोजपुर (आरा)</option>
-              <option value="रोहतास (सासाराम)">रोहतास (सासाराम)</option>
-              <option value="गया">गया</option>
-              <option value="अन्य">अन्य ज़िला</option>
+            <select id="reg-dist" class="w-full p-2 border rounded-xl bg-white outline-none district-select-pure">
             </select>
           </div>
         </div>
@@ -333,6 +297,12 @@
     <div class="max-w-4xl mx-auto px-4 space-y-4 text-center">
       <p class="font-bold text-sm">MistryBabu<span class="text-orange-500">.com</span></p>
       <p class="text-slate-400">सपोर्ट ईमेल: <a href="mailto:mistrybabuhelp@gmail.com" class="text-orange-400 underline">mistrybabuhelp@gmail.com</a></p>
+      <div class="flex justify-center gap-4 text-slate-400 font-semibold">
+        <button onclick="navigate('home')">होम</button>
+        <button onclick="navigate('masons')">मिस्त्री खोजें</button>
+        <button onclick="navigate('post-work')">काम पोस्ट</button>
+        <button onclick="navigate('rules')">नियम</button>
+      </div>
       <p class="text-[10px] text-slate-600">© 2026 MistryBabu.com | सर्वाधिकार सुरक्षित।</p>
     </div>
   </footer>
@@ -362,22 +332,36 @@
   </nav>
 
   <script>
-    // 1. FIREBASE SETUP (ऑनलाइन सभी यूज़र्स को लाइव डेटा दिखाने के लिए)
-    const firebaseConfig = {
-      apiKey: "AIzaSyDummyKeyReplaceThis",
-      authDomain: "mistrybabu-live.firebaseapp.com",
-      databaseURL: "https://mistrybabu-live-default-rtdb.firebaseio.com",
-      projectId: "mistrybabu-live",
-      storageBucket: "mistrybabu-live.appspot.com"
-    };
-    
-    // Firebase initialize (अगर कॉन्फ़िगर नहीं है तो fallback localStorage का इस्तेमाल होगा)
-    let db = null;
-    try {
-      firebase.initializeApp(firebaseConfig);
-      db = firebase.database();
-    } catch(e) {
-      console.log("Firebase fallback mode");
+    // बिहार के पूरे 38 ज़िले
+    const biharDistricts = [
+      "अररिया", "अरवल", "औरंगाबाद", "बांका", "बेगूसराय", "भागलपुर", "भोजपुर (आरा)", "बक्सर",
+      "दरभंगा", "पूर्वी चंपारण (मोतिहारी)", "गया", "गोपालगंज", "जमुई", "जहानाबाद", "कैमूर (भभुआ)",
+      "कटिहार", "खगड़िया", "किशनगंज", "लखीसराय", "मधेपुरा", "मधुबनी", "मुंगेर", "मुजफ्फरपुर",
+      "नालंदा (बिहारशरीफ)", "नवादा", "पटना", "पूर्णिया", "रोहतास (सासाराम)", "सहरसा", "समस्तीपुर",
+      "सारण (छपरा)", "शेखपुरा", "शिवहर", "सीतामढ़ी", "सीवान", "सुपौल", "वैशाली (हाजीपुर)", "पश्चिम चंपारण (बेतिया)"
+    ];
+
+    // सभी ड्रॉपडाउन बॉक्स में 38 ज़िले लोड करना
+    function populateDistricts() {
+      // 1. फ़िल्टर वाले सेलेक्ट बॉक्स (जिसमें 'पूरा बिहार (सभी ज़िले)' विकल्प रहेगा)
+      const allFilterSelects = document.querySelectorAll('.district-select-all');
+      allFilterSelects.forEach(select => {
+        let html = '<option value="सभी">पूरा बिहार (सभी ज़िले)</option>';
+        biharDistricts.forEach(d => {
+          html += `<option value="${d}">${d}</option>`;
+        });
+        select.innerHTML = html;
+      });
+
+      // 2. फॉर्म वाले सेलेक्ट बॉक्स (रजिस्ट्रेशन और काम पोस्ट करने के लिए)
+      const pureSelects = document.querySelectorAll('.district-select-pure');
+      pureSelects.forEach(select => {
+        let html = '';
+        biharDistricts.forEach(d => {
+          html += `<option value="${d}">${d}</option>`;
+        });
+        select.innerHTML = html;
+      });
     }
 
     let uploadedImageBase64 = null;
@@ -426,7 +410,7 @@
       });
 
       if(filtered.length === 0) {
-        grid.innerHTML = `<div class="col-span-2 bg-white p-6 rounded-2xl text-center text-xs text-slate-500">इस ज़िले में कोई कारीगर उपलब्ध नहीं है।</div>`;
+        grid.innerHTML = `<div class="col-span-2 bg-white p-6 rounded-2xl text-center text-xs text-slate-500">इस ज़िले में अभी कोई कारीगर उपलब्ध नहीं है।</div>`;
         return;
       }
 
@@ -477,14 +461,13 @@
       }
     }
 
-    // 2. 7 दिन बाद काम ऑटोमैटिक डिलीट होने और नज़दीकी ज़िला फ़िल्टर करने का लॉजिक
+    // 7 दिन की समय सीमा और ज़िला फ़िल्टर
     function renderJobs() {
       const container = document.getElementById('live-job-list');
       const selectedDist = document.getElementById('filter-job-dist') ? document.getElementById('filter-job-dist').value : 'सभी';
       const now = Date.now();
       const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
 
-      // 7 दिन के अंदर वाले काम फ़िल्टर करें
       const activeJobs = jobs.filter(j => {
         const isNotExpired = !j.createdAt || (now - j.createdAt) < SEVEN_DAYS_MS;
         const matchesDist = (selectedDist === 'सभी' || j.dist === selectedDist);
@@ -520,7 +503,7 @@
       e.preventDefault();
       const newJob = {
         id: Date.now(),
-        createdAt: Date.now(), // पोस्ट करने का समय
+        createdAt: Date.now(),
         desc: document.getElementById('job-desc').value,
         dist: document.getElementById('job-dist').value,
         rate: document.getElementById('job-rate').value,
@@ -530,11 +513,6 @@
 
       jobs.unshift(newJob);
       localStorage.setItem('mb_jobs', JSON.stringify(jobs));
-
-      // Firebase ऑनलाइन डेटाबेस सिंक
-      if(db) {
-        db.ref('jobs/' + newJob.id).set(newJob);
-      }
 
       alert('काम सफलतापूर्वक पोस्ट हो गया! यह अगले 7 दिनों तक नज़दीकी मिस्त्रियों को दिखेगा।');
       e.target.reset();
@@ -559,14 +537,15 @@
       masons.unshift(newMason);
       localStorage.setItem('mb_masons', JSON.stringify(masons));
 
-      if(db) {
-        db.ref('masons/' + newMason.id).set(newMason);
-      }
-
       alert('बधाई हो! आपकी प्रोफाइल लाइव हो गई है।');
       e.target.reset();
       navigate('masons');
     }
+
+    // पेज लोड होते ही पूरे 38 ज़िले लिस्ट में भर जाएँगे
+    window.addEventListener('DOMContentLoaded', () => {
+      populateDistricts();
+    });
   </script>
 </body>
 </html>
