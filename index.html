@@ -7,6 +7,11 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Hind:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Firebase Online Database SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
   <style>
     body { font-family: 'Hind', sans-serif; }
   </style>
@@ -21,7 +26,7 @@
     <button onclick="document.getElementById('notice-bar').style.display='none'" class="font-bold text-sm px-2">✕</button>
   </div>
 
-  <!-- Header with original MB Logo -->
+  <!-- Header with Original MB Logo -->
   <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
     <div class="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
       <div onclick="navigate('home')" class="flex items-center gap-2 cursor-pointer">
@@ -169,7 +174,7 @@
       <div class="border-b pb-2 flex justify-between items-center">
         <div>
           <h2 class="font-bold text-base text-slate-900">🏠 नया काम पोस्ट करें</h2>
-          <p class="text-[11px] text-slate-500">यह पोस्ट 7 दिन तक नज़दीकी मिस्त्रियों को दिखेगी</p>
+          <p class="text-[11px] text-slate-500">यह काम 7 दिन तक पूरे बिहार के मिस्त्रियों को दिखेगा</p>
         </div>
         <span class="text-[10px] bg-orange-100 text-orange-700 font-bold px-2 py-0.5 rounded-full">वैधता: 7 दिन</span>
       </div>
@@ -332,7 +337,22 @@
   </nav>
 
   <script>
-    // बिहार के पूरे 38 ज़िले
+    // 1. आपकी लाइव FIREBASE कॉन्फ़िगरेशन
+    const firebaseConfig = {
+      apiKey: "AIzaSyDtHDielE08vkTCQzmHxw0w23SAkeQMerI",
+      authDomain: "mistrybabu-31816.firebaseapp.com",
+      databaseURL: "https://mistrybabu-31816-default-rtdb.firebaseio.com",
+      projectId: "mistrybabu-31816",
+      storageBucket: "mistrybabu-31816.firebasestorage.app",
+      messagingSenderId: "955030602535",
+      appId: "1:955030602535:web:9535953332049193399f02",
+      measurementId: "G-MDBZVK8F03"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // 2. बिहार के पूरे 38 ज़िले
     const biharDistricts = [
       "अररिया", "अरवल", "औरंगाबाद", "बांका", "बेगूसराय", "भागलपुर", "भोजपुर (आरा)", "बक्सर",
       "दरभंगा", "पूर्वी चंपारण (मोतिहारी)", "गया", "गोपालगंज", "जमुई", "जहानाबाद", "कैमूर (भभुआ)",
@@ -341,9 +361,7 @@
       "सारण (छपरा)", "शेखपुरा", "शिवहर", "सीतामढ़ी", "सीवान", "सुपौल", "वैशाली (हाजीपुर)", "पश्चिम चंपारण (बेतिया)"
     ];
 
-    // सभी ड्रॉपडाउन बॉक्स में 38 ज़िले लोड करना
     function populateDistricts() {
-      // 1. फ़िल्टर वाले सेलेक्ट बॉक्स (जिसमें 'पूरा बिहार (सभी ज़िले)' विकल्प रहेगा)
       const allFilterSelects = document.querySelectorAll('.district-select-all');
       allFilterSelects.forEach(select => {
         let html = '<option value="सभी">पूरा बिहार (सभी ज़िले)</option>';
@@ -353,7 +371,6 @@
         select.innerHTML = html;
       });
 
-      // 2. फॉर्म वाले सेलेक्ट बॉक्स (रजिस्ट्रेशन और काम पोस्ट करने के लिए)
       const pureSelects = document.querySelectorAll('.district-select-pure');
       pureSelects.forEach(select => {
         let html = '';
@@ -365,17 +382,32 @@
     }
 
     let uploadedImageBase64 = null;
+    let masons = [];
+    let jobs = [];
 
-    let masons = JSON.parse(localStorage.getItem('mb_masons')) || [
-      { id: 1, name: "विकास कुमार शर्मा", district: "पटना", skill: "टाइल्स & मार्बल", exp: "8 साल", rate: "₹800/दिन", phone: "9876543210" },
-      { id: 2, name: "रामसुंदर यादव", district: "बक्सर", skill: "राजमिस्त्री", exp: "12 साल", rate: "₹750/दिन", phone: "9876543211" },
-      { id: 3, name: "मुन्ना बढ़ई", district: "भोजपुर (आरा)", skill: "कारपेंटर", exp: "7 साल", rate: "₹800/दिन", phone: "9876543212" },
-      { id: 4, name: "सोनू मांझी", district: "गया", skill: "लेबर/हेल्पर", exp: "4 साल", rate: "₹450/दिन", phone: "9876543214" }
-    ];
+    // 3. FIREBASE से डेटा लाइव लोड करना (Realtime Sync)
+    db.ref('masons').on('value', (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        masons = Object.values(data).reverse();
+      } else {
+        masons = [
+          { id: 1, name: "विकास कुमार शर्मा", district: "पटना", skill: "टाइल्स & मार्बल", exp: "8 साल", rate: "₹800/दिन", phone: "9876543210" },
+          { id: 2, name: "रामसुंदर यादव", district: "बक्सर", skill: "राजमिस्त्री", exp: "12 साल", rate: "₹750/दिन", phone: "9876543211" }
+        ];
+      }
+      renderMasonDirectory();
+    });
 
-    let jobs = JSON.parse(localStorage.getItem('mb_jobs')) || [
-      { id: 1, desc: "2000 ईंट की जोड़ाई और पिलर ढलाई", dist: "बक्सर", rate: "₹750/दिन", phone: "9123456780", createdAt: Date.now(), img: null }
-    ];
+    db.ref('jobs').on('value', (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        jobs = Object.values(data).reverse();
+      } else {
+        jobs = [];
+      }
+      renderJobs();
+    });
 
     function navigate(page) {
       document.querySelectorAll('.page-view').forEach(p => p.classList.add('hidden'));
@@ -461,7 +493,7 @@
       }
     }
 
-    // 7 दिन की समय सीमा और ज़िला फ़िल्टर
+    // 4. 7 दिन बाद काम अपने-आप हटने और नज़दीकी ज़िला फ़िल्टर का लॉजिक
     function renderJobs() {
       const container = document.getElementById('live-job-list');
       const selectedDist = document.getElementById('filter-job-dist') ? document.getElementById('filter-job-dist').value : 'सभी';
@@ -499,6 +531,7 @@
       }).join('');
     }
 
+    // 5. काम Firebase में ऑनलाइन सेव करना
     function handleJobSubmission(e) {
       e.preventDefault();
       const newJob = {
@@ -511,17 +544,18 @@
         img: uploadedImageBase64
       };
 
-      jobs.unshift(newJob);
-      localStorage.setItem('mb_jobs', JSON.stringify(jobs));
-
-      alert('काम सफलतापूर्वक पोस्ट हो गया! यह अगले 7 दिनों तक नज़दीकी मिस्त्रियों को दिखेगा।');
-      e.target.reset();
-      uploadedImageBase64 = null;
-      document.getElementById('image-preview').classList.add('hidden');
-      document.getElementById('upload-txt').classList.remove('hidden');
-      renderJobs();
+      db.ref('jobs/' + newJob.id).set(newJob).then(() => {
+        alert('काम सफलतापूर्वक पोस्ट हो गया! यह अगले 7 दिनों तक लाइव रहेगा।');
+        e.target.reset();
+        uploadedImageBase64 = null;
+        document.getElementById('image-preview').classList.add('hidden');
+        document.getElementById('upload-txt').classList.remove('hidden');
+      }).catch(err => {
+        alert('डेटा सेव करने में समस्या आई: ' + err.message);
+      });
     }
 
+    // 6. कारीगर प्रोफाइल Firebase में ऑनलाइन सेव करना
     function handleRegistration(e) {
       e.preventDefault();
       const newMason = {
@@ -534,15 +568,15 @@
         phone: document.getElementById('reg-phone').value
       };
 
-      masons.unshift(newMason);
-      localStorage.setItem('mb_masons', JSON.stringify(masons));
-
-      alert('बधाई हो! आपकी प्रोफाइल लाइव हो गई है।');
-      e.target.reset();
-      navigate('masons');
+      db.ref('masons/' + newMason.id).set(newMason).then(() => {
+        alert('बधाई हो! आपकी प्रोफाइल पूरे बिहार में लाइव हो गई है।');
+        e.target.reset();
+        navigate('masons');
+      }).catch(err => {
+        alert('रजिस्ट्रेशन में समस्या आई: ' + err.message);
+      });
     }
 
-    // पेज लोड होते ही पूरे 38 ज़िले लिस्ट में भर जाएँगे
     window.addEventListener('DOMContentLoaded', () => {
       populateDistricts();
     });
