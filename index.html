@@ -4,284 +4,592 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MistryBabu.com | बिहार का नंबर-1 मिस्त्री & लेबर नेटवर्क</title>
-
-  <!-- Google tag (gtag.js) -->
+  
+  <!-- Google Analytics Tag -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-MDBZVK8F03"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-
     gtag('config', 'G-MDBZVK8F03');
   </script>
 
-  <!-- Tailwind CSS & Font Awesome -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Hind:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-  <!-- Firebase App & Database SDK -->
+  <link href="https://fonts.googleapis.com/css2?family=Hind:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Firebase Online Database SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
   <style>
     body { font-family: 'Hind', sans-serif; }
-    .modal-active { display: flex !important; }
   </style>
 </head>
-<body class="bg-slate-100 text-slate-800 pb-20 md:pb-10 antialiased">
+<body class="bg-slate-100 text-slate-800 pb-20 md:pb-10">
 
-  <!-- Header -->
-  <header class="bg-orange-600 text-white p-4 shadow-md sticky top-0 z-40">
-    <div class="max-w-4xl mx-auto flex justify-between items-center">
-      <div class="flex items-center space-x-2">
-        <span class="bg-white text-orange-600 font-bold px-2.5 py-1 rounded text-lg shadow-sm">MB</span>
+  <div id="notice-bar" class="bg-amber-400 text-slate-950 px-3 py-2 text-xs font-bold flex items-center justify-between shadow-sm">
+    <div class="max-w-4xl mx-auto flex items-center justify-center gap-2 text-center w-full">
+      <span>📢</span>
+      <span>ज़रूरी सूचना: MistryBabu.com पर रजिस्ट्रेशन 100% मुफ़्त है। किसी को पैसे न दें!</span>
+    </div>
+    <button onclick="document.getElementById('notice-bar').style.display='none'" class="font-bold text-sm px-2">✕</button>
+  </div>
+
+  <!-- Header with MB Logo -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+    <div class="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
+      <div onclick="navigate('home')" class="flex items-center gap-2 cursor-pointer">
+        <div class="w-10 h-10 bg-gradient-to-tr from-orange-600 to-amber-500 rounded-xl flex items-center justify-center text-white shadow font-black text-lg">
+          MB
+        </div>
         <div>
-          <h1 class="text-xl font-bold leading-none">MistryBabu.com</h1>
-          <span class="text-[11px] text-orange-200">बिहार का अपना कारीगर नेटवर्क</span>
+          <div class="text-xl font-bold leading-none tracking-tight">
+            Mistry<span class="text-orange-600">Babu</span><span class="text-xs text-amber-600">.com</span>
+          </div>
+          <p class="text-[10px] text-slate-500 font-semibold mt-0.5">बिहार के अपने मिस्त्री... अब ऑनलाइन!</p>
         </div>
       </div>
-      <button onclick="requestNotificationPermission()" class="bg-orange-700 hover:bg-orange-800 text-xs px-3 py-1.5 rounded-full border border-orange-400 flex items-center gap-1.5 transition">
-        <i class="fa-regular fa-bell"></i>
-        <span>सूचना चालू करें</span>
-      </button>
+
+      <div class="hidden md:flex items-center gap-5 text-xs font-bold">
+        <button onclick="navigate('home')" class="text-orange-600">होम</button>
+        <button onclick="navigate('masons')" class="text-slate-600 hover:text-orange-600">मिस्त्री खोजें</button>
+        <button onclick="navigate('post-work')" class="text-slate-600 hover:text-orange-600">काम देखें व पोस्ट करें</button>
+        <button onclick="navigate('rules')" class="text-slate-600 hover:text-orange-600">नियम व शर्तें</button>
+        <a href="mailto:mistrybabuhelp@gmail.com" class="text-slate-600 hover:text-orange-600">
+          <i class="fa-solid fa-envelope text-orange-600"></i> mistrybabuhelp@gmail.com
+        </a>
+      </div>
+
+      <a href="mailto:mistrybabuhelp@gmail.com" class="md:hidden w-9 h-9 rounded-lg bg-orange-50 text-orange-600 border border-orange-200 flex items-center justify-center">
+        <i class="fa-solid fa-envelope"></i>
+      </a>
     </div>
   </header>
 
-  <!-- Hero Section -->
-  <section class="bg-orange-500 text-white py-10 px-4 text-center">
-    <div class="max-w-2xl mx-auto">
-      <span class="bg-orange-600 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wide border border-orange-400 inline-block mb-3">100% सत्यापित कारीगर</span>
-      <h2 class="text-2xl md:text-4xl font-bold mb-3">घर बैठे खोजें अनुभवी मिस्त्री और मजदूर</h2>
-      <p class="text-orange-100 text-sm md:text-base mb-6">राजमिस्त्री, प्लंबर, इलेक्ट्रीशियन, बढ़ई, पेंटर और टाइल्स कारीगर अब बस एक कॉल की दूरी पर।</p>
-      
-      <div class="flex flex-wrap justify-center gap-3">
-        <a href="#find-mistry" class="bg-white text-orange-600 font-bold px-6 py-2.5 rounded-full shadow hover:bg-orange-50 transition">कारीगर खोजें</a>
-        <a href="#post-job" class="bg-orange-800 text-white font-bold px-6 py-2.5 rounded-full shadow border border-orange-400 hover:bg-orange-900 transition">काम दर्ज करें</a>
+  <!-- HOME PAGE -->
+  <div id="page-home" class="page-view">
+    <div class="bg-gradient-to-r from-orange-600 to-amber-600 text-white px-4 py-8 text-center space-y-3">
+      <span class="inline-block bg-white/20 text-yellow-200 text-xs font-bold px-3 py-1 rounded-full border border-white/20">
+        🚩 बिहार के सभी 38 ज़िलों में उपलब्ध
+      </span>
+      <h1 class="text-2xl md:text-4xl font-extrabold leading-tight">
+        घर बनवाना या मरम्मत?<br>
+        <span class="text-yellow-300">लोकल मिस्त्री और लेबर</span> सीधे घर बुलाएँ
+      </h1>
+      <p class="text-xs md:text-sm text-orange-100 max-w-md mx-auto">
+        बिना किसी बिचौलिए या कमीशन के, सीधे अपने ज़िले के कारीगरों से संपर्क करें।
+      </p>
+
+      <div class="bg-white p-3 rounded-2xl shadow-lg max-w-lg mx-auto text-slate-800 text-left grid grid-cols-1 md:grid-cols-2 gap-2 mt-4">
+        <div>
+          <label class="text-[10px] font-bold text-slate-400 block uppercase">स्थान / ज़िला</label>
+          <select id="quick-district" class="w-full text-xs font-bold p-1 border-b border-slate-200 bg-transparent outline-none district-select-all">
+          </select>
+        </div>
+        <div>
+          <label class="text-[10px] font-bold text-slate-400 block uppercase">काम का प्रकार</label>
+          <select id="quick-skill" class="w-full text-xs font-bold p-1 border-b border-slate-200 bg-transparent outline-none">
+            <option value="सभी">सभी कामगार</option>
+            <option value="राजमिस्त्री">राजमिस्त्री (चिनाई/जोड़ाई)</option>
+            <option value="टाइल्स & मार्बल">टाइल्स & मार्बल मिस्त्री</option>
+            <option value="पेंटर & पुट्टी">पेंटर कारीगर</option>
+            <option value="कारपेंटर">कारपेंटर (बढ़ई)</option>
+            <option value="प्लंबर">प्लंबर (नल मिस्त्री)</option>
+            <option value="इलेक्ट्रीशियन">इलेक्ट्रीशियन (बिजली)</option>
+            <option value="लेबर/हेल्पर">लेबर / हेल्पर (मजदूर)</option>
+          </select>
+        </div>
+        <button onclick="handleQuickSearch()" class="col-span-1 md:col-span-2 bg-slate-900 text-white font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-2 mt-1">
+          <i class="fa-solid fa-magnifying-glass"></i> कारीगर खोजें
+        </button>
       </div>
     </div>
-  </section>
 
-  <!-- Main Container -->
-  <main class="max-w-4xl mx-auto px-4 py-6 space-y-8">
-
-    <!-- Categories Grid -->
-    <section id="find-mistry">
-      <div class="flex justify-between items-center mb-4">
-        <h3 class="text-lg font-bold text-slate-800 border-l-4 border-orange-500 pl-2">उपलब्ध मुख्य सेवाएँ</h3>
-        <span class="text-xs text-slate-500">सभी ज़िलों में सेवा</span>
+    <div class="max-w-4xl mx-auto px-4 py-6 space-y-4">
+      <div class="flex justify-between items-center">
+        <h2 class="font-bold text-base text-slate-900">मुख्य सेवाएँ</h2>
+        <button onclick="navigate('masons')" class="text-xs font-bold text-orange-600">सभी देखें &rarr;</button>
       </div>
-
-      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-        <div class="bg-white p-4 rounded-xl shadow-sm text-center border border-slate-200">
-          <div class="w-12 h-12 mx-auto mb-2 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center text-xl">
-            <i class="fa-solid fa-trowel-bricks"></i>
-          </div>
-          <p class="font-bold text-slate-800 text-sm">राजमिस्त्री</p>
-          <span class="text-xs text-slate-500">दीवार & प्लास्टर</span>
+      <div class="grid grid-cols-3 md:grid-cols-6 gap-3 text-center">
+        <div onclick="filterBySkill('राजमिस्त्री')" class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-orange-500">
+          <div class="text-2xl mb-1">🧱</div>
+          <p class="text-xs font-bold">राजमिस्त्री</p>
         </div>
-
-        <div class="bg-white p-4 rounded-xl shadow-sm text-center border border-slate-200">
-          <div class="w-12 h-12 mx-auto mb-2 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xl">
-            <i class="fa-solid fa-bolt"></i>
-          </div>
-          <p class="font-bold text-slate-800 text-sm">इलेक्ट्रीशियन</p>
-          <span class="text-xs text-slate-500">वायरिंग & फॉल्ट</span>
+        <div onclick="filterBySkill('टाइल्स & मार्बल')" class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-orange-500">
+          <div class="text-2xl mb-1">🏛️</div>
+          <p class="text-xs font-bold">टाइल्स मिस्त्री</p>
         </div>
-
-        <div class="bg-white p-4 rounded-xl shadow-sm text-center border border-slate-200">
-          <div class="w-12 h-12 mx-auto mb-2 bg-cyan-100 text-cyan-600 rounded-full flex items-center justify-center text-xl">
-            <i class="fa-solid fa-wrench"></i>
-          </div>
-          <p class="font-bold text-slate-800 text-sm">प्लंबर</p>
-          <span class="text-xs text-slate-500">पाइप & मोटर फिटिंग</span>
+        <div onclick="filterBySkill('पेंटर & पुट्टी')" class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-orange-500">
+          <div class="text-2xl mb-1">🎨</div>
+          <p class="text-xs font-bold">पेंटर</p>
         </div>
-
-        <div class="bg-white p-4 rounded-xl shadow-sm text-center border border-slate-200">
-          <div class="w-12 h-12 mx-auto mb-2 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-xl">
-            <i class="fa-solid fa-paint-roller"></i>
-          </div>
-          <p class="font-bold text-slate-800 text-sm">पेंटर</p>
-          <span class="text-xs text-slate-500">पुट्टी & पेंटिंग</span>
+        <div onclick="filterBySkill('कारपेंटर')" class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-orange-500">
+          <div class="text-2xl mb-1">🪚</div>
+          <p class="text-xs font-bold">कारपेंटर</p>
         </div>
-
-        <div class="bg-white p-4 rounded-xl shadow-sm text-center border border-slate-200">
-          <div class="w-12 h-12 mx-auto mb-2 bg-amber-100 text-amber-700 rounded-full flex items-center justify-center text-xl">
-            <i class="fa-solid fa-hammer"></i>
-          </div>
-          <p class="font-bold text-slate-800 text-sm">बढ़ई (Carpenter)</p>
-          <span class="text-xs text-slate-500">दरवाजा & फर्नीचर</span>
+        <div onclick="filterBySkill('प्लंबर')" class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-orange-500">
+          <div class="text-2xl mb-1">🔧</div>
+          <p class="text-xs font-bold">प्लंबर</p>
         </div>
-
-        <div class="bg-white p-4 rounded-xl shadow-sm text-center border border-slate-200">
-          <div class="w-12 h-12 mx-auto mb-2 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center text-xl">
-            <i class="fa-solid fa-border-all"></i>
-          </div>
-          <p class="font-bold text-slate-800 text-sm">टाइल्स & मार्बल</p>
-          <span class="text-xs text-slate-500">फर्श & बाथरूम</span>
-        </div>
-
-        <div class="bg-white p-4 rounded-xl shadow-sm text-center border border-slate-200">
-          <div class="w-12 h-12 mx-auto mb-2 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center text-xl">
-            <i class="fa-solid fa-people-carry-box"></i>
-          </div>
-          <p class="font-bold text-slate-800 text-sm">हेल्पर / लेबर</p>
-          <span class="text-xs text-slate-500">दैनिक मजदूरी</span>
-        </div>
-
-        <div class="bg-white p-4 rounded-xl shadow-sm text-center border border-slate-200">
-          <div class="w-12 h-12 mx-auto mb-2 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center text-xl">
-            <i class="fa-solid fa-phone"></i>
-          </div>
-          <p class="font-bold text-slate-800 text-sm">हेल्पलाइन</p>
-          <span class="text-xs text-slate-500">सीधा संपर्क</span>
+        <div onclick="filterBySkill('लेबर/हेल्पर')" class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-orange-500">
+          <div class="text-2xl mb-1">👷</div>
+          <p class="text-xs font-bold">लेबर/मजदूर</p>
         </div>
       </div>
-    </section>
+    </div>
 
-    <!-- Job Post Section -->
-    <section id="post-job">
-      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-        <div class="flex items-center space-x-2 mb-2">
-          <i class="fa-solid fa-clipboard-list text-orange-600 text-xl"></i>
-          <h3 class="text-lg font-bold text-slate-800">काम की आवश्यकता पोस्ट करें</h3>
+    <div class="max-w-4xl mx-auto px-4 py-4">
+      <div class="bg-slate-900 text-white p-6 rounded-3xl flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
+        <div>
+          <span class="text-xs font-bold text-orange-400 uppercase">कारीगर भाइयों के लिए</span>
+          <h3 class="text-xl font-bold mt-1">क्या आप मिस्त्री या हेल्पर हैं?</h3>
+          <p class="text-xs text-slate-300 mt-1">रोज़ नया काम पाने के लिए अपनी फ़्री प्रोफाइल आज ही बनाएँ।</p>
         </div>
-        <p class="text-xs text-slate-500 mb-5">विवरण भरें, पास के उपयुक्त कारीगर आपसे सीधे फोन या व्हाट्सएप पर बात करेंगे।</p>
-        
-        <form id="leadForm" class="space-y-4" onsubmit="submitForm(event)">
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">आपका नाम *</label>
-            <input id="userName" type="text" placeholder="पूरा नाम दर्ज करें" class="w-full p-2.5 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none" required>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div>
-              <label class="block text-xs font-bold text-slate-700 mb-1">मोबाइल नंबर *</label>
-              <input id="userPhone" type="tel" pattern="[0-9]{10}" placeholder="10 अंकों का नंबर" class="w-full p-2.5 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none" required>
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-slate-700 mb-1">ज़िला / ब्लॉक (बिहार) *</label>
-              <input id="userLocation" type="text" placeholder="उदा. पटना, मुज़फ़्फ़रपुर, गया" class="w-full p-2.5 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none" required>
-            </div>
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">आवश्यक कारीगर का प्रकार *</label>
-            <select id="workType" class="w-full p-2.5 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none" required>
-              <option value="">-- सेवा चुनें --</option>
-              <option value="राजमिस्त्री">राजमिस्त्री</option>
-              <option value="इलेक्ट्रीशियन">इलेक्ट्रीशियन</option>
-              <option value="प्लंबर">प्लंबर</option>
-              <option value="पेंटर">पेंटर</option>
-              <option value="बढ़ई">बढ़ई (Carpenter)</option>
-              <option value="टाइल्स मिस्त्री">टाइल्स & मार्बल</option>
-              <option value="मजदूर/लेबर">दैनिक मजदूर (Helper)</option>
-            </select>
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">काम का विवरण (वैकल्पिक)</label>
-            <textarea id="workDetails" rows="3" placeholder="काम कब से शुरू करना है या क्या काम है..." class="w-full p-2.5 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none"></textarea>
-          </div>
-
-          <div class="flex items-center text-xs text-slate-500">
-            <input type="checkbox" id="termsCheck" required class="mr-2 text-orange-600 rounded">
-            <label for="termsCheck">
-              मैं <button type="button" onclick="openModal()" class="text-orange-600 font-semibold underline">नियम और शर्तों</button> से सहमत हूँ।
-            </label>
-          </div>
-
-          <button type="submit" class="w-full bg-orange-600 text-white font-bold py-3 rounded-lg shadow-md hover:bg-orange-700 transition flex items-center justify-center gap-2">
-            <i class="fa-solid fa-paper-plane"></i>
-            <span>काम पोस्ट करें</span>
-          </button>
-        </form>
-      </div>
-    </section>
-
-  </main>
-
-  <!-- Terms & Conditions Modal -->
-  <div id="termsModal" class="fixed inset-0 bg-black/60 z-50 hidden items-center justify-center p-4">
-    <div class="bg-white max-w-lg w-full rounded-2xl p-6 shadow-2xl space-y-4 max-h-[80vh] overflow-y-auto">
-      <div class="flex justify-between items-center border-b pb-2">
-        <h4 class="text-base font-bold text-slate-800">नियम और शर्तें (Terms & Conditions)</h4>
-        <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
-      </div>
-      
-      <div class="text-xs text-slate-600 space-y-3 leading-relaxed">
-        <p><strong>1. मंच की भूमिका:</strong> MistryBabu.com केवल ग्राहकों और स्वतंत्र कारीगरों/लेबर के बीच संपर्क कराने का एक डिजिटल माध्यम है।</p>
-        <p><strong>2. काम और भुगतान:</strong> काम के दैनिक रेट, काम की गुणवत्ता और भुगतान संबंधी सभी शर्तें ग्राहक और कारीगर आपसी बातचीत से तय करेंगे।</p>
-        <p><strong>3. पहचान सत्यापन:</strong> काम सौंपने से पहले ग्राहक कारीगर के पहचान पत्र (आधार कार्ड इत्यादि) की पुष्टि स्वयं कर लें।</p>
-        <p><strong>4. डेटा गोपनीयता:</strong> आपका मोबाइल नंबर केवल संबंधित काम के सिलसिले में संपर्क करने हेतु उपयोग किया जाएगा।</p>
-      </div>
-
-      <div class="text-right pt-2 border-t">
-        <button onclick="closeModal()" class="bg-orange-600 text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-orange-700">स्वीकार है (बंद करें)</button>
+        <button onclick="navigate('register')" class="bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold px-6 py-3 rounded-xl shadow whitespace-nowrap">
+          मुफ़्त रजिस्ट्रेशन करें &rarr;
+        </button>
       </div>
     </div>
   </div>
 
-  <!-- Footer -->
-  <footer class="bg-slate-900 text-slate-400 text-center py-6 text-xs border-t border-slate-800">
-    <p class="text-slate-300 font-semibold">© 2026 MistryBabu.com | सर्वाधिकार सुरक्षित।</p>
-    <p class="mt-1">बिहार के हर जिले, कस्बे और गाँव में कुशल कारीगरों का विश्वसनीय मंच</p>
-    <div class="mt-3 flex justify-center gap-4 text-slate-500">
-      <button onclick="openModal()" class="underline hover:text-white">नियम और शर्तें</button>
-      <span>•</span>
-      <button onclick="requestNotificationPermission()" class="underline hover:text-white">नोटिफिकेशन अलर्ट</button>
+  <!-- MASONS DIRECTORY -->
+  <div id="page-masons" class="page-view hidden max-w-4xl mx-auto px-4 py-6 space-y-4">
+    <div class="bg-white p-4 rounded-2xl border border-slate-200 grid grid-cols-2 gap-2 shadow-sm">
+      <div>
+        <label class="text-[10px] font-bold text-slate-400 block uppercase mb-1">ज़िला चुनें (नज़दीकी कारीगर)</label>
+        <select id="dir-district" onchange="renderMasonDirectory()" class="w-full text-xs font-bold p-2 bg-slate-50 border rounded-xl outline-none district-select-all">
+        </select>
+      </div>
+      <div>
+        <label class="text-[10px] font-bold text-slate-400 block uppercase mb-1">काम का प्रकार</label>
+        <select id="dir-skill" onchange="renderMasonDirectory()" class="w-full text-xs font-bold p-2 bg-slate-50 border rounded-xl outline-none">
+          <option value="सभी">सभी कामगार</option>
+          <option value="राजमिस्त्री">राजमिस्त्री</option>
+          <option value="टाइल्स & मार्बल">टाइल्स & मार्बल</option>
+          <option value="पेंटर & पुट्टी">पेंटर कारीगर</option>
+          <option value="कारपेंटर">कारपेंटर</option>
+          <option value="प्लंबर">प्लंबर</option>
+          <option value="इलेक्ट्रीशियन">इलेक्ट्रीशियन</option>
+          <option value="लेबर/हेल्पर">लेबर / मजदूर</option>
+        </select>
+      </div>
+    </div>
+    <div id="mason-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+  </div>
+
+  <!-- JOB POST & NEARBY JOBS -->
+  <div id="page-post-work" class="page-view hidden max-w-xl mx-auto px-4 py-6 space-y-4">
+    <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-3">
+      <div class="border-b pb-2 flex justify-between items-center">
+        <div>
+          <h2 class="font-bold text-base text-slate-900">🏠 नया काम पोस्ट करें</h2>
+          <p class="text-[11px] text-slate-500">यह काम 7 दिन तक पूरे बिहार के मिस्त्रियों को दिखेगा</p>
+        </div>
+        <span class="text-[10px] bg-orange-100 text-orange-700 font-bold px-2 py-0.5 rounded-full">वैधता: 7 दिन</span>
+      </div>
+      <form onsubmit="handleJobSubmission(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="font-bold block mb-1">काम का विवरण *</label>
+          <textarea id="job-desc" required rows="3" placeholder="जैसे: 2 कमरों की जोड़ाई, छत ढलाई के लिए 4 लेबर चाहिए" class="w-full p-2.5 border rounded-xl outline-none focus:border-orange-500"></textarea>
+        </div>
+        <div>
+          <label class="font-bold block mb-1">📸 काम की फोटो (वैकल्पिक)</label>
+          <div class="border-2 border-dashed border-slate-300 rounded-xl p-3 text-center bg-slate-50 relative">
+            <input type="file" id="job-photo" accept="image/*" onchange="previewJobImage(event)" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+            <p id="upload-txt" class="font-bold text-slate-500">फ़ोटो अपलोड करने के लिए टैप करें</p>
+            <img id="image-preview" class="hidden w-full max-h-40 object-cover rounded-lg mt-2 mx-auto" />
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="font-bold block mb-1">ज़िला (काम का स्थान) *</label>
+            <select id="job-dist" class="w-full p-2 border rounded-xl bg-white outline-none district-select-pure">
+            </select>
+          </div>
+          <div>
+            <label class="font-bold block mb-1">अनुमानित बजट / रेट *</label>
+            <input type="text" id="job-rate" required placeholder="₹750/दिन या ठेका" class="w-full p-2 border rounded-xl outline-none">
+          </div>
+        </div>
+        <div>
+          <label class="font-bold block mb-1">मोबाइल नंबर *</label>
+          <input type="tel" id="job-contact" maxlength="10" required placeholder="10 अंकों का नंबर" class="w-full p-2 border rounded-xl outline-none">
+        </div>
+        <button type="submit" class="w-full bg-orange-600 text-white font-bold py-3 rounded-xl shadow">
+          काम लाइव पोस्ट करें (7 दिन के लिए)
+        </button>
+      </form>
+    </div>
+
+    <!-- Live Job Listings for Masons -->
+    <div class="space-y-2">
+      <div class="flex justify-between items-center px-1">
+        <h3 class="font-bold text-sm text-slate-900">📍 नज़दीकी उपलब्ध काम</h3>
+        <select id="filter-job-dist" onchange="renderJobs()" class="text-xs font-bold border rounded-lg p-1 bg-white district-select-all">
+        </select>
+      </div>
+      <div id="live-job-list" class="space-y-2"></div>
+    </div>
+  </div>
+
+  <!-- REGISTRATION PAGE -->
+  <div id="page-register" class="page-view hidden max-w-xl mx-auto px-4 py-6 space-y-4">
+    <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-3">
+      <div class="border-b pb-2">
+        <span class="text-[10px] font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded">100% मुफ़्त रजिस्ट्रेशन</span>
+        <h2 class="font-bold text-base text-slate-900 mt-1">👷 कारीगर / लेबर प्रोफाइल जोड़ें</h2>
+      </div>
+      <form onsubmit="handleRegistration(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="font-bold block mb-1">पूरा नाम *</label>
+          <input type="text" id="reg-name" required placeholder="उदा. मुन्ना कुमार" class="w-full p-2.5 border rounded-xl outline-none">
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="font-bold block mb-1">हुनर / काम *</label>
+            <select id="reg-trade" class="w-full p-2 border rounded-xl bg-white outline-none">
+              <option value="राजमिस्त्री">राजमिस्त्री</option>
+              <option value="टाइल्स & मार्बल">टाइल्स & मार्बल</option>
+              <option value="पेंटर & पुट्टी">पेंटर</option>
+              <option value="कारपेंटर">कारपेंटर</option>
+              <option value="प्लंबर">प्लंबर</option>
+              <option value="इलेक्ट्रीशियन">इलेक्ट्रीशियन</option>
+              <option value="लेबर/हेल्पर">लेबर/हेल्पर</option>
+            </select>
+          </div>
+          <div>
+            <label class="font-bold block mb-1">ज़िला *</label>
+            <select id="reg-dist" class="w-full p-2 border rounded-xl bg-white outline-none district-select-pure">
+            </select>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="font-bold block mb-1">अनुभव (साल) *</label>
+            <input type="text" id="reg-exp" required placeholder="जैसे: 6 साल" class="w-full p-2 border rounded-xl outline-none">
+          </div>
+          <div>
+            <label class="font-bold block mb-1">दिहाड़ी रेट (₹) *</label>
+            <input type="text" id="reg-rate" required placeholder="₹750/दिन" class="w-full p-2 border rounded-xl outline-none">
+          </div>
+        </div>
+        <div>
+          <label class="font-bold block mb-1">मोबाइल नंबर *</label>
+          <input type="tel" id="reg-phone" maxlength="10" required placeholder="कॉल व WhatsApp नंबर" class="w-full p-2 border rounded-xl outline-none">
+        </div>
+        <button type="submit" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl shadow">
+          मेरी प्रोफाइल लाइव करें
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- RULES PAGE -->
+  <div id="page-rules" class="page-view hidden max-w-2xl mx-auto px-4 py-6 space-y-4">
+    <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-4 text-xs leading-relaxed">
+      <h2 class="font-bold text-base text-slate-900 border-b pb-2">📜 नियम एवं शर्तें (Rules & Regulations)</h2>
+      <div class="bg-amber-50 border border-amber-200 p-3 rounded-xl text-amber-900">
+        <b>१. केवल डायरेक्टरी मंच:</b> MistryBabu.com केवल मकान मालिक और कारीगर को सीधे जोड़ता है। हम किसी काम से कोई कमीशन नहीं लेते।
+      </div>
+      <div>
+        <h4 class="font-bold text-slate-900 mb-1">२. काम की समय-सीमा:</h4>
+        <p class="text-slate-600">• किसी भी काम की पोस्ट 7 दिन तक लाइव रहती है और उसके बाद अपने-आप सिस्टम से हट जाती है।</p>
+      </div>
+      <div>
+        <h4 class="font-bold text-slate-900 mb-1">३. कारीगरों के लिए:</h4>
+        <p class="text-slate-600">• सही नाम और चालू नंबर दें। काम की गुणवत्ता बनाए रखें।</p>
+      </div>
+      <div class="bg-rose-50 border border-rose-200 p-3 rounded-xl text-rose-900">
+        <b>४. धोखाधड़ी से बचाव:</b> MistryBabu कभी ऑनलाइन पैसे नहीं माँगता। किसी भी धोखाधड़ी की सूचना <a href="mailto:mistrybabuhelp@gmail.com" class="underline font-bold">mistrybabuhelp@gmail.com</a> पर दें।
+      </div>
+      <button onclick="navigate('home')" class="w-full bg-slate-900 text-white font-bold py-2.5 rounded-xl">होम पर वापस जाएँ</button>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="bg-slate-950 text-white mt-12 py-8 text-xs border-t border-slate-800">
+    <div class="max-w-4xl mx-auto px-4 space-y-4 text-center">
+      <p class="font-bold text-sm">MistryBabu<span class="text-orange-500">.com</span></p>
+      <p class="text-slate-400">सपोर्ट ईमेल: <a href="mailto:mistrybabuhelp@gmail.com" class="text-orange-400 underline">mistrybabuhelp@gmail.com</a></p>
+      <div class="flex justify-center gap-4 text-slate-400 font-semibold">
+        <button onclick="navigate('home')">होम</button>
+        <button onclick="navigate('masons')">मिस्त्री खोजें</button>
+        <button onclick="navigate('post-work')">काम पोस्ट</button>
+        <button onclick="navigate('rules')">नियम</button>
+      </div>
+      <p class="text-[10px] text-slate-600">© 2026 MistryBabu.com | सर्वाधिकार सुरक्षित।</p>
     </div>
   </footer>
 
-  <!-- Scripts -->
-  <script>
-    // Modal Open/Close
-    function openModal() {
-      document.getElementById('termsModal').classList.add('modal-active');
-    }
-    function closeModal() {
-      document.getElementById('termsModal').classList.remove('modal-active');
-    }
+  <!-- MOBILE BOTTOM NAV -->
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 flex justify-around items-center h-14 shadow-lg z-50">
+    <button onclick="navigate('home')" class="flex flex-col items-center text-orange-600">
+      <i class="fa-solid fa-house text-sm"></i>
+      <span class="text-[10px] font-bold mt-0.5">होम</span>
+    </button>
+    <button onclick="navigate('masons')" class="flex flex-col items-center text-slate-400">
+      <i class="fa-solid fa-users-gear text-sm"></i>
+      <span class="text-[10px] font-bold mt-0.5">मिस्त्री</span>
+    </button>
+    <button onclick="navigate('post-work')" class="flex flex-col items-center text-slate-400">
+      <i class="fa-solid fa-camera text-sm"></i>
+      <span class="text-[10px] font-bold mt-0.5">काम पोस्ट</span>
+    </button>
+    <button onclick="navigate('rules')" class="flex flex-col items-center text-slate-400">
+      <i class="fa-solid fa-shield-halved text-sm"></i>
+      <span class="text-[10px] font-bold mt-0.5">नियम</span>
+    </button>
+    <button onclick="navigate('register')" class="flex flex-col items-center text-slate-400">
+      <i class="fa-solid fa-id-card text-sm"></i>
+      <span class="text-[10px] font-bold mt-0.5">रजिस्टर</span>
+    </button>
+  </nav>
 
-    // Push Notification Permission
-    function requestNotificationPermission() {
-      if (!("Notification" in window)) {
-        alert("यह ब्राउज़र नोटिफिकेशन सपोर्ट नहीं करता है।");
-        return;
-      }
-      Notification.requestPermission().then(permission => {
-        if (permission === "granted") {
-          new Notification("MistryBabu.com", {
-            body: "सूचना सेवा चालू हो गई है! नए अपडेट यहाँ दिखेंगे।",
-            icon: "https://via.placeholder.com/128/ea580c/ffffff?text=MB"
-          });
-        } else {
-          alert("आपने नोटिफिकेशन बंद कर रखा है। ब्राउज़र सेटिंग्स से ऑन कर सकते हैं।");
-        }
+  <script>
+    // 1. लाइव Firebase कॉन्फ़िगरेशन
+    const firebaseConfig = {
+      apiKey: "AIzaSyDtHDielE08vkTCQzmHxw0w23SAkeQMerI",
+      authDomain: "mistrybabu-31816.firebaseapp.com",
+      databaseURL: "https://mistrybabu-31816-default-rtdb.firebaseio.com",
+      projectId: "mistrybabu-31816",
+      storageBucket: "mistrybabu-31816.firebasestorage.app",
+      messagingSenderId: "955030602535",
+      appId: "1:955030602535:web:9535953332049193399f02",
+      measurementId: "G-MDBZVK8F03"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // 2. बिहार के पूरे 38 ज़िले
+    const biharDistricts = [
+      "अररिया", "अरवल", "औरंगाबाद", "बांका", "बेगूसराय", "भागलपुर", "भोजपुर (आरा)", "बक्सर",
+      "दरभंगा", "पूर्वी चंपारण (मोतिहारी)", "गया", "गोपालगंज", "जमुई", "जहानाबाद", "कैमूर (भभुआ)",
+      "कटिहार", "खगड़िया", "किशनगंज", "लखीसराय", "मधेपुरा", "मधुबनी", "मुंगेर", "मुजफ्फरपुर",
+      "नालंदा (बिहारशरीफ)", "नवादा", "पटना", "पूर्णिया", "रोहतास (सासाराम)", "सहरसा", "समस्तीपुर",
+      "सारण (छपरा)", "शेखपुरा", "शिवहर", "सीतामढ़ी", "सीवान", "सुपौल", "वैशाली (हाजीपुर)", "पश्चिम चंपारण (बेतिया)"
+    ];
+
+    function populateDistricts() {
+      const allFilterSelects = document.querySelectorAll('.district-select-all');
+      allFilterSelects.forEach(select => {
+        let html = '<option value="सभी">पूरा बिहार (सभी ज़िले)</option>';
+        biharDistricts.forEach(d => {
+          html += `<option value="${d}">${d}</option>`;
+        });
+        select.innerHTML = html;
+      });
+
+      const pureSelects = document.querySelectorAll('.district-select-pure');
+      pureSelects.forEach(select => {
+        let html = '';
+        biharDistricts.forEach(d => {
+          html += `<option value="${d}">${d}</option>`;
+        });
+        select.innerHTML = html;
       });
     }
 
-    // Form Submit Action
-    function submitForm(event) {
-      event.preventDefault();
+    let uploadedImageBase64 = null;
+    let masons = [];
+    let jobs = [];
 
-      const name = document.getElementById('userName').value;
-      const phone = document.getElementById('userPhone').value;
-      const location = document.getElementById('userLocation').value;
-      const type = document.getElementById('workType').value;
-      const details = document.getElementById('workDetails').value || "कोई विवरण नहीं";
+    // 3. डेटाबेस से लाइव लोड होना
+    db.ref('masons').on('value', (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        masons = Object.values(data).reverse();
+      } else {
+        masons = [
+          { id: 1, name: "विकास कुमार शर्मा", district: "पटना", skill: "टाइल्स & मार्बल", exp: "8 साल", rate: "₹800/दिन", phone: "9876543210" },
+          { id: 2, name: "रामसुंदर यादव", district: "बक्सर", skill: "राजमिस्त्री", exp: "12 साल", rate: "₹750/दिन", phone: "9876543211" }
+        ];
+      }
+      renderMasonDirectory();
+    });
 
-      // GA4 Event Trigger
-      if (typeof gtag === 'function') {
-        gtag('event', 'job_post', {
-          'category': type,
-          'district': location
-        });
+    db.ref('jobs').on('value', (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        jobs = Object.values(data).reverse();
+      } else {
+        jobs = [];
+      }
+      renderJobs();
+    });
+
+    function navigate(page) {
+      document.querySelectorAll('.page-view').forEach(p => p.classList.add('hidden'));
+      const target = document.getElementById('page-' + page);
+      if(target) target.classList.remove('hidden');
+      window.scrollTo(0, 0);
+      if(page === 'masons') renderMasonDirectory();
+      if(page === 'post-work') renderJobs();
+    }
+
+    function handleQuickSearch() {
+      document.getElementById('dir-district').value = document.getElementById('quick-district').value;
+      document.getElementById('dir-skill').value = document.getElementById('quick-skill').value;
+      navigate('masons');
+    }
+
+    function filterBySkill(s) {
+      document.getElementById('dir-district').value = 'सभी';
+      document.getElementById('dir-skill').value = s;
+      navigate('masons');
+    }
+
+    function renderMasonDirectory() {
+      const dist = document.getElementById('dir-district').value;
+      const skill = document.getElementById('dir-skill').value;
+      const grid = document.getElementById('mason-grid');
+
+      const filtered = masons.filter(m => {
+        const matchDist = (dist === 'सभी' || m.district === dist);
+        const matchSkill = (skill === 'सभी' || m.skill === skill);
+        return matchDist && matchSkill;
+      });
+
+      if(filtered.length === 0) {
+        grid.innerHTML = `<div class="col-span-2 bg-white p-6 rounded-2xl text-center text-xs text-slate-500">इस ज़िले में अभी कोई कारीगर उपलब्ध नहीं है।</div>`;
+        return;
       }
 
-      alert("धन्यवाद " + name + "! आपका काम MistryBabu पर दर्ज कर लिया गया है। पास के कारीगर जल्द संपर्क करेंगे।");
-      document.getElementById('leadForm').reset();
+      grid.innerHTML = filtered.map(m => `
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+          <div class="flex justify-between items-start">
+            <div class="flex gap-2.5 items-center">
+              <div class="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center font-bold text-slate-700 border">
+                ${m.name.charAt(0)}
+              </div>
+              <div>
+                <h4 class="font-bold text-sm text-slate-900">${m.name}</h4>
+                <p class="text-[11px] font-semibold text-orange-600">📍 ${m.district}</p>
+              </div>
+            </div>
+            <span class="bg-amber-50 text-amber-800 text-[10px] font-bold px-2 py-0.5 rounded border border-amber-200">
+              ★ 5.0
+            </span>
+          </div>
+          <div class="bg-slate-50 p-2.5 rounded-xl grid grid-cols-2 gap-2 text-xs">
+            <div><span class="text-slate-400 block text-[10px]">हुनर:</span> <b>${m.skill}</b></div>
+            <div><span class="text-slate-400 block text-[10px]">रेट:</span> <b class="text-emerald-600">${m.rate}</b></div>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <a href="tel:${m.phone}" class="bg-slate-900 text-white text-center py-2 rounded-xl text-xs font-bold">
+              📞 कॉल करें
+            </a>
+            <a href="https://wa.me/91${m.phone}" target="_blank" class="bg-emerald-600 text-white text-center py-2 rounded-xl text-xs font-bold">
+              💬 WhatsApp
+            </a>
+          </div>
+        </div>
+      `).join('');
     }
+
+    function previewJobImage(e) {
+      const file = e.target.files[0];
+      if(file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          uploadedImageBase64 = evt.target.result;
+          const img = document.getElementById('image-preview');
+          img.src = uploadedImageBase64;
+          img.classList.remove('hidden');
+          document.getElementById('upload-txt').classList.add('hidden');
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    // 4. 7 दिन बाद काम हटने का लॉजिक
+    function renderJobs() {
+      const container = document.getElementById('live-job-list');
+      const selectedDist = document.getElementById('filter-job-dist') ? document.getElementById('filter-job-dist').value : 'सभी';
+      const now = Date.now();
+      const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
+
+      const activeJobs = jobs.filter(j => {
+        const isNotExpired = !j.createdAt || (now - j.createdAt) < SEVEN_DAYS_MS;
+        const matchesDist = (selectedDist === 'सभी' || j.dist === selectedDist);
+        return isNotExpired && matchesDist;
+      });
+
+      if(activeJobs.length === 0) {
+        container.innerHTML = `<div class="bg-white p-4 rounded-xl text-center text-slate-400 text-xs">इस ज़िले में अभी कोई काम उपलब्ध नहीं है।</div>`;
+        return;
+      }
+
+      container.innerHTML = activeJobs.map(j => {
+        const daysLeft = j.createdAt ? Math.max(1, 7 - Math.floor((now - j.createdAt) / (24 * 60 * 60 * 1000))) : 7;
+        return `
+          <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm space-y-2 text-xs">
+            ${j.img ? `<img src="${j.img}" class="w-full h-36 object-cover rounded-xl border">` : ''}
+            <div class="flex justify-between items-start">
+              <div>
+                <p class="font-bold text-slate-900 text-sm">${j.desc}</p>
+                <p class="text-[11px] text-slate-500 mt-1 font-semibold">📍 ${j.dist} | 💰 ${j.rate}</p>
+                <span class="inline-block bg-amber-50 text-amber-700 text-[10px] px-2 py-0.5 rounded font-bold mt-1">⏳ ${daysLeft} दिन शेष</span>
+              </div>
+              <a href="tel:${j.phone}" class="bg-orange-600 hover:bg-orange-700 text-white px-3.5 py-2 rounded-xl font-bold flex items-center gap-1 shadow">
+                <i class="fa-solid fa-phone"></i> कॉल
+              </a>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // 5. काम Firebase में सेव करना
+    function handleJobSubmission(e) {
+      e.preventDefault();
+      const newJob = {
+        id: Date.now(),
+        createdAt: Date.now(),
+        desc: document.getElementById('job-desc').value,
+        dist: document.getElementById('job-dist').value,
+        rate: document.getElementById('job-rate').value,
+        phone: document.getElementById('job-contact').value,
+        img: uploadedImageBase64
+      };
+
+      db.ref('jobs/' + newJob.id).set(newJob).then(() => {
+        alert('काम सफलतापूर्वक पोस्ट हो गया! यह अगले 7 दिनों तक लाइव रहेगा।');
+        e.target.reset();
+        uploadedImageBase64 = null;
+        document.getElementById('image-preview').classList.add('hidden');
+        document.getElementById('upload-txt').classList.remove('hidden');
+      }).catch(err => {
+        alert('डेटा सेव करने में समस्या आई: ' + err.message);
+      });
+    }
+
+    // 6. मिस्त्री प्रोफाइल Firebase में सेव करना
+    function handleRegistration(e) {
+      e.preventDefault();
+      const newMason = {
+        id: Date.now(),
+        name: document.getElementById('reg-name').value,
+        district: document.getElementById('reg-dist').value,
+        skill: document.getElementById('reg-trade').value,
+        exp: document.getElementById('reg-exp').value,
+        rate: document.getElementById('reg-rate').value,
+        phone: document.getElementById('reg-phone').value
+      };
+
+      db.ref('masons/' + newMason.id).set(newMason).then(() => {
+        alert('बधाई हो! आपकी प्रोफाइल पूरे बिहार में लाइव हो गई है।');
+        e.target.reset();
+        navigate('masons');
+      }).catch(err => {
+        alert('रजिस्ट्रेशन में समस्या आई: ' + err.message);
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      populateDistricts();
+    });
   </script>
 </body>
-</html>
+            </html>
