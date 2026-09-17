@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MistryBabu.com | बिहार का नंबर-1 मिस्त्री & लेबर नेटवर्क</title>
 
-  <!-- Google Analytics -->
+  <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-MDBZVK8F03"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -14,31 +14,30 @@
     gtag('config', 'G-MDBZVK8F03');
   </script>
 
-  <!-- Tailwind CSS & Font Awesome -->
+  <!-- Tailwind CSS & Font Awesome Icons -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Hind:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- Firebase SDKs (v9 Compat) -->
+  <!-- Firebase App & Services (Compat v9) -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
   <style>
     body { font-family: 'Hind', sans-serif; }
-    .modal-open { display: flex !important; }
   </style>
 </head>
-<body class="bg-slate-100 text-slate-800 pb-16 antialiased">
+<body class="bg-slate-100 text-slate-800 pb-20 antialiased">
 
-  <!-- 1. Welcome Popup Modal -->
-  <div id="welcomeModal" class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
+  <!-- 1. Welcome Modal (Role Selection) -->
+  <div id="welcomeModal" class="fixed inset-0 bg-black/75 z-50 flex items-center justify-center p-4">
     <div class="bg-white max-w-md w-full rounded-2xl p-6 shadow-2xl text-center relative border-t-4 border-orange-600">
       <button onclick="closeWelcomeModal()" class="absolute top-3 right-3 text-slate-400 hover:text-slate-600 text-2xl font-bold">&times;</button>
       
-      <span class="bg-orange-100 text-orange-600 font-bold px-3 py-1 rounded-full text-xs">MistryBabu.com में स्वागत है</span>
-      <h3 class="text-xl font-bold text-slate-800 mt-2 mb-1">आप वेबसाइट पर किस लिए आए हैं?</h3>
-      <p class="text-xs text-slate-500 mb-6">कृपया अपना सही विकल्प चुनें ताकि हम आपकी मदद कर सकें:</p>
+      <span class="bg-orange-100 text-orange-600 font-bold px-3 py-1 rounded-full text-xs">MistryBabu.com में आपका स्वागत है</span>
+      <h3 class="text-xl font-bold text-slate-800 mt-3 mb-1">आप किस उद्देश्य से आए हैं?</h3>
+      <p class="text-xs text-slate-500 mb-6">कृपया सही विकल्प चुनें ताकि हम आपकी बेहतर सेवा कर सकें:</p>
 
       <div class="space-y-3">
         <button onclick="selectRole('client')" class="w-full p-4 border-2 border-orange-500 rounded-xl hover:bg-orange-50 flex items-center gap-3 text-left transition group">
@@ -47,7 +46,7 @@
           </div>
           <div>
             <h4 class="font-bold text-sm text-slate-800">मुझे मिस्त्री / लेबर चाहिए</h4>
-            <p class="text-[11px] text-slate-500">घर बनाने या मरम्मत के लिए कारीगर खोजें</p>
+            <p class="text-[11px] text-slate-500">घर बनाने, प्लंबर, वायरिंग या मरम्मत हेतु काम दर्ज करें</p>
           </div>
         </button>
 
@@ -57,7 +56,7 @@
           </div>
           <div>
             <h4 class="font-bold text-sm text-slate-800">मैं मिस्त्री / मजदूर हूँ</h4>
-            <p class="text-[11px] text-slate-500">काम पाने के लिए अपना नाम मुफ़्त जोड़ें</p>
+            <p class="text-[11px] text-slate-500">नया काम पाने के लिए अपना नाम मुफ़्त जोड़ें</p>
           </div>
         </button>
       </div>
@@ -83,7 +82,7 @@
   <!-- Hero Section -->
   <section class="bg-gradient-to-b from-orange-600 to-orange-500 text-white py-8 px-4 text-center">
     <div class="max-w-2xl mx-auto">
-      <span class="bg-orange-700 text-xs font-semibold px-3 py-1 rounded-full uppercase border border-orange-400 inline-block mb-3">बिहार के 38 ज़िलों में सेवा</span>
+      <span class="bg-orange-700 text-xs font-semibold px-3 py-1 rounded-full uppercase border border-orange-400 inline-block mb-3">बिहार के 38 ज़िलों में उपलब्ध</span>
       <h2 class="text-2xl md:text-3xl font-bold mb-2">सत्यापित कारीगर और मजदूर, सीधे आपके संपर्क में</h2>
       <p class="text-orange-100 text-xs md:text-sm mb-6">मोबाइल नंबर OTP से प्रमाणित। कोई फ़र्ज़ी नंबर या बिचौलिया नहीं।</p>
     </div>
@@ -119,7 +118,7 @@
       </div>
     </section>
 
-    <!-- Forms Section with District-Block & OTP -->
+    <!-- Forms Section with 38 Districts, Blocks & OTP -->
     <section id="action-forms" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
       <div class="flex border-b border-slate-200 mb-6">
         <button id="tab-client" onclick="switchRole('client')" class="flex-1 pb-3 text-sm font-bold text-orange-600 border-b-2 border-orange-600 text-center">
@@ -130,18 +129,17 @@
         </button>
       </div>
 
-      <!-- Registration / Post Form -->
       <form id="mainForm" class="space-y-4" onsubmit="handleFormSubmit(event)">
         
         <div>
           <label class="block text-xs font-bold text-slate-700 mb-1">पूरा नाम *</label>
-          <input type="text" id="formName" required placeholder="अपना नाम दर्ज करें" class="w-full p-2.5 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none">
+          <input type="text" id="formName" required placeholder="अपना पूरा नाम दर्ज करें" class="w-full p-2.5 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none">
         </div>
 
-        <!-- Cascading District & Block -->
+        <!-- Cascading District & Block (38 Districts) -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">ज़िला (बिहार) *</label>
+            <label class="block text-xs font-bold text-slate-700 mb-1">ज़िला (बिहार के 38 ज़िले) *</label>
             <select id="districtSelect" onchange="populateBlocks()" required class="w-full p-2.5 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none">
               <option value="">-- ज़िला चुनें --</option>
             </select>
@@ -158,17 +156,17 @@
         <div>
           <label id="serviceLabel" class="block text-xs font-bold text-slate-700 mb-1">आवश्यक कारीगर का प्रकार *</label>
           <select id="serviceSelect" required class="w-full p-2.5 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none">
-            <option value="राजमिस्त्री">राजमिस्त्री</option>
-            <option value="इलेक्ट्रीशियन">इलेक्ट्रीशियन</option>
-            <option value="प्लंबर">प्लंबर</option>
-            <option value="पेंटर">पेंटर</option>
-            <option value="बढ़ई">बढ़ई (Carpenter)</option>
-            <option value="टाइल्स मिस्त्री">टाइल्स मिस्त्री</option>
+            <option value="राजमिस्त्री">राजमिस्त्री (दीवार, प्लास्टर, छत)</option>
+            <option value="इलेक्ट्रीशियन">इलेक्ट्रीशियन (वायरिंग, फॉल्ट)</option>
+            <option value="प्लंबर">प्लंबर (नल, मोटर, पाइप)</option>
+            <option value="पेंटर">पेंटर (पुट्टी, पेंटिंग)</option>
+            <option value="बढ़ई">बढ़ई (Carpenter - लकड़ी का काम)</option>
+            <option value="टाइल्स मिस्त्री">टाइल्स & मार्बल मिस्त्री</option>
             <option value="दैनिक लेबर">दैनिक लेबर / हेल्पर</option>
           </select>
         </div>
 
-        <!-- OTP Phone Verification Section -->
+        <!-- OTP Phone Verification -->
         <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
           <label class="block text-xs font-bold text-slate-700">मोबाइल नंबर (OTP वेरिफिकेशन) *</label>
           
@@ -187,7 +185,7 @@
 
           <!-- OTP Input Box -->
           <div id="otpBox" class="hidden flex gap-2">
-            <input type="text" id="otpCode" placeholder="6 अंकों का OTP दर्ज करें" class="flex-1 p-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
+            <input type="text" id="otpCode" placeholder="6 अंकों का SMS कोड दर्ज करें" class="flex-1 p-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
             <button type="button" onclick="verifyOTP()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2 rounded-lg transition">
               सत्यापित करें
             </button>
@@ -197,8 +195,8 @@
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1">विवरण / अतिरिक्त जानकारी</label>
-          <textarea id="formDetails" rows="2" placeholder="कोई खास जानकारी लिखना चाहें तो यहाँ लिखें..." class="w-full p-2.5 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"></textarea>
+          <label class="block text-xs font-bold text-slate-700 mb-1">काम का विवरण / अनुभव</label>
+          <textarea id="formDetails" rows="2" placeholder="काम कब से शुरू करना है या अपने तजुर्बे के बारे में लिखें..." class="w-full p-2.5 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"></textarea>
         </div>
 
         <button type="submit" id="submitBtn" disabled class="w-full bg-slate-300 text-slate-500 font-bold py-3 rounded-lg shadow cursor-not-allowed transition flex items-center justify-center gap-2">
@@ -215,7 +213,7 @@
     <p class="mt-1 text-[11px] text-slate-500">सुरक्षित • सत्यापित • लोकल</p>
   </footer>
 
-  <!-- Logic & Scripts -->
+  <!-- Scripts -->
   <script>
     // 1. Firebase Configuration (mistrybabu-57ddd)
     const firebaseConfig = {
@@ -236,49 +234,49 @@
     let isPhoneVerified = false;
     let confirmationResult = null;
 
-    // 2. 38 Districts and Key Blocks Data
+    // 2. Complete 38 Districts and Key Blocks Data
     const biharData = {
-      "पटना": ["दानापुर", "बिहटा", "बाढ़", "बख्तियारपुर", "फुलवारीशरीफ", "फतुहा", "संपतचक", "मसौढ़ी", "पालीगंज", "मनेर"],
-      "गया": ["बोधगया", "शेरघाटी", "टिकारी", "वज़ीरगंज", "बेलागंज", "इमामगंज", "डोभी", "फतेहपुर"],
-      "मुज़फ़्फ़रपुर": ["बैरिया", "कांटी", "मोतीपुर", "मड़वन", "कुढ़नी", "सकरा", "सरैया", "साहेबगंज"],
-      "भागलपुर": ["सबौर", "कहलगांव", "नाथनगर", "सुलतानगंज", "पीरपैंती", "नवगछिया", "बिहपुर"],
-      "दरभंगा": ["दरभंगा सदर", "बेनीपुर", "बहेड़ी", "हायाघाट", "केवटी", "सिंहवाड़ा", "बिरौल"],
-      "पूर्णिया": ["पूर्णिया पूर्व", "कसबा", "बनमनखी", "भवानीपुर", "धमदाहा", "बायसी"],
-      "सीवान": ["सीवान सदर", "महाराजगंज", "मैरवा", "गुठनी", "बड़हरिया", "रघुनाथपुर", "दरौली"],
-      "सारण (छपरा)": ["छपरा सदर", "मढ़ौरा", "सोनपुर", "गड़खा", "रिविलगंज", "परसा", "दिघवारा"],
-      "पूर्वी चंपारण (मोतिहारी)": ["मोतिहारी सदर", "रक्सौल", "चकिया", "अरेराज", "ढाका", "केसरिया"],
-      "पश्चिमी चंपारण (बेतिया)": ["बेतिया", "बगहा", "नरकटियागंज", "चनपटिया", "रामनगर"],
-      "रोहतास (सासाराम)": ["सासाराम", "डेहरी", "नोखा", "बिक्रमगंज", "करगहर"],
-      "नालंदा (बिहारशरीफ)": ["बिहारशरीफ", "राजगीर", "हिलसा", "इस्लामपुर", "हरनौत"],
-      "वैशाली (हाजीपुर)": ["हाजीपुर", "लालगंज", "महुआ", "पातेपुर", "भगवानपुर"],
-      "समस्तीपुर": ["समस्तीपुर सदर", "रोसड़ा", "दलसिंहसराय", "पटोरी", "कल्याणपुर"],
-      "बेगूसराय": ["बेगूसराय सदर", "बरौनी", "मंझौल", "तेघड़ा", "बलिया"],
-      "मधुबनी": ["मधुबनी सदर", "झंझारपुर", "बेनीपट्टी", "जयनगर", "फुलपरास"],
-      "सहरसा": ["सहरसा सदर", "सिमरी बख्तियारपुर", "सौरबाजार", "सोनबरसा"],
-      "सुपौल": ["सुपौल सदर", "बीरपुर", "त्रिवेणीगंज", "निर्मली", "पिपरा"],
-      "मधेपुरा": ["मधेपुरा सदर", "उदाकिशुनगंज", "मुरलीगंज", "आलमनगर"],
-      "कटिहार": ["कटिहार सदर", "बारसोई", "मनिहारी", "कोढ़ा", "बलरामपुर"],
-      "अररिया": ["अररिया सदर", "फारबिसगंज", "जोकीहाट", "रानीगंज"],
-      "किशनगंज": ["किशनगंज सदर", "बहादुरगंज", "ठाकुरगंज", "कोचाधामन"],
-      "खगड़िया": ["खगड़िया सदर", "गोगरी", "अलौली", "बेलदौर"],
-      "मुंगेर": ["मुंगेर सदर", "जमालपुर", "हवेली खड़गपुर", "तारापुर"],
-      "लखीसराय": ["लखीसराय सदर", "बड़हिया", "सूर्यगढ़ा", "पिपरिया"],
-      "शेखपुरा": ["शेखपुरा सदर", "बरबीघा", "घाटकुसुम्भा"],
-      "जमुई": ["जमुई सदर", "झाझा", "सोनो", "खैरा"],
-      "बांका": ["बांका सदर", "अमरपुर", "कटोरिया", "बेलहर"],
-      "औरंगाबाद": ["औरंगाबाद सदर", "दाउदनगर", "नवीनगर", "रफ़ीगंज"],
-      "नवादा": ["नवादा सदर", "रजौली", "हिसुआ", "वारिसलीगंज"],
-      "जहानाबाद": ["जहानाबाद सदर", "मखदुमपुर", "हुलासगंज", "काको"],
-      "अरवल": ["अरवल सदर", "कुर्था", "करपी"],
-      "भोजपुर (आरा)": ["आरा सदर", "जगदीशपुर", "पीरो", "बड़हरा", "शाहपुर"],
-      "बक्सर": ["बक्सर सदर", "डुमरांव", "ब्रह्मपुर", "इटाढ़ी"],
-      "कैमूर (भभुआ)": ["भभुआ", "मोहनिया", "कुदरा", "चैनपुर"],
-      "गोपालगंज": ["गोपालगंज सदर", "हथुआ", "मीरगंज", "बरौली", "बैकुंठपुर"],
-      "शिवहर": ["शिवहर सदर", "तरियानी", "पिपराही"],
-      "सीतामढ़ी": ["सीतामढ़ी सदर", "पुपरी", "बेलसंड", "रून्नीसैदपुर"]
+      "अररिया": ["अररिया सदर", "फारबिसगंज", "जोकीहाट", "रानीगंज", "नरपतगंज", "भरगामा", "कुर्साकांटा", "पलासी", "सिकटी"],
+      "अरवल": ["अरवल सदर", "कुर्था", "करपी", "कलेर", "सोनभद्र बंशी सूर्यपुर"],
+      "औरंगाबाद": ["औरंगाबाद सदर", "दाउदनगर", "नवीनगर", "रफ़ीगंज", "ओबरा", "बारुन", "मदनपुर", "गोह", "हसपुरा", "कुटुम्बा", "देव"],
+      "बांका": ["बांका सदर", "अमरपुर", "कटोरिया", "बेलहर", "बाराहाट", "धोरैया", "रजौन", "शंभुगंज", "बौसी", "फुल्लीडुमर", "चांदन"],
+      "बेगूसराय": ["बेगूसराय सदर", "बरौनी", "मंझौल", "तेघड़ा", "बलिया", "बछवाड़ा", "मटिहानी", "साहेबपुर कमाल", "नावकोठी", "खोदावंदपुर", "छौड़ाही", "वीरपुर"],
+      "भागलपुर": ["भागलपुर सदर", "सबौर", "कहलगांव", "नाथनगर", "सुलतानगंज", "पीरपैंती", "नवगछिया", "बिहपुर", "गोपालपुर", "इस्माइलपुर", "रंगरा चौक", "शाहकुंड", "गोरडीह", "सन्हौला", "जगदीशपुर"],
+      "भोजपुर (आरा)": ["आरा सदर", "जगदीशपुर", "पीरो", "बड़हरा", "शाहपुर", "कोईलवर", "उदवंतनगर", "सहार", "संदेश", "अगिआंव", "गड़हनी", "तरारी", "चरपोखरी"],
+      "बक्सर": ["बक्सर सदर", "डुमरांव", "ब्रह्मपुर", "इटाढ़ी", "राजपुर", "सिमरी", "नावानगर", "केसठ", "चौगाईं", "चक्की"],
+      "दरभंगा": ["दरभंगा सदर", "बेनीपुर", "बहेड़ी", "हायाघाट", "केवटी", "सिंहवाड़ा", "बिरौल", "जाले", "कुशेश्वरस्थान", "घनश्यामपुर", "अलीनगर", "हनुमाननगर", "मनीगाछी", "गौड़ाबौराम"],
+      "पूर्वी चंपारण (मोतिहारी)": ["मोतिहारी सदर", "रक्सौल", "चकिया", "अरेराज", "ढाका", "केसरिया", "सुगौली", "कल्याणपुर", "कोटवा", "पिपराकोठी", "तेतरिया", "पकड़ी दयाल", "चिरैया", "घोड़ासहन", "बनकटवा", "पताही", "फेनहारा", "मधुबन"],
+      "गया": ["गया सदर", "बोधगया", "शेरघाटी", "टिकारी", "वज़ीरगंज", "बेलागंज", "इमामगंज", "डोभी", "फतेहपुर", "बाराचट्टी", "गुरारू", "परैया", "मानपुर", "अतरी", "नीमचक बथानी", "खिजरसराय", "मोहड़ा", "कोंच", "डुमरिया", "बांके बाज़ार", "आमस", "गुरुआ", "टनकुप्पा", "मोहनपुर"],
+      "गोपालगंज": ["गोपालगंज सदर", "हथुआ", "मीरगंज", "बरौली", "बैकुंठपुर", "मांझा", "उचकागांव", "सिधवलिया", "कुचायकोट", "भोरे", "कटेया", "विजयीपुर", "फुलवरिया", "थावे"],
+      "जमुई": ["जमुई सदर", "झाझा", "सोनो", "खैरा", "गिद्धौर", "चकाई", "बरहट", "अलीगंज", "सिकंदरा", "इस्लामनगर अलीगंज"],
+      "जहानाबाद": ["जहानाबाद सदर", "मखदुमपुर", "हुलासगंज", "काको", "घोसी", "रत्नफरी फरीदपुर", "मोदनगंज"],
+      "कैमूर (भभुआ)": ["भभुआ", "मोहनिया", "कुदरा", "चैनपुर", "भगवानपुर", "चांद", "दुर्गावती", "रामगढ़", "रामपुर", "अधौरा", "नुआंव"],
+      "कटिहार": ["कटिहार सदर", "बारसोई", "मनिहारी", "कोढ़ा", "बलरामपुर", "अमदाबाद", "आजमनगर", "कदवा", "डंडखोरा", "प्राणपुर", "मनसाही", "फल्का", "कोढ़ा", "समेली", "बरारी", "कुरसेला"],
+      "खगड़िया": ["खगड़िया सदर", "गोगरी", "अलौली", "बेलदौर", "चौथम", "मानसी", "परबत्ता"],
+      "किशनगंज": ["किशनगंज सदर", "बहादुरगंज", "ठाकुरगंज", "कोचाधामन", "पोठिया", "दिघलबैंक", "टेढ़ागाछ"],
+      "लखीसराय": ["लखीसराय सदर", "बड़हिया", "सूर्यगढ़ा", "पिपरिया", "हलसी", "रामगढ़ चौक", "चानन"],
+      "मधेपुरा": ["मधेपुरा सदर", "उदाकिशुनगंज", "मुरलीगंज", "आलमनगर", "कुमारखंड", "सिंहेश्वर", "शंकरपुर", "घैलाढ़", "बिहारीगंज", "ग्वालपाड़ा", "चौसा"],
+      "मधुबनी": ["मधुबनी सदर", "झंझारपुर", "बेनीपट्टी", "जयनगर", "फुलपरास", "बाबूबरही", "रहिका", "पंडौल", "सकरी", "बिस्फी", "हरलाखी", "खजौली", "लदनिया", "घोघरडीहा", "लखनौर", "मधेपुर", "अंधराठाढ़ी"],
+      "मुंगेर": ["मुंगेर सदर", "जमालपुर", "हवेली खड़गपुर", "तारापुर", "असरगंज", "बरियारपुर", "धरहरा", "संग्रामपुर", "टेटिया बंबर"],
+      "मुज़फ़्फ़रपुर": ["मुज़फ़्फ़रपुर सदर", "बैरिया", "कांटी", "मोतीपुर", "मड़वन", "कुढ़नी", "सकरा", "सरैया", "साहेबगंज", "पारू", "मुरौल", "बंदरा", "औराई", "कटरा", "गायघाट", "बोचहां", "मीनापुर"],
+      "नालंदा (बिहारशरीफ)": ["बिहारशरीफ", "राजगीर", "हिलसा", "इस्लामपुर", "हरनौत", "सिलाव", "बेन", "चंडी", "नगरनौसा", "एकंगरसराय", "परवलपुर", "गिरियक", "कतरीसराय", "सरमेरा", "अस्थावां", "बिंद", "रहुई", "नूरसराय", "कराई परशुराम", "थरथरी"],
+      "नवादा": ["नवादा सदर", "रजौली", "हिसुआ", "वारिसलीगंज", "पकड़ीबरावां", "कौआकोल", "काशीचक", "रोह", "गोविंदपुर", "मेसकौर", "सिरदला", "अकबरपुर", "नारदीगंज"],
+      "पश्चिमी चंपारण (बेतिया)": ["बेतिया", "बगहा", "नरकटियागंज", "चनपटिया", "रामनगर", "लौरिया", "मझौलिया", "सिकटा", "मैनाटांड़", "गौनाहा", "योगापट्टी", "बैरिया", "मधुबनी", "भितहा", "पिपरासी", "ठकराहा"],
+      "पटना": ["पटना सदर", "दानापुर", "बिहटा", "बाढ़", "बख्तियारपुर", "फुलवारीशरीफ", "फतुहा", "संपतचक", "मसौढ़ी", "पालीगंज", "मनेर", "खुसरूपुर", "दनियावां", "अथमलगोला", "मोकामा", "घोषवरी", "बेलछी", "पंडारक", "पुनपुन", "धनरूआ", "नौबतपुर", "बिक्रम", "दुल्हिन बाज़ार"],
+      "पूर्णिया": ["पूर्णिया पूर्व", "कसबा", "बनमनखी", "भवानीपुर", "धमदाहा", "बायसी", "अमौर", "बैसा", "डगरुआ", "जलालगढ़", "के.नगर", "श्रीनगर", "बी.कोठी"],
+      "रोहतास (सासाराम)": ["सासाराम", "डेहरी", "नोखा", "बिक्रमगंज", "करगहर", "चेनारी", "शिवसागर", "तिलौथू", "रोहतास", "नौहट्टा", "सूर्यपुरा", "दावथ", "दिनारा", "संझौली", "अकोढ़ीगोला", "काराकाट", "राजपुर"],
+      "सहरसा": ["सहरसा सदर", "सिमरी बख्तियारपुर", "सौरबाजार", "सोनबरसा", "सलखुआ", "बनमा इटहरी", "पतरघट", "महिषी", "सत्तर कटैया", "कहरा"],
+      "समस्तीपुर": ["समस्तीपुर सदर", "रोसड़ा", "दलसिंहसराय", "पटोरी", "कल्याणपुर", "वारिसनगर", "शिवाजीनगर", "खानपुर", "सरायरंजन", "मोरवा", "उजियारपुर", "विद्यापतिनगर", "विभूतिपुर", "सिंघिया", "हसनपुर", "बिथान", "ताजपुर", "पूसा"],
+      "सारण (छपरा)": ["छपरा सदर", "मढ़ौरा", "सोनपुर", "गड़खा", "रिविलगंज", "परसा", "दिघवारा", "दरियापुर", "अमनौर", "मकेर", "तरैया", "मशरख", "पानापुर", "इसुआपुर", "बनियापुर", "लहलादपुर", "एकमा", "मांझी", "जलालपुर"],
+      "शेखपुरा": ["शेखपुरा सदर", "बरबीघा", "घाटकुसुम्भा", "चेवाड़ा", "अरिअरी", "शेखोपुर सराय"],
+      "शिवहर": ["शिवहर सदर", "तरियानी", "पिपराही", "डुमरी कटसरी", "पुरनहिया"],
+      "सीतामढ़ी": ["सीतामढ़ी सदर", "पुपरी", "बेलसंड", "रून्नीसैदपुर", "डुमरा", "बैरगनिया", "सुप्पी", "मेजरगंज", "रीगा", "परसौनी", "बाजपट्टी", "नानपुर", "बोखड़ा", "चोरौत", "सुरसंड", "परिहार", "सोनबरसा"],
+      "सीवान": ["सीवान सदर", "महाराजगंज", "मैरवा", "गुठनी", "बड़हरिया", "रघुनाथपुर", "दरौली", "आंदर", "हुसैनगंज", "हसनपुरा", "जीरादेई", "नौतन", "दरौंदा", "भगवानपुर हाट", "बसंतपुर", "गोरेयाकोठी", "लकड़ी नबीगंज"],
+      "सुपौल": ["सुपौल सदर", "बीरपुर", "त्रिवेणीगंज", "निर्मली", "पिपरा", "किशनपुर", "राघोपुर", "सरायगढ़ भपटियाही", "बसंतपुर", "मरौना", "छातापुर"],
+      "वैशाली (हाजीपुर)": ["हाजीपुर", "लालगंज", "महुआ", "पातेपुर", "भगवानपुर", "वैशाली", "गोरौल", "चेहराकलां", "जंदाहा", "राजापाकर", "सहोदेई बुजुर्ग", "बिदुपुर", "देसरी", "राघोपुर", "पटेढ़ी बेलसर"]
     };
 
-    // Load Districts
+    // Load All 38 Districts Alphabetically
     window.onload = function() {
       const distSelect = document.getElementById('districtSelect');
       Object.keys(biharData).sort().forEach(dist => {
@@ -305,8 +303,11 @@
       }
     }
 
-    // Modal Controls
-    function closeWelcomeModal() { document.getElementById('welcomeModal').style.display = 'none'; }
+    // Modal & Role Selection
+    function closeWelcomeModal() { 
+      document.getElementById('welcomeModal').style.display = 'none'; 
+    }
+    
     function selectRole(role) {
       switchRole(role);
       closeWelcomeModal();
@@ -340,7 +341,7 @@
     function sendOTP() {
       const phoneInput = document.getElementById('userPhone').value.trim();
       if (phoneInput.length !== 10) {
-        alert("कृपया 10 अंकों का वैध मोबाइल नंबर लिखें!");
+        alert("कृपया 10 अंकों का वैध मोबाइल नंबर दर्ज करें!");
         return;
       }
       const fullPhone = "+91" + phoneInput;
@@ -349,18 +350,18 @@
 
       btn.disabled = true;
       btn.textContent = "भेज रहे हैं...";
-      status.textContent = "SMS कोड भेजा जा रहा है...";
+      status.textContent = "SMS कोड भेजा जा रहा है, कृपया प्रतीक्षा करें...";
 
       auth.signInWithPhoneNumber(fullPhone, window.recaptchaVerifier)
         .then((confirmation) => {
           window.confirmationResult = confirmation;
           document.getElementById('otpBox').classList.remove('hidden');
-          status.textContent = "OTP आपके मोबाइल पर भेज दिया गया है।";
+          status.innerHTML = "<span class='text-blue-600 font-bold'>OTP आपके मोबाइल पर भेज दिया गया है।</span>";
           btn.textContent = "दोबारा भेजें";
           btn.disabled = false;
         }).catch((error) => {
           console.error(error);
-          status.textContent = "OTP भेजने में त्रुटि: " + error.message;
+          status.innerHTML = "<span class='text-red-500'>त्रुटि: " + error.message + "</span>";
           btn.textContent = "OTP भेजें";
           btn.disabled = false;
         });
@@ -371,13 +372,13 @@
       const status = document.getElementById('authStatus');
 
       if (!code || code.length !== 6) {
-        alert("कृपया 6 अंकों का OTP दर्ज करें!");
+        alert("कृपया 6 अंकों का सही OTP दर्ज करें!");
         return;
       }
 
       window.confirmationResult.confirm(code).then((result) => {
         isPhoneVerified = true;
-        status.innerHTML = "<span class='text-emerald-600 font-bold'>✓ मोबाइल नंबर सफलतापूर्वक सत्यापित हुआ!</span>";
+        status.innerHTML = "<span class='text-emerald-600 font-bold'>✓ मोबाइल नंबर सफलतापूर्वक सत्यापित (Verified) हो गया!</span>";
         document.getElementById('otpBox').classList.add('hidden');
         document.getElementById('sendOtpBtn').classList.add('hidden');
         document.getElementById('userPhone').disabled = true;
@@ -387,11 +388,11 @@
         subBtn.className = "w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 rounded-lg shadow transition flex items-center justify-center gap-2 cursor-pointer";
         subBtn.innerHTML = "<i class='fa-solid fa-paper-plane'></i> सबमिट करें";
       }).catch((error) => {
-        status.innerHTML = "<span class='text-red-500'>गलत OTP! कृपया पुनः प्रयास करें।</span>";
+        status.innerHTML = "<span class='text-red-500 font-bold'>गलत OTP! कृपया SMS देखकर सही कोड डालें।</span>";
       });
     }
 
-    // 4. Save to Firestore Securely
+    // 4. Firestore Secure Save
     function handleFormSubmit(e) {
       e.preventDefault();
       if (!isPhoneVerified) {
@@ -401,7 +402,7 @@
 
       const subBtn = document.getElementById('submitBtn');
       subBtn.disabled = true;
-      subBtn.textContent = "सुरक्षित सेव हो रहा है...";
+      subBtn.textContent = "सुरक्षित दर्ज हो रहा है...";
 
       const leadData = {
         role: currentRole,
@@ -411,6 +412,7 @@
         block: document.getElementById('blockSelect').value,
         service: document.getElementById('serviceSelect').value,
         details: document.getElementById('formDetails').value || "",
+        verified: true,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       };
 
