@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MistryBabu.com | बिहार का नंबर-1 मिस्त्री & लेबर नेटवर्क</title>
   
-  <!-- Google Analytics Tag (ट्रैफ़िक और यूज़र्स देखने के लिए) -->
+  <!-- Google Analytics Tag -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-MDBZVK8F03"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -347,7 +347,7 @@
   </nav>
 
   <script>
-    // 1. आपकी लाइव FIREBASE कॉन्फ़िगरेशन
+    // 1. लाइव Firebase कॉन्फ़िगरेशन
     const firebaseConfig = {
       apiKey: "AIzaSyDtHDielE08vkTCQzmHxw0w23SAkeQMerI",
       authDomain: "mistrybabu-31816.firebaseapp.com",
@@ -395,7 +395,7 @@
     let masons = [];
     let jobs = [];
 
-    // 3. FIREBASE से डेटा लाइव लोड करना (Realtime Sync)
+    // 3. डेटाबेस से लाइव लोड होना
     db.ref('masons').on('value', (snapshot) => {
       const data = snapshot.val();
       if (data) {
@@ -503,7 +503,7 @@
       }
     }
 
-    // 4. 7 दिन बाद काम अपने-आप हटने और नज़दीकी ज़िला फ़िल्टर का लॉजिक
+    // 4. 7 दिन बाद काम हटने का लॉजिक
     function renderJobs() {
       const container = document.getElementById('live-job-list');
       const selectedDist = document.getElementById('filter-job-dist') ? document.getElementById('filter-job-dist').value : 'सभी';
@@ -541,7 +541,7 @@
       }).join('');
     }
 
-    // 5. काम Firebase में ऑनलाइन सेव करना
+    // 5. काम Firebase में सेव करना
     function handleJobSubmission(e) {
       e.preventDefault();
       const newJob = {
@@ -565,7 +565,7 @@
       });
     }
 
-    // 6. कारीगर प्रोफाइल Firebase में ऑनलाइन सेव करना
+    // 6. मिस्त्री प्रोफाइल Firebase में सेव करना
     function handleRegistration(e) {
       e.preventDefault();
       const newMason = {
