@@ -1,431 +1,649 @@
+
 <!DOCTYPE html>
 <html lang="hi">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MistryBabu.com | बिहार का नंबर-1 मिस्त्री & लेबर नेटवर्क</title>
-
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-MDBZVK8F03"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-MDBZVK8F03');
-  </script>
-
-  <!-- Tailwind CSS & Font Awesome Icons -->
+  <title>MistryBabu.com - बिहार का भरोसेमंद कारीगर नेटवर्क</title>
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Hind:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-  <!-- Firebase App & Services (Compat v9) -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-
-  <style>
-    body { font-family: 'Hind', sans-serif; }
-  </style>
+  
+  <!-- Firebase SDKs (v8) -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 </head>
-<body class="bg-slate-100 text-slate-800 pb-20 antialiased">
+<body class="bg-gray-50 text-gray-800 font-sans">
 
-  <!-- 1. Welcome Modal (Role Selection) -->
-  <div id="welcomeModal" class="fixed inset-0 bg-black/75 z-50 flex items-center justify-center p-4">
-    <div class="bg-white max-w-md w-full rounded-2xl p-6 shadow-2xl text-center relative border-t-4 border-orange-600">
-      <button onclick="closeWelcomeModal()" class="absolute top-3 right-3 text-slate-400 hover:text-slate-600 text-2xl font-bold">&times;</button>
-      
-      <span class="bg-orange-100 text-orange-600 font-bold px-3 py-1 rounded-full text-xs">MistryBabu.com में आपका स्वागत है</span>
-      <h3 class="text-xl font-bold text-slate-800 mt-3 mb-1">आप किस उद्देश्य से आए हैं?</h3>
-      <p class="text-xs text-slate-500 mb-6">कृपया सही विकल्प चुनें ताकि हम आपकी बेहतर सेवा कर सकें:</p>
-
-      <div class="space-y-3">
-        <button onclick="selectRole('client')" class="w-full p-4 border-2 border-orange-500 rounded-xl hover:bg-orange-50 flex items-center gap-3 text-left transition group">
-          <div class="w-12 h-12 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center text-xl group-hover:bg-orange-600 group-hover:text-white transition">
-            <i class="fa-solid fa-user-tie"></i>
-          </div>
-          <div>
-            <h4 class="font-bold text-sm text-slate-800">मुझे मिस्त्री / लेबर चाहिए</h4>
-            <p class="text-[11px] text-slate-500">घर बनाने, प्लंबर, वायरिंग या मरम्मत हेतु काम दर्ज करें</p>
-          </div>
-        </button>
-
-        <button onclick="selectRole('mistry')" class="w-full p-4 border-2 border-slate-200 hover:border-emerald-500 rounded-xl hover:bg-emerald-50 flex items-center gap-3 text-left transition group">
-          <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-xl group-hover:bg-emerald-600 group-hover:text-white transition">
-            <i class="fa-solid fa-trowel-bricks"></i>
-          </div>
-          <div>
-            <h4 class="font-bold text-sm text-slate-800">मैं मिस्त्री / मजदूर हूँ</h4>
-            <p class="text-[11px] text-slate-500">नया काम पाने के लिए अपना नाम मुफ़्त जोड़ें</p>
-          </div>
-        </button>
-      </div>
-    </div>
+  <!-- 1. डायनामिक सूचना बार (Firestore से बदलने योग्य) -->
+  <div id="notice-bar" class="hidden bg-amber-500 text-white py-2 px-4 text-center text-sm font-semibold sticky top-0 z-50 shadow-md">
+    <span id="notice-text">सूचना लोड हो रही है...</span>
   </div>
 
-  <!-- Header -->
-  <header class="bg-orange-600 text-white sticky top-0 z-40 shadow-md">
-    <div class="max-w-5xl mx-auto px-4 py-3 flex justify-between items-center">
+  <!-- 2. मुख्य हेडर / नेविगेशन -->
+  <header class="bg-slate-900 text-white shadow-lg sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
       <div class="flex items-center space-x-2">
-        <span class="bg-white text-orange-600 font-black px-2.5 py-1 rounded text-xl shadow">MB</span>
+        <span class="bg-amber-500 text-slate-900 font-extrabold px-2.5 py-1 rounded text-xl">MB</span>
         <div>
-          <h1 class="text-xl font-bold leading-none">MistryBabu.com</h1>
-          <p class="text-[11px] text-orange-100">बिहार का विश्वसनीय कारीगर नेटवर्क</p>
+          <h1 class="text-xl font-black tracking-wide">MistryBabu<span class="text-amber-400">.com</span></h1>
+          <p class="text-[11px] text-gray-400">बिहार का विश्वसनीय कारीगर नेटवर्क</p>
         </div>
       </div>
-      <a href="#action-forms" class="bg-white text-orange-600 text-xs font-bold px-3 py-1.5 rounded-full shadow hover:bg-orange-50">
-        रजिस्ट्रेशन / काम
-      </a>
+      <div class="flex space-x-2">
+        <button onclick="switchView('worker-auth')" id="btn-worker-tab" class="bg-amber-500 text-slate-900 text-xs md:text-sm font-bold px-3 py-1.5 rounded hover:bg-amber-400 transition">मिस्त्री जुड़ें</button>
+        <button onclick="switchView('client-auth')" id="btn-client-tab" class="bg-slate-800 border border-slate-600 text-white text-xs md:text-sm font-bold px-3 py-1.5 rounded hover:bg-slate-700 transition">काम पोस्ट करें</button>
+      </div>
     </div>
   </header>
 
-  <!-- Hero Section -->
-  <section class="bg-gradient-to-b from-orange-600 to-orange-500 text-white py-8 px-4 text-center">
-    <div class="max-w-2xl mx-auto">
-      <span class="bg-orange-700 text-xs font-semibold px-3 py-1 rounded-full uppercase border border-orange-400 inline-block mb-3">बिहार के 38 ज़िलों में उपलब्ध</span>
-      <h2 class="text-2xl md:text-3xl font-bold mb-2">सत्यापित कारीगर और मजदूर, सीधे आपके संपर्क में</h2>
-      <p class="text-orange-100 text-xs md:text-sm mb-6">मोबाइल नंबर OTP से प्रमाणित। कोई फ़र्ज़ी नंबर या बिचौलिया नहीं।</p>
-    </div>
-  </section>
+  <!-- मुख्य कंटेनर -->
+  <main class="max-w-6xl mx-auto px-4 py-6">
 
-  <!-- Main Container -->
-  <main class="max-w-4xl mx-auto px-4 py-8 space-y-10">
+    <!-- Recaptcha Container -->
+    <div id="recaptcha-container"></div>
 
-    <!-- Categories Grid -->
-    <section>
-      <h3 class="text-base font-bold text-slate-800 border-l-4 border-orange-500 pl-2 mb-4">प्रमुख सेवा श्रेणियाँ</h3>
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center text-xs">
-        <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
-          <i class="fa-solid fa-trowel-bricks text-orange-500 text-2xl mb-1"></i>
-          <p class="font-bold">राजमिस्त्री</p>
-          <span class="text-[10px] text-slate-500">दीवार, छत, प्लास्टर</span>
+    <!-- ==================== सेक्शन 1: मिस्त्री रजिस्ट्रेशन और प्रोफ़ाइल ==================== -->
+    <section id="section-worker-auth" class="block">
+      <div class="max-w-xl mx-auto bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+        <div class="text-center mb-6">
+          <span class="bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">कारीगर पंजीकरण</span>
+          <h2 class="text-2xl font-black text-gray-900 mt-2">सीधा काम पाएं, कोई बिचौलिया नहीं</h2>
+          <p class="text-sm text-gray-500 mt-1">अपना मोबाइल नंबर डालकर OTP से प्रमाणित करें</p>
         </div>
-        <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
-          <i class="fa-solid fa-bolt text-blue-500 text-2xl mb-1"></i>
-          <p class="font-bold">इलेक्ट्रीशियन</p>
-          <span class="text-[10px] text-slate-500">वायरिंग & फिटिंग</span>
+
+        <!-- मोबाइल और OTP ब्लॉक -->
+        <div id="worker-otp-box" class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">मोबाइल नंबर</label>
+            <div class="flex">
+              <span class="inline-flex items-center px-3 rounded-l-lg border border-r-0 border-gray-300 bg-gray-100 text-gray-600 text-sm font-bold">+91</span>
+              <input type="tel" id="worker-phone" maxlength="10" placeholder="9876543210" class="flex-1 block w-full rounded-r-lg border border-gray-300 px-3 py-2.5 text-gray-900 focus:ring-2 focus:ring-amber-500 focus:outline-none font-medium">
+            </div>
+          </div>
+          <button type="button" onclick="sendWorkerOTP()" id="btn-send-otp" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold py-2.5 rounded-lg shadow transition">OTP भेजें</button>
+
+          <div id="worker-verification-fields" class="hidden space-y-3 pt-2">
+            <div>
+              <label class="block text-xs font-bold text-gray-700 uppercase mb-1">6-अंकों का OTP दर्ज करें</label>
+              <input type="number" id="worker-otp" placeholder="123456" class="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-center text-lg tracking-widest font-bold focus:ring-2 focus:ring-amber-500 focus:outline-none">
+            </div>
+            <button type="button" onclick="verifyWorkerOTP()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg shadow transition">सत्यापित करें (Verify)</button>
+          </div>
         </div>
-        <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
-          <i class="fa-solid fa-wrench text-cyan-500 text-2xl mb-1"></i>
-          <p class="font-bold">प्लंबर</p>
-          <span class="text-[10px] text-slate-500">नल & मोटर पाइप</span>
+
+        <!-- प्रोफ़ाइल विवरण फ़ॉर्म (OTP सफल होने के बाद खुलेगा) -->
+        <form id="worker-profile-form" onsubmit="saveWorkerProfile(event)" class="hidden space-y-4 mt-6 pt-6 border-t border-gray-100">
+          <div class="bg-emerald-50 text-emerald-800 text-xs p-3 rounded-lg flex items-center space-x-2">
+            <i class="fa-solid fa-circle-check text-base"></i>
+            <span>नंबर सत्यापित हो चुका है! कृपया अपनी प्रोफ़ाइल पूरी करें।</span>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">पूरा नाम *</label>
+            <input type="text" id="w-name" required placeholder="जैसे: दिलबास अंसारी" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+          </div>
+
+          <!-- 38 ज़िले और ब्लॉक (ऑटोमैटिक अपडेट) -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-gray-700 uppercase mb-1">ज़िला (District) *</label>
+              <select id="w-district" onchange="updateBlocks('w-district', 'w-block')" required class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                <option value="">-- ज़िला चुनें --</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-700 uppercase mb-1">प्रखंड / ब्लॉक *</label>
+              <select id="w-block" required class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                <option value="">-- पहले ज़िला चुनें --</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">मुख्य हुनर / काम *</label>
+            <select id="w-skill" required class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+              <option value="">-- काम का प्रकार चुनें --</option>
+              <option value="राजमिस्त्री (ईंट जोड़ाई, छत ढलाई)">राजमिस्त्री (ईंट जोड़ाई, छत ढलाई)</option>
+              <option value="प्लास्टर और फिनिशिंग मिस्त्री">प्लास्टर और फिनिशिंग मिस्त्री</option>
+              <option value="टाइल्स और मार्बल मिस्त्री">टाइल्स और मार्बल मिस्त्री</option>
+              <option value="पेंटर / पुट्टी कारीगर">पेंटर / पुट्टी कारीगर</option>
+              <option value="बढ़ई / कारपेंटर">बढ़ई / कारपेंटर</option>
+              <option value="प्लंबर / सेनेटरी मिस्त्री">प्लंबर / सेनेटरी मिस्त्री</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">काम का अनुभव (वर्ष)</label>
+            <input type="number" id="w-exp" placeholder="जैसे: 5" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+          </div>
+
+          <!-- प्रोफ़ाइल फ़ोटो -->
+          <div>
+            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">अपनी फ़ोटो (Photo URL / लिंक)</label>
+            <input type="text" id="w-photo" placeholder="फ़ोटो लिंक दर्ज करें (ऐच्छिक)" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+            <span class="text-[11px] text-gray-400">यह फ़ोटो ग्राहकों को पहचान के लिए दिखेगी।</span>
+          </div>
+
+          <!-- पहचान सत्यापन (सुरक्षित - केवल कंपनी रिकॉर्ड के लिए) -->
+          <div class="bg-amber-50 border border-amber-200 p-3 rounded-lg">
+            <div class="flex items-start space-x-2">
+              <i class="fa-solid fa-shield-halved text-amber-600 mt-0.5"></i>
+              <div>
+                <label class="block text-xs font-bold text-gray-900 uppercase">पहचान / आईडी सत्यापन (कंपनी रिकॉर्ड)</label>
+                <p class="text-[11px] text-gray-500">यह दस्तावेज़ पूरी तरह सुरक्षित रहेगा और कभी किसी ग्राहक को नहीं दिखेगा।</p>
+              </div>
+            </div>
+            <input type="text" id="w-id-ref" placeholder="दस्तावेज़ लिंक या संदर्भ" class="mt-2 w-full rounded-md border border-gray-300 px-3 py-1.5 text-xs bg-white focus:outline-none">
+          </div>
+
+          <button type="submit" id="btn-save-worker" class="w-full bg-slate-900 hover:bg-slate-800 text-amber-400 font-bold py-3 rounded-lg shadow-md transition">प्रोफ़ाइल पूरी करें और काम देखें</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- ==================== सेक्शन 2: मिस्त्री डैशबोर्ड (जॉब फ़ीड + टिप्स) ==================== -->
+    <section id="section-worker-dashboard" class="hidden space-y-6">
+      <div class="bg-gradient-to-r from-slate-900 to-slate-800 text-white rounded-2xl p-6 shadow-md flex flex-col md:flex-row justify-between items-center gap-4">
+        <div class="flex items-center space-x-4">
+          <div class="w-14 h-14 bg-amber-500 rounded-full flex items-center justify-center text-slate-900 font-extrabold text-2xl" id="dash-avatar">M</div>
+          <div>
+            <div class="flex items-center space-x-2">
+              <h3 class="text-xl font-bold" id="dash-worker-name">कारीगर बंधु</h3>
+              <span class="bg-emerald-500 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full flex items-center"><i class="fa-solid fa-check mr-1"></i> वेरीफाइड</span>
+            </div>
+            <p class="text-xs text-gray-300 mt-1" id="dash-worker-skill">राजमिस्त्री • बिहार</p>
+          </div>
         </div>
-        <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
-          <i class="fa-solid fa-paint-roller text-emerald-500 text-2xl mb-1"></i>
-          <p class="font-bold">पेंटर / पुट्टी</p>
-          <span class="text-[10px] text-slate-500">कलर & डिस्टेंपर</span>
+        <div class="flex space-x-3">
+          <a href="tel:+919199362034" class="bg-amber-500 text-slate-900 px-4 py-2 rounded-lg text-xs font-bold flex items-center space-x-1.5 shadow hover:bg-amber-400">
+            <i class="fa-solid fa-headset"></i>
+            <span>हेल्पलाइन सपोर्ट</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- जॉब फ़ीड -->
+      <div>
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-bold text-gray-900 flex items-center">
+            <i class="fa-solid fa-briefcase text-amber-500 mr-2"></i> उपलब्ध काम की सूची (Live Job Feed)
+          </h3>
+          <span class="text-xs text-gray-500">सीधा मालिक से जुड़ें</span>
+        </div>
+
+        <div id="job-feed-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- डायनामिक जॉब कार्ड्स लोड होंगे -->
+        </div>
+      </div>
+
+      <!-- टिप्स कॉर्नर -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+        <div class="bg-amber-50 border border-amber-200 rounded-xl p-4">
+          <h4 class="text-sm font-bold text-amber-900 flex items-center">
+            <i class="fa-solid fa-lightbulb mr-2 text-amber-600"></i> काम जल्दी पाने के टिप्स
+          </h4>
+          <ul class="text-xs text-amber-800 space-y-1.5 mt-2 list-disc list-inside">
+            <li>साइट पर समय से पहुंचें और काम में मजबूती रखें।</li>
+            <li>कंपनी सपोर्ट नंबर के ज़रिए अपनी हाजिरी सुरक्षित रखें।</li>
+            <li>अच्छा काम पूरा होने पर ग्राहक से अच्छी रेटिंग लें।</li>
+          </ul>
+        </div>
+        <div class="bg-blue-50 border border-blue-200 rounded-xl p-4">
+          <h4 class="text-sm font-bold text-blue-900 flex items-center">
+            <i class="fa-solid fa-shield mr-2 text-blue-600"></i> सुरक्षा और भुगतान
+          </h4>
+          <p class="text-xs text-blue-800 mt-2 leading-relaxed">
+            MistryBabu.com पर रजिस्टर्ड हर मिस्त्री का श्रम सम्मान हमारी प्राथमिकता है। भुगतान या साइट से जुड़ी किसी भी समस्या के लिए कंपनी हेल्पलाइन तुरंत उपलब्ध है।
+          </p>
         </div>
       </div>
     </section>
 
-    <!-- Forms Section with 38 Districts, Blocks & OTP -->
-    <section id="action-forms" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-      <div class="flex border-b border-slate-200 mb-6">
-        <button id="tab-client" onclick="switchRole('client')" class="flex-1 pb-3 text-sm font-bold text-orange-600 border-b-2 border-orange-600 text-center">
-          <i class="fa-solid fa-briefcase mr-1"></i> मुझे मिस्त्री चाहिए (काम दर्ज करें)
-        </button>
-        <button id="tab-mistry" onclick="switchRole('mistry')" class="flex-1 pb-3 text-sm font-bold text-slate-500 hover:text-orange-600 text-center">
-          <i class="fa-solid fa-id-card mr-1"></i> मैं मिस्त्री हूँ (रजिस्ट्रेशन)
-        </button>
+    <!-- ==================== सेक्शन 3: ग्राहक (काम पोस्ट करें) ==================== -->
+    <section id="section-client-auth" class="hidden">
+      <div class="max-w-xl mx-auto bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+        <div class="text-center mb-6">
+          <span class="bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">मकान मालिक / ठेकेदार</span>
+          <h2 class="text-2xl font-black text-gray-900 mt-2">घर के काम के लिए कारीगर चाहिए?</h2>
+          <p class="text-sm text-gray-500 mt-1">अपनी आवश्यकता पोस्ट करें और सत्यापित मिस्त्री खोजें</p>
+        </div>
+
+        <form id="client-job-form" onsubmit="saveClientJob(event)" class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">आपका नाम *</label>
+            <input type="text" id="c-name" required placeholder="जैसे: रमेश सिंह" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">संपर्क नंबर (Mobile Number) *</label>
+            <input type="tel" id="c-phone" required maxlength="10" placeholder="10 अंकों का मोबाइल नंबर" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+          </div>
+
+          <!-- ग्राहक के लिए 38 ज़िले और ब्लॉक -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-gray-700 uppercase mb-1">ज़िला *</label>
+              <select id="c-district" onchange="updateBlocks('c-district', 'c-block')" required class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                <option value="">-- ज़िला चुनें --</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-700 uppercase mb-1">प्रखंड / ब्लॉक *</label>
+              <select id="c-block" required class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                <option value="">-- पहले ज़िला चुनें --</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">साइट का सटीक पता / इलाका *</label>
+            <input type="text" id="c-location" required placeholder="जैसे: स्टेशन रोड, नया बाजार" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">किस काम के लिए मिस्त्री चाहिए? *</label>
+            <select id="c-work-type" required class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+              <option value="राजमिस्त्री (ईंट जुड़ाई / प्लास्टर)">राजमिस्त्री (ईंट जुड़ाई / प्लास्टर)</option>
+              <option value="छत ढलाई (RCC Work)">छत ढलाई (RCC Work)</option>
+              <option value="टाइल्स और मार्बल फिटिंग">टाइल्स और मार्बल फिटिंग</option>
+              <option value="पेंट और पुट्टी">पेंट और पुट्टी</option>
+              <option value="प्लंबिंग कार्य">प्लंबिंग कार्य</option>
+              <option value="अन्य मरम्मत कार्य">अन्य मरम्मत कार्य</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">काम का संक्षिप्त विवरण</label>
+            <textarea id="c-desc" rows="2" placeholder="कमरे की बाउंड्री बनानी है, 5 दिन का काम है..." class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
+          </div>
+
+          <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg shadow-md transition">काम पोस्ट करें और मिस्त्री देखें</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- ==================== सेक्शन 4: ग्राहक डैशबोर्ड (मिस्त्री डायरेक्टरी) ==================== -->
+    <section id="section-client-dashboard" class="hidden space-y-6">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+        <div>
+          <h3 class="text-xl font-black text-gray-900">सत्यापित कारीगर सूची (Verified Mistri List)</h3>
+          <p class="text-xs text-gray-500">सभी कारीगर MistryBabu द्वारा जांचे और प्रमाणित हैं</p>
+        </div>
       </div>
 
-      <form id="mainForm" class="space-y-4" onsubmit="handleFormSubmit(event)">
-        
-        <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1">पूरा नाम *</label>
-          <input type="text" id="formName" required placeholder="अपना पूरा नाम दर्ज करें" class="w-full p-2.5 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none">
-        </div>
+      <div id="worker-directory-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <!-- डायनामिक कारीगर कार्ड लोड होंगे -->
+      </div>
+    </section>
 
-        <!-- Cascading District & Block (38 Districts) -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">ज़िला (बिहार के 38 ज़िले) *</label>
-            <select id="districtSelect" onchange="populateBlocks()" required class="w-full p-2.5 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none">
-              <option value="">-- ज़िला चुनें --</option>
-            </select>
+    <!-- ==================== सेक्शन 5: MistryBabu कंपनी भरोसा व सजावट ==================== -->
+    <section class="mt-14 border-t border-gray-200 pt-10">
+      <div class="text-center max-w-2xl mx-auto mb-8">
+        <h3 class="text-2xl font-black text-slate-900">MistryBabu क्यों चुनें?</h3>
+        <p class="text-sm text-gray-500 mt-1">बिहार के निर्माण क्षेत्र में पारदर्शिता, सुरक्षा और सम्मान का नया मंच</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-center">
+        <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm">
+          <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-3 text-xl">
+            <i class="fa-solid fa-id-card"></i>
           </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">ब्लॉक / प्रखंड *</label>
-            <select id="blockSelect" required class="w-full p-2.5 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none">
-              <option value="">-- पहले ज़िला चुनें --</option>
-            </select>
+          <h4 class="font-bold text-gray-900 text-sm">पहचान सत्यापित</h4>
+          <p class="text-xs text-gray-500 mt-1">हर कारीगर की पहचान कंपनी रिकॉर्ड में जांची जाती है।</p>
+        </div>
+
+        <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm">
+          <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-3 text-xl">
+            <i class="fa-solid fa-handshake-simple"></i>
           </div>
+          <h4 class="font-bold text-gray-900 text-sm">शून्य बिचौलिया</h4>
+          <p class="text-xs text-gray-500 mt-1">मालिक और कारीगर के बीच कोई दलाली या कमीशन नहीं।</p>
         </div>
 
-        <!-- Service / Skill Selection -->
-        <div>
-          <label id="serviceLabel" class="block text-xs font-bold text-slate-700 mb-1">आवश्यक कारीगर का प्रकार *</label>
-          <select id="serviceSelect" required class="w-full p-2.5 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none">
-            <option value="राजमिस्त्री">राजमिस्त्री (दीवार, प्लास्टर, छत)</option>
-            <option value="इलेक्ट्रीशियन">इलेक्ट्रीशियन (वायरिंग, फॉल्ट)</option>
-            <option value="प्लंबर">प्लंबर (नल, मोटर, पाइप)</option>
-            <option value="पेंटर">पेंटर (पुट्टी, पेंटिंग)</option>
-            <option value="बढ़ई">बढ़ई (Carpenter - लकड़ी का काम)</option>
-            <option value="टाइल्स मिस्त्री">टाइल्स & मार्बल मिस्त्री</option>
-            <option value="दैनिक लेबर">दैनिक लेबर / हेल्पर</option>
-          </select>
-        </div>
-
-        <!-- OTP Phone Verification -->
-        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
-          <label class="block text-xs font-bold text-slate-700">मोबाइल नंबर (OTP वेरिफिकेशन) *</label>
-          
-          <div class="flex gap-2">
-            <div class="relative flex-1">
-              <span class="absolute left-3 top-2.5 text-xs text-slate-500 font-bold">+91</span>
-              <input type="tel" id="userPhone" pattern="[0-9]{10}" placeholder="10 अंकों का मोबाइल नंबर" class="w-full pl-11 pr-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" required>
-            </div>
-            <button type="button" id="sendOtpBtn" onclick="sendOTP()" class="bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold px-4 py-2 rounded-lg transition whitespace-nowrap">
-              OTP भेजें
-            </button>
+        <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm">
+          <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-3 text-xl">
+            <i class="fa-solid fa-user-shield"></i>
           </div>
+          <h4 class="font-bold text-gray-900 text-sm">डेटा प्राइवेसी</h4>
+          <p class="text-xs text-gray-500 mt-1">कारीगरों का व्यक्तिगत नंबर सार्वजनिक नहीं किया जाता।</p>
+        </div>
 
-          <!-- Recaptcha Container -->
-          <div id="recaptcha-container"></div>
-
-          <!-- OTP Input Box -->
-          <div id="otpBox" class="hidden flex gap-2">
-            <input type="text" id="otpCode" placeholder="6 अंकों का SMS कोड दर्ज करें" class="flex-1 p-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
-            <button type="button" onclick="verifyOTP()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2 rounded-lg transition">
-              सत्यापित करें
-            </button>
+        <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm">
+          <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mx-auto mb-3 text-xl">
+            <i class="fa-solid fa-phone-volume"></i>
           </div>
-
-          <p id="authStatus" class="text-xs text-slate-500 italic"></p>
+          <h4 class="font-bold text-gray-900 text-sm">हेल्पलाइन मदद</h4>
+          <p class="text-xs text-gray-500 mt-1">काम की निगरानी और आवश्यकता पड़ने पर सीधी सहायता।</p>
         </div>
-
-        <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1">काम का विवरण / अनुभव</label>
-          <textarea id="formDetails" rows="2" placeholder="काम कब से शुरू करना है या अपने तजुर्बे के बारे में लिखें..." class="w-full p-2.5 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"></textarea>
-        </div>
-
-        <button type="submit" id="submitBtn" disabled class="w-full bg-slate-300 text-slate-500 font-bold py-3 rounded-lg shadow cursor-not-allowed transition flex items-center justify-center gap-2">
-          <i class="fa-solid fa-lock"></i> पहले मोबाइल नंबर OTP से वेरिफाई करें
-        </button>
-      </form>
+      </div>
     </section>
 
   </main>
 
-  <!-- Footer -->
-  <footer class="bg-slate-900 text-slate-400 text-center py-6 text-xs mt-12">
-    <p class="text-slate-300 font-semibold">© 2026 MistryBabu.com | बिहार का नंबर-1 कारीगर नेटवर्क</p>
-    <p class="mt-1 text-[11px] text-slate-500">सुरक्षित • सत्यापित • लोकल</p>
+  <!-- फुटर -->
+  <footer class="bg-slate-900 text-gray-400 text-xs py-8 mt-12 border-t border-slate-800">
+    <div class="max-w-6xl mx-auto px-4 text-center space-y-2">
+      <p class="font-bold text-gray-300">© 2026 MistryBabu.com • सर्वाधिकार सुरक्षित</p>
+      <p>बिहार के हुनर को बिहार में ही सम्मान और रोज़गार • बक्सर, बिहार</p>
+    </div>
   </footer>
 
-  <!-- Scripts -->
+  <!-- ==================== JavaScript लॉजिक ==================== -->
   <script>
-    // 1. Firebase Configuration (mistrybabu-57ddd)
-    const firebaseConfig = {
-      apiKey: "AIzaSyC8_rBqU98wdZW52db53GKG6N4MT4hhByI",
-      authDomain: "mistrybabu-57ddd.firebaseapp.com",
-      projectId: "mistrybabu-57ddd",
-      storageBucket: "mistrybabu-57ddd.firebasestorage.app",
-      messagingSenderId: "205243711402",
-      appId: "1:205243711402:web:354d21f842329168eeb5d3",
-      measurementId: "G-TYW1RV0EDR"
+    // बिहार के सभी 38 ज़िले और उनके ब्लॉक
+    const biharData = {
+      "बक्सर": ["बक्सर", "डुमरांव", "इटाढ़ी", "राजपुर", "सिमरी", "ब्रह्मपुर", "नावानगर", "केसठ", "चक्की", "चौगाईं"],
+      "भोजपुर (आरा)": ["आरा सदर", "बड़हरा", "कोइलवर", "संदेश", "सहार", "उदवंतनगर", "तरारी", "पीरो", "जगदीशपुर", "बिहिया", "शाहपुर", "गड़हनी", "अगिआंव", "चरपोखरी"],
+      "पटना": ["पटना सदर", "दानापुर", "फुलवारीशरीफ", "फतुहा", "बख्तियारपुर", "बाढ़", "मोकामा", "मसौढ़ी", "पुनपुन", "बिहटा", "मनेर", "पालीगंज", "दुल्हिन बाजार", "दनियावां", "खुसरूपुर", "बेलछी", "अथमलगोला", "घोसी", "संपतचक"],
+      "रोहतास (सासाराम)": ["सासाराम", "डेहरी", "नोखा", "करगहर", "दिनारा", "दावथ", "बिक्रमगंज", "सूर्यपुरा", "संझौली", "चेनारी", "शिवसागर", "तिलौथू", "रोहतास", "नौहट्टा", "अकोढ़ीगोला", "राजपुर", "कोचस", "काराकाट", "नासरीगंज"],
+      "कैमूर (भभुआ)": ["भभुआ", "मोहनिया", "कुदरा", "दुर्गावती", "रामगढ़", "चैनपुर", "चांद", "भगवानपुर", "नुआंव", "अधौरा", "रामपुर"],
+      "गया": ["गया सदर", "बोधगया", "बेलागंज", "टिकारी", "शेरघाटी", "इमामगंज", "डोभी", "फतेहपुर", "वजीरगंज", "मानपुर", "कोंच", "गुरुआ", "परैया", "आमस", "बांके बाजार", "डुमरिया", "बाराचट्टी", "मोहनपुर", "टनकुप्पा", "खिजरसराय", "नीमचक बथानी", "अतरी", "मोहड़ा"],
+      "मुजफ्फरपुर": ["मुशहरी", "कांटी", "मोतीपुर", "मड़वन", "सरैया", "पारू", "साहेबगंज", "बरूराज", "कुढ़नी", "सकरा", "मुरौल", "बोचहां", "गायघाट", "औराई", "कटरा", "मीनापुर"],
+      "भागलपुर": ["जगदीशपुर", "नाथनगर", "सुलतानगंज", "कहलगांव", "पीरपैंती", "सन्हौला", "शाहकुंड", "गोराडीह", "सबौर", "नारायणपुर", "बिहपुर", "खरीक", "नवगछिया", "इस्माइलपुर", "रंगरा चौक", "गोपालपुर"],
+      "दरभंगा": ["दरभंगा सदर", "बहादुरपुर", "बेनीपुर", "अलीनगर", "बिरौल", "घनश्यामपुर", "गौड़ाबौराम", "कुशेश्वरस्थान", "कुशेश्वरस्थान पूर्वी", "हायाघाट", "हनुमाननगर", "केवटी", "जाले", "सिंहवाड़ा", "मनीगाछी", "तारडीह", "बहेड़ी"],
+      "सारण (छपरा)": ["छपरा सदर", "मढ़ौरा", "सोनपुर", "दिघवारा", "दरियापुर", "परसा", "मकेर", "गड़खा", "अमनौर", "तरैया", "इसुआपुर", "मशरख", "पानापुर", "एकमा", "मांझी", "रिविलगंज", "बनियापुर", "जलालपुर", "लहलादपुर", "नगरा"],
+      "सीवान": ["सीवान सदर", "मैरवा", "दरौली", "गुठनी", "हुसैनगंज", "आंदर", "रघुनाथपुर", "सिसवन", "बड़हरिया", "गोरियाकोठी", "महाराजगंज", "दरौंदा", "भगवानपुर हाट", "बसंतपुर", "लकड़ी नबीगंज", "हसनपुरा", "जीरनदेई", "नौतन", "पचरुखी"],
+      "गोपालगंज": ["गोपालगंज सदर", "मांझा", "बरौली", "सिधवलिया", "बैकुंठपुर", "कुचायकोट", "थावे", "उचकागांव", "हथुआ", "मीरगंज", "फुलवरिया", "भोरे", "कटेया", "विजयीपुर"],
+      "वैशाली (हाजीपुर)": ["हाजीपुर", "लालगंज", "वैशाली", "गोरौल", "महुआ", "जंदाहा", "पातेपुर", "भगवानपुर", "महनार", "राघोपुर", "देसरी", "सहदेई बुजुर्ग", "चेहराकलां", "पटेढ़ी बेलसर", "राजापाकर", "बिदुपुर"],
+      "पूर्वी चंपारण (मोतिहारी)": ["मोतिहारी सदर", "चकिया", "रक्सौल", "ढाका", "अरेराज", "सुगौली", "कल्याणपुर", "कोटवा", "पीपराकोठी", "केसरिया", "मधुबन", "पकड़ीदयाल", "पताही", "फेनहारा", "तेतरिया", "तुरकौलिया", "हरसिद्धि", "पहाड़पुर", "संग्रामपुर", "मेहसी", "चिरैया", "घोड़ासहन", "बनकटवा", "आदापुर", "छौड़ादानो", "रामगढ़वा"],
+      "पश्चिम चंपारण (बेतिया)": ["बेतिया", "मझौलिया", "नौतन", "बैरिया", "चनपटिया", "नरकटियागंज", "लौरिया", "बगहा-1", "बगहा-2", "रामनगर", "गौनाहा", "मैनाटांड़", "सिकटा", "योगापट्टी", "मधुबनी", "पिपरासी", "भितहा", "ठकराहां"],
+      "समस्तीपुर": ["समस्तीपुर सदर", "वारिसनगर", "कल्याणपुर", "खानपुर", "पूसा", "ताजपुर", "मोरवा", "सरायरंजन", "दलसिंहसराय", "उजियारपुर", "विद्यापतिनगर", "पटोरी", "मोहनपुर", "मोहिउद्दीननगर", "रोसड़ा", "हसनपुर", "बिथान", "शिवाजीनगर", "सिंघिया", "विभूतिपुर"],
+      "मधुबनी": ["मधुबनी सदर", "रहिका", "पंडौल", "सकरी", "बेनीपट्टी", "बिस्फी", "हरलाखी", "मधवापुर", "झंझारपुर", "अंधराठाढ़ी", "लखनौर", "मधेपुर", "फुलपरास", "घोघरडीहा", "लौकहा", "लौकही", "बाबूबरही", "खजौली", "राजनगर", "जयनगर", "लदनिया", "कलुआही"],
+      "नालंदा (बिहारशरीफ)": ["बिहारशरीफ", "राजगीर", "हिलसा", "इस्लामपुर", "हरनौत", "चंडी", "नूरसराय", "बेन", "सिलाव", "गिरियक", "कतरीसराय", "सरमेरा", "बिंद", "अस्थावां", "रहुई", "थरथरी", "परवलपुर", "कराईपरसुराई", "एकंगरसराय", "नगरनौसा"],
+      "नवादा": ["नवादा सदर", "वारिसलीगंज", "रजौली", "हिसुआ", "अकबरपुर", "गोविंदपुर", "पकरीबरावां", "कौआकोल", "काशीचक", "सिरदला", "मेसकौर", "नरहट", "रोह"],
+      "जहानाबाद": ["जहानाबाद सदर", "मखदुमपुर", "काको", "घोसी", "हुलासगंज", "मोदनगंज", "रतनी फरीदपुर"],
+      "अरवल": ["अरवल सदर", "करपी", "कलेर", "कुर्था", "सोनभद्र बंशी सूर्यपुर"],
+      "औरंगाबाद": ["औरंगाबाद सदर", "दाउदनगर", "ओबरा", "बारुन", "नवीनगर", "कुटुम्बा", "देव", "मदनपुर", "रफीगंज", "हसपुरा", "गोह"],
+      "बेगूसराय": ["बेगूसराय सदर", "बरौनी", "तेघड़ा", "बछवाड़ा", "मंसूरचक", "बलिया", "साहेबपुर कमाल", "डंडारी", "शाम्हो अकहा कुरहा", "बखरी", "नावकोठी", "गढ़पुरा", "वीरपुर", "चेरिया बरियारपुर", "छौड़ाही", "खोदावंदपुर", "भगवानपुर", "मटिहानी"],
+      "खगड़िया": ["खगड़िया सदर", "अलौली", "चौथम", "गोगरी", "परबत्ता", "बेलदौर", "मानसी"],
+      "मुंगेर": ["मुंगेर सदर", "जमालपुर", "बरियारपुर", "धरहरा", "खड़कपुर", "तारापुर", "असरगंज", "संग्रामपुर", "टेटिया बंबर"],
+      "लखीसराय": ["लखीसराय सदर", "सूर्यगढ़ा", "बड़हिया", "पिपरीया", "हलसी", "रामगढ़ चौक", "चानन"],
+      "शेखपुरा": ["शेखपुरा सदर", "बरबीघा", "शेखोपुरसराय", "घाटकुसुम्भा", "चेवाड़ा", "अरिअरी"],
+      "जमुई": ["जमुई सदर", "झाझा", "सोनो", "चकाई", "खैरा", "सिकंदरा", "अलीगंज", "बरहट", "लक्ष्मीपुर", "गिद्धौर"],
+      "बांका": ["बांका सदर", "अमरपुर", "रजौन", "बाराहाट", "धोरैया", "बौंसी", "कटोरिया", "फुल्लीडुमर", "शंभूगंज", "बेलहर", "चांदन"],
+      "सहरसा": ["सहरसा सदर", "कहरा", "सौरबाजार", "पतरघट", "सिमरी बख्तियारपुर", "सलखुआ", "बनमा इटहरी", "सोनवर्षा", "महिषी", "नवट्टा"],
+      "मधेपुरा": ["मधेपुरा सदर", "सिंहेश्वर", "मुरलीगंज", "कुमारखंड", "ग्वालपाड़ा", "उदाकिशुनगंज", "बिहारीगंज", "आलमनगर", "चौसा", "पुरैनी", "शंकरपुर", "घैलाढ़", "गम्हरिया"],
+      "सुपौल": ["सुपौल सदर", "किशनपुर", "सरायगढ़ भपटियाही", "निर्मली", "मरौना", "पिपरा", "त्रिवेणीगंज", "छातापुर", "बसंतपुर (बीरपुर)", "राघोपुर", "प्रतापगंज"],
+      "पूर्णिया": ["पूर्णिया सदर", "कसबा", "जलालगढ़", "कृत्यानंद नगर", "श्रीनगर", "बनमनखी", "भवानीपुर", "रूपौली", "धमदाहा", "बीकोठी", "डगरुआ", "बायसी", "अमौर", "बैसा"],
+      "कटिहार": ["कटिहार सदर", "कोढ़ा", "फलका", "बरारी", "कुरसेला", "समेली", "मनसाही", "प्राणपुर", "डंडखोरा", "हसनगंज", "बलरामपुर", "बरसोई", "कदवा", "आजमनगर", "अमदाबाद", "मनिहारी"],
+      "अररिया": ["अररिया सदर", "जोकीहाट", "कुर्साकांटा", "रानीगंज", "फारबिसगंज", "भरगामा", "नरपतगंज", "सिकटी", "पलासी"],
+      "किशनगंज": ["किशनगंज सदर", "बहादुरगंज", "ठाकुरगंज", "कोचाधामन", "टेढ़ागाछ", "दिघलबैंक", "पोठिया"],
+      "सीतामढ़ी": ["डुमरा (सीतामढ़ी)", "रुन्नीसैदपुर", "बेलसंड", "परसौनी", "बैरगनिया", "रीगा", "सुप्पी", "मेजरगंज", "सोनबरसा", "परिहार", "सुरसंड", "पुपरी", "नानपुर", "बाजपट्टी", "बोखड़ा", "चोरौत", "बथनाहा"],
+      "शिवहर": ["शिवहर सदर", "तरियानी", "पिपराही", "डुमरी कटसरी", "पूरनहिया"]
     };
 
-    firebase.initializeApp(firebaseConfig);
+    // Firebase कॉन्फ़िगरेशन
+    const firebaseConfig = {
+      apiKey: "AIzaSy...", // आपकी Firebase API Key यहाँ रहेगी
+      authDomain: "mistrybabu-57ddd.firebaseapp.com",
+      projectId: "mistrybabu-57ddd",
+      storageBucket: "mistrybabu-57ddd.appspot.com",
+      messagingSenderId: "379307330936",
+      appId: "1:379307330936:web:..."
+    };
+
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
     const auth = firebase.auth();
     const db = firebase.firestore();
 
-    let currentRole = "client";
-    let isPhoneVerified = false;
     let confirmationResult = null;
+    let currentWorkerPhone = "";
 
-    // 2. Complete 38 Districts and Key Blocks Data
-    const biharData = {
-      "अररिया": ["अररिया सदर", "फारबिसगंज", "जोकीहाट", "रानीगंज", "नरपतगंज", "भरगामा", "कुर्साकांटा", "पलासी", "सिकटी"],
-      "अरवल": ["अरवल सदर", "कुर्था", "करपी", "कलेर", "सोनभद्र बंशी सूर्यपुर"],
-      "औरंगाबाद": ["औरंगाबाद सदर", "दाउदनगर", "नवीनगर", "रफ़ीगंज", "ओबरा", "बारुन", "मदनपुर", "गोह", "हसपुरा", "कुटुम्बा", "देव"],
-      "बांका": ["बांका सदर", "अमरपुर", "कटोरिया", "बेलहर", "बाराहाट", "धोरैया", "रजौन", "शंभुगंज", "बौसी", "फुल्लीडुमर", "चांदन"],
-      "बेगूसराय": ["बेगूसराय सदर", "बरौनी", "मंझौल", "तेघड़ा", "बलिया", "बछवाड़ा", "मटिहानी", "साहेबपुर कमाल", "नावकोठी", "खोदावंदपुर", "छौड़ाही", "वीरपुर"],
-      "भागलपुर": ["भागलपुर सदर", "सबौर", "कहलगांव", "नाथनगर", "सुलतानगंज", "पीरपैंती", "नवगछिया", "बिहपुर", "गोपालपुर", "इस्माइलपुर", "रंगरा चौक", "शाहकुंड", "गोरडीह", "सन्हौला", "जगदीशपुर"],
-      "भोजपुर (आरा)": ["आरा सदर", "जगदीशपुर", "पीरो", "बड़हरा", "शाहपुर", "कोईलवर", "उदवंतनगर", "सहार", "संदेश", "अगिआंव", "गड़हनी", "तरारी", "चरपोखरी"],
-      "बक्सर": ["बक्सर सदर", "डुमरांव", "ब्रह्मपुर", "इटाढ़ी", "राजपुर", "सिमरी", "नावानगर", "केसठ", "चौगाईं", "चक्की"],
-      "दरभंगा": ["दरभंगा सदर", "बेनीपुर", "बहेड़ी", "हायाघाट", "केवटी", "सिंहवाड़ा", "बिरौल", "जाले", "कुशेश्वरस्थान", "घनश्यामपुर", "अलीनगर", "हनुमाननगर", "मनीगाछी", "गौड़ाबौराम"],
-      "पूर्वी चंपारण (मोतिहारी)": ["मोतिहारी सदर", "रक्सौल", "चकिया", "अरेराज", "ढाका", "केसरिया", "सुगौली", "कल्याणपुर", "कोटवा", "पिपराकोठी", "तेतरिया", "पकड़ी दयाल", "चिरैया", "घोड़ासहन", "बनकटवा", "पताही", "फेनहारा", "मधुबन"],
-      "गया": ["गया सदर", "बोधगया", "शेरघाटी", "टिकारी", "वज़ीरगंज", "बेलागंज", "इमामगंज", "डोभी", "फतेहपुर", "बाराचट्टी", "गुरारू", "परैया", "मानपुर", "अतरी", "नीमचक बथानी", "खिजरसराय", "मोहड़ा", "कोंच", "डुमरिया", "बांके बाज़ार", "आमस", "गुरुआ", "टनकुप्पा", "मोहनपुर"],
-      "गोपालगंज": ["गोपालगंज सदर", "हथुआ", "मीरगंज", "बरौली", "बैकुंठपुर", "मांझा", "उचकागांव", "सिधवलिया", "कुचायकोट", "भोरे", "कटेया", "विजयीपुर", "फुलवरिया", "थावे"],
-      "जमुई": ["जमुई सदर", "झाझा", "सोनो", "खैरा", "गिद्धौर", "चकाई", "बरहट", "अलीगंज", "सिकंदरा", "इस्लामनगर अलीगंज"],
-      "जहानाबाद": ["जहानाबाद सदर", "मखदुमपुर", "हुलासगंज", "काको", "घोसी", "रत्नफरी फरीदपुर", "मोदनगंज"],
-      "कैमूर (भभुआ)": ["भभुआ", "मोहनिया", "कुदरा", "चैनपुर", "भगवानपुर", "चांद", "दुर्गावती", "रामगढ़", "रामपुर", "अधौरा", "नुआंव"],
-      "कटिहार": ["कटिहार सदर", "बारसोई", "मनिहारी", "कोढ़ा", "बलरामपुर", "अमदाबाद", "आजमनगर", "कदवा", "डंडखोरा", "प्राणपुर", "मनसाही", "फल्का", "कोढ़ा", "समेली", "बरारी", "कुरसेला"],
-      "खगड़िया": ["खगड़िया सदर", "गोगरी", "अलौली", "बेलदौर", "चौथम", "मानसी", "परबत्ता"],
-      "किशनगंज": ["किशनगंज सदर", "बहादुरगंज", "ठाकुरगंज", "कोचाधामन", "पोठिया", "दिघलबैंक", "टेढ़ागाछ"],
-      "लखीसराय": ["लखीसराय सदर", "बड़हिया", "सूर्यगढ़ा", "पिपरिया", "हलसी", "रामगढ़ चौक", "चानन"],
-      "मधेपुरा": ["मधेपुरा सदर", "उदाकिशुनगंज", "मुरलीगंज", "आलमनगर", "कुमारखंड", "सिंहेश्वर", "शंकरपुर", "घैलाढ़", "बिहारीगंज", "ग्वालपाड़ा", "चौसा"],
-      "मधुबनी": ["मधुबनी सदर", "झंझारपुर", "बेनीपट्टी", "जयनगर", "फुलपरास", "बाबूबरही", "रहिका", "पंडौल", "सकरी", "बिस्फी", "हरलाखी", "खजौली", "लदनिया", "घोघरडीहा", "लखनौर", "मधेपुर", "अंधराठाढ़ी"],
-      "मुंगेर": ["मुंगेर सदर", "जमालपुर", "हवेली खड़गपुर", "तारापुर", "असरगंज", "बरियारपुर", "धरहरा", "संग्रामपुर", "टेटिया बंबर"],
-      "मुज़फ़्फ़रपुर": ["मुज़फ़्फ़रपुर सदर", "बैरिया", "कांटी", "मोतीपुर", "मड़वन", "कुढ़नी", "सकरा", "सरैया", "साहेबगंज", "पारू", "मुरौल", "बंदरा", "औराई", "कटरा", "गायघाट", "बोचहां", "मीनापुर"],
-      "नालंदा (बिहारशरीफ)": ["बिहारशरीफ", "राजगीर", "हिलसा", "इस्लामपुर", "हरनौत", "सिलाव", "बेन", "चंडी", "नगरनौसा", "एकंगरसराय", "परवलपुर", "गिरियक", "कतरीसराय", "सरमेरा", "अस्थावां", "बिंद", "रहुई", "नूरसराय", "कराई परशुराम", "थरथरी"],
-      "नवादा": ["नवादा सदर", "रजौली", "हिसुआ", "वारिसलीगंज", "पकड़ीबरावां", "कौआकोल", "काशीचक", "रोह", "गोविंदपुर", "मेसकौर", "सिरदला", "अकबरपुर", "नारदीगंज"],
-      "पश्चिमी चंपारण (बेतिया)": ["बेतिया", "बगहा", "नरकटियागंज", "चनपटिया", "रामनगर", "लौरिया", "मझौलिया", "सिकटा", "मैनाटांड़", "गौनाहा", "योगापट्टी", "बैरिया", "मधुबनी", "भितहा", "पिपरासी", "ठकराहा"],
-      "पटना": ["पटना सदर", "दानापुर", "बिहटा", "बाढ़", "बख्तियारपुर", "फुलवारीशरीफ", "फतुहा", "संपतचक", "मसौढ़ी", "पालीगंज", "मनेर", "खुसरूपुर", "दनियावां", "अथमलगोला", "मोकामा", "घोषवरी", "बेलछी", "पंडारक", "पुनपुन", "धनरूआ", "नौबतपुर", "बिक्रम", "दुल्हिन बाज़ार"],
-      "पूर्णिया": ["पूर्णिया पूर्व", "कसबा", "बनमनखी", "भवानीपुर", "धमदाहा", "बायसी", "अमौर", "बैसा", "डगरुआ", "जलालगढ़", "के.नगर", "श्रीनगर", "बी.कोठी"],
-      "रोहतास (सासाराम)": ["सासाराम", "डेहरी", "नोखा", "बिक्रमगंज", "करगहर", "चेनारी", "शिवसागर", "तिलौथू", "रोहतास", "नौहट्टा", "सूर्यपुरा", "दावथ", "दिनारा", "संझौली", "अकोढ़ीगोला", "काराकाट", "राजपुर"],
-      "सहरसा": ["सहरसा सदर", "सिमरी बख्तियारपुर", "सौरबाजार", "सोनबरसा", "सलखुआ", "बनमा इटहरी", "पतरघट", "महिषी", "सत्तर कटैया", "कहरा"],
-      "समस्तीपुर": ["समस्तीपुर सदर", "रोसड़ा", "दलसिंहसराय", "पटोरी", "कल्याणपुर", "वारिसनगर", "शिवाजीनगर", "खानपुर", "सरायरंजन", "मोरवा", "उजियारपुर", "विद्यापतिनगर", "विभूतिपुर", "सिंघिया", "हसनपुर", "बिथान", "ताजपुर", "पूसा"],
-      "सारण (छपरा)": ["छपरा सदर", "मढ़ौरा", "सोनपुर", "गड़खा", "रिविलगंज", "परसा", "दिघवारा", "दरियापुर", "अमनौर", "मकेर", "तरैया", "मशरख", "पानापुर", "इसुआपुर", "बनियापुर", "लहलादपुर", "एकमा", "मांझी", "जलालपुर"],
-      "शेखपुरा": ["शेखपुरा सदर", "बरबीघा", "घाटकुसुम्भा", "चेवाड़ा", "अरिअरी", "शेखोपुर सराय"],
-      "शिवहर": ["शिवहर सदर", "तरियानी", "पिपराही", "डुमरी कटसरी", "पुरनहिया"],
-      "सीतामढ़ी": ["सीतामढ़ी सदर", "पुपरी", "बेलसंड", "रून्नीसैदपुर", "डुमरा", "बैरगनिया", "सुप्पी", "मेजरगंज", "रीगा", "परसौनी", "बाजपट्टी", "नानपुर", "बोखड़ा", "चोरौत", "सुरसंड", "परिहार", "सोनबरसा"],
-      "सीवान": ["सीवान सदर", "महाराजगंज", "मैरवा", "गुठनी", "बड़हरिया", "रघुनाथपुर", "दरौली", "आंदर", "हुसैनगंज", "हसनपुरा", "जीरादेई", "नौतन", "दरौंदा", "भगवानपुर हाट", "बसंतपुर", "गोरेयाकोठी", "लकड़ी नबीगंज"],
-      "सुपौल": ["सुपौल सदर", "बीरपुर", "त्रिवेणीगंज", "निर्मली", "पिपरा", "किशनपुर", "राघोपुर", "सरायगढ़ भपटियाही", "बसंतपुर", "मरौना", "छातापुर"],
-      "वैशाली (हाजीपुर)": ["हाजीपुर", "लालगंज", "महुआ", "पातेपुर", "भगवानपुर", "वैशाली", "गोरौल", "चेहराकलां", "जंदाहा", "राजापाकर", "सहोदेई बुजुर्ग", "बिदुपुर", "देसरी", "राघोपुर", "पटेढ़ी बेलसर"]
-    };
+    // 38 ज़िले लोड करना
+    function populateDistricts() {
+      const wDist = document.getElementById("w-district");
+      const cDist = document.getElementById("c-district");
+      for (let dist in biharData) {
+        let opt1 = document.createElement("option");
+        opt1.value = dist;
+        opt1.textContent = dist;
+        if(wDist) wDist.appendChild(opt1);
 
-    // Load All 38 Districts Alphabetically
-    window.onload = function() {
-      const distSelect = document.getElementById('districtSelect');
-      Object.keys(biharData).sort().forEach(dist => {
-        const opt = document.createElement('option');
-        opt.value = dist;
-        opt.textContent = dist;
-        distSelect.appendChild(opt);
-      });
-      initRecaptcha();
-    };
+        let opt2 = document.createElement("option");
+        opt2.value = dist;
+        opt2.textContent = dist;
+        if(cDist) cDist.appendChild(opt2);
+      }
+    }
 
-    function populateBlocks() {
-      const dist = document.getElementById('districtSelect').value;
-      const blkSelect = document.getElementById('blockSelect');
-      blkSelect.innerHTML = '<option value="">-- ब्लॉक चुनें --</option>';
+    // ज़िला बदलने पर ब्लॉक बदलना
+    function updateBlocks(distSelectId, blockSelectId) {
+      const distSelect = document.getElementById(distSelectId);
+      const blockSelect = document.getElementById(blockSelectId);
+      const selDist = distSelect.value;
 
-      if (dist && biharData[dist]) {
-        biharData[dist].forEach(blk => {
-          const opt = document.createElement('option');
-          opt.value = blk;
-          opt.textContent = blk;
-          blkSelect.appendChild(opt);
+      blockSelect.innerHTML = '<option value="">-- प्रखंड / ब्लॉक चुनें --</option>';
+      if (selDist && biharData[selDist]) {
+        biharData[selDist].forEach(b => {
+          let opt = document.createElement("option");
+          opt.value = b;
+          opt.textContent = b;
+          blockSelect.appendChild(opt);
         });
       }
     }
 
-    // Modal & Role Selection
-    function closeWelcomeModal() { 
-      document.getElementById('welcomeModal').style.display = 'none'; 
-    }
-    
-    function selectRole(role) {
-      switchRole(role);
-      closeWelcomeModal();
-      document.getElementById('action-forms').scrollIntoView({ behavior: 'smooth' });
-    }
+    window.addEventListener('DOMContentLoaded', () => {
+      populateDistricts();
 
-    function switchRole(role) {
-      currentRole = role;
-      const tClient = document.getElementById('tab-client');
-      const tMistry = document.getElementById('tab-mistry');
-      const sLabel = document.getElementById('serviceLabel');
+      // लाइव नोटिस बार सुनना
+      db.collection("settings").doc("announcement")
+        .onSnapshot((doc) => {
+          const bar = document.getElementById("notice-bar");
+          const txt = document.getElementById("notice-text");
+          if (doc.exists) {
+            const d = doc.data();
+            if (d.active && d.text) {
+              txt.innerHTML = d.text;
+              bar.classList.remove("hidden");
+            } else {
+              bar.classList.add("hidden");
+            }
+          }
+        }, (err) => console.log("Notice error:", err));
+    });
 
-      if (role === 'client') {
-        tClient.className = "flex-1 pb-3 text-sm font-bold text-orange-600 border-b-2 border-orange-600 text-center";
-        tMistry.className = "flex-1 pb-3 text-sm font-bold text-slate-500 hover:text-orange-600 text-center";
-        sLabel.textContent = "आवश्यक कारीगर का प्रकार *";
-      } else {
-        tMistry.className = "flex-1 pb-3 text-sm font-bold text-orange-600 border-b-2 border-orange-600 text-center";
-        tClient.className = "flex-1 pb-3 text-sm font-bold text-slate-500 hover:text-orange-600 text-center";
-        sLabel.textContent = "आपका मुख्य काम / हुनर *";
+    // व्यू स्विच करना
+    function switchView(target) {
+      document.getElementById("section-worker-auth").classList.add("hidden");
+      document.getElementById("section-worker-dashboard").classList.add("hidden");
+      document.getElementById("section-client-auth").classList.add("hidden");
+      document.getElementById("section-client-dashboard").classList.add("hidden");
+
+      if (target === 'worker-auth') {
+        document.getElementById("section-worker-auth").classList.remove("hidden");
+      } else if (target === 'client-auth') {
+        document.getElementById("section-client-auth").classList.remove("hidden");
+      } else if (target === 'worker-dash') {
+        document.getElementById("section-worker-dashboard").classList.remove("hidden");
+        loadJobFeed();
+      } else if (target === 'client-dash') {
+        document.getElementById("section-client-dashboard").classList.remove("hidden");
+        loadWorkersDirectory();
       }
     }
 
-    // 3. Recaptcha & Phone Auth
-    function initRecaptcha() {
-      window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-        'size': 'invisible'
-      });
+    // Recaptcha और OTP भेजना
+    function setupRecaptcha() {
+      if (!window.recaptchaVerifier) {
+        window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+          'size': 'invisible'
+        });
+      }
     }
 
-    function sendOTP() {
-      const phoneInput = document.getElementById('userPhone').value.trim();
+    function sendWorkerOTP() {
+      const phoneInput = document.getElementById("worker-phone").value.trim();
       if (phoneInput.length !== 10) {
-        alert("कृपया 10 अंकों का वैध मोबाइल नंबर दर्ज करें!");
+        alert("कृपया 10 अंकों का मान्य मोबाइल नंबर डालें!");
         return;
       }
-      const fullPhone = "+91" + phoneInput;
-      const btn = document.getElementById('sendOtpBtn');
-      const status = document.getElementById('authStatus');
+      currentWorkerPhone = "+91" + phoneInput;
+      setupRecaptcha();
 
-      btn.disabled = true;
-      btn.textContent = "भेज रहे हैं...";
-      status.textContent = "SMS कोड भेजा जा रहा है, कृपया प्रतीक्षा करें...";
-
-      auth.signInWithPhoneNumber(fullPhone, window.recaptchaVerifier)
-        .then((confirmation) => {
-          window.confirmationResult = confirmation;
-          document.getElementById('otpBox').classList.remove('hidden');
-          status.innerHTML = "<span class='text-blue-600 font-bold'>OTP आपके मोबाइल पर भेज दिया गया है।</span>";
-          btn.textContent = "दोबारा भेजें";
-          btn.disabled = false;
-        }).catch((error) => {
-          console.error(error);
-          status.innerHTML = "<span class='text-red-500'>त्रुटि: " + error.message + "</span>";
-          btn.textContent = "OTP भेजें";
-          btn.disabled = false;
+      document.getElementById("btn-send-otp").innerText = "OTP भेजा जा रहा है...";
+      auth.signInWithPhoneNumber(currentWorkerPhone, window.recaptchaVerifier)
+        .then((res) => {
+          confirmationResult = res;
+          document.getElementById("worker-verification-fields").classList.remove("hidden");
+          document.getElementById("btn-send-otp").innerText = "OTP दोबारा भेजें";
+          alert("OTP भेज दिया गया है!");
+        })
+        .catch((err) => {
+          alert("त्रुटि: " + err.message);
+          document.getElementById("btn-send-otp").innerText = "OTP भेजें";
         });
     }
 
-    function verifyOTP() {
-      const code = document.getElementById('otpCode').value.trim();
-      const status = document.getElementById('authStatus');
-
-      if (!code || code.length !== 6) {
-        alert("कृपया 6 अंकों का सही OTP दर्ज करें!");
+    // OTP सत्यापित करना
+    function verifyWorkerOTP() {
+      const code = document.getElementById("worker-otp").value.trim();
+      if (code.length !== 6) {
+        alert("कृपया 6 अंकों का OTP दर्ज करें!");
         return;
       }
 
-      window.confirmationResult.confirm(code).then((result) => {
-        isPhoneVerified = true;
-        status.innerHTML = "<span class='text-emerald-600 font-bold'>✓ मोबाइल नंबर सफलतापूर्वक सत्यापित (Verified) हो गया!</span>";
-        document.getElementById('otpBox').classList.add('hidden');
-        document.getElementById('sendOtpBtn').classList.add('hidden');
-        document.getElementById('userPhone').disabled = true;
-
-        const subBtn = document.getElementById('submitBtn');
-        subBtn.disabled = false;
-        subBtn.className = "w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 rounded-lg shadow transition flex items-center justify-center gap-2 cursor-pointer";
-        subBtn.innerHTML = "<i class='fa-solid fa-paper-plane'></i> सबमिट करें";
-      }).catch((error) => {
-        status.innerHTML = "<span class='text-red-500 font-bold'>गलत OTP! कृपया SMS देखकर सही कोड डालें।</span>";
-      });
+      confirmationResult.confirm(code)
+        .then((result) => {
+          document.getElementById("worker-otp-box").classList.add("hidden");
+          document.getElementById("worker-profile-form").classList.remove("hidden");
+        })
+        .catch((err) => {
+          alert("अमान्य OTP! कृपया सही कोड डालें।");
+        });
     }
 
-    // 4. Firestore Secure Save
-    function handleFormSubmit(e) {
+    // मिस्त्री प्रोफ़ाइल सुरक्षित करना
+    function saveWorkerProfile(e) {
       e.preventDefault();
-      if (!isPhoneVerified) {
-        alert("पहले अपना मोबाइल नंबर OTP से वेरिफाई करें!");
-        return;
-      }
+      const btn = document.getElementById("btn-save-worker");
+      btn.innerText = "प्रोफ़ाइल सुरक्षित की जा रही है...";
 
-      const subBtn = document.getElementById('submitBtn');
-      subBtn.disabled = true;
-      subBtn.textContent = "सुरक्षित दर्ज हो रहा है...";
-
-      const leadData = {
-        role: currentRole,
-        name: document.getElementById('formName').value,
-        phone: document.getElementById('userPhone').value,
-        district: document.getElementById('districtSelect').value,
-        block: document.getElementById('blockSelect').value,
-        service: document.getElementById('serviceSelect').value,
-        details: document.getElementById('formDetails').value || "",
-        verified: true,
+      const workerData = {
+        name: document.getElementById("w-name").value.trim(),
+        district: document.getElementById("w-district").value,
+        block: document.getElementById("w-block").value,
+        skill: document.getElementById("w-skill").value,
+        experience: document.getElementById("w-exp").value || "0",
+        photoUrl: document.getElementById("w-photo").value.trim() || "",
+        private_phone: currentWorkerPhone, // नंबर केवल कंपनी रिकॉर्ड में
+        id_reference: document.getElementById("w-id-ref").value.trim() || "", // गोपनीय दस्तावेज
+        isVerified: true,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       };
 
-      const collectionName = currentRole === 'client' ? 'job_leads' : 'mistry_registrations';
+      db.collection("workers").add(workerData)
+        .then(() => {
+          document.getElementById("dash-worker-name").innerText = workerData.name;
+          document.getElementById("dash-worker-skill").innerText = workerData.skill + " • " + workerData.district + " (" + workerData.block + ")";
+          document.getElementById("dash-avatar").innerText = workerData.name.charAt(0);
+          switchView('worker-dash');
+        })
+        .catch((err) => {
+          alert("त्रुटि: " + err.message);
+          btn.innerText = "प्रोफ़ाइल पूरी करें और काम देखें";
+        });
+    }
 
-      db.collection(collectionName).add(leadData).then(() => {
-        alert("सफलतापूर्वक दर्ज हो गया! MistryBabu.com से जुड़ने के लिए धन्यवाद।");
-        document.getElementById('mainForm').reset();
-        location.reload();
-      }).catch((err) => {
-        alert("डेटा सेव करने में समस्या आई: " + err.message);
-        subBtn.disabled = false;
-      });
+    // ग्राहक द्वारा काम दर्ज करना
+    function saveClientJob(e) {
+      e.preventDefault();
+      const jobData = {
+        clientName: document.getElementById("c-name").value.trim(),
+        phone: document.getElementById("c-phone").value.trim(),
+        district: document.getElementById("c-district").value,
+        block: document.getElementById("c-block").value,
+        location: document.getElementById("c-location").value.trim(),
+        workType: document.getElementById("c-work-type").value,
+        desc: document.getElementById("c-desc").value.trim(),
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      };
+
+      db.collection("job_posts").add(jobData)
+        .then(() => {
+          alert("आपकी आवश्यकता दर्ज हो गई है! अब आप उपलब्ध कारीगरों की सूची देख सकते हैं।");
+          switchView('client-dash');
+        })
+        .catch((err) => alert("त्रुटि: " + err.message));
+    }
+
+    // मिस्त्री के लिए लाइव जॉब फ़ीड
+    function loadJobFeed() {
+      const feed = document.getElementById("job-feed-list");
+      feed.innerHTML = "<p class='text-xs text-gray-400'>उपलब्ध काम लोड हो रहे हैं...</p>";
+
+      db.collection("job_posts").orderBy("createdAt", "desc").limit(15).get()
+        .then((snapshot) => {
+          if (snapshot.empty) {
+            feed.innerHTML = "<p class='text-xs text-gray-500'>वर्तमान में कोई नया काम दर्ज नहीं है।</p>";
+            return;
+          }
+          feed.innerHTML = "";
+          snapshot.forEach((doc) => {
+            const j = doc.data();
+            feed.innerHTML += `
+              <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+                <div class="flex justify-between items-start">
+                  <span class="bg-amber-100 text-amber-800 text-[10px] font-bold px-2 py-0.5 rounded">नई आवश्यकता</span>
+                </div>
+                <h4 class="font-bold text-gray-900 mt-2">${j.workType}</h4>
+                <p class="text-xs text-gray-500 mt-1"><i class="fa-solid fa-location-dot mr-1 text-gray-400"></i> ${j.district} • ${j.block || ''} (${j.location})</p>
+                <p class="text-xs text-gray-600 mt-2">${j.desc || 'काम का संक्षिप्त विवरण उपलब्ध नहीं'}</p>
+                <div class="mt-4 pt-3 border-t border-gray-100 flex justify-between items-center">
+                  <span class="text-[11px] text-gray-400">मालिक: ${j.clientName}</span>
+                  <a href="tel:+919199362034" class="text-xs bg-slate-900 text-amber-400 px-3 py-1.5 rounded font-bold hover:bg-slate-800">काम स्वीकारें</a>
+                </div>
+              </div>`;
+          });
+        });
+    }
+
+    // ग्राहक के लिए मिस्त्री डायरेक्टरी (नंबर सुरक्षित)
+    function loadWorkersDirectory() {
+      const grid = document.getElementById("worker-directory-grid");
+      grid.innerHTML = "<p class='text-xs text-gray-400'>सत्यापित कारीगर लोड हो रहे हैं...</p>";
+
+      db.collection("workers").orderBy("createdAt", "desc").limit(25).get()
+        .then((snapshot) => {
+          if (snapshot.empty) {
+            grid.innerHTML = "<p class='text-xs text-gray-500'>अभी कोई कारीगर पंजीकृत नहीं है।</p>";
+            return;
+          }
+          grid.innerHTML = "";
+          snapshot.forEach((doc) => {
+            const w = doc.data();
+            const photo = w.photoUrl || "https://placehold.co/100x100?text=Mistri";
+            grid.innerHTML += `
+              <div class="bg-white rounded-xl border border-gray-200 p-5 shadow-sm hover:shadow-md transition">
+                <div class="flex items-center space-x-3">
+                  <img src="${photo}" class="w-14 h-14 rounded-full object-cover border-2 border-amber-400" alt="कारीगर">
+                  <div>
+                    <h4 class="font-bold text-gray-900">${w.name}</h4>
+                    <p class="text-xs text-amber-600 font-bold">${w.skill}</p>
+                    <span class="inline-block mt-1 bg-emerald-50 text-emerald-700 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                      <i class="fa-solid fa-circle-check text-emerald-500 mr-1"></i> MistryBabu Verified
+                    </span>
+                  </div>
+                </div>
+                <div class="mt-4 text-xs text-gray-600 space-y-1">
+                  <p><i class="fa-solid fa-location-dot mr-1 text-gray-400"></i> ${w.district}, ${w.block || ''}</p>
+                  <p><i class="fa-solid fa-business-time mr-1 text-gray-400"></i> अनुभव: ${w.experience} वर्ष</p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between">
+                  <span class="text-[11px] text-gray-400"><i class="fa-solid fa-lock mr-1"></i> नंबर सुरक्षित</span>
+                  <a href="tel:+919199362034" class="bg-amber-500 hover:bg-amber-600 text-slate-900 px-3 py-1.5 rounded-lg text-xs font-bold shadow flex items-center space-x-1">
+                    <i class="fa-solid fa-phone"></i>
+                    <span>मिस्त्री बुक करें</span>
+                  </a>
+                </div>
+              </div>`;
+          });
+        });
     }
   </script>
 </body>
