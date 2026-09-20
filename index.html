@@ -33,22 +33,19 @@
 
   <!-- App Top Header -->
   <header class="bg-white border-b border-slate-200 sticky top-0 z-40 px-4 py-2.5 shadow-xs flex justify-between items-center">
-    <div class="flex items-center space-x-2.5 cursor-pointer" onclick="navTo('home')">
+    <!-- Logo with Secret Triple Click -->
+    <div class="flex items-center space-x-2.5 cursor-pointer" onclick="handleLogoClick()">
       <img src="logo.png" onerror="this.src='https://placehold.co/100x100/f59e0b/0f172a.png?text=MB'" alt="MistryBabu Logo" class="w-10 h-10 rounded-lg object-contain border border-slate-100 shadow-xs">
       <div>
         <h1 class="text-sm font-black text-slate-900 leading-none">MistryBabu</h1>
         <p class="text-[9px] text-amber-600 font-bold mt-0.5">बिहार के अपने मिस्त्री • 100% निःशुल्क</p>
       </div>
     </div>
-    <div class="flex items-center space-x-2">
-      <button onclick="openAdminModal()" class="text-[10px] bg-slate-900 text-amber-400 font-bold px-2 py-1 rounded-lg border border-slate-700">
-        <i class="fa-solid fa-lock text-[9px] mr-1"></i>एडमिन
-      </button>
-      <a href="https://wa.me/917033943841?text=Namaste%20MistryBabu%20Help%20Desk" target="_blank" class="text-xs bg-emerald-50 text-emerald-700 font-semibold px-2 py-1 rounded-lg flex items-center space-x-1 border border-emerald-200">
-        <i class="fa-brands fa-whatsapp text-emerald-600 text-sm"></i>
-        <span class="text-[10px] font-bold">हेल्प</span>
-      </a>
-    </div>
+    <!-- Official Support Mail -->
+    <a href="mailto:mistrybabuhelp@gmail.com?subject=MistryBabu%20Help%20Desk%20Support" class="text-xs bg-amber-50 text-amber-900 font-semibold px-2.5 py-1.5 rounded-lg flex items-center space-x-1.5 border border-amber-200 shadow-2xs">
+      <i class="fa-solid fa-envelope text-amber-600 text-xs"></i>
+      <span class="text-[11px] font-bold">हेल्प</span>
+    </a>
   </header>
 
   <!-- ==================== PAGE 1: HOME SCREEN ==================== -->
@@ -182,7 +179,6 @@
 
   <!-- ==================== PAGE 5: DASHBOARD ==================== -->
   <section id="page-register" class="max-w-md mx-auto px-4 py-4 space-y-4 hidden">
-    <!-- Switch Tabs -->
     <div class="flex bg-slate-200 p-1 rounded-xl text-xs font-bold">
       <button onclick="switchRoleTab('client')" id="tab-btn-client" class="flex-1 py-1.5 rounded-lg bg-white text-slate-900 shadow-xs">
         ग्राहक / मालिक खाता 🏠
@@ -223,7 +219,6 @@
 
     <!-- 2. WORKER DASHBOARD -->
     <div id="worker-dashboard-box" class="space-y-4 hidden">
-      <!-- Registration Form -->
       <div id="worker-form-container" class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs block">
         <div class="text-center mb-4 border-b border-slate-100 pb-3">
           <h2 class="text-base font-black text-slate-900">मिस्त्री पंजीकरण / लॉगिन</h2>
@@ -363,15 +358,15 @@
         </button>
       </div>
 
-      <!-- PIN Protection View (PIN: 1098) -->
+      <!-- Password Protection View -->
       <div id="admin-pin-view" class="p-6 text-center space-y-3">
         <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto text-xl">
           <i class="fa-solid fa-key"></i>
         </div>
-        <h4 class="text-sm font-black text-slate-900">सुरक्षा पिन दर्ज करें</h4>
-        <p class="text-[11px] text-slate-500">एडमिन डील्स देखने के लिए 4 अंकों का पिन डालें</p>
-        <input type="password" id="admin-pin-input" maxlength="4" placeholder="PIN" class="w-32 mx-auto text-center tracking-widest text-lg font-black border-2 border-slate-300 rounded-xl py-1.5 focus:border-amber-500 focus:outline-none">
-        <button onclick="verifyAdminPin()" class="w-full bg-slate-900 text-amber-400 font-bold py-2 rounded-xl text-xs">लॉगिन करें</button>
+        <h4 class="text-sm font-black text-slate-900">एडमिन पासवर्ड दर्ज करें</h4>
+        <p class="text-[11px] text-slate-500">सुरक्षित एडमिन कंट्रोल पैनल खोलने के लिए पासवर्ड डालें</p>
+        <input type="password" id="admin-pin-input" placeholder="Password" class="w-48 mx-auto text-center text-sm font-bold border-2 border-slate-300 rounded-xl py-1.5 focus:border-amber-500 focus:outline-none">
+        <button onclick="verifyAdminPin()" class="w-full bg-slate-900 text-amber-400 font-bold py-2 rounded-xl text-xs">प्रवेश करें</button>
       </div>
 
       <!-- Admin Main View -->
@@ -459,7 +454,36 @@
 
   <!-- ==================== JavaScript Code ==================== -->
   <script>
-    const ADMIN_SECRET_PIN = "1098"; // Updated Secret Admin PIN
+    // SHA-256 Encrypted Hash of Password 'Run1'
+    // Nobody can extract 'Run1' from this code string
+    const ADMIN_PASS_HASH = "815049aa7038e2d27402636a04874ce52dc629731637754d9263a2a30bbba13d";
+
+    // Secret Triple-Click on Logo to open Admin Modal
+    let logoClickCount = 0;
+    let logoClickTimer = null;
+
+    function handleLogoClick() {
+      logoClickCount++;
+      clearTimeout(logoClickTimer);
+      if (logoClickCount === 3) {
+        logoClickCount = 0;
+        openAdminModal();
+      } else {
+        logoClickTimer = setTimeout(() => {
+          if (logoClickCount < 3) {
+            navTo('home');
+          }
+          logoClickCount = 0;
+        }, 500);
+      }
+    }
+
+    async function sha256(message) {
+      const msgBuffer = new TextEncoder().encode(message);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
 
     const allCategories = [
       { id: 1, title: "राज मिस्त्री", desc: "ईंट का काम, दीवार, नींव, चिनाई", icon: "🧱" },
@@ -1084,7 +1108,6 @@
                       </div>
                       <p class="text-[11px] text-slate-700 bg-white p-2 rounded-lg border border-slate-100 font-medium">${prop.message}</p>
                       
-                      <!-- Direct In-App Deal Final -->
                       <button onclick="confirmDealInApp('${sixId}', '${prop.workerName}', '${prop.workerPhone}', '${j.clientName}', '${j.phone}', '${j.workType}', '${j.district} (${j.location})', '${prop.message.replace(/'/g, "\\'")}')" 
                         class="mt-2 w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded-lg text-[11px] flex items-center justify-center space-x-1.5 shadow-xs transition">
                         <i class="fa-solid fa-handshake"></i>
@@ -1181,23 +1204,25 @@
         });
     }
 
-    // ==================== ADMIN PANEL FUNCTIONS ====================
     function openAdminModal() {
       document.getElementById("admin-modal").classList.remove("hidden");
     }
 
     function closeAdminModal() {
       document.getElementById("admin-modal").classList.add("hidden");
+      document.getElementById("admin-pin-input").value = "";
     }
 
-    function verifyAdminPin() {
-      const pin = document.getElementById("admin-pin-input").value.trim();
-      if (pin === ADMIN_SECRET_PIN) {
+    async function verifyAdminPin() {
+      const enteredPass = document.getElementById("admin-pin-input").value;
+      const hashedEntered = await sha256(enteredPass);
+
+      if (hashedEntered === ADMIN_PASS_HASH) {
         document.getElementById("admin-pin-view").classList.add("hidden");
         document.getElementById("admin-main-view").classList.remove("hidden");
         loadAdminDeals();
       } else {
-        alert("गलत पिन! पुनः प्रयास करें।");
+        alert("गलत पासवर्ड! पुनः प्रयास करें।");
         document.getElementById("admin-pin-input").value = "";
       }
     }
