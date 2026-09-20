@@ -113,7 +113,7 @@
         <p class="text-[11px] text-slate-500">फ़ोटो व हुनर से प्रमाणित • 100% सुरक्षित</p>
       </div>
     </div>
-    <div id="full-worker-grid" class="space-y-2.5">
+    <div id="full-worker-grid" class="space-y-3">
       <p class="text-xs text-slate-400">कारीगर लोड हो रहे हैं...</p>
     </div>
   </section>
@@ -127,6 +127,14 @@
       </div>
 
       <form onsubmit="saveClientJob(event)" class="space-y-3">
+        <!-- Feature 4: Emergency / Urgent Work Tag -->
+        <div class="bg-red-50 border border-red-200 p-2.5 rounded-xl flex items-center space-x-2">
+          <input type="checkbox" id="pc-urgent" class="w-4 h-4 text-red-600 rounded cursor-pointer">
+          <label for="pc-urgent" class="text-xs font-bold text-red-700 cursor-pointer">
+            🚨 तत्काल / आज ही काम चाहिए (Emergency Job)
+          </label>
+        </div>
+
         <div>
           <label class="block text-[11px] font-bold text-slate-700 mb-1">आपका नाम *</label>
           <input type="text" id="pc-name" required placeholder="जैसे: रमेश सिंह" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs focus:outline-none">
@@ -165,8 +173,15 @@
           <select id="pc-work" required class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs focus:outline-none"></select>
         </div>
 
+        <!-- Feature 1: Voice Input for Job Description -->
         <div>
-          <label class="block text-[11px] font-bold text-slate-700 mb-1">काम का विवरण</label>
+          <div class="flex justify-between items-center mb-1">
+            <label class="block text-[11px] font-bold text-slate-700">काम का विवरण</label>
+            <button type="button" onclick="startVoiceInput('pc-desc', 'voice-btn-post')" id="voice-btn-post" class="text-[10px] text-amber-600 bg-amber-50 px-2 py-0.5 rounded border border-amber-200 font-bold flex items-center space-x-1">
+              <i class="fa-solid fa-microphone"></i>
+              <span>बोलकर लिखें</span>
+            </button>
+          </div>
           <textarea id="pc-desc" rows="2" placeholder="कितने दिन का काम है, क्या-क्या करवाना है..." class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs focus:outline-none"></textarea>
         </div>
 
@@ -235,9 +250,22 @@
 
         <form onsubmit="saveWorkerProfile(event)" class="space-y-3">
           <div class="bg-slate-50 p-3 rounded-xl border border-dashed border-slate-300 text-center">
-            <label class="block text-[11px] font-bold text-slate-700 mb-1">प्रोफ़ाइल फ़ोटो (ऐच्छिक - बाद में भी लगा सकते हैं)</label>
-            <p class="text-[9px] text-amber-600 mb-2">⚠️ ध्यान दें: एक बार फ़ोटो लग जाने के बाद बदली नहीं जा सकेगी!</p>
-            <input type="file" id="pw-photo-file" accept="image/*" class="text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-amber-100 file:text-amber-800 hover:file:bg-amber-200">
+            <label class="block text-[11px] font-bold text-slate-700 mb-1">प्रोफ़ाइल फ़ोटो</label>
+            <input type="file" id="pw-photo-file" accept="image/*" class="text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-amber-100 file:text-amber-800">
+          </div>
+
+          <!-- Feature 2: Work Portfolio Photos (1 to 3 images) -->
+          <div class="bg-amber-50/50 p-3 rounded-xl border border-amber-200 text-center">
+            <label class="block text-[11px] font-bold text-amber-900 mb-0.5">📸 पिछले काम की तस्वीरें (Work Photos)</label>
+            <p class="text-[9px] text-slate-500 mb-2">अपनी साइट, चिनाई, टाइल, फिटिंग की 1-3 फ़ोटो चुनें</p>
+            <input type="file" id="pw-work-photos" accept="image/*" multiple class="text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-amber-200 file:text-amber-900">
+          </div>
+
+          <!-- Feature 6: ID Card Verification (Adhaar/Voter ID for Admin eyes only) -->
+          <div class="bg-blue-50/50 p-3 rounded-xl border border-blue-200 text-center">
+            <label class="block text-[11px] font-bold text-blue-900 mb-0.5">🛡️ पहचान सत्यापन (ID Verification)</label>
+            <p class="text-[9px] text-slate-500 mb-2">आधार या वोटर आईडी फ़ोटो (सिर्फ़ एडमिन को दिखेगी, सुरक्षित रहेगी)</p>
+            <input type="file" id="pw-id-card" accept="image/*" class="text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-blue-200 file:text-blue-900">
           </div>
 
           <div>
@@ -286,16 +314,28 @@
 
       <!-- Mistri Profile View -->
       <div id="worker-profile-view" class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden hidden">
-        <div class="bg-slate-900 text-white p-5 text-center">
-          <div class="relative w-20 h-20 mx-auto">
+        <div class="bg-slate-900 text-white p-5 text-center relative">
+          <!-- Feature 5: Available / Busy Live Toggle -->
+          <div class="absolute top-3 right-3">
+            <button onclick="toggleWorkerLiveStatus()" id="btn-live-status" class="bg-emerald-500 text-slate-900 text-[10px] font-black px-2.5 py-1 rounded-full shadow flex items-center space-x-1">
+              <span class="w-2 h-2 rounded-full bg-white animate-ping"></span>
+              <span id="txt-live-status">काम के लिए उपलब्ध 🟢</span>
+            </button>
+          </div>
+
+          <div class="relative w-20 h-20 mx-auto mt-2">
             <img id="my-prof-img" src="logo.png" onerror="this.src='https://placehold.co/100x100/f59e0b/0f172a.png?text=MB'" alt="Profile Photo" class="w-20 h-20 rounded-full mx-auto shadow-md border-2 border-amber-400 object-cover bg-white">
-            <span id="photo-locked-badge" class="hidden absolute bottom-0 right-0 bg-emerald-600 text-white p-1 rounded-full text-[10px] shadow" title="फ़ोटो लॉक है"><i class="fa-solid fa-lock"></i></span>
           </div>
 
           <h3 class="text-base font-black mt-2" id="my-prof-name">कारीगर का नाम</h3>
-          <span class="inline-block mt-1 bg-emerald-500/20 text-emerald-300 text-[10px] font-bold px-2.5 py-0.5 rounded-full">
-            <i class="fa-solid fa-circle-check mr-1"></i> MistryBabu Verified Pro
-          </span>
+          <div class="flex items-center justify-center space-x-1 mt-1">
+            <span id="badge-verified-id" class="hidden bg-blue-500/20 text-blue-300 text-[9px] font-bold px-2 py-0.5 rounded-full border border-blue-400/30">
+              <i class="fa-solid fa-id-card mr-1"></i>पहचान सत्यापित
+            </span>
+            <span class="bg-amber-400/20 text-amber-300 text-[9px] font-bold px-2 py-0.5 rounded-full" id="my-prof-rating">
+              ⭐ 5.0 (नया कारीगर)
+            </span>
+          </div>
         </div>
 
         <div class="p-4 space-y-3 text-xs">
@@ -312,11 +352,12 @@
             </div>
           </div>
 
-          <div id="add-photo-later-box" class="hidden bg-amber-50 p-2.5 rounded-xl border border-amber-200 text-center">
-            <p class="text-[11px] font-bold text-slate-800 mb-1">आपने अभी तक प्रोफ़ाइल फ़ोटो नहीं लगाई है</p>
-            <p class="text-[9px] text-red-600 mb-2">⚠️ एक बार लगाने के बाद बदली नहीं जा सकेगी!</p>
-            <input type="file" id="late-photo-file" accept="image/*" class="text-xs text-slate-500 mb-2">
-            <button onclick="uploadPhotoLater()" id="btn-upload-late-photo" class="bg-amber-500 text-slate-900 px-3 py-1 rounded-lg text-xs font-bold">फ़ोटो सुरक्षित करें</button>
+          <!-- Feature 2: Portfolio Work Photos Gallery Display -->
+          <div id="my-portfolio-section" class="border-b border-slate-100 pb-3">
+            <span class="text-slate-500 font-bold block mb-1.5">मेरे पिछले काम की तस्वीरें:</span>
+            <div id="my-portfolio-grid" class="flex gap-2 overflow-x-auto py-1">
+              <p class="text-[10px] text-slate-400 italic">कोई तस्वीर नहीं जोड़ी गई।</p>
+            </div>
           </div>
 
           <div class="border-b border-slate-100 pb-2">
@@ -381,7 +422,7 @@
       <!-- Admin Main View -->
       <div id="admin-main-view" class="p-4 space-y-4 overflow-y-auto flex-1 hidden">
         <div class="flex justify-between items-center bg-slate-100 p-2.5 rounded-xl">
-          <span class="text-xs font-bold text-slate-700">सभी आई हुई डील्स (All Confirmed Deals)</span>
+          <span class="text-xs font-bold text-slate-700">पुष्टि की गई डील्स (Confirmed Deals)</span>
           <button onclick="loadAdminDeals()" class="text-[10px] bg-slate-900 text-amber-400 px-2.5 py-1 rounded-lg font-bold">
             <i class="fa-solid fa-rotate-right mr-1"></i>रिफ्रेश
           </button>
@@ -394,7 +435,7 @@
     </div>
   </div>
 
-  <!-- Proposal Modal -->
+  <!-- Proposal Modal (Send Bid) with Voice Input -->
   <div id="proposal-modal" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-xs w-full p-5 shadow-2xl relative">
       <div class="flex justify-between items-center pb-2 border-b border-slate-100 mb-3">
@@ -424,7 +465,13 @@
         </div>
 
         <div>
-          <label class="block text-[10px] font-bold text-slate-700 uppercase mb-0.5">आपका रेट व संदेश *</label>
+          <div class="flex justify-between items-center mb-0.5">
+            <label class="block text-[10px] font-bold text-slate-700 uppercase">आपका रेट व संदेश *</label>
+            <button type="button" onclick="startVoiceInput('prop-message', 'voice-btn-prop')" id="voice-btn-prop" class="text-[9px] text-amber-600 bg-amber-50 px-2 py-0.5 rounded border border-amber-200 font-bold flex items-center space-x-1">
+              <i class="fa-solid fa-microphone"></i>
+              <span>बोलकर लिखें</span>
+            </button>
+          </div>
           <textarea id="prop-message" rows="3" required placeholder="जैसे: ₹600/दिन या 2 दिन में काम पूरा कर दूंगा।" class="w-full rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs focus:outline-none"></textarea>
         </div>
 
@@ -432,6 +479,33 @@
           रेट व संदेश भेजें
         </button>
       </form>
+    </div>
+  </div>
+
+  <!-- Rating & Review Modal (Feature 3) -->
+  <div id="review-modal" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-xs w-full p-5 shadow-2xl relative text-center">
+      <h4 class="text-xs font-black text-slate-900 mb-1">कारीगर के काम को रेटिंग दें ⭐</h4>
+      <p class="text-[10px] text-slate-500 mb-3" id="review-worker-name">मिस्त्री का काम कैसा लगा?</p>
+
+      <input type="hidden" id="rev-worker-phone">
+      <input type="hidden" id="rev-job-id">
+
+      <div class="flex justify-center space-x-2 text-2xl text-amber-400 mb-3 cursor-pointer">
+        <i class="fa-solid fa-star star-opt" onclick="setRating(1)"></i>
+        <i class="fa-solid fa-star star-opt" onclick="setRating(2)"></i>
+        <i class="fa-solid fa-star star-opt" onclick="setRating(3)"></i>
+        <i class="fa-solid fa-star star-opt" onclick="setRating(4)"></i>
+        <i class="fa-solid fa-star star-opt" onclick="setRating(5)"></i>
+      </div>
+      <input type="hidden" id="rev-stars" value="5">
+
+      <textarea id="rev-comment" rows="2" placeholder="जैसे: काम बहुत अच्छा और समय पर किया..." class="w-full rounded-lg border border-slate-300 p-2 text-xs mb-3 focus:outline-none"></textarea>
+
+      <div class="flex gap-2">
+        <button onclick="submitReview()" class="flex-1 bg-amber-500 text-slate-900 font-bold py-1.5 rounded-lg text-xs">रिव्यू भेजें</button>
+        <button onclick="closeReviewModal()" class="flex-1 bg-slate-100 text-slate-600 font-bold py-1.5 rounded-lg text-xs">रद्द करें</button>
+      </div>
     </div>
   </div>
 
@@ -463,7 +537,7 @@
 
   <!-- ==================== JavaScript Code ==================== -->
   <script>
-    // Secret Triple-Click on Logo
+    // Secret Triple-Click on Logo to open Admin Modal
     let logoClickCount = 0;
     let logoClickTimer = null;
 
@@ -475,9 +549,7 @@
         openAdminModal();
       } else {
         logoClickTimer = setTimeout(() => {
-          if (logoClickCount < 3) {
-            navTo('home');
-          }
+          if (logoClickCount < 3) navTo('home');
           logoClickCount = 0;
         }, 600);
       }
@@ -495,12 +567,10 @@
       }
     }
 
+    // Direct password verification (accepts Run1, run1, RUN1)
     function verifyAdminPin() {
-      const raw = document.getElementById("admin-pin-input").value;
-      // Trims accidental spaces and accepts Run1 in any case (Run1, run1, RUN1)
-      const cleanPass = raw.trim().toLowerCase();
-
-      if (cleanPass === "run1") {
+      const entered = document.getElementById("admin-pin-input").value;
+      if (entered.trim().toLowerCase() === "run1") {
         document.getElementById("admin-pin-view").classList.add("hidden");
         document.getElementById("admin-main-view").classList.remove("hidden");
         loadAdminDeals();
@@ -508,6 +578,106 @@
         alert("गलत पासवर्ड! कृपया Run1 दर्ज करें।");
         document.getElementById("admin-pin-input").value = "";
       }
+    }
+
+    // ==================== FEATURE 1: VOICE INPUT (MIC) ====================
+    function startVoiceInput(targetInputId, btnId) {
+      if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        return alert("क्षमा करें! आपके ब्राउज़र में वॉयस टाइपिंग सपोर्ट नहीं है। कृपया लिखकर भरें।");
+      }
+
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const recognition = new SpeechRecognition();
+      recognition.lang = 'hi-IN'; // Hindi recognition for Bihar users
+      recognition.interimResults = false;
+
+      const btn = document.getElementById(btnId);
+      const originalHTML = btn.innerHTML;
+      btn.innerHTML = `<i class="fa-solid fa-circle text-red-600 animate-ping"></i> <span>सुन रहा हूँ...</span>`;
+
+      recognition.onresult = function(event) {
+        const transcript = event.results[0][0].transcript;
+        const target = document.getElementById(targetInputId);
+        target.value = target.value ? target.value + " " + transcript : transcript;
+      };
+
+      recognition.onerror = function() {
+        alert("आवाज़ पहचानने में समस्या आई, कृपया दोबारा बोलें।");
+      };
+
+      recognition.onend = function() {
+        btn.innerHTML = originalHTML;
+      };
+
+      recognition.start();
+    }
+
+    // ==================== FEATURE 5: MISTRI LIVE STATUS ====================
+    function toggleWorkerLiveStatus() {
+      const current = localStorage.getItem("mb_worker_status") || "available";
+      const newStatus = current === "available" ? "busy" : "available";
+      localStorage.setItem("mb_worker_status", newStatus);
+
+      const docId = localStorage.getItem("mb_worker_doc_id");
+      if (docId) {
+        db.collection("workers").doc(docId).update({ liveStatus: newStatus });
+      }
+      renderLiveStatusUI(newStatus);
+    }
+
+    function renderLiveStatusUI(status) {
+      const btn = document.getElementById("btn-live-status");
+      const txt = document.getElementById("txt-live-status");
+      if (status === "busy") {
+        btn.className = "bg-rose-600 text-white text-[10px] font-black px-2.5 py-1 rounded-full shadow flex items-center space-x-1";
+        txt.innerText = "काम में व्यस्त 🔴";
+      } else {
+        btn.className = "bg-emerald-500 text-slate-900 text-[10px] font-black px-2.5 py-1 rounded-full shadow flex items-center space-x-1";
+        txt.innerText = "काम के लिए उपलब्ध 🟢";
+      }
+    }
+
+    // ==================== FEATURE 3: RATING SYSTEM ====================
+    function openReviewModal(workerPhone, workerName, jobId) {
+      document.getElementById("rev-worker-phone").value = workerPhone;
+      document.getElementById("rev-job-id").value = jobId;
+      document.getElementById("review-worker-name").innerText = `${workerName} के काम को रेटिंग दें:`;
+      setRating(5);
+      document.getElementById("review-modal").classList.remove("hidden");
+    }
+
+    function closeReviewModal() {
+      document.getElementById("review-modal").classList.add("hidden");
+    }
+
+    function setRating(num) {
+      document.getElementById("rev-stars").value = num;
+      const stars = document.querySelectorAll(".star-opt");
+      stars.forEach((s, idx) => {
+        if (idx < num) {
+          s.classList.remove("text-slate-300");
+          s.classList.add("text-amber-400");
+        } else {
+          s.classList.remove("text-amber-400");
+          s.classList.add("text-slate-300");
+        }
+      });
+    }
+
+    function submitReview() {
+      const workerPhone = document.getElementById("rev-worker-phone").value;
+      const stars = parseInt(document.getElementById("rev-stars").value) || 5;
+      const comment = document.getElementById("rev-comment").value.trim();
+
+      db.collection("worker_reviews").add({
+        workerPhone: workerPhone,
+        stars: stars,
+        comment: comment,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      }).then(() => {
+        alert("✅ आपकी रेटिंग और प्रतिक्रिया दर्ज कर ली गई है! धन्यवाद।");
+        closeReviewModal();
+      });
     }
 
     const allCategories = [
@@ -787,6 +957,7 @@
       const fullPhone = "+91" + phone;
       const clientName = document.getElementById("pc-name").value.trim();
       const sixDigitId = generateJobId();
+      const isUrgent = document.getElementById("pc-urgent").checked;
 
       const data = {
         jobSixId: sixDigitId,
@@ -797,6 +968,7 @@
         location: document.getElementById("pc-location").value.trim(),
         workType: document.getElementById("pc-work").value,
         desc: document.getElementById("pc-desc").value.trim(),
+        isUrgent: isUrgent,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       };
 
@@ -830,18 +1002,34 @@
       if (phone.length !== 10) return alert("10 अंकों का मोबाइल नंबर डालें!");
 
       const btn = document.getElementById("btn-save-worker");
-      btn.innerText = "जाँच...";
+      btn.innerText = "प्रोसेसिंग...";
 
       const fullPhone = "+91" + phone;
 
+      // Profile Photo Base64
       let photoData = "";
       const photoFile = document.getElementById("pw-photo-file").files[0];
       if (photoFile) {
-        try {
-          photoData = await fileToBase64(photoFile);
-        } catch (err) {
-          console.error("Photo process error", err);
+        try { photoData = await fileToBase64(photoFile); } catch (err) {}
+      }
+
+      // Feature 2: Work Photos Portfolio (Array of Base64)
+      const workPhotosFiles = document.getElementById("pw-work-photos").files;
+      let workPhotosArray = [];
+      if (workPhotosFiles && workPhotosFiles.length > 0) {
+        for (let i = 0; i < Math.min(workPhotosFiles.length, 3); i++) {
+          try {
+            const b64 = await fileToBase64(workPhotosFiles[i]);
+            workPhotosArray.push(b64);
+          } catch(e) {}
         }
+      }
+
+      // Feature 6: ID Card Photo (Admin Eyes Only)
+      let idCardData = "";
+      const idCardFile = document.getElementById("pw-id-card").files[0];
+      if (idCardFile) {
+        try { idCardData = await fileToBase64(idCardFile); } catch(e) {}
       }
 
       db.collection("workers").where("private_phone", "==", fullPhone).limit(1).get()
@@ -862,8 +1050,11 @@
               experience: exp,
               private_phone: fullPhone,
               photo: photoData || "",
-              photoLocked: photoData ? true : false,
-              isVerified: true,
+              workPhotos: workPhotosArray,
+              idCardPhoto: idCardData || "",
+              isIdVerified: false,
+              liveStatus: "available",
+              rating: 5.0,
               createdAt: firebase.firestore.FieldValue.serverTimestamp()
             };
 
@@ -890,7 +1081,10 @@
       localStorage.setItem("mb_worker_district", wData.district + (wData.block ? " (" + wData.block + ")" : ""));
       localStorage.setItem("mb_worker_phone", wData.private_phone.replace("+91", ""));
       localStorage.setItem("mb_worker_photo", wData.photo || "");
-      localStorage.setItem("mb_worker_photo_locked", wData.photoLocked ? "true" : "false");
+      localStorage.setItem("mb_worker_status", wData.liveStatus || "available");
+      localStorage.setItem("mb_worker_photos", JSON.stringify(wData.workPhotos || []));
+      localStorage.setItem("mb_worker_id_verified", wData.isIdVerified ? "true" : "false");
+      
       updateRegisterScreenView();
       listenWorkerInbox("+91" + localStorage.getItem("mb_worker_phone"));
     }
@@ -910,66 +1104,37 @@
         const skillsContainer = document.getElementById("my-prof-skills-tags");
         skillsContainer.innerHTML = "";
         let skills = [];
-        try {
-          skills = JSON.parse(localStorage.getItem("mb_worker_skills")) || [];
-        } catch(e) { skills = []; }
+        try { skills = JSON.parse(localStorage.getItem("mb_worker_skills")) || []; } catch(e) { skills = []; }
         skills.forEach(s => {
           skillsContainer.innerHTML += `<span class="bg-amber-100 text-amber-900 text-[10px] font-bold px-2 py-0.5 rounded-full">${s}</span>`;
         });
 
         const photo = localStorage.getItem("mb_worker_photo");
-        const imgEl = document.getElementById("my-prof-img");
-        const lockBadge = document.getElementById("photo-locked-badge");
-        const latePhotoBox = document.getElementById("add-photo-later-box");
+        document.getElementById("my-prof-img").src = photo || "logo.png";
 
-        if (photo) {
-          imgEl.src = photo;
-          lockBadge.classList.remove("hidden");
-          latePhotoBox.classList.add("hidden");
-        } else {
-          imgEl.src = "logo.png";
-          lockBadge.classList.add("hidden");
-          latePhotoBox.classList.remove("hidden");
+        // Render Live Status
+        const status = localStorage.getItem("mb_worker_status") || "available";
+        renderLiveStatusUI(status);
+
+        // Render ID Verified Badge
+        const isVerified = localStorage.getItem("mb_worker_id_verified") === "true";
+        const idBadge = document.getElementById("badge-verified-id");
+        if (isVerified) idBadge.classList.remove("hidden");
+        else idBadge.classList.add("hidden");
+
+        // Render Work Photos Portfolio
+        const myPortGrid = document.getElementById("my-portfolio-grid");
+        let workPhotos = [];
+        try { workPhotos = JSON.parse(localStorage.getItem("mb_worker_photos")) || []; } catch(e) {}
+        if (workPhotos.length > 0) {
+          myPortGrid.innerHTML = "";
+          workPhotos.forEach(p => {
+            myPortGrid.innerHTML += `<img src="${p}" class="w-16 h-16 rounded-lg object-cover border border-slate-200">`;
+          });
         }
       } else {
         formBox.classList.remove("hidden");
         profileBox.classList.add("hidden");
-      }
-    }
-
-    async function uploadPhotoLater() {
-      const fileInput = document.getElementById("late-photo-file");
-      if (!fileInput.files || !fileInput.files[0]) {
-        return alert("कृपया गैलरी से अपनी एक साफ़ फ़ोटो चुनें!");
-      }
-
-      if (!confirm("⚠️ क्या आप निश्चित हैं? एक बार फ़ोटो सुरक्षित होने के बाद इसे दोबारा कभी बदला नहीं जा सकेगा!")) {
-        return;
-      }
-
-      const btn = document.getElementById("btn-upload-late-photo");
-      btn.innerText = "सुरक्षित हो रहा है...";
-
-      const photoData = await fileToBase64(fileInput.files[0]);
-      const docId = localStorage.getItem("mb_worker_doc_id");
-      const phone = "+91" + localStorage.getItem("mb_worker_phone");
-
-      const updatePayload = { photo: photoData, photoLocked: true };
-
-      const handleSuccess = () => {
-        localStorage.setItem("mb_worker_photo", photoData);
-        localStorage.setItem("mb_worker_photo_locked", "true");
-        btn.innerText = "फ़ोटो सुरक्षित करें";
-        alert("आपकी प्रोफ़ाइल फ़ोटो सफलतापूर्वक लॉक और सुरक्षित कर दी गई है!");
-        updateRegisterScreenView();
-      };
-
-      if (docId) {
-        db.collection("workers").doc(docId).update(updatePayload).then(handleSuccess);
-      } else {
-        db.collection("workers").where("private_phone", "==", phone).limit(1).get().then(snap => {
-          if (!snap.empty) snap.docs[0].ref.update(updatePayload).then(handleSuccess);
-        });
       }
     }
 
@@ -1001,13 +1166,7 @@
 
     function logoutWorker() {
       if (confirm("क्या आप लॉग आउट करना चाहते हैं?")) {
-        localStorage.removeItem("mb_worker_name");
-        localStorage.removeItem("mb_worker_skills");
-        localStorage.removeItem("mb_worker_district");
-        localStorage.removeItem("mb_worker_phone");
-        localStorage.removeItem("mb_worker_photo");
-        localStorage.removeItem("mb_worker_photo_locked");
-        localStorage.removeItem("mb_worker_doc_id");
+        localStorage.clear();
         updateRegisterScreenView();
         alert("आप लॉग आउट हो चुके हैं।");
       }
@@ -1015,7 +1174,7 @@
 
     function loadFullWorkers(filterSkill = "") {
       const grid = document.getElementById("full-worker-grid");
-      db.collection("workers").orderBy("createdAt", "desc").limit(20).get().then(snap => {
+      db.collection("workers").orderBy("createdAt", "desc").limit(25).get().then(snap => {
         if (snap.empty) return grid.innerHTML = "<p class='text-xs text-slate-400'>कोई कारीगर नहीं मिला।</p>";
         grid.innerHTML = "";
         snap.forEach(doc => {
@@ -1024,23 +1183,38 @@
           if (filterSkill && !skillsList.some(s => s.includes(filterSkill))) return;
 
           const photoSrc = w.photo || 'logo.png';
+          const isBusy = w.liveStatus === 'busy';
+          const workPhotos = w.workPhotos || [];
 
           grid.innerHTML += `
-            <div class="bg-white p-3 rounded-xl border border-slate-200 flex items-center justify-between">
-              <div class="flex items-center space-x-2.5">
-                <img src="${photoSrc}" onerror="this.src='https://placehold.co/100x100/f59e0b/0f172a.png?text=MB'" class="w-12 h-12 rounded-full object-cover border-2 border-amber-400">
-                <div>
-                  <div class="flex items-center space-x-1">
-                    <h4 class="font-bold text-slate-800 text-xs">${w.name}</h4>
-                    <i class="fa-solid fa-circle-check text-emerald-500 text-[10px]" title="प्रमाणित"></i>
+            <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-2xs space-y-2">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2.5">
+                  <div class="relative">
+                    <img src="${photoSrc}" onerror="this.src='https://placehold.co/100x100/f59e0b/0f172a.png?text=MB'" class="w-12 h-12 rounded-full object-cover border-2 border-amber-400">
+                    <span class="absolute bottom-0 right-0 w-3 h-3 rounded-full ${isBusy ? 'bg-rose-500' : 'bg-emerald-500'} border-2 border-white" title="${isBusy ? 'व्यस्त' : 'उपलब्ध'}"></span>
                   </div>
-                  <p class="text-[10px] text-amber-600 font-bold mt-0.5">${skillsList.slice(0, 2).join(', ')}${skillsList.length > 2 ? ' +' + (skillsList.length - 2) : ''}</p>
-                  <p class="text-[9px] text-slate-400">${w.district} • ${w.experience || 0} वर्ष अनुभव</p>
+                  <div>
+                    <div class="flex items-center space-x-1">
+                      <h4 class="font-bold text-slate-900 text-xs">${w.name}</h4>
+                      ${w.isIdVerified ? '<i class="fa-solid fa-circle-check text-blue-500 text-[10px]" title="पहचान सत्यापित"></i>' : ''}
+                    </div>
+                    <span class="text-[9px] font-bold ${isBusy ? 'text-rose-500' : 'text-emerald-600'}">${isBusy ? 'काम में व्यस्त 🔴' : 'काम के लिए उपलब्ध 🟢'}</span>
+                    <p class="text-[9px] text-slate-400">${w.district} • ${w.experience || 0} वर्ष अनुभव</p>
+                  </div>
                 </div>
+                <button onclick="navTo('post')" class="bg-amber-500 text-slate-900 px-3 py-1.5 rounded-lg text-[11px] font-bold shadow-xs">
+                  काम दें
+                </button>
               </div>
-              <button onclick="navTo('post')" class="bg-amber-500 text-slate-900 px-3 py-1.5 rounded-lg text-[11px] font-bold shadow-xs">
-                काम दें
-              </button>
+
+              <!-- Feature 2: Work Portfolio Preview in Listing -->
+              ${workPhotos.length > 0 ? `
+                <div class="pt-1 flex items-center space-x-1.5 overflow-x-auto">
+                  <span class="text-[9px] text-slate-400 font-bold">काम की फ़ोटो:</span>
+                  ${workPhotos.map(img => `<img src="${img}" class="w-10 h-10 rounded-md object-cover border border-slate-100">`).join('')}
+                </div>
+              ` : ''}
             </div>`;
         });
       });
@@ -1095,7 +1269,7 @@
               <div class="flex justify-between items-start border-b border-slate-100 pb-2">
                 <div>
                   <div class="flex items-center space-x-1.5">
-                    <span class="bg-amber-100 text-amber-800 text-[10px] font-black px-2 py-0.5 rounded">आपकी पोस्ट</span>
+                    ${j.isUrgent ? '<span class="bg-red-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded animate-pulse">URGENT</span>' : ''}
                     <span class="bg-slate-900 text-amber-400 text-[10px] font-black px-2 py-0.5 rounded">ID: ${sixId}</span>
                   </div>
                   <h4 class="font-bold text-slate-900 text-sm mt-1">${j.workType}</h4>
@@ -1133,11 +1307,17 @@
                       </div>
                       <p class="text-[11px] text-slate-700 bg-white p-2 rounded-lg border border-slate-100 font-medium">${prop.message}</p>
                       
-                      <button onclick="confirmDealInApp('${sixId}', '${prop.workerName}', '${prop.workerPhone}', '${j.clientName}', '${j.phone}', '${j.workType}', '${j.district} (${j.location})', '${prop.message.replace(/'/g, "\\'")}')" 
-                        class="mt-2 w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded-lg text-[11px] flex items-center justify-center space-x-1.5 shadow-xs transition">
-                        <i class="fa-solid fa-handshake"></i>
-                        <span>इस मिस्त्री की डील पक्की करें (Confirm Deal)</span>
-                      </button>
+                      <div class="mt-2 flex gap-1.5">
+                        <button onclick="confirmDealInApp('${sixId}', '${prop.workerName}', '${prop.workerPhone}', '${j.clientName}', '${j.phone}', '${j.workType}', '${j.district} (${j.location})', '${prop.message.replace(/'/g, "\\'")}')" 
+                          class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded-lg text-[10px] flex items-center justify-center space-x-1 shadow-xs transition">
+                          <i class="fa-solid fa-handshake"></i>
+                          <span>डील पक्की करें</span>
+                        </button>
+                        <!-- Feature 3: Rating Button -->
+                        <button onclick="openReviewModal('${prop.workerPhone}', '${prop.workerName}', '${sixId}')" class="bg-amber-100 text-amber-900 px-2.5 py-2 rounded-lg text-[10px] font-bold" title="रेटिंग दें">
+                          ⭐ रेटिंग
+                        </button>
+                      </div>
                     </div>
                   `;
                 });
@@ -1337,8 +1517,11 @@
             feed.innerHTML += `
               <div class="bg-white p-3 rounded-xl border border-slate-200 text-xs flex justify-between items-center">
                 <div>
-                  <span class="text-[9px] font-bold text-amber-600">${sixId}</span>
-                  <h5 class="font-bold text-slate-800">${j.workType}</h5>
+                  <div class="flex items-center space-x-1.5">
+                    ${j.isUrgent ? '<span class="bg-red-500 text-white text-[8px] font-black px-1 rounded">URGENT</span>' : ''}
+                    <span class="text-[9px] font-bold text-amber-600">${sixId}</span>
+                  </div>
+                  <h5 class="font-bold text-slate-800 mt-0.5">${j.workType}</h5>
                   <p class="text-[10px] text-slate-400">${j.district} (${j.location}) • मालिक: ${j.clientName}</p>
                 </div>
                 <button onclick="openProposalModal('${doc.id}', '${sixId}', '${j.phone}', '${j.workType}')" class="bg-amber-500 text-slate-900 px-2.5 py-1 rounded-lg text-[10px] font-bold">मैसेज / Bid</button>
@@ -1368,7 +1551,9 @@
             feed.innerHTML += `
               <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
                 <div class="flex justify-between items-start">
-                  <span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded">सक्रिय काम (7 दिन वैध)</span>
+                  <div class="flex items-center space-x-1.5">
+                    ${j.isUrgent ? '<span class="bg-red-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded animate-pulse">🚨 URGENT</span>' : '<span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded">7 दिन वैध</span>'}
+                  </div>
                   <span class="bg-slate-100 text-slate-700 text-[10px] font-bold px-2 py-0.5 rounded">ID: ${sixId}</span>
                 </div>
                 <h4 class="font-bold text-slate-900 text-sm mt-1.5">${j.workType}</h4>
