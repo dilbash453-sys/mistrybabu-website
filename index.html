@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>MistryBabu.com - पूरे बिहार के मिस्त्री और लेबर ऑनलाइन</title>
+  <title>MistryBabu.com - poore Bihar ke Mistri aur Labour Online</title>
   
   <link rel="icon" type="image/png" href="logo.png">
   <link rel="manifest" href="manifest.json">
@@ -24,28 +24,31 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 </head>
-<body class="bg-slate-100 text-slate-800 font-sans pb-24 select-none">
+<body class="bg-slate-100 text-slate-800 font-sans pb-28 select-none">
 
   <!-- Live Notice Bar -->
   <div id="notice-bar" class="hidden bg-amber-500 text-slate-900 py-1.5 px-4 text-center text-xs font-bold sticky top-0 z-50 shadow-sm">
-    <span id="notice-text">सूचना लोड हो रही है...</span>
+    <span id="notice-text">Soochna load ho rahi hai...</span>
   </div>
 
   <!-- App Top Header -->
   <header class="bg-white border-b border-slate-200 sticky top-0 z-40 px-4 py-2.5 shadow-xs flex justify-between items-center">
-    <!-- Logo with Secret Triple Click -->
     <div class="flex items-center space-x-2.5 cursor-pointer" onclick="handleLogoClick()">
       <img src="logo.png" onerror="this.src='https://placehold.co/100x100/f59e0b/0f172a.png?text=MB'" alt="MistryBabu Logo" class="w-10 h-10 rounded-lg object-contain border border-slate-100 shadow-xs">
       <div>
         <h1 class="text-sm font-black text-slate-900 leading-none">MistryBabu</h1>
-        <p class="text-[9px] text-amber-600 font-bold mt-0.5">बिहार के अपने मिस्त्री • 100% निःशुल्क</p>
+        <p class="text-[9px] text-amber-600 font-bold mt-0.5">Bihar ke Apne Mistri • 100% Nishulk</p>
       </div>
     </div>
-    <!-- Official Support Mail -->
-    <a href="mailto:mistrybabuhelp@gmail.com?subject=MistryBabu%20Help%20Desk%20Support" class="text-xs bg-amber-50 text-amber-900 font-semibold px-2.5 py-1.5 rounded-lg flex items-center space-x-1.5 border border-amber-200 shadow-2xs">
-      <i class="fa-solid fa-envelope text-amber-600 text-xs"></i>
-      <span class="text-[11px] font-bold">हेल्प</span>
-    </a>
+    <div class="flex items-center space-x-2">
+      <button onclick="openTermsModal()" class="text-[11px] font-bold text-slate-600 bg-slate-100 px-2 py-1 rounded-lg border border-slate-200">
+        Niyam
+      </button>
+      <a href="mailto:mistrybabuhelp@gmail.com?subject=MistryBabu%20Support" class="text-xs bg-amber-50 text-amber-900 font-semibold px-2 py-1 rounded-lg flex items-center space-x-1 border border-amber-200">
+        <i class="fa-solid fa-envelope text-amber-600 text-xs"></i>
+        <span class="text-[11px] font-bold">Help</span>
+      </a>
+    </div>
   </header>
 
   <!-- ==================== PAGE 1: HOME SCREEN ==================== -->
@@ -53,41 +56,41 @@
     <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-xs flex items-center space-x-2">
       <i class="fa-solid fa-location-dot text-amber-500 text-base"></i>
       <div class="flex-1">
-        <span class="text-[9px] text-slate-400 font-bold block uppercase">ज़िला चुनें</span>
+        <span class="text-[9px] text-slate-400 font-bold block uppercase">Zila Chunein</span>
         <select id="home-district-filter" onchange="filterByDistrict()" class="w-full text-xs font-bold text-slate-800 bg-transparent border-none outline-none cursor-pointer">
-          <option value="">बिहार के सभी 38 ज़िले</option>
+          <option value="">Bihar ke sabhi 38 Zile</option>
         </select>
       </div>
     </div>
 
     <div class="bg-gradient-to-r from-slate-900 to-slate-800 text-white p-4 rounded-2xl shadow-sm">
-      <span class="bg-emerald-500 text-slate-900 text-[10px] font-black px-2 py-0.5 rounded-md uppercase">100% मुफ़्त सेवा</span>
-      <h3 class="text-lg font-black mt-2 leading-snug">मिस्त्री खोजें या सीधा काम पाएं</h3>
-      <p class="text-xs text-slate-300 mt-1">30 मुख्य कैटेगरी के कुशल कारीगर। किसी से ₹1 कमीशन नहीं।</p>
+      <span class="bg-emerald-500 text-slate-900 text-[10px] font-black px-2 py-0.5 rounded-md uppercase">100% Nishulk Seva</span>
+      <h3 class="text-lg font-black mt-2 leading-snug">Mistri Khojein ya Seedha Kaam Paayein</h3>
+      <p class="text-xs text-slate-300 mt-1">30 mukhya category ke karigar. Kisi se 0% commission.</p>
       <div class="mt-3 flex space-x-2">
-        <button onclick="navTo('post')" class="bg-amber-500 text-slate-900 text-xs font-bold px-3 py-1.5 rounded-lg shadow-xs">काम पोस्ट करें</button>
-        <button onclick="navTo('register'); switchRoleTab('worker');" class="bg-slate-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg">मिस्त्री जुड़ें</button>
+        <button onclick="navTo('post')" class="bg-amber-500 text-slate-900 text-xs font-bold px-3 py-1.5 rounded-lg shadow-xs">Kaam Post Karein</button>
+        <button onclick="navTo('register'); switchRoleTab('worker');" class="bg-slate-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg">Mistri Judein</button>
       </div>
     </div>
 
     <div>
       <div class="flex justify-between items-center mb-2.5">
         <div>
-          <h3 class="text-xs font-black text-slate-900 uppercase tracking-wide">मुख्य सेवाएं (Categories)</h3>
-          <p class="text-[10px] text-slate-500">ज़रूरत अनुसार मिस्त्री चुनें</p>
+          <h3 class="text-xs font-black text-slate-900 uppercase tracking-wide">Mukhya Sevaayein (Categories)</h3>
+          <p class="text-[10px] text-slate-500">Zarurat anusaar mistri chunein</p>
         </div>
-        <span class="text-[10px] bg-amber-100 text-amber-900 font-bold px-2 py-0.5 rounded-full">30 श्रेणियां</span>
+        <span class="text-[10px] bg-amber-100 text-amber-900 font-bold px-2 py-0.5 rounded-full">30 Categories</span>
       </div>
       <div id="home-categories-grid" class="grid grid-cols-3 gap-2"></div>
     </div>
 
     <div>
       <div class="flex justify-between items-center mb-2">
-        <h3 class="text-xs font-black text-slate-900 uppercase tracking-wide">ताज़ा काम (वैधता: 7 दिन)</h3>
-        <button onclick="navTo('jobs')" class="text-[11px] font-bold text-amber-600">सभी देखें →</button>
+        <h3 class="text-xs font-black text-slate-900 uppercase tracking-wide">Taaza Kaam (7 Din Vaidh)</h3>
+        <button onclick="navTo('jobs')" class="text-[11px] font-bold text-amber-600">Sabhi Dekhein →</button>
       </div>
       <div id="home-recent-jobs" class="space-y-2">
-        <p class="text-xs text-slate-400">काम लोड हो रहे हैं...</p>
+        <p class="text-xs text-slate-400">Kaam load ho rahe hain...</p>
       </div>
     </div>
   </section>
@@ -96,12 +99,12 @@
   <section id="page-jobs" class="max-w-md mx-auto px-4 py-4 space-y-4 hidden">
     <div class="flex justify-between items-center border-b border-slate-200 pb-2">
       <div>
-        <h2 class="text-base font-black text-slate-900">उपलब्ध काम (Job Feed)</h2>
-        <p class="text-[11px] text-slate-500">मिस्त्री यहाँ से सीधे इन-ऐप रेट व संदेश भेजें</p>
+        <h2 class="text-base font-black text-slate-900">Uplabdh Kaam (Job Feed)</h2>
+        <p class="text-[11px] text-slate-500">Mistri yahan se seedhe in-app rate va sandesh bhejein</p>
       </div>
     </div>
     <div id="full-job-feed" class="space-y-3">
-      <p class="text-xs text-slate-400">काम लोड हो रहे हैं...</p>
+      <p class="text-xs text-slate-400">Kaam load ho rahe hain...</p>
     </div>
   </section>
 
@@ -109,12 +112,12 @@
   <section id="page-workers" class="max-w-md mx-auto px-4 py-4 space-y-4 hidden">
     <div class="flex justify-between items-center border-b border-slate-200 pb-2">
       <div>
-        <h2 class="text-base font-black text-slate-900">सत्यापित कारीगर (Verified Pros)</h2>
-        <p class="text-[11px] text-slate-500">फ़ोटो व हुनर से प्रमाणित • 100% सुरक्षित</p>
+        <h2 class="text-base font-black text-slate-900">Satyaapit Karigar (Verified Pros)</h2>
+        <p class="text-[11px] text-slate-500">Photo va hunar se pramanit • 100% surakshit</p>
       </div>
     </div>
     <div id="full-worker-grid" class="space-y-3">
-      <p class="text-xs text-slate-400">कारीगर लोड हो रहे हैं...</p>
+      <p class="text-xs text-slate-400">Karigar load ho rahe hain...</p>
     </div>
   </section>
 
@@ -122,71 +125,104 @@
   <section id="page-post" class="max-w-md mx-auto px-4 py-4 hidden">
     <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
       <div class="text-center mb-4 border-b border-slate-100 pb-3">
-        <h2 class="text-base font-black text-slate-900">काम पोस्ट करें (ग्राहक / मालिक)</h2>
-        <p class="text-[11px] text-slate-500">यह काम 7 दिन तक लाइव रहेगा</p>
+        <h2 class="text-base font-black text-slate-900">Kaam Post Karein (Grahak / Malik)</h2>
+        <p class="text-[11px] text-slate-500">Yeh kaam 7 dino tak live rahega</p>
       </div>
 
       <form onsubmit="saveClientJob(event)" class="space-y-3">
-        <!-- Feature 4: Emergency / Urgent Work Tag -->
+        <!-- Emergency Urgent Work -->
         <div class="bg-red-50 border border-red-200 p-2.5 rounded-xl flex items-center space-x-2">
           <input type="checkbox" id="pc-urgent" class="w-4 h-4 text-red-600 rounded cursor-pointer">
           <label for="pc-urgent" class="text-xs font-bold text-red-700 cursor-pointer">
-            🚨 तत्काल / आज ही काम चाहिए (Emergency Job)
+            🚨 Tatkal / Aaj hi kaam chahiye (Emergency)
           </label>
         </div>
 
         <div>
-          <label class="block text-[11px] font-bold text-slate-700 mb-1">आपका नाम *</label>
-          <input type="text" id="pc-name" required placeholder="जैसे: रमेश सिंह" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs focus:outline-none">
+          <label class="block text-[11px] font-bold text-slate-700 mb-1">Aapka Naam *</label>
+          <input type="text" id="pc-name" required placeholder="Jaise: Ramesh Kumar" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs focus:outline-none">
         </div>
 
         <div>
-          <label class="block text-[11px] font-bold text-slate-700 mb-1">मोबाइल नंबर (गोपनीय रहेगा) *</label>
+          <label class="block text-[11px] font-bold text-slate-700 mb-1">Mobile Number (Gopniya Rahega) *</label>
           <div class="flex">
             <span class="inline-flex items-center px-2.5 rounded-l-lg border border-r-0 border-slate-300 bg-slate-100 text-slate-600 text-xs font-bold">+91</span>
-            <input type="tel" id="pc-phone" required maxlength="10" placeholder="10 अंकों का नंबर" class="flex-1 block w-full rounded-r-lg border border-slate-300 px-3 py-2 text-xs focus:outline-none">
+            <input type="tel" id="pc-phone" required maxlength="10" placeholder="10 anko ka number" class="flex-1 block w-full rounded-r-lg border border-slate-300 px-3 py-2 text-xs focus:outline-none">
           </div>
         </div>
 
         <div class="grid grid-cols-2 gap-2">
           <div>
-            <label class="block text-[11px] font-bold text-slate-700 mb-1">ज़िला *</label>
+            <label class="block text-[11px] font-bold text-slate-700 mb-1">Zila *</label>
             <select id="pc-district" onchange="updateBlocks('pc-district', 'pc-block')" required class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs focus:outline-none">
-              <option value="">-- ज़िला --</option>
+              <option value="">-- Zila --</option>
             </select>
           </div>
           <div>
-            <label class="block text-[11px] font-bold text-slate-700 mb-1">प्रखंड / ब्लॉक *</label>
+            <label class="block text-[11px] font-bold text-slate-700 mb-1">Prakhand / Block *</label>
             <select id="pc-block" required class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs focus:outline-none">
-              <option value="">-- ब्लॉक --</option>
+              <option value="">-- Block --</option>
             </select>
           </div>
         </div>
 
         <div>
-          <label class="block text-[11px] font-bold text-slate-700 mb-1">साइट का इलाका / गाँव *</label>
-          <input type="text" id="pc-location" required placeholder="जैसे: स्टेशन रोड, नया बाजार" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs focus:outline-none">
+          <label class="block text-[11px] font-bold text-slate-700 mb-1">Site ka Ilaqa / Gaaon *</label>
+          <input type="text" id="pc-location" required placeholder="Jaise: Station Road, Bazar" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs focus:outline-none">
         </div>
 
         <div>
-          <label class="block text-[11px] font-bold text-slate-700 mb-1">काम का प्रकार (Category) *</label>
+          <label class="block text-[11px] font-bold text-slate-700 mb-1">Kaam ka Prakaar (Category) *</label>
           <select id="pc-work" required class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs focus:outline-none"></select>
         </div>
 
-        <!-- Feature 1: Voice Input for Job Description -->
+        <!-- Kaam ki Duration / Time -->
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[11px] font-bold text-slate-700 mb-1">Kaam ka Samay *</label>
+            <select id="pc-duration" required class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs focus:outline-none">
+              <option value="1 Din ki Dihadi">1 Din ki Dihadi</option>
+              <option value="1-2 Ghante ka Chota Kaam">1-2 Ghante ka Kaam</option>
+              <option value="Theka / Lumpsum">Theka / Lumpsum</option>
+              <option value="Hafte / Mahine ka Kaam">Hafte / Mahine ka Kaam</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-700 mb-1">Kitne Aadmi Chahiye? *</label>
+            <input type="number" id="pc-worker-count" value="1" min="1" max="50" required class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs focus:outline-none">
+          </div>
+        </div>
+
+        <!-- Material Selection -->
+        <div>
+          <label class="block text-[11px] font-bold text-slate-700 mb-1">Saaman kaun layega? *</label>
+          <select id="pc-material" required class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs focus:outline-none">
+            <option value="Saaman Malik ka (Keval Labour Charge)">📦 Saaman Malik ka (Keval Labour Charge)</option>
+            <option value="Saaman Sahit Theka (With Material)">🛠️ Saaman Sahit Poora Theka (With Material)</option>
+          </select>
+        </div>
+
+        <!-- Site Photo Upload -->
+        <div class="bg-slate-50 p-2.5 rounded-xl border border-dashed border-slate-300">
+          <label class="block text-[11px] font-bold text-slate-700 mb-0.5">Site ki Photo (Optional)</label>
+          <p class="text-[9px] text-slate-500 mb-1">Photo dekhkar mistri turant sahi rate de payega</p>
+          <input type="file" id="pc-site-photo" accept="image/*" class="text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:bg-amber-100 file:text-amber-800">
+        </div>
+
+        <!-- Description with Voice -->
         <div>
           <div class="flex justify-between items-center mb-1">
-            <label class="block text-[11px] font-bold text-slate-700">काम का विवरण</label>
+            <label class="block text-[11px] font-bold text-slate-700">Kaam ka Vivran</label>
             <button type="button" onclick="startVoiceInput('pc-desc', 'voice-btn-post')" id="voice-btn-post" class="text-[10px] text-amber-600 bg-amber-50 px-2 py-0.5 rounded border border-amber-200 font-bold flex items-center space-x-1">
               <i class="fa-solid fa-microphone"></i>
-              <span>बोलकर लिखें</span>
+              <span>Bolkar Likhein</span>
             </button>
           </div>
-          <textarea id="pc-desc" rows="2" placeholder="कितने दिन का काम है, क्या-क्या करवाना है..." class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs focus:outline-none"></textarea>
+          <textarea id="pc-desc" rows="2" placeholder="Kaam ke baare me thoda batayein..." class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs focus:outline-none"></textarea>
         </div>
 
         <button type="submit" id="btn-post-job" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold py-2.5 rounded-xl text-xs shadow-xs transition">
-          काम पोस्ट करें (7 दिन के लिए)
+          Kaam Post Karein (7 Din ke liye)
         </button>
       </form>
     </div>
@@ -196,35 +232,34 @@
   <section id="page-register" class="max-w-md mx-auto px-4 py-4 space-y-4 hidden">
     <div class="flex bg-slate-200 p-1 rounded-xl text-xs font-bold">
       <button onclick="switchRoleTab('client')" id="tab-btn-client" class="flex-1 py-1.5 rounded-lg bg-white text-slate-900 shadow-xs">
-        ग्राहक / मालिक खाता 🏠
+        Grahak / Malik Khata 🏠
       </button>
       <button onclick="switchRoleTab('worker')" id="tab-btn-worker" class="flex-1 py-1.5 rounded-lg text-slate-600">
-        मिस्त्री खाता 🛠️
+        Mistri Khata 🛠️
       </button>
     </div>
 
     <!-- 1. CUSTOMER DASHBOARD -->
     <div id="client-dashboard-box" class="space-y-4 block">
       <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
-        <h3 class="text-xs font-black text-slate-900 uppercase">मालिक प्रोफ़ाइल / मेरी पोस्ट</h3>
-        <p class="text-[11px] text-slate-500 mt-0.5">अपनी पोस्ट की गई जॉब्स और एडमिन द्वारा भेजे गए संदेश देखें</p>
+        <h3 class="text-xs font-black text-slate-900 uppercase">Malik Profile / Meri Post</h3>
+        <p class="text-[11px] text-slate-500 mt-0.5">Apni post ki gayi jobs aur mistriyon ke sandesh dekhein</p>
 
         <div id="client-phone-login" class="mt-3 pt-3 border-t border-slate-100">
-          <label class="block text-[10px] font-bold text-slate-700 uppercase mb-1">मोबाइल नंबर डालकर प्रोफ़ाइल खोलें:</label>
+          <label class="block text-[10px] font-bold text-slate-700 uppercase mb-1">Mobile number daalkar profile kholein:</label>
           <div class="flex gap-2">
-            <input type="tel" id="dash-client-phone" maxlength="10" placeholder="10 अंकों का नंबर" class="flex-1 rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs">
-            <button onclick="loadClientPosts()" class="bg-slate-900 text-amber-400 text-xs font-bold px-3 py-1.5 rounded-lg">खोलें</button>
+            <input type="tel" id="dash-client-phone" maxlength="10" placeholder="10 anko ka number" class="flex-1 rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs">
+            <button onclick="loadClientPosts()" class="bg-slate-900 text-amber-400 text-xs font-bold px-3 py-1.5 rounded-lg">Kholein</button>
           </div>
         </div>
       </div>
 
-      <!-- Customer In-App Inbox -->
       <div id="client-inbox-section" class="hidden bg-amber-50/70 border border-amber-200 rounded-2xl p-4 shadow-xs">
         <div class="flex items-center justify-between mb-2">
           <h4 class="text-xs font-black text-slate-900 flex items-center">
-            <i class="fa-solid fa-bell text-amber-600 mr-1.5 animate-bounce"></i> MistryBabu आधिकारिक इनबॉक्स
+            <i class="fa-solid fa-bell text-amber-600 mr-1.5 animate-bounce"></i> MistryBabu In-App Inbox
           </h4>
-          <span class="text-[9px] bg-amber-200 text-amber-900 font-bold px-2 py-0.5 rounded-full">मैसेज अलर्ट</span>
+          <span class="text-[9px] bg-amber-200 text-amber-900 font-bold px-2 py-0.5 rounded-full">Alerts</span>
         </div>
         <div id="client-inbox-messages" class="space-y-2 text-xs"></div>
       </div>
@@ -236,78 +271,77 @@
     <div id="worker-dashboard-box" class="space-y-4 hidden">
       <div id="worker-form-container" class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs block">
         <div class="text-center mb-4 border-b border-slate-100 pb-3">
-          <h2 class="text-base font-black text-slate-900">मिस्त्री पंजीकरण / लॉगिन</h2>
-          <p class="text-[11px] text-slate-500">100% निःशुल्क सेवा • कोई कमीशन नहीं</p>
+          <h2 class="text-base font-black text-slate-900">Mistri Panjikaran / Login</h2>
+          <p class="text-[11px] text-slate-500">100% Nishulk Seva • 0% Commission</p>
         </div>
 
         <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-4">
-          <span class="text-[11px] font-bold text-slate-800 block mb-1.5">पहले से जुड़े हैं? मोबाइल नंबर डालकर खोलें:</span>
+          <span class="text-[11px] font-bold text-slate-800 block mb-1.5">Pehle se jude hain? Mobile number daalein:</span>
           <div class="flex gap-2">
-            <input type="tel" id="quick-login-phone" maxlength="10" placeholder="10 अंकों का नंबर" class="flex-1 rounded-lg border border-amber-300 px-2.5 py-1.5 text-xs bg-white focus:outline-none">
-            <button type="button" onclick="loginWithPhone()" id="btn-quick-login" class="bg-slate-900 text-amber-400 text-xs font-bold px-3 py-1.5 rounded-lg shadow-xs">खोलें</button>
+            <input type="tel" id="quick-login-phone" maxlength="10" placeholder="10 anko ka number" class="flex-1 rounded-lg border border-amber-300 px-2.5 py-1.5 text-xs bg-white focus:outline-none">
+            <button type="button" onclick="loginWithPhone()" id="btn-quick-login" class="bg-slate-900 text-amber-400 text-xs font-bold px-3 py-1.5 rounded-lg shadow-xs">Kholein</button>
           </div>
         </div>
 
         <form onsubmit="saveWorkerProfile(event)" class="space-y-3">
           <div class="bg-slate-50 p-3 rounded-xl border border-dashed border-slate-300 text-center">
-            <label class="block text-[11px] font-bold text-slate-700 mb-1">प्रोफ़ाइल फ़ोटो</label>
-            <input type="file" id="pw-photo-file" accept="image/*" class="text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-amber-100 file:text-amber-800">
+            <label class="block text-[11px] font-bold text-slate-700 mb-1">Profile Photo</label>
+            <input type="file" id="pw-photo-file" accept="image/*" class="text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:bg-amber-100 file:text-amber-800">
           </div>
 
-          <!-- Feature 2: Work Portfolio Photos (1 to 3 images) -->
+          <!-- Work Photos -->
           <div class="bg-amber-50/50 p-3 rounded-xl border border-amber-200 text-center">
-            <label class="block text-[11px] font-bold text-amber-900 mb-0.5">📸 पिछले काम की तस्वीरें (Work Photos)</label>
-            <p class="text-[9px] text-slate-500 mb-2">अपनी साइट, चिनाई, टाइल, फिटिंग की 1-3 फ़ोटो चुनें</p>
-            <input type="file" id="pw-work-photos" accept="image/*" multiple class="text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-amber-200 file:text-amber-900">
+            <label class="block text-[11px] font-bold text-amber-900 mb-0.5">📸 Pichhle Kaam ki Tasveerein (1-3 Photos)</label>
+            <input type="file" id="pw-work-photos" accept="image/*" multiple class="text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:bg-amber-200 file:text-amber-900">
           </div>
 
-          <!-- Feature 6: ID Card Verification (Adhaar/Voter ID for Admin eyes only) -->
+          <!-- ID Verification -->
           <div class="bg-blue-50/50 p-3 rounded-xl border border-blue-200 text-center">
-            <label class="block text-[11px] font-bold text-blue-900 mb-0.5">🛡️ पहचान सत्यापन (ID Verification)</label>
-            <p class="text-[9px] text-slate-500 mb-2">आधार या वोटर आईडी फ़ोटो (सिर्फ़ एडमिन को दिखेगी, सुरक्षित रहेगी)</p>
-            <input type="file" id="pw-id-card" accept="image/*" class="text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-blue-200 file:text-blue-900">
+            <label class="block text-[11px] font-bold text-blue-900 mb-0.5">🛡️ Pehchan Satyapan (Aadhaar / Voter ID)</label>
+            <p class="text-[9px] text-slate-500 mb-1">Keval Admin dekhega, profile par Verified Pro badge aayega</p>
+            <input type="file" id="pw-id-card" accept="image/*" class="text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:bg-blue-200 file:text-blue-900">
           </div>
 
           <div>
-            <label class="block text-[11px] font-bold text-slate-700 mb-1">पूरा नाम *</label>
-            <input type="text" id="pw-name" required placeholder="जैसे: दिलबास अंसारी" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs focus:outline-none">
+            <label class="block text-[11px] font-bold text-slate-700 mb-1">Poora Naam *</label>
+            <input type="text" id="pw-name" required placeholder="Jaise: Dilbas Ansari" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs focus:outline-none">
           </div>
 
           <div>
-            <label class="block text-[11px] font-bold text-slate-700 mb-1">मोबाइल नंबर (सुरक्षित) *</label>
+            <label class="block text-[11px] font-bold text-slate-700 mb-1">Mobile Number (Surakshit) *</label>
             <div class="flex">
               <span class="inline-flex items-center px-2.5 rounded-l-lg border border-r-0 border-slate-300 bg-slate-100 text-slate-600 text-xs font-bold">+91</span>
-              <input type="tel" id="pw-phone" required maxlength="10" placeholder="10 अंकों का नंबर" class="flex-1 block w-full rounded-r-lg border border-slate-300 px-3 py-2 text-xs focus:outline-none">
+              <input type="tel" id="pw-phone" required maxlength="10" placeholder="10 anko ka number" class="flex-1 block w-full rounded-r-lg border border-slate-300 px-3 py-2 text-xs focus:outline-none">
             </div>
           </div>
 
           <div class="grid grid-cols-2 gap-2">
             <div>
-              <label class="block text-[11px] font-bold text-slate-700 mb-1">ज़िला *</label>
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">Zila *</label>
               <select id="pw-district" onchange="updateBlocks('pw-district', 'pw-block')" required class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs focus:outline-none">
-                <option value="">-- ज़िला --</option>
+                <option value="">-- Zila --</option>
               </select>
             </div>
             <div>
-              <label class="block text-[11px] font-bold text-slate-700 mb-1">प्रखंड / ब्लॉक *</label>
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">Prakhand / Block *</label>
               <select id="pw-block" required class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs focus:outline-none">
-                <option value="">-- ब्लॉक --</option>
+                <option value="">-- Block --</option>
               </select>
             </div>
           </div>
 
           <div>
-            <label class="block text-[11px] font-bold text-slate-700 mb-1">आप कौन-कौन सा काम जानते हैं? (टिक करें) *</label>
+            <label class="block text-[11px] font-bold text-slate-700 mb-1">Aap kaun sa kaam jaante hain? (Tick karein) *</label>
             <div id="worker-skills-checkboxes" class="grid grid-cols-1 gap-1.5 max-h-52 overflow-y-auto p-2 bg-slate-50 border border-slate-200 rounded-xl"></div>
           </div>
 
           <div>
-            <label class="block text-[11px] font-bold text-slate-700 mb-1">अनुभव (वर्ष)</label>
-            <input type="number" id="pw-exp" placeholder="जैसे: 5" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs focus:outline-none">
+            <label class="block text-[11px] font-bold text-slate-700 mb-1">Anubhav (Saal)</label>
+            <input type="number" id="pw-exp" placeholder="Jaise: 5" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs focus:outline-none">
           </div>
 
           <button type="submit" id="btn-save-worker" class="w-full bg-slate-900 hover:bg-slate-800 text-amber-400 font-bold py-2.5 rounded-xl text-xs shadow-xs transition">
-            कारीगर पंजीकरण पूरा करें
+            Karigar Panjikaran Poora Karein
           </button>
         </form>
       </div>
@@ -315,11 +349,9 @@
       <!-- Mistri Profile View -->
       <div id="worker-profile-view" class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden hidden">
         <div class="bg-slate-900 text-white p-5 text-center relative">
-          <!-- Feature 5: Available / Busy Live Toggle -->
           <div class="absolute top-3 right-3">
             <button onclick="toggleWorkerLiveStatus()" id="btn-live-status" class="bg-emerald-500 text-slate-900 text-[10px] font-black px-2.5 py-1 rounded-full shadow flex items-center space-x-1">
-              <span class="w-2 h-2 rounded-full bg-white animate-ping"></span>
-              <span id="txt-live-status">काम के लिए उपलब्ध 🟢</span>
+              <span id="txt-live-status">Kaam ke liye Uplabdh 🟢</span>
             </button>
           </div>
 
@@ -327,55 +359,49 @@
             <img id="my-prof-img" src="logo.png" onerror="this.src='https://placehold.co/100x100/f59e0b/0f172a.png?text=MB'" alt="Profile Photo" class="w-20 h-20 rounded-full mx-auto shadow-md border-2 border-amber-400 object-cover bg-white">
           </div>
 
-          <h3 class="text-base font-black mt-2" id="my-prof-name">कारीगर का नाम</h3>
-          <div class="flex items-center justify-center space-x-1 mt-1">
-            <span id="badge-verified-id" class="hidden bg-blue-500/20 text-blue-300 text-[9px] font-bold px-2 py-0.5 rounded-full border border-blue-400/30">
-              <i class="fa-solid fa-id-card mr-1"></i>पहचान सत्यापित
-            </span>
-            <span class="bg-amber-400/20 text-amber-300 text-[9px] font-bold px-2 py-0.5 rounded-full" id="my-prof-rating">
-              ⭐ 5.0 (नया कारीगर)
-            </span>
+          <h3 class="text-base font-black mt-2" id="my-prof-name">Karigar ka Naam</h3>
+          <div class="flex items-center justify-center space-x-1.5 mt-1">
+            <span id="badge-worker-level" class="bg-amber-400/20 text-amber-300 text-[9px] font-bold px-2 py-0.5 rounded-full border border-amber-400/30">Kushal Karigar</span>
+            <span id="badge-verified-id" class="hidden bg-blue-500/20 text-blue-300 text-[9px] font-bold px-2 py-0.5 rounded-full border border-blue-400/30">🛡️ Verified ID</span>
           </div>
         </div>
 
         <div class="p-4 space-y-3 text-xs">
-          <!-- Worker In-App Inbox -->
           <div id="worker-inbox-section" class="bg-amber-50 border border-amber-200 rounded-xl p-3">
             <div class="flex items-center justify-between mb-1.5">
               <span class="font-black text-slate-900 flex items-center text-[11px]">
-                <i class="fa-solid fa-envelope text-amber-600 mr-1.5"></i> MistryBabu इनबॉक्स
+                <i class="fa-solid fa-envelope text-amber-600 mr-1.5"></i> MistryBabu Inbox
               </span>
-              <span class="text-[9px] bg-amber-200 text-amber-900 font-bold px-1.5 py-0.5 rounded">मालिक के नंबर</span>
+              <span class="text-[9px] bg-amber-200 text-amber-900 font-bold px-1.5 py-0.5 rounded">Malik ke Number</span>
             </div>
             <div id="worker-inbox-messages" class="space-y-1.5 text-slate-700">
-              <p class="text-[10px] text-slate-400 italic">कोई नया संदेश नहीं है।</p>
+              <p class="text-[10px] text-slate-400 italic">Koi naya sandesh nahi hai.</p>
             </div>
           </div>
 
-          <!-- Feature 2: Portfolio Work Photos Gallery Display -->
           <div id="my-portfolio-section" class="border-b border-slate-100 pb-3">
-            <span class="text-slate-500 font-bold block mb-1.5">मेरे पिछले काम की तस्वीरें:</span>
+            <span class="text-slate-500 font-bold block mb-1.5">Mere pichhle kaam ki photo:</span>
             <div id="my-portfolio-grid" class="flex gap-2 overflow-x-auto py-1">
-              <p class="text-[10px] text-slate-400 italic">कोई तस्वीर नहीं जोड़ी गई।</p>
+              <p class="text-[10px] text-slate-400 italic">Koi photo nahi jodi gayi.</p>
             </div>
           </div>
 
           <div class="border-b border-slate-100 pb-2">
-            <span class="text-slate-400 block mb-1">आपके पंजीकृत हुनर (Skills):</span>
+            <span class="text-slate-400 block mb-1">Aapke panjikrit hunar (Skills):</span>
             <div id="my-prof-skills-tags" class="flex flex-wrap gap-1"></div>
           </div>
 
           <div class="flex justify-between border-b border-slate-100 pb-2">
-            <span class="text-slate-400">ज़िला व प्रखंड:</span>
-            <span class="font-bold text-slate-800" id="my-prof-location">बिहार</span>
+            <span class="text-slate-400">Zila va Prakhand:</span>
+            <span class="font-bold text-slate-800" id="my-prof-location">Bihar</span>
           </div>
 
           <div class="pt-2 flex flex-col gap-2">
             <button onclick="navTo('jobs')" class="w-full bg-amber-500 text-slate-900 py-2.5 rounded-xl font-bold shadow-xs">
-              काम देखें और मालिक को रेट भेजें →
+              Kaam Dekhein va Malik ko Rate Bhejein →
             </button>
             <button onclick="logoutWorker()" class="w-full bg-slate-100 hover:bg-slate-200 text-red-600 py-2 rounded-xl font-bold">
-              लॉग आउट करें
+              Log Out Karein
             </button>
           </div>
         </div>
@@ -390,8 +416,8 @@
         <div class="flex items-center space-x-2">
           <i class="fa-solid fa-shield-halved text-amber-400 text-base"></i>
           <div>
-            <h3 class="text-xs font-black">MistryBabu एडमिन कंट्रोल रूम</h3>
-            <p class="text-[9px] text-slate-400">गोपनीय पोर्टल • डील्स व डायरेक्ट इनबॉक्स</p>
+            <h3 class="text-xs font-black">MistryBabu Admin Control Room</h3>
+            <p class="text-[9px] text-slate-400">Gopniya Portal • Deals va Inbox</p>
           </div>
         </div>
         <button onclick="closeAdminModal()" class="text-slate-400 hover:text-white text-lg">
@@ -399,49 +425,43 @@
         </button>
       </div>
 
-      <!-- Password Protection View -->
       <div id="admin-pin-view" class="p-6 text-center space-y-3">
         <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto text-xl">
           <i class="fa-solid fa-key"></i>
         </div>
-        <h4 class="text-sm font-black text-slate-900">एडमिन पासवर्ड दर्ज करें</h4>
-        <p class="text-[11px] text-slate-500">सुरक्षित एडमिन कंट्रोल पैनल खोलने के लिए पासवर्ड डालें</p>
-        
+        <h4 class="text-sm font-black text-slate-900">Admin Password Daalein</h4>
         <div class="relative max-w-[200px] mx-auto">
-          <input type="password" id="admin-pin-input" placeholder="पासवर्ड लिखें" class="w-full text-center text-sm font-bold border-2 border-slate-300 rounded-xl py-2 px-8 focus:border-amber-500 focus:outline-none">
+          <input type="password" id="admin-pin-input" placeholder="Password likhein" class="w-full text-center text-sm font-bold border-2 border-slate-300 rounded-xl py-2 px-8 focus:border-amber-500 focus:outline-none">
           <button type="button" onclick="togglePassVisibility()" class="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600">
             <i id="eye-icon" class="fa-solid fa-eye text-xs"></i>
           </button>
         </div>
-
         <button onclick="verifyAdminPin()" class="w-full bg-slate-900 hover:bg-slate-800 text-amber-400 font-bold py-2.5 rounded-xl text-xs transition shadow-xs">
-          प्रवेश करें
+          Pravesh Karein
         </button>
       </div>
 
-      <!-- Admin Main View -->
       <div id="admin-main-view" class="p-4 space-y-4 overflow-y-auto flex-1 hidden">
         <div class="flex justify-between items-center bg-slate-100 p-2.5 rounded-xl">
-          <span class="text-xs font-bold text-slate-700">पुष्टि की गई डील्स (Confirmed Deals)</span>
+          <span class="text-xs font-bold text-slate-700">Confirmed Deals</span>
           <button onclick="loadAdminDeals()" class="text-[10px] bg-slate-900 text-amber-400 px-2.5 py-1 rounded-lg font-bold">
-            <i class="fa-solid fa-rotate-right mr-1"></i>रिफ्रेश
+            <i class="fa-solid fa-rotate-right mr-1"></i>Refresh
           </button>
         </div>
-
         <div id="admin-deals-container" class="space-y-3">
-          <p class="text-xs text-slate-400 text-center py-4">डील्स लोड हो रही हैं...</p>
+          <p class="text-xs text-slate-400 text-center py-4">Deals load ho rahi hain...</p>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Proposal Modal (Send Bid) with Voice Input -->
+  <!-- Proposal Modal with Voice -->
   <div id="proposal-modal" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-xs w-full p-5 shadow-2xl relative">
       <div class="flex justify-between items-center pb-2 border-b border-slate-100 mb-3">
         <div>
-          <h4 class="text-xs font-black text-slate-900">मालिक को इन-ऐप संदेश भेजें</h4>
-          <p class="text-[10px] text-emerald-600 font-bold">🔒 दोनों का नंबर पूरी तरह सुरक्षित है</p>
+          <h4 class="text-xs font-black text-slate-900">Malik ko In-App Sandesh Bhejein</h4>
+          <p class="text-[10px] text-emerald-600 font-bold">🔒 Dono number surakshit hain</p>
         </div>
         <button onclick="closeProposalModal()" class="text-slate-400 hover:text-slate-700 text-base">
           <i class="fa-solid fa-xmark"></i>
@@ -455,39 +475,38 @@
         <input type="hidden" id="prop-job-title">
 
         <div>
-          <label class="block text-[10px] font-bold text-slate-700 uppercase mb-0.5">कारीगर का नाम *</label>
-          <input type="text" id="prop-worker-name" required placeholder="अपना नाम लिखें" class="w-full rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs focus:outline-none">
+          <label class="block text-[10px] font-bold text-slate-700 uppercase mb-0.5">Karigar ka Naam *</label>
+          <input type="text" id="prop-worker-name" required placeholder="Apna naam likhein" class="w-full rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs focus:outline-none">
         </div>
 
         <div>
-          <label class="block text-[10px] font-bold text-slate-700 uppercase mb-0.5">आपका मोबाइल नंबर (कंपनी रिकॉर्ड) *</label>
-          <input type="tel" id="prop-worker-phone" required maxlength="10" placeholder="10 अंकों का नंबर" class="w-full rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs focus:outline-none">
+          <label class="block text-[10px] font-bold text-slate-700 uppercase mb-0.5">Mobile Number *</label>
+          <input type="tel" id="prop-worker-phone" required maxlength="10" placeholder="10 anko ka number" class="w-full rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs focus:outline-none">
         </div>
 
         <div>
           <div class="flex justify-between items-center mb-0.5">
-            <label class="block text-[10px] font-bold text-slate-700 uppercase">आपका रेट व संदेश *</label>
+            <label class="block text-[10px] font-bold text-slate-700 uppercase">Rate va Sandesh *</label>
             <button type="button" onclick="startVoiceInput('prop-message', 'voice-btn-prop')" id="voice-btn-prop" class="text-[9px] text-amber-600 bg-amber-50 px-2 py-0.5 rounded border border-amber-200 font-bold flex items-center space-x-1">
               <i class="fa-solid fa-microphone"></i>
-              <span>बोलकर लिखें</span>
+              <span>Bolkar Likhein</span>
             </button>
           </div>
-          <textarea id="prop-message" rows="3" required placeholder="जैसे: ₹600/दिन या 2 दिन में काम पूरा कर दूंगा।" class="w-full rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs focus:outline-none"></textarea>
+          <textarea id="prop-message" rows="3" required placeholder="Jaise: ₹600/din ya 2 din me kaam poora ho jayega." class="w-full rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs focus:outline-none"></textarea>
         </div>
 
         <button type="submit" id="btn-prop-submit" class="w-full bg-slate-900 hover:bg-slate-800 text-amber-400 font-bold py-2 rounded-xl text-xs shadow-xs transition">
-          रेट व संदेश भेजें
+          Rate va Sandesh Bhejein
         </button>
       </form>
     </div>
   </div>
 
-  <!-- Rating & Review Modal (Feature 3) -->
+  <!-- Rating Modal -->
   <div id="review-modal" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-xs w-full p-5 shadow-2xl relative text-center">
-      <h4 class="text-xs font-black text-slate-900 mb-1">कारीगर के काम को रेटिंग दें ⭐</h4>
-      <p class="text-[10px] text-slate-500 mb-3" id="review-worker-name">मिस्त्री का काम कैसा लगा?</p>
-
+      <h4 class="text-xs font-black text-slate-900 mb-1">Karigar ko Rating Dein ⭐</h4>
+      <p class="text-[10px] text-slate-500 mb-3" id="review-worker-name">Mistri ka kaam kaisa laga?</p>
       <input type="hidden" id="rev-worker-phone">
       <input type="hidden" id="rev-job-id">
 
@@ -500,14 +519,43 @@
       </div>
       <input type="hidden" id="rev-stars" value="5">
 
-      <textarea id="rev-comment" rows="2" placeholder="जैसे: काम बहुत अच्छा और समय पर किया..." class="w-full rounded-lg border border-slate-300 p-2 text-xs mb-3 focus:outline-none"></textarea>
+      <textarea id="rev-comment" rows="2" placeholder="Kaam kaisa laga likhein..." class="w-full rounded-lg border border-slate-300 p-2 text-xs mb-3 focus:outline-none"></textarea>
 
       <div class="flex gap-2">
-        <button onclick="submitReview()" class="flex-1 bg-amber-500 text-slate-900 font-bold py-1.5 rounded-lg text-xs">रिव्यू भेजें</button>
-        <button onclick="closeReviewModal()" class="flex-1 bg-slate-100 text-slate-600 font-bold py-1.5 rounded-lg text-xs">रद्द करें</button>
+        <button onclick="submitReview()" class="flex-1 bg-amber-500 text-slate-900 font-bold py-1.5 rounded-lg text-xs">Review Bhejein</button>
+        <button onclick="closeReviewModal()" class="flex-1 bg-slate-100 text-slate-600 font-bold py-1.5 rounded-lg text-xs">Cancel</button>
       </div>
     </div>
   </div>
+
+  <!-- Terms & Conditions Modal (Niyam va Shartein) -->
+  <div id="terms-modal" class="fixed inset-0 bg-slate-900/70 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-5 shadow-2xl relative max-h-[85vh] flex flex-col">
+      <div class="flex justify-between items-center pb-2 border-b border-slate-100 mb-3">
+        <h3 class="text-sm font-black text-slate-900 flex items-center">
+          <i class="fa-solid fa-file-contract text-amber-500 mr-2"></i> MistryBabu.com Niyam va Shartein
+        </h3>
+        <button onclick="closeTermsModal()" class="text-slate-400 hover:text-slate-700 text-base">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="text-xs text-slate-600 space-y-2.5 overflow-y-auto pr-1">
+        <p><strong>1. Seva ka Swaroop:</strong> MistryBabu.com poore Bihar me karigaron aur grahakon ko aapas me jodne ka ek 100% nishulk platform hai. Hum kisi bhi deal par koi commission nahi lete.</p>
+        <p><strong>2. Rate va Len-Den:</strong> Kaam ka rate, samay aur bhugtan grahak aur mistri aapas me aamne-saamne tay karein. MistryBabu.com kisi aarthik len-den ke liye utardayi nahi hoga.</p>
+        <p><strong>3. Suraksha va Satyapan:</strong> Karigar dwara di gayi ID Admin dwara jaanchi ja sakti hai, kintu grahak ko swayam karyasthal par santusht hokar hi kaam karwana chahiye.</p>
+        <p><strong>4. Job Validity:</strong> Har post kiye gaye kaam ki vaidhata 7 dino ki hoti hai. Kaam poora hone par malik Job Close kar sakta hai.</p>
+        <p><strong>5. Durupyog Par Rok:</strong> Galat sankhya, asatyavadi jaankari ya anuchit bhasha ka upyog karne par account turant block kar diya jayega.</p>
+      </div>
+      <button onclick="closeTermsModal()" class="mt-4 w-full bg-slate-900 text-amber-400 py-2 rounded-xl font-bold text-xs">
+        Maine Padh Liya va Sahmat Hoon
+      </button>
+    </div>
+  </div>
+
+  <!-- Floating Help Button (WhatsApp / Call Support) -->
+  <a href="https://wa.me/91XXXXXXXXXX?text=Namaste%20MistryBabu%20Help%20Desk" target="_blank" class="fixed bottom-16 right-4 z-40 bg-emerald-600 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg border-2 border-white active:scale-95 transition">
+    <i class="fa-brands fa-whatsapp text-2xl"></i>
+  </a>
 
   <!-- Bottom Navigation Bar -->
   <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-4 py-2 flex justify-around items-center z-40 shadow-md max-w-md mx-auto">
@@ -537,7 +585,6 @@
 
   <!-- ==================== JavaScript Code ==================== -->
   <script>
-    // Secret Triple-Click on Logo to open Admin Modal
     let logoClickCount = 0;
     let logoClickTimer = null;
 
@@ -567,7 +614,6 @@
       }
     }
 
-    // Direct password verification (accepts Run1, run1, RUN1)
     function verifyAdminPin() {
       const entered = document.getElementById("admin-pin-input").value;
       if (entered.trim().toLowerCase() === "run1") {
@@ -575,53 +621,43 @@
         document.getElementById("admin-main-view").classList.remove("hidden");
         loadAdminDeals();
       } else {
-        alert("गलत पासवर्ड! कृपया Run1 दर्ज करें।");
+        alert("Galat Password! Run1 likhein.");
         document.getElementById("admin-pin-input").value = "";
       }
     }
 
-    // ==================== FEATURE 1: VOICE INPUT (MIC) ====================
+    function openTermsModal() { document.getElementById("terms-modal").classList.remove("hidden"); }
+    function closeTermsModal() { document.getElementById("terms-modal").classList.add("hidden"); }
+
     function startVoiceInput(targetInputId, btnId) {
       if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-        return alert("क्षमा करें! आपके ब्राउज़र में वॉयस टाइपिंग सपोर्ट नहीं है। कृपया लिखकर भरें।");
+        return alert("Aapke phone me bolkar likhne ka support nahi hai.");
       }
-
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       const recognition = new SpeechRecognition();
-      recognition.lang = 'hi-IN'; // Hindi recognition for Bihar users
+      recognition.lang = 'hi-IN';
       recognition.interimResults = false;
 
       const btn = document.getElementById(btnId);
       const originalHTML = btn.innerHTML;
-      btn.innerHTML = `<i class="fa-solid fa-circle text-red-600 animate-ping"></i> <span>सुन रहा हूँ...</span>`;
+      btn.innerHTML = `<i class="fa-solid fa-circle text-red-600 animate-ping"></i> <span>Sun raha hoon...</span>`;
 
       recognition.onresult = function(event) {
         const transcript = event.results[0][0].transcript;
         const target = document.getElementById(targetInputId);
         target.value = target.value ? target.value + " " + transcript : transcript;
       };
-
-      recognition.onerror = function() {
-        alert("आवाज़ पहचानने में समस्या आई, कृपया दोबारा बोलें।");
-      };
-
-      recognition.onend = function() {
-        btn.innerHTML = originalHTML;
-      };
-
+      recognition.onerror = function() { alert("Awaaz samajh nahi aayi, kripya dubara bolein."); };
+      recognition.onend = function() { btn.innerHTML = originalHTML; };
       recognition.start();
     }
 
-    // ==================== FEATURE 5: MISTRI LIVE STATUS ====================
     function toggleWorkerLiveStatus() {
       const current = localStorage.getItem("mb_worker_status") || "available";
       const newStatus = current === "available" ? "busy" : "available";
       localStorage.setItem("mb_worker_status", newStatus);
-
       const docId = localStorage.getItem("mb_worker_doc_id");
-      if (docId) {
-        db.collection("workers").doc(docId).update({ liveStatus: newStatus });
-      }
+      if (docId) { db.collection("workers").doc(docId).update({ liveStatus: newStatus }); }
       renderLiveStatusUI(newStatus);
     }
 
@@ -630,37 +666,45 @@
       const txt = document.getElementById("txt-live-status");
       if (status === "busy") {
         btn.className = "bg-rose-600 text-white text-[10px] font-black px-2.5 py-1 rounded-full shadow flex items-center space-x-1";
-        txt.innerText = "काम में व्यस्त 🔴";
+        txt.innerText = "Kaam me Vyast 🔴";
       } else {
         btn.className = "bg-emerald-500 text-slate-900 text-[10px] font-black px-2.5 py-1 rounded-full shadow flex items-center space-x-1";
-        txt.innerText = "काम के लिए उपलब्ध 🟢";
+        txt.innerText = "Kaam ke liye Uplabdh 🟢";
       }
     }
 
-    // ==================== FEATURE 3: RATING SYSTEM ====================
+    function shareJobOnWhatsApp(workType, district, location, sixId) {
+      const text = `*MistryBabu.com par Naya Kaam Aaya Hai!*%0A%0A🔧 *Kaam:* ${workType}%0A📍 *Jagah:* ${district} (${location})%0A🆔 *Job ID:* ${sixId}%0A%0AApna rate va sandesh bhejne ke liye yahan kholein:%0Ahttps://mistrybabu.com/#jobs`;
+      window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+    }
+
+    function markJobCompleted(jobDocId, sixId, workerName, workerPhone) {
+      if (!confirm(`Kya aap Job ${sixId} ko poora ghoshit karke close karna chahte hain?`)) return;
+      db.collection("job_posts").doc(jobDocId).update({ isClosed: true }).then(() => {
+        alert("✅ Kaam poora ghoshit kar diya gaya hai!");
+        loadClientPosts();
+        if (workerPhone) {
+          openReviewModal(workerPhone, workerName || "Mistri", sixId);
+        }
+      });
+    }
+
     function openReviewModal(workerPhone, workerName, jobId) {
       document.getElementById("rev-worker-phone").value = workerPhone;
       document.getElementById("rev-job-id").value = jobId;
-      document.getElementById("review-worker-name").innerText = `${workerName} के काम को रेटिंग दें:`;
+      document.getElementById("review-worker-name").innerText = `${workerName} ke kaam ko rating dein:`;
       setRating(5);
       document.getElementById("review-modal").classList.remove("hidden");
     }
 
-    function closeReviewModal() {
-      document.getElementById("review-modal").classList.add("hidden");
-    }
+    function closeReviewModal() { document.getElementById("review-modal").classList.add("hidden"); }
 
     function setRating(num) {
       document.getElementById("rev-stars").value = num;
       const stars = document.querySelectorAll(".star-opt");
       stars.forEach((s, idx) => {
-        if (idx < num) {
-          s.classList.remove("text-slate-300");
-          s.classList.add("text-amber-400");
-        } else {
-          s.classList.remove("text-amber-400");
-          s.classList.add("text-slate-300");
-        }
+        if (idx < num) { s.className = "fa-solid fa-star star-opt text-amber-400"; }
+        else { s.className = "fa-solid fa-star star-opt text-slate-300"; }
       });
     }
 
@@ -675,42 +719,42 @@
         comment: comment,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       }).then(() => {
-        alert("✅ आपकी रेटिंग और प्रतिक्रिया दर्ज कर ली गई है! धन्यवाद।");
+        alert("✅ Rating aur feedback darj kar liya gaya hai!");
         closeReviewModal();
       });
     }
 
     const allCategories = [
-      { id: 1, title: "राज मिस्त्री", desc: "ईंट का काम, दीवार, नींव, चिनाई", icon: "🧱" },
-      { id: 2, title: "RCC/कंक्रीट", desc: "कॉलम, बीम, स्लैब, छत", icon: "🏗️" },
-      { id: 3, title: "सेंटरिंग/शटरिंग", desc: "स्लैब, कॉलम, बीम शटरिंग", icon: "🔨" },
-      { id: 4, title: "सरिया/बार-बेंडिंग", desc: "सरिया कटिंग, बाइंडिंग, RCC", icon: "🔩" },
-      { id: 5, title: "पत्थर मिस्त्री", desc: "पत्थर की दीवार, स्टोन वर्क", icon: "🪨" },
-      { id: 6, title: "प्लास्टर", desc: "अंदरूनी, बाहरी, सीमेंट प्लास्टर", icon: "🧱" },
-      { id: 7, title: "पुट्टी/पेंटिंग", desc: "पुट्टी, प्राइमर, पेंट, टेक्सचर", icon: "🎨" },
-      { id: 8, title: "टाइल मिस्त्री", desc: "फ्लोर, वॉल, बाथरूम, किचन", icon: "🧱" },
-      { id: 9, title: "मार्बल/ग्रेनाइट", desc: "फर्श, सीढ़ी, किचन स्लैब", icon: "🪨" },
-      { id: 10, title: "बढ़ई", desc: "दरवाजा, खिड़की, फर्नीचर", icon: "🚪" },
-      { id: 11, title: "मॉड्यूलर किचन", desc: "किचन कैबिनेट, प्लेटफॉर्म, फिटिंग", icon: "🍳" },
-      { id: 12, title: "इलेक्ट्रिशियन", desc: "वायरिंग, स्विच, पंखा, लाइट", icon: "⚡" },
-      { id: 13, title: "प्लंबर", desc: "पानी की पाइप, टंकी, बाथरूम", icon: "🚿" },
-      { id: 14, title: "सैनिटरी फिटिंग", desc: "कमोड, वॉशबेसिन, शॉवर, फिटिंग", icon: "🛁" },
-      { id: 15, title: "गैस पाइप फिटिंग", desc: "LPG पाइपलाइन/फिटिंग", icon: "🔥" },
-      { id: 16, title: "वेल्डिंग/फैब्रिकेशन", desc: "गेट, ग्रिल, रेलिंग, शेड", icon: "🔧" },
-      { id: 17, title: "एल्युमिनियम", desc: "दरवाजा, खिड़की, पार्टिशन", icon: "🪟" },
-      { id: 18, title: "UPVC", desc: "दरवाजा, खिड़की", icon: "🪟" },
-      { id: 19, title: "POP/जिप्सम", desc: "फॉल्स सीलिंग, डिजाइन", icon: "🏠" },
-      { id: 20, title: "वॉटरप्रूफिंग", desc: "छत, बाथरूम, दीवार", icon: "💧" },
-      { id: 21, title: "रूफिंग", desc: "टिन शेड, रूफ शीट, छत", icon: "🏡" },
-      { id: 22, title: "सीढ़ी", desc: "RCC, मार्बल, ग्रेनाइट", icon: "🪜" },
-      { id: 23, title: "बाउंड्री वॉल", desc: "चारदीवारी, गेट पिलर", icon: "🧱" },
-      { id: 24, title: "साइट मजदूर", desc: "हेल्पर, सामान्य निर्माण मजदूर", icon: "🏗️" },
-      { id: 25, title: "सफाई", desc: "निर्माण के बाद सफाई, मलबा हटाना", icon: "🧹" },
-      { id: 26, title: "AC मिस्त्री", desc: "AC इंस्टॉलेशन, सर्विस", icon: "❄️" },
-      { id: 27, title: "CCTV/सिक्योरिटी", desc: "CCTV, वीडियो डोरबेल", icon: "📡" },
-      { id: 28, title: "सोलर", desc: "Solar Panel, Inverter, Wiring", icon: "☀️" },
-      { id: 29, title: "इन्वर्टर/बैटरी", desc: "Installation, Wiring", icon: "🔋" },
-      { id: 30, title: "लैंडस्केपिंग", desc: "गार्डन, पेड़-पौधे, बाहरी डिजाइन", icon: "🌳" }
+      { id: 1, title: "Raj Mistri", desc: "Eent, Deewar, Chanaai", icon: "🧱" },
+      { id: 2, title: "RCC/Concrete", desc: "Column, Beam, Chhat Dhalai", icon: "🏗️" },
+      { id: 3, title: "Centering/Shuttering", desc: "Slab, Column Shuttering", icon: "🔨" },
+      { id: 4, title: "Sariya/Bar Bending", desc: "Cutting, Binding", icon: "🔩" },
+      { id: 5, title: "Patthar Mistri", desc: "Stone Work", icon: "🪨" },
+      { id: 6, title: "Plaster", desc: "Cement Plaster", icon: "🧱" },
+      { id: 7, title: "Putty/Painting", desc: "Putty, Primer, Paint", icon: "🎨" },
+      { id: 8, title: "Tile Mistri", desc: "Floor, Bathroom, Kitchen", icon: "🧱" },
+      { id: 9, title: "Marble/Granite", desc: "Floor, Sidhi, Slab", icon: "🪨" },
+      { id: 10, title: "Badhai / Carpenter", desc: "Darwaza, Khidki, Furniture", icon: "🚪" },
+      { id: 11, title: "Modular Kitchen", desc: "Cabinet, Platform Fitting", icon: "🍳" },
+      { id: 12, title: "Electrician", desc: "Wiring, Switch, Fan, Light", icon: "⚡" },
+      { id: 13, title: "Plumber", desc: "Pipe, Tank, Bathroom Fitting", icon: "🚿" },
+      { id: 14, title: "Sanitary Fitting", desc: "Commode, Washbasin", icon: "🛁" },
+      { id: 15, title: "Gas Pipe Fitting", desc: "LPG Pipeline", icon: "🔥" },
+      { id: 16, title: "Welding/Fabrication", desc: "Gate, Grill, Shed", icon: "🔧" },
+      { id: 17, title: "Aluminium", desc: "Door, Window, Partition", icon: "🪟" },
+      { id: 18, title: "UPVC", desc: "Door, Window", icon: "🪟" },
+      { id: 19, title: "POP/Gypsum", desc: "False Ceiling Design", icon: "🏠" },
+      { id: 20, title: "Waterproofing", desc: "Roof, Bathroom, Seelan", icon: "💧" },
+      { id: 21, title: "Roofing", desc: "Tin Shed, Sheet", icon: "🏡" },
+      { id: 22, title: "Sidhi Mistri", desc: "RCC, Marble Stair", icon: "🪜" },
+      { id: 23, title: "Boundary Wall", desc: "Char Diwari, Pillar", icon: "🧱" },
+      { id: 24, title: "Site Mazdoor", desc: "Helper, Labour", icon: "🏗️" },
+      { id: 25, title: "Safai", desc: "Malba Safai, Construction Clean", icon: "🧹" },
+      { id: 26, title: "AC Mistri", desc: "Installation, Service", icon: "❄️" },
+      { id: 27, title: "CCTV/Security", desc: "Camera, Bell Fitting", icon: "📡" },
+      { id: 28, title: "Solar Panel", desc: "Panel, Inverter Wiring", icon: "☀️" },
+      { id: 29, title: "Inverter/Battery", desc: "Installation, Wiring", icon: "🔋" },
+      { id: 30, title: "Landscaping", desc: "Garden, Paudhe", icon: "🌳" }
     ];
 
     const biharData = {
@@ -763,9 +807,7 @@
       appId: "1:379307330936:web:..."
     };
 
-    if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
-    }
+    if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
     const db = firebase.firestore();
 
     function getSevenDaysAgoTimestamp() {
@@ -791,15 +833,9 @@
             let width = img.width;
             let height = img.height;
             if (width > height) {
-              if (width > max_size) {
-                height *= max_size / width;
-                width = max_size;
-              }
+              if (width > max_size) { height *= max_size / width; width = max_size; }
             } else {
-              if (height > max_size) {
-                width *= max_size / height;
-                height = max_size;
-              }
+              if (height > max_size) { width *= max_size / height; height = max_size; }
             }
             canvas.width = width;
             canvas.height = height;
@@ -855,29 +891,19 @@
       }
 
       window.scrollTo(0, 0);
-
-      if (pushHistory) {
-        history.pushState({ page: target }, "", "#" + target);
-      }
-
+      if (pushHistory) history.pushState({ page: target }, "", "#" + target);
       if (target === 'jobs') loadFullJobs();
       if (target === 'workers') loadFullWorkers();
       if (target === 'register') {
         const savedWorker = localStorage.getItem("mb_worker_phone");
-        if (savedWorker) {
-          switchRoleTab('worker');
-        } else {
-          switchRoleTab('client');
-        }
+        if (savedWorker) switchRoleTab('worker');
+        else switchRoleTab('client');
       }
     }
 
     window.addEventListener('popstate', (event) => {
-      if (event.state && event.state.page) {
-        navTo(event.state.page, false);
-      } else {
-        navTo('home', false);
-      }
+      if (event.state && event.state.page) navTo(event.state.page, false);
+      else navTo('home', false);
     });
 
     function renderCategories() {
@@ -935,7 +961,7 @@
     function updateBlocks(distId, blockId) {
       const dist = document.getElementById(distId).value;
       const block = document.getElementById(blockId);
-      block.innerHTML = '<option value="">-- ब्लॉक --</option>';
+      block.innerHTML = '<option value="">-- Block --</option>';
       if (dist && biharData[dist]) {
         biharData[dist].forEach(b => {
           let opt = document.createElement("option");
@@ -946,18 +972,24 @@
       }
     }
 
-    function saveClientJob(e) {
+    async function saveClientJob(e) {
       e.preventDefault();
       const phone = document.getElementById("pc-phone").value.trim();
-      if (phone.length !== 10) return alert("10 अंकों का मोबाइल नंबर डालें!");
+      if (phone.length !== 10) return alert("10 anko ka mobile number daalein!");
 
       const btn = document.getElementById("btn-post-job");
-      btn.innerText = "पोस्ट हो रहा है...";
+      btn.innerText = "Post ho raha hai...";
 
       const fullPhone = "+91" + phone;
       const clientName = document.getElementById("pc-name").value.trim();
       const sixDigitId = generateJobId();
       const isUrgent = document.getElementById("pc-urgent").checked;
+
+      let sitePhoto = "";
+      const siteFile = document.getElementById("pc-site-photo").files[0];
+      if (siteFile) {
+        try { sitePhoto = await fileToBase64(siteFile); } catch(err) {}
+      }
 
       const data = {
         jobSixId: sixDigitId,
@@ -967,21 +999,26 @@
         block: document.getElementById("pc-block").value,
         location: document.getElementById("pc-location").value.trim(),
         workType: document.getElementById("pc-work").value,
+        duration: document.getElementById("pc-duration").value,
+        workerCount: document.getElementById("pc-worker-count").value || 1,
+        materialType: document.getElementById("pc-material").value,
+        sitePhoto: sitePhoto || "",
         desc: document.getElementById("pc-desc").value.trim(),
         isUrgent: isUrgent,
+        isClosed: false,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       };
 
       db.collection("job_posts").add(data).then(() => {
         localStorage.setItem("mb_client_phone", fullPhone);
         localStorage.setItem("mb_client_name", clientName);
-        alert(`बधाई हो! आपका काम पोस्ट हो गया है।\nआपकी पोस्ट आईडी है: ${sixDigitId}\nयह काम 7 दिनों तक लाइव रहेगा।`);
-        btn.innerText = "काम पोस्ट करें (7 दिन के लिए)";
+        alert(`Badhai ho! Kaam post ho gaya hai.\nJob ID: ${sixDigitId}\n7 dino tak active rahega.`);
+        btn.innerText = "Kaam Post Karein (7 Din ke liye)";
         navTo('register');
         switchRoleTab('client');
       }).catch(err => {
-        alert("त्रुटि: " + err.message);
-        btn.innerText = "काम पोस्ट करें";
+        alert("Truti: " + err.message);
+        btn.innerText = "Kaam Post Karein";
       });
     }
 
@@ -991,29 +1028,24 @@
       const phone = document.getElementById("pw-phone").value.trim();
       const district = document.getElementById("pw-district").value;
       const block = document.getElementById("pw-block").value;
-      const exp = document.getElementById("pw-exp").value || "0";
+      const exp = parseInt(document.getElementById("pw-exp").value) || 0;
 
       const checkedBoxes = document.querySelectorAll("input[name='worker_skill']:checked");
-      if (checkedBoxes.length === 0) {
-        return alert("कृपया कम से कम एक हुनर (Skill) पर टिक करें!");
-      }
+      if (checkedBoxes.length === 0) return alert("Kripya kam se kam ek hunar chunein!");
       const skillsArray = Array.from(checkedBoxes).map(cb => cb.value);
 
-      if (phone.length !== 10) return alert("10 अंकों का मोबाइल नंबर डालें!");
+      if (phone.length !== 10) return alert("10 anko ka mobile number daalein!");
 
       const btn = document.getElementById("btn-save-worker");
-      btn.innerText = "प्रोसेसिंग...";
-
+      btn.innerText = "Processing...";
       const fullPhone = "+91" + phone;
 
-      // Profile Photo Base64
       let photoData = "";
       const photoFile = document.getElementById("pw-photo-file").files[0];
       if (photoFile) {
         try { photoData = await fileToBase64(photoFile); } catch (err) {}
       }
 
-      // Feature 2: Work Photos Portfolio (Array of Base64)
       const workPhotosFiles = document.getElementById("pw-work-photos").files;
       let workPhotosArray = [];
       if (workPhotosFiles && workPhotosFiles.length > 0) {
@@ -1025,29 +1057,33 @@
         }
       }
 
-      // Feature 6: ID Card Photo (Admin Eyes Only)
       let idCardData = "";
       const idCardFile = document.getElementById("pw-id-card").files[0];
       if (idCardFile) {
         try { idCardData = await fileToBase64(idCardFile); } catch(e) {}
       }
 
+      let workerLevel = "Naya Karigar";
+      if (exp >= 8) workerLevel = "Senior Ustaad";
+      else if (exp >= 3) workerLevel = "Kushal Karigar";
+
       db.collection("workers").where("private_phone", "==", fullPhone).limit(1).get()
         .then(snap => {
           if (!snap.empty) {
-            btn.innerText = "कारीगर पंजीकरण पूरा करें";
+            btn.innerText = "Karigar Panjikaran Poora Karein";
             const existing = snap.docs[0].data();
             existing.id = snap.docs[0].id;
             setLoggedInWorker(existing);
-            alert("आपका खाता पहले से मौजूद है! प्रोफ़ाइल लोड कर दी गई है।");
+            alert("Aapka khata pehle se maujood hai!");
           } else {
-            btn.innerText = "सेव हो रहा है...";
+            btn.innerText = "Save ho raha hai...";
             const data = {
               name: name,
               district: district,
               block: block,
               skills: skillsArray,
               experience: exp,
+              level: workerLevel,
               private_phone: fullPhone,
               photo: photoData || "",
               workPhotos: workPhotosArray,
@@ -1059,18 +1095,18 @@
             };
 
             db.collection("workers").add(data).then(docRef => {
-              btn.innerText = "कारीगर पंजीकरण पूरा करें";
+              btn.innerText = "Karigar Panjikaran Poora Karein";
               data.id = docRef.id;
               setLoggedInWorker(data);
-              alert("बधाई हो! आपका पंजीकरण सफल रहा।");
+              alert("Badhai ho! Panjikaran safal raha.");
             }).catch(err => {
-              btn.innerText = "कारीगर पंजीकरण पूरा करें";
-              alert("त्रुटि: " + err.message);
+              btn.innerText = "Karigar Panjikaran Poora Karein";
+              alert("Truti: " + err.message);
             });
           }
         }).catch(err => {
-          btn.innerText = "कारीगर पंजीकरण पूरा करें";
-          alert("त्रुटि: " + err.message);
+          btn.innerText = "Karigar Panjikaran Poora Karein";
+          alert("Truti: " + err.message);
         });
     }
 
@@ -1082,6 +1118,7 @@
       localStorage.setItem("mb_worker_phone", wData.private_phone.replace("+91", ""));
       localStorage.setItem("mb_worker_photo", wData.photo || "");
       localStorage.setItem("mb_worker_status", wData.liveStatus || "available");
+      localStorage.setItem("mb_worker_level", wData.level || "Kushal Karigar");
       localStorage.setItem("mb_worker_photos", JSON.stringify(wData.workPhotos || []));
       localStorage.setItem("mb_worker_id_verified", wData.isIdVerified ? "true" : "false");
       
@@ -1099,7 +1136,8 @@
         profileBox.classList.remove("hidden");
 
         document.getElementById("my-prof-name").innerText = workerName;
-        document.getElementById("my-prof-location").innerText = localStorage.getItem("mb_worker_district") || "बिहार";
+        document.getElementById("my-prof-location").innerText = localStorage.getItem("mb_worker_district") || "Bihar";
+        document.getElementById("badge-worker-level").innerText = localStorage.getItem("mb_worker_level") || "Kushal Karigar";
 
         const skillsContainer = document.getElementById("my-prof-skills-tags");
         skillsContainer.innerHTML = "";
@@ -1112,17 +1150,14 @@
         const photo = localStorage.getItem("mb_worker_photo");
         document.getElementById("my-prof-img").src = photo || "logo.png";
 
-        // Render Live Status
         const status = localStorage.getItem("mb_worker_status") || "available";
         renderLiveStatusUI(status);
 
-        // Render ID Verified Badge
         const isVerified = localStorage.getItem("mb_worker_id_verified") === "true";
         const idBadge = document.getElementById("badge-verified-id");
         if (isVerified) idBadge.classList.remove("hidden");
         else idBadge.classList.add("hidden");
 
-        // Render Work Photos Portfolio
         const myPortGrid = document.getElementById("my-portfolio-grid");
         let workPhotos = [];
         try { workPhotos = JSON.parse(localStorage.getItem("mb_worker_photos")) || []; } catch(e) {}
@@ -1140,46 +1175,46 @@
 
     function loginWithPhone() {
       const phoneInput = document.getElementById("quick-login-phone").value.trim();
-      if (phoneInput.length !== 10) return alert("कृपया 10 अंकों का मोबाइल नंबर डालें!");
+      if (phoneInput.length !== 10) return alert("10 anko ka number daalein!");
 
       const btn = document.getElementById("btn-quick-login");
-      btn.innerText = "जाँच...";
+      btn.innerText = "Check...";
 
       const fullPhone = "+91" + phoneInput;
       db.collection("workers").where("private_phone", "==", fullPhone).limit(1).get()
         .then(snap => {
-          btn.innerText = "खोलें";
+          btn.innerText = "Kholein";
           if (!snap.empty) {
             const data = snap.docs[0].data();
             data.id = snap.docs[0].id;
             setLoggedInWorker(data);
-            alert("स्वागत है! आपकी प्रोफ़ाइल लोड हो गई है।");
+            alert("Swagat hai! Profile khul gayi.");
           } else {
-            alert("यह नंबर पंजीकृत नहीं है! कृपया नीचे दिया गया फ़ॉर्म भरें।");
+            alert("Yeh number register nahi hai! Neeche form bharein.");
             document.getElementById("pw-phone").value = phoneInput;
           }
         }).catch(err => {
-          btn.innerText = "खोलें";
-          alert("त्रुटि: " + err.message);
+          btn.innerText = "Kholein";
+          alert("Truti: " + err.message);
         });
     }
 
     function logoutWorker() {
-      if (confirm("क्या आप लॉग आउट करना चाहते हैं?")) {
+      if (confirm("Kya aap log out karna chahte hain?")) {
         localStorage.clear();
         updateRegisterScreenView();
-        alert("आप लॉग आउट हो चुके हैं।");
+        alert("Aap log out ho chuke hain.");
       }
     }
 
     function loadFullWorkers(filterSkill = "") {
       const grid = document.getElementById("full-worker-grid");
       db.collection("workers").orderBy("createdAt", "desc").limit(25).get().then(snap => {
-        if (snap.empty) return grid.innerHTML = "<p class='text-xs text-slate-400'>कोई कारीगर नहीं मिला।</p>";
+        if (snap.empty) return grid.innerHTML = "<p class='text-xs text-slate-400'>Koi karigar nahi mila.</p>";
         grid.innerHTML = "";
         snap.forEach(doc => {
           const w = doc.data();
-          const skillsList = w.skills || (w.skill ? [w.skill] : ["कारीगर"]);
+          const skillsList = w.skills || (w.skill ? [w.skill] : ["Karigar"]);
           if (filterSkill && !skillsList.some(s => s.includes(filterSkill))) return;
 
           const photoSrc = w.photo || 'logo.png';
@@ -1192,26 +1227,25 @@
                 <div class="flex items-center space-x-2.5">
                   <div class="relative">
                     <img src="${photoSrc}" onerror="this.src='https://placehold.co/100x100/f59e0b/0f172a.png?text=MB'" class="w-12 h-12 rounded-full object-cover border-2 border-amber-400">
-                    <span class="absolute bottom-0 right-0 w-3 h-3 rounded-full ${isBusy ? 'bg-rose-500' : 'bg-emerald-500'} border-2 border-white" title="${isBusy ? 'व्यस्त' : 'उपलब्ध'}"></span>
+                    <span class="absolute bottom-0 right-0 w-3 h-3 rounded-full ${isBusy ? 'bg-rose-500' : 'bg-emerald-500'} border-2 border-white" title="${isBusy ? 'Vyast' : 'Uplabdh'}"></span>
                   </div>
                   <div>
                     <div class="flex items-center space-x-1">
                       <h4 class="font-bold text-slate-900 text-xs">${w.name}</h4>
-                      ${w.isIdVerified ? '<i class="fa-solid fa-circle-check text-blue-500 text-[10px]" title="पहचान सत्यापित"></i>' : ''}
+                      <span class="text-[8px] bg-amber-100 text-amber-800 px-1.5 py-0.2 rounded font-bold">${w.level || 'Kushal'}</span>
                     </div>
-                    <span class="text-[9px] font-bold ${isBusy ? 'text-rose-500' : 'text-emerald-600'}">${isBusy ? 'काम में व्यस्त 🔴' : 'काम के लिए उपलब्ध 🟢'}</span>
-                    <p class="text-[9px] text-slate-400">${w.district} • ${w.experience || 0} वर्ष अनुभव</p>
+                    <span class="text-[9px] font-bold ${isBusy ? 'text-rose-500' : 'text-emerald-600'}">${isBusy ? 'Kaam me Vyast 🔴' : 'Kaam ke liye Uplabdh 🟢'}</span>
+                    <p class="text-[9px] text-slate-400">${w.district} • ${w.experience || 0} saal anubhav</p>
                   </div>
                 </div>
                 <button onclick="navTo('post')" class="bg-amber-500 text-slate-900 px-3 py-1.5 rounded-lg text-[11px] font-bold shadow-xs">
-                  काम दें
+                  Kaam Dein
                 </button>
               </div>
 
-              <!-- Feature 2: Work Portfolio Preview in Listing -->
               ${workPhotos.length > 0 ? `
                 <div class="pt-1 flex items-center space-x-1.5 overflow-x-auto">
-                  <span class="text-[9px] text-slate-400 font-bold">काम की फ़ोटो:</span>
+                  <span class="text-[9px] text-slate-400 font-bold">Kaam Photo:</span>
                   ${workPhotos.map(img => `<img src="${img}" class="w-10 h-10 rounded-md object-cover border border-slate-100">`).join('')}
                 </div>
               ` : ''}
@@ -1230,7 +1264,7 @@
 
     function loadClientPosts() {
       const p = document.getElementById("dash-client-phone").value.trim();
-      if (p.length !== 10) return alert("10 अंकों का मोबाइल नंबर डालें!");
+      if (p.length !== 10) return alert("10 anko ka number daalein!");
 
       const fullPhone = "+91" + p;
       localStorage.setItem("mb_client_phone", fullPhone);
@@ -1238,7 +1272,7 @@
       listenClientInbox(fullPhone);
 
       const listDiv = document.getElementById("client-posts-list");
-      listDiv.innerHTML = "<p class='text-xs text-slate-400'>आपकी पोस्ट और मिस्त्रियों के संदेश खोजे जा रहे हैं...</p>";
+      listDiv.innerHTML = "<p class='text-xs text-slate-400'>Aapke kaam aur bids khoje ja rahe hain...</p>";
 
       const sevenDaysAgo = getSevenDaysAgoTimestamp();
 
@@ -1251,8 +1285,8 @@
           if (snap.empty) {
             listDiv.innerHTML = `
               <div class="bg-white p-5 rounded-2xl border border-slate-200 text-center text-xs">
-                <p class="text-slate-500 font-bold">इस नंबर पर पिछले 7 दिनों में कोई सक्रिय काम पोस्ट नहीं है।</p>
-                <button onclick="navTo('post')" class="mt-2 bg-amber-500 text-slate-900 font-bold px-3 py-1.5 rounded-lg">नया काम पोस्ट करें</button>
+                <p class="text-slate-500 font-bold">Pichhle 7 dino me koi active kaam nahi hai.</p>
+                <button onclick="navTo('post')" class="mt-2 bg-amber-500 text-slate-900 font-bold px-3 py-1.5 rounded-lg">Naya Kaam Post Karein</button>
               </div>`;
             return;
           }
@@ -1269,18 +1303,23 @@
               <div class="flex justify-between items-start border-b border-slate-100 pb-2">
                 <div>
                   <div class="flex items-center space-x-1.5">
-                    ${j.isUrgent ? '<span class="bg-red-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded animate-pulse">URGENT</span>' : ''}
+                    ${j.isUrgent ? '<span class="bg-red-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded">URGENT</span>' : ''}
                     <span class="bg-slate-900 text-amber-400 text-[10px] font-black px-2 py-0.5 rounded">ID: ${sixId}</span>
+                    ${j.isClosed ? '<span class="bg-rose-100 text-rose-800 text-[9px] font-bold px-2 py-0.5 rounded">Kaam Poora Hua (Closed)</span>' : ''}
                   </div>
                   <h4 class="font-bold text-slate-900 text-sm mt-1">${j.workType}</h4>
-                  <p class="text-[10px] text-slate-400">${j.district} (${j.location})</p>
+                  <p class="text-[10px] text-slate-400">${j.district} (${j.location}) • Aadmi: ${j.workerCount || 1}</p>
                 </div>
-                <span class="text-[9px] bg-emerald-50 text-emerald-700 font-bold px-2 py-1 rounded-full border border-emerald-200">7 दिन एक्टिव</span>
+                ${!j.isClosed ? `
+                  <button onclick="markJobCompleted('${jobId}', '${sixId}', '', '')" class="bg-emerald-50 text-emerald-700 border border-emerald-300 text-[10px] font-bold px-2.5 py-1 rounded-lg">
+                    Kaam Poora Hua ✅
+                  </button>
+                ` : ''}
               </div>
               <div>
-                <h5 class="text-[11px] font-black text-slate-800 uppercase tracking-wide">मिस्त्रियों के आए संदेश व रेट:</h5>
+                <h5 class="text-[11px] font-black text-slate-800 uppercase tracking-wide">Mistriyon ke Aaye Sandesh:</h5>
                 <div id="bids-for-${jobId}" class="mt-2 space-y-2">
-                  <p class="text-[10px] text-slate-400">संदेश लोड हो रहे हैं...</p>
+                  <p class="text-[10px] text-slate-400">Sandesh load ho rahe hain...</p>
                 </div>
               </div>
             `;
@@ -1293,7 +1332,7 @@
               .then(pSnap => {
                 const bidsBox = document.getElementById("bids-for-" + jobId);
                 if (pSnap.empty) {
-                  bidsBox.innerHTML = "<p class='text-[10px] text-slate-400 italic'>अभी तक किसी मिस्त्री का संदेश नहीं आया है।</p>";
+                  bidsBox.innerHTML = "<p class='text-[10px] text-slate-400 italic'>Abhi koi sandesh nahi aaya hai.</p>";
                   return;
                 }
                 bidsBox.innerHTML = "";
@@ -1303,7 +1342,7 @@
                     <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs">
                       <div class="flex justify-between items-center mb-1">
                         <span class="font-black text-slate-900"><i class="fa-solid fa-user-gear text-amber-600 mr-1"></i>${prop.workerName}</span>
-                        <span class="text-[9px] bg-slate-200 text-slate-600 px-1.5 py-0.5 rounded font-bold">🔒 नंबर सुरक्षित</span>
+                        <span class="text-[9px] bg-slate-200 text-slate-600 px-1.5 py-0.5 rounded font-bold">🔒 Number Surakshit</span>
                       </div>
                       <p class="text-[11px] text-slate-700 bg-white p-2 rounded-lg border border-slate-100 font-medium">${prop.message}</p>
                       
@@ -1311,11 +1350,10 @@
                         <button onclick="confirmDealInApp('${sixId}', '${prop.workerName}', '${prop.workerPhone}', '${j.clientName}', '${j.phone}', '${j.workType}', '${j.district} (${j.location})', '${prop.message.replace(/'/g, "\\'")}')" 
                           class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded-lg text-[10px] flex items-center justify-center space-x-1 shadow-xs transition">
                           <i class="fa-solid fa-handshake"></i>
-                          <span>डील पक्की करें</span>
+                          <span>Deal Pakki Karein</span>
                         </button>
-                        <!-- Feature 3: Rating Button -->
-                        <button onclick="openReviewModal('${prop.workerPhone}', '${prop.workerName}', '${sixId}')" class="bg-amber-100 text-amber-900 px-2.5 py-2 rounded-lg text-[10px] font-bold" title="रेटिंग दें">
-                          ⭐ रेटिंग
+                        <button onclick="openReviewModal('${prop.workerPhone}', '${prop.workerName}', '${sixId}')" class="bg-amber-100 text-amber-900 px-2.5 py-2 rounded-lg text-[10px] font-bold">
+                          ⭐ Rating
                         </button>
                       </div>
                     </div>
@@ -1324,14 +1362,12 @@
               });
           });
         }).catch(err => {
-          listDiv.innerHTML = "<p class='text-xs text-red-500'>त्रुटि: " + err.message + "</p>";
+          listDiv.innerHTML = "<p class='text-xs text-red-500'>Truti: " + err.message + "</p>";
         });
     }
 
     function confirmDealInApp(sixId, workerName, workerPhone, clientName, clientPhone, workType, location, rateMsg) {
-      if (!confirm(`क्या आप पोस्ट ${sixId} के लिए ${workerName} की डील फाइनल करना चाहते हैं?\n\nयह डील MistryBabu एडमिन को भेजी जाएगी और आपके इनबॉक्स में संपर्क नंबर आ जाएगा।`)) {
-        return;
-      }
+      if (!confirm(`Kya aap ${sixId} ke liye ${workerName} ki deal final karna chahte hain?`)) return;
 
       const dealData = {
         jobSixId: sixId,
@@ -1347,9 +1383,9 @@
       };
 
       db.collection("confirmed_deals").add(dealData).then(() => {
-        alert(`✅ बधाई हो!\nपोस्ट ID: ${sixId} की डील रिक्वेस्ट MistryBabu कंट्रोल रूम में दर्ज हो गई है।\nएडमिन सत्यापन के बाद आपके इनबॉक्स में मिस्त्री का नंबर आ जाएगा।`);
+        alert(`✅ Deal Request darj ho gayi hai! Admin verification ke baad inbox me number aa jayega.`);
       }).catch(err => {
-        alert("त्रुटि: " + err.message);
+        alert("Truti: " + err.message);
       });
     }
 
@@ -1369,12 +1405,12 @@
               inboxList.innerHTML += `
                 <div class="bg-white p-2.5 rounded-xl border border-amber-300 shadow-2xs">
                   <div class="flex justify-between items-center mb-1">
-                    <span class="font-black text-amber-800 text-[10px]"><i class="fa-solid fa-building-circle-check mr-1"></i>${m.title || 'MistryBabu अपडेट'}</span>
+                    <span class="font-black text-amber-800 text-[10px]">${m.title || 'MistryBabu Alert'}</span>
                     <span class="text-[9px] text-slate-400">ID: ${m.jobSixId || '#MB'}</span>
                   </div>
                   <p class="text-slate-800 text-xs font-semibold leading-relaxed">${m.message}</p>
                   ${m.contactNumber ? `<div class="mt-1.5 pt-1.5 border-t border-slate-100 flex items-center justify-between">
-                    <span class="text-[10px] text-slate-500 font-bold">संपर्क नंबर:</span>
+                    <span class="text-[10px] text-slate-500 font-bold">Sampark Number:</span>
                     <a href="tel:${m.contactNumber}" class="bg-emerald-600 text-white px-2 py-0.5 rounded text-[10px] font-bold"><i class="fa-solid fa-phone mr-1"></i>${m.contactNumber}</a>
                   </div>` : ''}
                 </div>
@@ -1397,11 +1433,11 @@
               inboxList.innerHTML += `
                 <div class="bg-white p-2 rounded-lg border border-amber-200">
                   <div class="flex justify-between items-center mb-0.5">
-                    <span class="font-black text-slate-900 text-[10px]">${m.title || 'काम की सूचना'}</span>
+                    <span class="font-black text-slate-900 text-[10px]">${m.title || 'Kaam Soochna'}</span>
                     <span class="text-[9px] text-slate-400">${m.jobSixId || ''}</span>
                   </div>
                   <p class="text-xs text-slate-800">${m.message}</p>
-                  ${m.contactNumber ? `<a href="tel:${m.contactNumber}" class="mt-1 inline-block bg-slate-900 text-amber-400 px-2 py-0.5 rounded text-[10px] font-bold"><i class="fa-solid fa-phone mr-1"></i>मालिक को कॉल करें: ${m.contactNumber}</a>` : ''}
+                  ${m.contactNumber ? `<a href="tel:${m.contactNumber}" class="mt-1 inline-block bg-slate-900 text-amber-400 px-2 py-0.5 rounded text-[10px] font-bold"><i class="fa-solid fa-phone mr-1"></i>Call: ${m.contactNumber}</a>` : ''}
                 </div>
               `;
             });
@@ -1409,22 +1445,16 @@
         });
     }
 
-    function openAdminModal() {
-      document.getElementById("admin-modal").classList.remove("hidden");
-    }
-
-    function closeAdminModal() {
-      document.getElementById("admin-modal").classList.add("hidden");
-      document.getElementById("admin-pin-input").value = "";
-    }
+    function openAdminModal() { document.getElementById("admin-modal").classList.remove("hidden"); }
+    function closeAdminModal() { document.getElementById("admin-modal").classList.add("hidden"); }
 
     function loadAdminDeals() {
       const container = document.getElementById("admin-deals-container");
-      container.innerHTML = "<p class='text-xs text-slate-400 text-center py-4'>डील्स खोजी जा रही हैं...</p>";
+      container.innerHTML = "<p class='text-xs text-slate-400 text-center py-4'>Deals khoji ja rahi hain...</p>";
 
       db.collection("confirmed_deals").orderBy("createdAt", "desc").limit(30).get().then(snap => {
         if (snap.empty) {
-          container.innerHTML = "<p class='text-xs text-slate-400 text-center py-4'>वर्तमान में कोई नई डील नहीं आई है।</p>";
+          container.innerHTML = "<p class='text-xs text-slate-400 text-center py-4'>Koi nayi deal nahi aayi hai.</p>";
           return;
         }
 
@@ -1442,29 +1472,27 @@
 
               <div class="grid grid-cols-2 gap-2 text-[11px]">
                 <div class="bg-white p-2 rounded-lg border border-slate-200">
-                  <span class="text-slate-400 font-bold block text-[9px] uppercase">🏠 मालिक (Customer)</span>
+                  <span class="text-slate-400 font-bold block text-[9px] uppercase">🏠 Malik</span>
                   <span class="font-black text-slate-900 block">${d.clientName}</span>
-                  <a href="tel:${d.clientPhone}" class="text-blue-600 font-bold block mt-0.5"><i class="fa-solid fa-phone mr-1"></i>${d.clientPhone}</a>
-                  <span class="text-[9px] text-slate-500 block truncate">${d.location}</span>
+                  <a href="tel:${d.clientPhone}" class="text-blue-600 font-bold block mt-0.5">${d.clientPhone}</a>
                 </div>
                 <div class="bg-white p-2 rounded-lg border border-slate-200">
-                  <span class="text-slate-400 font-bold block text-[9px] uppercase">👷 मिस्त्री (Worker)</span>
+                  <span class="text-slate-400 font-bold block text-[9px] uppercase">👷 Mistri</span>
                   <span class="font-black text-slate-900 block">${d.workerName}</span>
-                  <a href="tel:${d.workerPhone}" class="text-emerald-600 font-bold block mt-0.5"><i class="fa-solid fa-phone mr-1"></i>${d.workerPhone}</a>
-                  <span class="text-[9px] text-amber-700 font-bold block truncate">${d.workType}</span>
+                  <a href="tel:${d.workerPhone}" class="text-emerald-600 font-bold block mt-0.5">${d.workerPhone}</a>
                 </div>
               </div>
 
               <div class="bg-amber-50 p-2 rounded-lg border border-amber-200 text-[10px] text-slate-700">
-                <span class="font-bold">तय रेट / मैसेज:</span> ${d.rateMessage}
+                <span class="font-bold">Rate/Msg:</span> ${d.rateMessage}
               </div>
 
               <div class="pt-1 flex gap-2">
-                <button onclick="adminSendInboxMsg('${dealId}', '${d.clientPhone}', 'मालिक', '${d.workerName}', '${d.workerPhone}', '${d.jobSixId}')" class="flex-1 bg-slate-900 hover:bg-slate-800 text-amber-400 py-1.5 rounded-lg text-[10px] font-bold shadow-xs">
-                  <i class="fa-solid fa-paper-plane mr-1"></i>मालिक को नंबर भेजें
+                <button onclick="adminSendInboxMsg('${dealId}', '${d.clientPhone}', 'Malik', '${d.workerName}', '${d.workerPhone}', '${d.jobSixId}')" class="flex-1 bg-slate-900 text-amber-400 py-1.5 rounded-lg text-[10px] font-bold shadow-xs">
+                  Malik ko No. Bhejein
                 </button>
-                <button onclick="adminSendInboxMsg('${dealId}', '${d.workerPhone}', 'मिस्त्री', '${d.clientName}', '${d.clientPhone}', '${d.jobSixId}')" class="flex-1 bg-emerald-700 hover:bg-emerald-600 text-white py-1.5 rounded-lg text-[10px] font-bold shadow-xs">
-                  <i class="fa-solid fa-paper-plane mr-1"></i>मिस्त्री को नंबर भेजें
+                <button onclick="adminSendInboxMsg('${dealId}', '${d.workerPhone}', 'Mistri', '${d.clientName}', '${d.clientPhone}', '${d.jobSixId}')" class="flex-1 bg-emerald-700 text-white py-1.5 rounded-lg text-[10px] font-bold shadow-xs">
+                  Mistri ko No. Bhejein
                 </button>
               </div>
             </div>
@@ -1474,16 +1502,16 @@
     }
 
     function adminSendInboxMsg(dealDocId, recipientPhone, recipientType, partnerName, partnerPhone, jobSixId) {
-      const defaultText = recipientType === 'मालिक' 
-        ? `नमस्ते! आपकी पोस्ट ${jobSixId} के लिए मिस्त्री ${partnerName} का नंबर जारी कर दिया गया है। कृपया उनसे सीधे बात कर लें।`
-        : `नमस्ते! पोस्ट ${jobSixId} के लिए मालिक ${partnerName} का नंबर जारी कर दिया गया है। कृपया काम के सिलसिले में तुरंत संपर्क करें।`;
+      const defaultText = recipientType === 'Malik' 
+        ? `Namaste! Post ${jobSixId} ke liye Mistri ${partnerName} ka number: ${partnerPhone} hai.`
+        : `Namaste! Post ${jobSixId} ke liye Malik ${partnerName} ka number: ${partnerPhone} hai.`;
 
-      const customMsg = prompt(`इस ${recipientType} के इन-ऐप इनबॉक्स में संदेश भेजें:`, defaultText);
+      const customMsg = prompt(`Is ${recipientType} ko sandesh bhejein:`, defaultText);
       if (!customMsg) return;
 
       const payload = {
         recipientPhone: recipientPhone,
-        title: `MistryBabu डील कनेक्ट (${jobSixId})`,
+        title: `MistryBabu Deal Connect (${jobSixId})`,
         jobSixId: jobSixId,
         message: customMsg,
         contactNumber: partnerPhone,
@@ -1492,11 +1520,9 @@
 
       db.collection("inbox_messages").add(payload).then(() => {
         db.collection("confirmed_deals").doc(dealDocId).update({ status: "Connected" });
-        alert(`✅ ${recipientType} के प्रोफ़ाइल इनबॉक्स में संदेश और नंबर सुरक्षित भेज दिया गया है!`);
+        alert(`✅ Number bhej diya gaya!`);
         loadAdminDeals();
-      }).catch(err => {
-        alert("त्रुटि: " + err.message);
-      });
+      }).catch(err => alert("Truti: " + err.message));
     }
 
     function loadRecentJobs() {
@@ -1505,11 +1531,12 @@
 
       db.collection("job_posts")
         .where("createdAt", ">=", sevenDaysAgo)
+        .where("isClosed", "==", false)
         .orderBy("createdAt", "desc")
         .limit(3)
         .get()
         .then(snap => {
-          if (snap.empty) return feed.innerHTML = "<p class='text-xs text-slate-400'>वर्तमान में कोई काम दर्ज नहीं है।</p>";
+          if (snap.empty) return feed.innerHTML = "<p class='text-xs text-slate-400'>Koi kaam darj nahi hai.</p>";
           feed.innerHTML = "";
           snap.forEach(doc => {
             const j = doc.data();
@@ -1522,14 +1549,12 @@
                     <span class="text-[9px] font-bold text-amber-600">${sixId}</span>
                   </div>
                   <h5 class="font-bold text-slate-800 mt-0.5">${j.workType}</h5>
-                  <p class="text-[10px] text-slate-400">${j.district} (${j.location}) • मालिक: ${j.clientName}</p>
+                  <p class="text-[10px] text-slate-400">${j.district} (${j.location})</p>
                 </div>
-                <button onclick="openProposalModal('${doc.id}', '${sixId}', '${j.phone}', '${j.workType}')" class="bg-amber-500 text-slate-900 px-2.5 py-1 rounded-lg text-[10px] font-bold">मैसेज / Bid</button>
+                <button onclick="openProposalModal('${doc.id}', '${sixId}', '${j.phone}', '${j.workType}')" class="bg-amber-500 text-slate-900 px-2.5 py-1 rounded-lg text-[10px] font-bold">Bid Bhejein</button>
               </div>`;
           });
-        }).catch(() => {
-          feed.innerHTML = "<p class='text-xs text-slate-400'>काम लोड हो रहे हैं...</p>";
-        });
+        }).catch(() => { feed.innerHTML = "<p class='text-xs text-slate-400'>Kaam load ho rahe hain...</p>"; });
     }
 
     function loadFullJobs(filterDist = "") {
@@ -1538,39 +1563,46 @@
 
       db.collection("job_posts")
         .where("createdAt", ">=", sevenDaysAgo)
+        .where("isClosed", "==", false)
         .orderBy("createdAt", "desc")
         .limit(20)
         .get()
         .then(snap => {
-          if (snap.empty) return feed.innerHTML = "<p class='text-xs text-slate-400'>पिछले 7 दिनों में कोई काम नहीं मिला।</p>";
+          if (snap.empty) return feed.innerHTML = "<p class='text-xs text-slate-400'>Pichhle 7 dino me koi kaam nahi mila.</p>";
           feed.innerHTML = "";
           snap.forEach(doc => {
             const j = doc.data();
             if (filterDist && j.district !== filterDist) return;
             const sixId = j.jobSixId || ("#MB-" + doc.id.substring(0, 6).toUpperCase());
+
             feed.innerHTML += `
-              <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
+              <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs space-y-2">
                 <div class="flex justify-between items-start">
                   <div class="flex items-center space-x-1.5">
-                    ${j.isUrgent ? '<span class="bg-red-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded animate-pulse">🚨 URGENT</span>' : '<span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded">7 दिन वैध</span>'}
+                    ${j.isUrgent ? '<span class="bg-red-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded">🚨 URGENT</span>' : '<span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded">7 Din Vaidh</span>'}
+                    <span class="bg-amber-50 text-amber-900 text-[10px] font-bold px-1.5 py-0.5 rounded">${j.duration || 'Dihadi'}</span>
                   </div>
                   <span class="bg-slate-100 text-slate-700 text-[10px] font-bold px-2 py-0.5 rounded">ID: ${sixId}</span>
                 </div>
-                <h4 class="font-bold text-slate-900 text-sm mt-1.5">${j.workType}</h4>
-                <p class="text-[11px] text-slate-400 mt-0.5"><i class="fa-solid fa-location-dot text-amber-500 mr-1"></i>${j.district} (${j.location})</p>
-                <p class="text-xs text-slate-500 mt-1">${j.desc || 'काम का विवरण उपलब्ध नहीं है'}</p>
-                <div class="mt-3 pt-2.5 border-t border-slate-100 flex justify-between items-center">
-                  <span class="text-[10px] text-slate-400 font-bold">मालिक: ${j.clientName} (🔒 नंबर सुरक्षित)</span>
+                <h4 class="font-bold text-slate-900 text-sm">${j.workType}</h4>
+                <p class="text-[11px] text-slate-500"><i class="fa-solid fa-location-dot text-amber-500 mr-1"></i>${j.district} (${j.location}) • Zarurat: <strong>${j.workerCount || 1} Aadmi</strong></p>
+                <p class="text-[10px] text-slate-600 bg-slate-50 p-1.5 rounded">${j.materialType || 'Saaman Malik ka'}</p>
+                ${j.sitePhoto ? `<img src="${j.sitePhoto}" class="w-full h-32 rounded-lg object-cover border border-slate-100">` : ''}
+                <p class="text-xs text-slate-500">${j.desc || 'Vivran uplabdh nahi hai'}</p>
+
+                <div class="pt-2 border-t border-slate-100 flex justify-between items-center">
+                  <button onclick="shareJobOnWhatsApp('${j.workType}', '${j.district}', '${j.location}', '${sixId}')" class="text-[11px] bg-emerald-50 text-emerald-700 font-bold px-2 py-1.5 rounded-lg flex items-center space-x-1 border border-emerald-200">
+                    <i class="fa-brands fa-whatsapp text-emerald-600"></i>
+                    <span>Share</span>
+                  </button>
                   <button onclick="openProposalModal('${doc.id}', '${sixId}', '${j.phone}', '${j.workType}')" class="bg-slate-900 text-amber-400 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center space-x-1 shadow-xs">
                     <i class="fa-solid fa-comment-dots text-[10px]"></i>
-                    <span>रेट / संदेश भेजें</span>
+                    <span>Rate Bhejein</span>
                   </button>
                 </div>
               </div>`;
           });
-        }).catch(() => {
-          feed.innerHTML = "<p class='text-xs text-slate-400'>लोडिंग...</p>";
-        });
+        }).catch(() => { feed.innerHTML = "<p class='text-xs text-slate-400'>Loading...</p>"; });
     }
 
     function filterByDistrict() {
@@ -1598,17 +1630,15 @@
       document.getElementById("proposal-modal").classList.remove("hidden");
     }
 
-    function closeProposalModal() {
-      document.getElementById("proposal-modal").classList.add("hidden");
-    }
+    function closeProposalModal() { document.getElementById("proposal-modal").classList.add("hidden"); }
 
     function sendProposal(e) {
       e.preventDefault();
       const phone = document.getElementById("prop-worker-phone").value.trim();
-      if (phone.length !== 10) return alert("10 अंकों का मोबाइल नंबर डालें!");
+      if (phone.length !== 10) return alert("10 anko ka number daalein!");
 
       const btn = document.getElementById("btn-prop-submit");
-      btn.innerText = "भेजा जा रहा है...";
+      btn.innerText = "Bheja ja raha hai...";
 
       const pData = {
         jobId: document.getElementById("prop-job-id").value,
@@ -1621,13 +1651,13 @@
       };
 
       db.collection("job_proposals").add(pData).then(() => {
-        alert("संदेश सफलतापूर्वक भेज दिया गया है! मालिक को आपकी प्रोफ़ाइल और रेट दिखेगा। नंबर पूरी तरह सुरक्षित है।");
-        btn.innerText = "रेट व संदेश भेजें";
+        alert("Sandesh bhej diya gaya hai! Number poori tarah surakshit hai.");
+        btn.innerText = "Rate va Sandesh Bhejein";
         document.getElementById("prop-message").value = "";
         closeProposalModal();
       }).catch(err => {
-        alert("त्रुटि: " + err.message);
-        btn.innerText = "रेट व संदेश भेजें";
+        alert("Truti: " + err.message);
+        btn.innerText = "Rate va Sandesh Bhejein";
       });
     }
 
