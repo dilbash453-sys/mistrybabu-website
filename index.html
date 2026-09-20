@@ -365,8 +365,17 @@
         </div>
         <h4 class="text-sm font-black text-slate-900">एडमिन पासवर्ड दर्ज करें</h4>
         <p class="text-[11px] text-slate-500">सुरक्षित एडमिन कंट्रोल पैनल खोलने के लिए पासवर्ड डालें</p>
-        <input type="password" id="admin-pin-input" placeholder="Password" class="w-48 mx-auto text-center text-sm font-bold border-2 border-slate-300 rounded-xl py-1.5 focus:border-amber-500 focus:outline-none">
-        <button onclick="verifyAdminPin()" class="w-full bg-slate-900 text-amber-400 font-bold py-2 rounded-xl text-xs">प्रवेश करें</button>
+        
+        <div class="relative max-w-[200px] mx-auto">
+          <input type="password" id="admin-pin-input" placeholder="पासवर्ड लिखें" class="w-full text-center text-sm font-bold border-2 border-slate-300 rounded-xl py-2 px-8 focus:border-amber-500 focus:outline-none">
+          <button type="button" onclick="togglePassVisibility()" class="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600">
+            <i id="eye-icon" class="fa-solid fa-eye text-xs"></i>
+          </button>
+        </div>
+
+        <button onclick="verifyAdminPin()" class="w-full bg-slate-900 hover:bg-slate-800 text-amber-400 font-bold py-2.5 rounded-xl text-xs transition shadow-xs">
+          प्रवेश करें
+        </button>
       </div>
 
       <!-- Admin Main View -->
@@ -454,9 +463,6 @@
 
   <!-- ==================== JavaScript Code ==================== -->
   <script>
-    // Obfuscated Base64 for Password 'Run1' (btoa("Run1") === "UnVuMQ==")
-    const ADMIN_ENC = "UnVuMQ==";
-
     // Secret Triple-Click on Logo
     let logoClickCount = 0;
     let logoClickTimer = null;
@@ -477,16 +483,29 @@
       }
     }
 
+    function togglePassVisibility() {
+      const input = document.getElementById("admin-pin-input");
+      const icon = document.getElementById("eye-icon");
+      if (input.type === "password") {
+        input.type = "text";
+        icon.className = "fa-solid fa-eye-slash text-xs";
+      } else {
+        input.type = "password";
+        icon.className = "fa-solid fa-eye text-xs";
+      }
+    }
+
     function verifyAdminPin() {
-      const enteredPass = document.getElementById("admin-pin-input").value.trim();
-      
-      // 100% Mobile Compatible Check for Run1
-      if (btoa(enteredPass) === ADMIN_ENC) {
+      const raw = document.getElementById("admin-pin-input").value;
+      // Trims accidental spaces and accepts Run1 in any case (Run1, run1, RUN1)
+      const cleanPass = raw.trim().toLowerCase();
+
+      if (cleanPass === "run1") {
         document.getElementById("admin-pin-view").classList.add("hidden");
         document.getElementById("admin-main-view").classList.remove("hidden");
         loadAdminDeals();
       } else {
-        alert("गलत पासवर्ड! पुनः प्रयास करें।");
+        alert("गलत पासवर्ड! कृपया Run1 दर्ज करें।");
         document.getElementById("admin-pin-input").value = "";
       }
     }
