@@ -40,15 +40,19 @@
         <p class="text-[9px] text-amber-600 font-bold mt-0.5">बिहार के अपने मिस्त्री • 100% निःशुल्क</p>
       </div>
     </div>
-    <a href="https://wa.me/917033943841?text=Namaste%20MistryBabu%20Help%20Desk" target="_blank" class="text-xs bg-emerald-50 text-emerald-700 font-semibold px-2.5 py-1.5 rounded-lg flex items-center space-x-1 border border-emerald-200">
-      <i class="fa-brands fa-whatsapp text-emerald-600 text-sm"></i>
-      <span class="text-[11px] font-bold">हेल्पलाइन</span>
-    </a>
+    <div class="flex items-center space-x-2">
+      <button onclick="openAdminModal()" class="text-[10px] bg-slate-900 text-amber-400 font-bold px-2 py-1 rounded-lg border border-slate-700">
+        <i class="fa-solid fa-lock text-[9px] mr-1"></i>एडमिन
+      </button>
+      <a href="https://wa.me/917033943841?text=Namaste%20MistryBabu%20Help%20Desk" target="_blank" class="text-xs bg-emerald-50 text-emerald-700 font-semibold px-2 py-1 rounded-lg flex items-center space-x-1 border border-emerald-200">
+        <i class="fa-brands fa-whatsapp text-emerald-600 text-sm"></i>
+        <span class="text-[10px] font-bold">हेल्प</span>
+      </a>
+    </div>
   </header>
 
   <!-- ==================== PAGE 1: HOME SCREEN ==================== -->
   <section id="page-home" class="max-w-md mx-auto px-4 py-4 space-y-5 block">
-    <!-- Location Filter -->
     <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-xs flex items-center space-x-2">
       <i class="fa-solid fa-location-dot text-amber-500 text-base"></i>
       <div class="flex-1">
@@ -59,7 +63,6 @@
       </div>
     </div>
 
-    <!-- Banner Card -->
     <div class="bg-gradient-to-r from-slate-900 to-slate-800 text-white p-4 rounded-2xl shadow-sm">
       <span class="bg-emerald-500 text-slate-900 text-[10px] font-black px-2 py-0.5 rounded-md uppercase">100% मुफ़्त सेवा</span>
       <h3 class="text-lg font-black mt-2 leading-snug">मिस्त्री खोजें या सीधा काम पाएं</h3>
@@ -70,7 +73,6 @@
       </div>
     </div>
 
-    <!-- 30 Categories Grid on Home -->
     <div>
       <div class="flex justify-between items-center mb-2.5">
         <div>
@@ -82,7 +84,6 @@
       <div id="home-categories-grid" class="grid grid-cols-3 gap-2"></div>
     </div>
 
-    <!-- Recent Jobs Short List -->
     <div>
       <div class="flex justify-between items-center mb-2">
         <h3 class="text-xs font-black text-slate-900 uppercase tracking-wide">ताज़ा काम (वैधता: 7 दिन)</h3>
@@ -164,9 +165,7 @@
 
         <div>
           <label class="block text-[11px] font-bold text-slate-700 mb-1">काम का प्रकार (Category) *</label>
-          <select id="pc-work" required class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs focus:outline-none">
-            <!-- 30 Categories Loaded Via JS -->
-          </select>
+          <select id="pc-work" required class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs focus:outline-none"></select>
         </div>
 
         <div>
@@ -193,25 +192,36 @@
       </button>
     </div>
 
-    <!-- 1. CUSTOMER DASHBOARD (मालिक प्रोफ़ाइल) -->
+    <!-- 1. CUSTOMER DASHBOARD -->
     <div id="client-dashboard-box" class="space-y-4 block">
       <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
         <h3 class="text-xs font-black text-slate-900 uppercase">मालिक प्रोफ़ाइल / मेरी पोस्ट</h3>
-        <p class="text-[11px] text-slate-500 mt-0.5">अपनी 6 अंकों की पोस्ट आईडी और मिस्त्रियों के आए रेट देखें</p>
+        <p class="text-[11px] text-slate-500 mt-0.5">अपनी पोस्ट की गई जॉब्स और एडमिन द्वारा भेजे गए संदेश देखें</p>
 
         <div id="client-phone-login" class="mt-3 pt-3 border-t border-slate-100">
-          <label class="block text-[10px] font-bold text-slate-700 uppercase mb-1">मोबाइल नंबर डालकर पोस्ट खोलें:</label>
+          <label class="block text-[10px] font-bold text-slate-700 uppercase mb-1">मोबाइल नंबर डालकर प्रोफ़ाइल खोलें:</label>
           <div class="flex gap-2">
             <input type="tel" id="dash-client-phone" maxlength="10" placeholder="10 अंकों का नंबर" class="flex-1 rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs">
-            <button onclick="loadClientPosts()" class="bg-slate-900 text-amber-400 text-xs font-bold px-3 py-1.5 rounded-lg">देखें</button>
+            <button onclick="loadClientPosts()" class="bg-slate-900 text-amber-400 text-xs font-bold px-3 py-1.5 rounded-lg">खोलें</button>
           </div>
         </div>
+      </div>
+
+      <!-- Customer In-App Inbox -->
+      <div id="client-inbox-section" class="hidden bg-amber-50/70 border border-amber-200 rounded-2xl p-4 shadow-xs">
+        <div class="flex items-center justify-between mb-2">
+          <h4 class="text-xs font-black text-slate-900 flex items-center">
+            <i class="fa-solid fa-bell text-amber-600 mr-1.5 animate-bounce"></i> MistryBabu आधिकारिक इनबॉक्स
+          </h4>
+          <span class="text-[9px] bg-amber-200 text-amber-900 font-bold px-2 py-0.5 rounded-full">मैसेज अलर्ट</span>
+        </div>
+        <div id="client-inbox-messages" class="space-y-2 text-xs"></div>
       </div>
 
       <div id="client-posts-list" class="space-y-3"></div>
     </div>
 
-    <!-- 2. WORKER DASHBOARD (मिस्त्री खाता) -->
+    <!-- 2. WORKER DASHBOARD -->
     <div id="worker-dashboard-box" class="space-y-4 hidden">
       <!-- Registration Form -->
       <div id="worker-form-container" class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs block">
@@ -229,7 +239,6 @@
         </div>
 
         <form onsubmit="saveWorkerProfile(event)" class="space-y-3">
-          <!-- Profile Photo Upload -->
           <div class="bg-slate-50 p-3 rounded-xl border border-dashed border-slate-300 text-center">
             <label class="block text-[11px] font-bold text-slate-700 mb-1">प्रोफ़ाइल फ़ोटो (ऐच्छिक - बाद में भी लगा सकते हैं)</label>
             <p class="text-[9px] text-amber-600 mb-2">⚠️ ध्यान दें: एक बार फ़ोटो लग जाने के बाद बदली नहीं जा सकेगी!</p>
@@ -264,12 +273,9 @@
             </div>
           </div>
 
-          <!-- 30 Skills Multi-select Checkbox Grid -->
           <div>
             <label class="block text-[11px] font-bold text-slate-700 mb-1">आप कौन-कौन सा काम जानते हैं? (टिक करें) *</label>
-            <div id="worker-skills-checkboxes" class="grid grid-cols-1 gap-1.5 max-h-52 overflow-y-auto p-2 bg-slate-50 border border-slate-200 rounded-xl">
-              <!-- Loaded via JavaScript -->
-            </div>
+            <div id="worker-skills-checkboxes" class="grid grid-cols-1 gap-1.5 max-h-52 overflow-y-auto p-2 bg-slate-50 border border-slate-200 rounded-xl"></div>
           </div>
 
           <div>
@@ -283,7 +289,7 @@
         </form>
       </div>
 
-      <!-- Mistri Profile View (With Permanent Photo Lock Rule) -->
+      <!-- Mistri Profile View -->
       <div id="worker-profile-view" class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden hidden">
         <div class="bg-slate-900 text-white p-5 text-center">
           <div class="relative w-20 h-20 mx-auto">
@@ -298,7 +304,19 @@
         </div>
 
         <div class="p-4 space-y-3 text-xs">
-          <!-- Add photo later option if not uploaded -->
+          <!-- Worker In-App Inbox -->
+          <div id="worker-inbox-section" class="bg-amber-50 border border-amber-200 rounded-xl p-3">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="font-black text-slate-900 flex items-center text-[11px]">
+                <i class="fa-solid fa-envelope text-amber-600 mr-1.5"></i> MistryBabu इनबॉक्स
+              </span>
+              <span class="text-[9px] bg-amber-200 text-amber-900 font-bold px-1.5 py-0.5 rounded">मालिक के नंबर</span>
+            </div>
+            <div id="worker-inbox-messages" class="space-y-1.5 text-slate-700">
+              <p class="text-[10px] text-slate-400 italic">कोई नया संदेश नहीं है।</p>
+            </div>
+          </div>
+
           <div id="add-photo-later-box" class="hidden bg-amber-50 p-2.5 rounded-xl border border-amber-200 text-center">
             <p class="text-[11px] font-bold text-slate-800 mb-1">आपने अभी तक प्रोफ़ाइल फ़ोटो नहीं लगाई है</p>
             <p class="text-[9px] text-red-600 mb-2">⚠️ एक बार लगाने के बाद बदली नहीं जा सकेगी!</p>
@@ -316,11 +334,6 @@
             <span class="font-bold text-slate-800" id="my-prof-location">बिहार</span>
           </div>
 
-          <div class="flex justify-between border-b border-slate-100 pb-2">
-            <span class="text-slate-400">मोबाइल नंबर:</span>
-            <span class="font-bold text-slate-800">सुरक्षित (Protected)</span>
-          </div>
-
           <div class="pt-2 flex flex-col gap-2">
             <button onclick="navTo('jobs')" class="w-full bg-amber-500 text-slate-900 py-2.5 rounded-xl font-bold shadow-xs">
               काम देखें और मालिक को रेट भेजें →
@@ -333,6 +346,49 @@
       </div>
     </div>
   </section>
+
+  <!-- ==================== SECRET ADMIN PANEL MODAL ==================== -->
+  <div id="admin-modal" class="fixed inset-0 bg-slate-900/80 z-50 hidden flex items-center justify-center p-3">
+    <div class="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] flex flex-col shadow-2xl relative overflow-hidden">
+      <div class="bg-slate-900 text-white p-3.5 flex justify-between items-center">
+        <div class="flex items-center space-x-2">
+          <i class="fa-solid fa-shield-halved text-amber-400 text-base"></i>
+          <div>
+            <h3 class="text-xs font-black">MistryBabu एडमिन कंट्रोल रूम</h3>
+            <p class="text-[9px] text-slate-400">गोपनीय पोर्टल • डील्स व डायरेक्ट इनबॉक्स</p>
+          </div>
+        </div>
+        <button onclick="closeAdminModal()" class="text-slate-400 hover:text-white text-lg">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- PIN Protection View (PIN: 1098) -->
+      <div id="admin-pin-view" class="p-6 text-center space-y-3">
+        <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto text-xl">
+          <i class="fa-solid fa-key"></i>
+        </div>
+        <h4 class="text-sm font-black text-slate-900">सुरक्षा पिन दर्ज करें</h4>
+        <p class="text-[11px] text-slate-500">एडमिन डील्स देखने के लिए 4 अंकों का पिन डालें</p>
+        <input type="password" id="admin-pin-input" maxlength="4" placeholder="PIN" class="w-32 mx-auto text-center tracking-widest text-lg font-black border-2 border-slate-300 rounded-xl py-1.5 focus:border-amber-500 focus:outline-none">
+        <button onclick="verifyAdminPin()" class="w-full bg-slate-900 text-amber-400 font-bold py-2 rounded-xl text-xs">लॉगिन करें</button>
+      </div>
+
+      <!-- Admin Main View -->
+      <div id="admin-main-view" class="p-4 space-y-4 overflow-y-auto flex-1 hidden">
+        <div class="flex justify-between items-center bg-slate-100 p-2.5 rounded-xl">
+          <span class="text-xs font-bold text-slate-700">सभी आई हुई डील्स (All Confirmed Deals)</span>
+          <button onclick="loadAdminDeals()" class="text-[10px] bg-slate-900 text-amber-400 px-2.5 py-1 rounded-lg font-bold">
+            <i class="fa-solid fa-rotate-right mr-1"></i>रिफ्रेश
+          </button>
+        </div>
+
+        <div id="admin-deals-container" class="space-y-3">
+          <p class="text-xs text-slate-400 text-center py-4">डील्स लोड हो रही हैं...</p>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Proposal Modal -->
   <div id="proposal-modal" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center p-4">
@@ -403,7 +459,8 @@
 
   <!-- ==================== JavaScript Code ==================== -->
   <script>
-    // Complete 30 Mistri Categories
+    const ADMIN_SECRET_PIN = "1098"; // Updated Secret Admin PIN
+
     const allCategories = [
       { id: 1, title: "राज मिस्त्री", desc: "ईंट का काम, दीवार, नींव, चिनाई", icon: "🧱" },
       { id: 2, title: "RCC/कंक्रीट", desc: "कॉलम, बीम, स्लैब, छत", icon: "🏗️" },
@@ -498,7 +555,6 @@
       return firebase.firestore.Timestamp.fromDate(d);
     }
 
-    // 6-digit Random Job ID Generator
     function generateJobId() {
       return "#MB-" + Math.floor(100000 + Math.random() * 900000);
     }
@@ -605,7 +661,6 @@
       }
     });
 
-    // Render 30 Categories
     function renderCategories() {
       const homeGrid = document.getElementById("home-categories-grid");
       homeGrid.innerHTML = "";
@@ -672,7 +727,6 @@
       }
     }
 
-    // Save Client Job with 6-digit Job ID
     function saveClientJob(e) {
       e.preventDefault();
       const phone = document.getElementById("pc-phone").value.trim();
@@ -710,7 +764,6 @@
       });
     }
 
-    // Save Worker Profile
     async function saveWorkerProfile(e) {
       e.preventDefault();
       const name = document.getElementById("pw-name").value.trim();
@@ -790,6 +843,7 @@
       localStorage.setItem("mb_worker_photo", wData.photo || "");
       localStorage.setItem("mb_worker_photo_locked", wData.photoLocked ? "true" : "false");
       updateRegisterScreenView();
+      listenWorkerInbox("+91" + localStorage.getItem("mb_worker_phone"));
     }
 
     function updateRegisterScreenView() {
@@ -851,10 +905,7 @@
       const docId = localStorage.getItem("mb_worker_doc_id");
       const phone = "+91" + localStorage.getItem("mb_worker_phone");
 
-      const updatePayload = {
-        photo: photoData,
-        photoLocked: true
-      };
+      const updatePayload = { photo: photoData, photoLocked: true };
 
       const handleSuccess = () => {
         localStorage.setItem("mb_worker_photo", photoData);
@@ -865,15 +916,10 @@
       };
 
       if (docId) {
-        db.collection("workers").doc(docId).update(updatePayload).then(handleSuccess).catch(err => {
-          btn.innerText = "फ़ोटो सुरक्षित करें";
-          alert("त्रुटि: " + err.message);
-        });
+        db.collection("workers").doc(docId).update(updatePayload).then(handleSuccess);
       } else {
         db.collection("workers").where("private_phone", "==", phone).limit(1).get().then(snap => {
-          if (!snap.empty) {
-            snap.docs[0].ref.update(updatePayload).then(handleSuccess);
-          }
+          if (!snap.empty) snap.docs[0].ref.update(updatePayload).then(handleSuccess);
         });
       }
     }
@@ -943,15 +989,14 @@
                   <p class="text-[9px] text-slate-400">${w.district} • ${w.experience || 0} वर्ष अनुभव</p>
                 </div>
               </div>
-              <a href="https://wa.me/917033943841?text=Namaste%20MistryBabu%20Help%20Desk,%20Mujhe%20karigar%20${encodeURIComponent(w.name)}%20ko%20book%20karna%20hai" target="_blank" class="bg-amber-500 text-slate-900 px-3 py-1.5 rounded-lg text-[11px] font-bold shadow-xs">
-                बुक करें
-              </a>
+              <button onclick="navTo('post')" class="bg-amber-500 text-slate-900 px-3 py-1.5 rounded-lg text-[11px] font-bold shadow-xs">
+                काम दें
+              </button>
             </div>`;
         });
       });
     }
 
-    // Customer: View Own Posts with 6-digit Job ID and Bids
     function autoLoadClientIfSaved() {
       const savedPhone = localStorage.getItem("mb_client_phone");
       if (savedPhone) {
@@ -966,6 +1011,8 @@
 
       const fullPhone = "+91" + p;
       localStorage.setItem("mb_client_phone", fullPhone);
+
+      listenClientInbox(fullPhone);
 
       const listDiv = document.getElementById("client-posts-list");
       listDiv.innerHTML = "<p class='text-xs text-slate-400'>आपकी पोस्ट और मिस्त्रियों के संदेश खोजे जा रहे हैं...</p>";
@@ -1037,11 +1084,11 @@
                       </div>
                       <p class="text-[11px] text-slate-700 bg-white p-2 rounded-lg border border-slate-100 font-medium">${prop.message}</p>
                       
-                      <!-- Deal Final Button with 6-digit Job ID -->
-                      <button onclick="requestAdminConnect('${sixId}', '${prop.workerName}', '${prop.workerPhone}', '${j.clientName}', '${j.phone}', '${j.workType}', '${j.district} (${j.location})', '${prop.message.replace(/'/g, "\\'")}')" 
-                        class="mt-2 w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-1.5 rounded-lg text-[11px] flex items-center justify-center space-x-1 shadow-xs">
+                      <!-- Direct In-App Deal Final -->
+                      <button onclick="confirmDealInApp('${sixId}', '${prop.workerName}', '${prop.workerPhone}', '${j.clientName}', '${j.phone}', '${j.workType}', '${j.district} (${j.location})', '${prop.message.replace(/'/g, "\\'")}')" 
+                        class="mt-2 w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded-lg text-[11px] flex items-center justify-center space-x-1.5 shadow-xs transition">
                         <i class="fa-solid fa-handshake"></i>
-                        <span>इस मिस्त्री को फ़ाइनल करें / नंबर कनेक्ट करवाएं</span>
+                        <span>इस मिस्त्री की डील पक्की करें (Confirm Deal)</span>
                       </button>
                     </div>
                   `;
@@ -1053,13 +1100,187 @@
         });
     }
 
-    // Connect Request -> WhatsApp to Admin (7033943841) with 6-digit Job ID
-    function requestAdminConnect(sixId, workerName, workerPhone, clientName, clientPhone, workType, location, rateMsg) {
-      const adminWhatsApp = "917033943841";
-      const text = `*📋 MISTRYBABU नई डील पर्ची*%0A--------------------------------%0A🆔 *पोस्ट आईडी (Job ID):* ${sixId}%0A--------------------------------%0A🏠 *मालिक (Customer):*%0A• नाम: ${clientName}%0A• मोबाइल: ${clientPhone}%0A• पता: ${location}%0A%0A👷 *मिस्त्री (Worker):*%0A• नाम: ${workerName}%0A• मोबाइल: ${workerPhone}%0A• हुनर: ${workType}%0A• तय रेट / संदेश: ${rateMsg}%0A--------------------------------%0A🟢 *कृपया दोनों पक्षों से बात करके नंबर कनेक्ट करवाएं। (100% निःशुल्क सेवा)*`;
+    function confirmDealInApp(sixId, workerName, workerPhone, clientName, clientPhone, workType, location, rateMsg) {
+      if (!confirm(`क्या आप पोस्ट ${sixId} के लिए ${workerName} की डील फाइनल करना चाहते हैं?\n\nयह डील MistryBabu एडमिन को भेजी जाएगी और आपके इनबॉक्स में संपर्क नंबर आ जाएगा।`)) {
+        return;
+      }
 
-      alert(`बधाई हो! आपकी डील दर्ज कर ली गई है। (पोस्ट ID: ${sixId})\nअब MistryBabu हेल्पलाइन (WhatsApp) पर ब्योरा भेजा जा रहा है ताकि कंपनी दोनों का नंबर सुरक्षित रूप से कनेक्ट करवा सके।`);
-      window.open(`https://wa.me/${adminWhatsApp}?text=${text}`, '_blank');
+      const dealData = {
+        jobSixId: sixId,
+        clientName: clientName,
+        clientPhone: clientPhone,
+        workerName: workerName,
+        workerPhone: workerPhone,
+        workType: workType,
+        location: location,
+        rateMessage: rateMsg,
+        status: "Pending",
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      };
+
+      db.collection("confirmed_deals").add(dealData).then(() => {
+        alert(`✅ बधाई हो!\nपोस्ट ID: ${sixId} की डील रिक्वेस्ट MistryBabu कंट्रोल रूम में दर्ज हो गई है।\nएडमिन सत्यापन के बाद आपके इनबॉक्स में मिस्त्री का नंबर आ जाएगा।`);
+      }).catch(err => {
+        alert("त्रुटि: " + err.message);
+      });
+    }
+
+    function listenClientInbox(phone) {
+      const inboxSec = document.getElementById("client-inbox-section");
+      const inboxList = document.getElementById("client-inbox-messages");
+
+      db.collection("inbox_messages")
+        .where("recipientPhone", "==", phone)
+        .orderBy("createdAt", "desc")
+        .onSnapshot(snap => {
+          if (!snap.empty) {
+            inboxSec.classList.remove("hidden");
+            inboxList.innerHTML = "";
+            snap.forEach(doc => {
+              const m = doc.data();
+              inboxList.innerHTML += `
+                <div class="bg-white p-2.5 rounded-xl border border-amber-300 shadow-2xs">
+                  <div class="flex justify-between items-center mb-1">
+                    <span class="font-black text-amber-800 text-[10px]"><i class="fa-solid fa-building-circle-check mr-1"></i>${m.title || 'MistryBabu अपडेट'}</span>
+                    <span class="text-[9px] text-slate-400">ID: ${m.jobSixId || '#MB'}</span>
+                  </div>
+                  <p class="text-slate-800 text-xs font-semibold leading-relaxed">${m.message}</p>
+                  ${m.contactNumber ? `<div class="mt-1.5 pt-1.5 border-t border-slate-100 flex items-center justify-between">
+                    <span class="text-[10px] text-slate-500 font-bold">संपर्क नंबर:</span>
+                    <a href="tel:${m.contactNumber}" class="bg-emerald-600 text-white px-2 py-0.5 rounded text-[10px] font-bold"><i class="fa-solid fa-phone mr-1"></i>${m.contactNumber}</a>
+                  </div>` : ''}
+                </div>
+              `;
+            });
+          }
+        });
+    }
+
+    function listenWorkerInbox(phone) {
+      const inboxList = document.getElementById("worker-inbox-messages");
+      db.collection("inbox_messages")
+        .where("recipientPhone", "==", phone)
+        .orderBy("createdAt", "desc")
+        .onSnapshot(snap => {
+          if (!snap.empty) {
+            inboxList.innerHTML = "";
+            snap.forEach(doc => {
+              const m = doc.data();
+              inboxList.innerHTML += `
+                <div class="bg-white p-2 rounded-lg border border-amber-200">
+                  <div class="flex justify-between items-center mb-0.5">
+                    <span class="font-black text-slate-900 text-[10px]">${m.title || 'काम की सूचना'}</span>
+                    <span class="text-[9px] text-slate-400">${m.jobSixId || ''}</span>
+                  </div>
+                  <p class="text-xs text-slate-800">${m.message}</p>
+                  ${m.contactNumber ? `<a href="tel:${m.contactNumber}" class="mt-1 inline-block bg-slate-900 text-amber-400 px-2 py-0.5 rounded text-[10px] font-bold"><i class="fa-solid fa-phone mr-1"></i>मालिक को कॉल करें: ${m.contactNumber}</a>` : ''}
+                </div>
+              `;
+            });
+          }
+        });
+    }
+
+    // ==================== ADMIN PANEL FUNCTIONS ====================
+    function openAdminModal() {
+      document.getElementById("admin-modal").classList.remove("hidden");
+    }
+
+    function closeAdminModal() {
+      document.getElementById("admin-modal").classList.add("hidden");
+    }
+
+    function verifyAdminPin() {
+      const pin = document.getElementById("admin-pin-input").value.trim();
+      if (pin === ADMIN_SECRET_PIN) {
+        document.getElementById("admin-pin-view").classList.add("hidden");
+        document.getElementById("admin-main-view").classList.remove("hidden");
+        loadAdminDeals();
+      } else {
+        alert("गलत पिन! पुनः प्रयास करें।");
+        document.getElementById("admin-pin-input").value = "";
+      }
+    }
+
+    function loadAdminDeals() {
+      const container = document.getElementById("admin-deals-container");
+      container.innerHTML = "<p class='text-xs text-slate-400 text-center py-4'>डील्स खोजी जा रही हैं...</p>";
+
+      db.collection("confirmed_deals").orderBy("createdAt", "desc").limit(30).get().then(snap => {
+        if (snap.empty) {
+          container.innerHTML = "<p class='text-xs text-slate-400 text-center py-4'>वर्तमान में कोई नई डील नहीं आई है।</p>";
+          return;
+        }
+
+        container.innerHTML = "";
+        snap.forEach(doc => {
+          const d = doc.data();
+          const dealId = doc.id;
+
+          container.innerHTML += `
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs space-y-2">
+              <div class="flex justify-between items-center border-b border-slate-200 pb-1.5">
+                <span class="font-black bg-slate-900 text-amber-400 px-2 py-0.5 rounded text-[11px]">${d.jobSixId}</span>
+                <span class="text-[10px] font-bold px-2 py-0.5 rounded ${d.status === 'Connected' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${d.status}</span>
+              </div>
+
+              <div class="grid grid-cols-2 gap-2 text-[11px]">
+                <div class="bg-white p-2 rounded-lg border border-slate-200">
+                  <span class="text-slate-400 font-bold block text-[9px] uppercase">🏠 मालिक (Customer)</span>
+                  <span class="font-black text-slate-900 block">${d.clientName}</span>
+                  <a href="tel:${d.clientPhone}" class="text-blue-600 font-bold block mt-0.5"><i class="fa-solid fa-phone mr-1"></i>${d.clientPhone}</a>
+                  <span class="text-[9px] text-slate-500 block truncate">${d.location}</span>
+                </div>
+                <div class="bg-white p-2 rounded-lg border border-slate-200">
+                  <span class="text-slate-400 font-bold block text-[9px] uppercase">👷 मिस्त्री (Worker)</span>
+                  <span class="font-black text-slate-900 block">${d.workerName}</span>
+                  <a href="tel:${d.workerPhone}" class="text-emerald-600 font-bold block mt-0.5"><i class="fa-solid fa-phone mr-1"></i>${d.workerPhone}</a>
+                  <span class="text-[9px] text-amber-700 font-bold block truncate">${d.workType}</span>
+                </div>
+              </div>
+
+              <div class="bg-amber-50 p-2 rounded-lg border border-amber-200 text-[10px] text-slate-700">
+                <span class="font-bold">तय रेट / मैसेज:</span> ${d.rateMessage}
+              </div>
+
+              <div class="pt-1 flex gap-2">
+                <button onclick="adminSendInboxMsg('${dealId}', '${d.clientPhone}', 'मालिक', '${d.workerName}', '${d.workerPhone}', '${d.jobSixId}')" class="flex-1 bg-slate-900 hover:bg-slate-800 text-amber-400 py-1.5 rounded-lg text-[10px] font-bold shadow-xs">
+                  <i class="fa-solid fa-paper-plane mr-1"></i>मालिक को नंबर भेजें
+                </button>
+                <button onclick="adminSendInboxMsg('${dealId}', '${d.workerPhone}', 'मिस्त्री', '${d.clientName}', '${d.clientPhone}', '${d.jobSixId}')" class="flex-1 bg-emerald-700 hover:bg-emerald-600 text-white py-1.5 rounded-lg text-[10px] font-bold shadow-xs">
+                  <i class="fa-solid fa-paper-plane mr-1"></i>मिस्त्री को नंबर भेजें
+                </button>
+              </div>
+            </div>
+          `;
+        });
+      });
+    }
+
+    function adminSendInboxMsg(dealDocId, recipientPhone, recipientType, partnerName, partnerPhone, jobSixId) {
+      const defaultText = recipientType === 'मालिक' 
+        ? `नमस्ते! आपकी पोस्ट ${jobSixId} के लिए मिस्त्री ${partnerName} का नंबर जारी कर दिया गया है। कृपया उनसे सीधे बात कर लें।`
+        : `नमस्ते! पोस्ट ${jobSixId} के लिए मालिक ${partnerName} का नंबर जारी कर दिया गया है। कृपया काम के सिलसिले में तुरंत संपर्क करें।`;
+
+      const customMsg = prompt(`इस ${recipientType} के इन-ऐप इनबॉक्स में संदेश भेजें:`, defaultText);
+      if (!customMsg) return;
+
+      const payload = {
+        recipientPhone: recipientPhone,
+        title: `MistryBabu डील कनेक्ट (${jobSixId})`,
+        jobSixId: jobSixId,
+        message: customMsg,
+        contactNumber: partnerPhone,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      };
+
+      db.collection("inbox_messages").add(payload).then(() => {
+        db.collection("confirmed_deals").doc(dealDocId).update({ status: "Connected" });
+        alert(`✅ ${recipientType} के प्रोफ़ाइल इनबॉक्स में संदेश और नंबर सुरक्षित भेज दिया गया है!`);
+        loadAdminDeals();
+      }).catch(err => {
+        alert("त्रुटि: " + err.message);
+      });
     }
 
     function loadRecentJobs() {
@@ -1194,6 +1415,11 @@
       renderCategories();
       populateDistricts();
       loadRecentJobs();
+
+      const savedWorkerPhone = localStorage.getItem("mb_worker_phone");
+      if (savedWorkerPhone) {
+        listenWorkerInbox("+91" + savedWorkerPhone);
+      }
 
       db.collection("settings").doc("announcement").onSnapshot(doc => {
         const bar = document.getElementById("notice-bar");
