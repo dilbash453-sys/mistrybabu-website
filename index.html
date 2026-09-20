@@ -44,8 +44,9 @@
       <button onclick="openTermsModal()" class="text-[11px] font-bold text-slate-600 bg-slate-100 px-2 py-1 rounded-lg border border-slate-200">
         नियम
       </button>
-      <a href="https://wa.me/917033943841?text=नमस्ते%20मिस्त्रीबाबू,%20मुझे%20मदद%20चाहिए" target="_blank" class="text-xs bg-emerald-50 text-emerald-900 font-semibold px-2 py-1 rounded-lg flex items-center space-x-1 border border-emerald-200">
-        <i class="fa-brands fa-whatsapp text-emerald-600 text-xs"></i>
+      <!-- Official Help Mail -->
+      <a href="mailto:mistrybabuhelp@gmail.com?subject=MistryBabu%20Help%20Desk%20Support" class="text-xs bg-amber-50 text-amber-900 font-semibold px-2 py-1 rounded-lg flex items-center space-x-1 border border-amber-200">
+        <i class="fa-solid fa-envelope text-amber-600 text-xs"></i>
         <span class="text-[11px] font-bold">हेल्प</span>
       </a>
     </div>
@@ -130,7 +131,6 @@
       </div>
 
       <form onsubmit="saveClientJob(event)" class="space-y-3">
-        <!-- Emergency Urgent Work -->
         <div class="bg-red-50 border border-red-200 p-2.5 rounded-xl flex items-center space-x-2">
           <input type="checkbox" id="pc-urgent" class="w-4 h-4 text-red-600 rounded cursor-pointer">
           <label for="pc-urgent" class="text-xs font-bold text-red-700 cursor-pointer">
@@ -176,7 +176,6 @@
           <select id="pc-work" required class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs focus:outline-none"></select>
         </div>
 
-        <!-- Duration & Worker Count -->
         <div class="grid grid-cols-2 gap-2">
           <div>
             <label class="block text-[11px] font-bold text-slate-700 mb-1">काम की अवधि *</label>
@@ -193,7 +192,6 @@
           </div>
         </div>
 
-        <!-- Material Selection -->
         <div>
           <label class="block text-[11px] font-bold text-slate-700 mb-1">सामान का इंतज़ाम कौन करेगा? *</label>
           <select id="pc-material" required class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs focus:outline-none">
@@ -202,14 +200,12 @@
           </select>
         </div>
 
-        <!-- Site Photo Upload -->
         <div class="bg-slate-50 p-2.5 rounded-xl border border-dashed border-slate-300">
           <label class="block text-[11px] font-bold text-slate-700 mb-0.5">काम की जगह की फ़ोटो (वैकल्पिक)</label>
           <p class="text-[9px] text-slate-500 mb-1">फ़ोटो देखकर मिस्त्री तुरंत सही रेट दे सकेगा</p>
           <input type="file" id="pc-site-photo" accept="image/*" class="text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:bg-amber-100 file:text-amber-800">
         </div>
 
-        <!-- Description with Voice -->
         <div>
           <div class="flex justify-between items-center mb-1">
             <label class="block text-[11px] font-bold text-slate-700">काम का पूरा विवरण</label>
@@ -241,6 +237,23 @@
 
     <!-- 1. CUSTOMER DASHBOARD -->
     <div id="client-dashboard-box" class="space-y-4 block">
+      <!-- Feature: Client Help / Guide Card (Collapsible) -->
+      <div class="bg-blue-50 border border-blue-200 rounded-2xl p-3 shadow-xs">
+        <button onclick="toggleGuide('client-guide-content', 'icon-client-guide')" class="w-full flex justify-between items-center text-left">
+          <span class="text-xs font-black text-blue-950 flex items-center">
+            <i class="fa-solid fa-book-open text-blue-600 mr-2"></i> मकान मालिक के लिए ज़रूरी दिशा-निर्देश व सुविधाएं
+          </span>
+          <i id="icon-client-guide" class="fa-solid fa-chevron-down text-blue-600 text-xs transition-transform"></i>
+        </button>
+        <div id="client-guide-content" class="hidden mt-2 pt-2 border-t border-blue-200 text-[11px] text-blue-900 space-y-1.5">
+          <p>• <strong>काम पोस्ट करें:</strong> इमरजेंसी काम में 'तत्काल' चुनें। दिहाड़ी, ठेका और साइट फ़ोटो जोड़ें।</p>
+          <p>• <strong>रेट व मिस्त्री देखना:</strong> आपकी पोस्ट के नीचे मिस्त्रियों के भेजे रेट और अनुभव दिखेंगे।</p>
+          <p>• <strong>डील पक्की करें:</strong> पसंद आने पर 'डील पक्की करें' दबाएँ, एडमिन द्वारा इनबॉक्स में मिस्त्री का नंबर आ जाएगा।</p>
+          <p>• <strong>काम पूरा हुआ (Close):</strong> काम खत्म होने पर 'काम पूरा हुआ ✅' दबाकर पोस्ट बंद करें और मिस्त्री को 5-Star रेटिंग दें।</p>
+          <p>• <strong>WhatsApp शेयर:</strong> अपने काम को सीधे WhatsApp ग्रुप में भेजें ताकि जल्दी कारीगर मिलें।</p>
+        </div>
+      </div>
+
       <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
         <h3 class="text-xs font-black text-slate-900 uppercase">मालिक प्रोफ़ाइल / मेरा काम</h3>
         <p class="text-[11px] text-slate-500 mt-0.5">अपनी पोस्ट की गई जॉब्स और मिस्त्रियों के आए संदेश देखें</p>
@@ -269,6 +282,23 @@
 
     <!-- 2. WORKER DASHBOARD -->
     <div id="worker-dashboard-box" class="space-y-4 hidden">
+      <!-- Feature: Worker Help / Guide Card (Collapsible) -->
+      <div class="bg-amber-50 border border-amber-300 rounded-2xl p-3 shadow-xs">
+        <button onclick="toggleGuide('worker-guide-content', 'icon-worker-guide')" class="w-full flex justify-between items-center text-left">
+          <span class="text-xs font-black text-amber-950 flex items-center">
+            <i class="fa-solid fa-book-open text-amber-600 mr-2"></i> मिस्त्री भाइयों के लिए ज़रूरी जानकारी व सुविधाएं
+          </span>
+          <i id="icon-worker-guide" class="fa-solid fa-chevron-down text-amber-600 text-xs transition-transform"></i>
+        </button>
+        <div id="worker-guide-content" class="hidden mt-2 pt-2 border-t border-amber-200 text-[11px] text-amber-900 space-y-1.5">
+          <p>• <strong>काम कैसे पाएं:</strong> 'काम देखें' मेनू में जाएँ, काम चुनें और माइक 🎙️ बटन से बोलकर अपना रेट व संदेश भेजें।</p>
+          <p>• <strong>लाइव स्टेटस:</strong> खाली होने पर 🟢 'उपलब्ध' रखें। कहीं काम चल रहा हो तो 🔴 'व्यस्त' सेट करें।</p>
+          <p>• <strong>फ़ोटो व पहचान:</strong> पिछले काम की 3 तस्वीरें लगाएँ और आधार कार्ड जोड़कर 🛡️ 'सत्यापित पहचान' बैज पाएं।</p>
+          <p>• <strong>मालिक का नंबर:</strong> जब मालिक डील पक्की करेगा, तो आपके इनबॉक्स में मालिक का नंबर आएगा, सीधे कॉल करें।</p>
+          <p>• <strong>100% मुफ़्त:</strong> यह सेवा बिल्कुल मुफ़्त है, किसी को भी कोई कमीशन नहीं देना है।</p>
+        </div>
+      </div>
+
       <div id="worker-form-container" class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs block">
         <div class="text-center mb-4 border-b border-slate-100 pb-3">
           <h2 class="text-base font-black text-slate-900">मिस्त्री पंजीकरण / लॉगिन</h2>
@@ -289,13 +319,11 @@
             <input type="file" id="pw-photo-file" accept="image/*" class="text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:bg-amber-100 file:text-amber-800">
           </div>
 
-          <!-- Work Photos -->
           <div class="bg-amber-50/50 p-3 rounded-xl border border-amber-200 text-center">
             <label class="block text-[11px] font-bold text-amber-900 mb-0.5">📸 अपने पिछले काम की तस्वीरें (1 से 3 फ़ोटो)</label>
             <input type="file" id="pw-work-photos" accept="image/*" multiple class="text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:bg-amber-200 file:text-amber-900">
           </div>
 
-          <!-- ID Verification -->
           <div class="bg-blue-50/50 p-3 rounded-xl border border-blue-200 text-center">
             <label class="block text-[11px] font-bold text-blue-900 mb-0.5">🛡️ पहचान पत्र (आधार या वोटर आईडी)</label>
             <p class="text-[9px] text-slate-500 mb-1">यह सिर्फ़ एडमिन को दिखेगी, प्रोफ़ाइल पर सत्यापित बैज लगेगा</p>
@@ -551,7 +579,7 @@
     </div>
   </div>
 
-  <!-- Floating WhatsApp Support Button (With 7033943841) -->
+  <!-- Floating WhatsApp Support Button (7033943841) -->
   <a href="https://wa.me/917033943841?text=नमस्ते%20मिस्त्रीबाबू,%20मुझे%20सहायता%20चाहिए" target="_blank" class="fixed bottom-16 right-4 z-40 bg-emerald-600 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg border-2 border-white active:scale-95 transition">
     <i class="fa-brands fa-whatsapp text-2xl"></i>
   </a>
@@ -622,6 +650,19 @@
       } else {
         alert("गलत पासवर्ड! कृपया Run1 लिखें।");
         document.getElementById("admin-pin-input").value = "";
+      }
+    }
+
+    // Toggle Guide function for Client & Worker
+    function toggleGuide(contentId, iconId) {
+      const content = document.getElementById(contentId);
+      const icon = document.getElementById(iconId);
+      if (content.classList.contains("hidden")) {
+        content.classList.remove("hidden");
+        icon.classList.add("rotate-180");
+      } else {
+        content.classList.add("hidden");
+        icon.classList.remove("rotate-180");
       }
     }
 
