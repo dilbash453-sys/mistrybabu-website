@@ -454,11 +454,10 @@
 
   <!-- ==================== JavaScript Code ==================== -->
   <script>
-    // SHA-256 Encrypted Hash of Password 'Run1'
-    // Nobody can extract 'Run1' from this code string
-    const ADMIN_PASS_HASH = "815049aa7038e2d27402636a04874ce52dc629731637754d9263a2a30bbba13d";
+    // Obfuscated Base64 for Password 'Run1' (btoa("Run1") === "UnVuMQ==")
+    const ADMIN_ENC = "UnVuMQ==";
 
-    // Secret Triple-Click on Logo to open Admin Modal
+    // Secret Triple-Click on Logo
     let logoClickCount = 0;
     let logoClickTimer = null;
 
@@ -474,15 +473,22 @@
             navTo('home');
           }
           logoClickCount = 0;
-        }, 500);
+        }, 600);
       }
     }
 
-    async function sha256(message) {
-      const msgBuffer = new TextEncoder().encode(message);
-      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-      const hashArray = Array.from(new Uint8Array(hashBuffer));
-      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    function verifyAdminPin() {
+      const enteredPass = document.getElementById("admin-pin-input").value.trim();
+      
+      // 100% Mobile Compatible Check for Run1
+      if (btoa(enteredPass) === ADMIN_ENC) {
+        document.getElementById("admin-pin-view").classList.add("hidden");
+        document.getElementById("admin-main-view").classList.remove("hidden");
+        loadAdminDeals();
+      } else {
+        alert("गलत पासवर्ड! पुनः प्रयास करें।");
+        document.getElementById("admin-pin-input").value = "";
+      }
     }
 
     const allCategories = [
@@ -1211,20 +1217,6 @@
     function closeAdminModal() {
       document.getElementById("admin-modal").classList.add("hidden");
       document.getElementById("admin-pin-input").value = "";
-    }
-
-    async function verifyAdminPin() {
-      const enteredPass = document.getElementById("admin-pin-input").value;
-      const hashedEntered = await sha256(enteredPass);
-
-      if (hashedEntered === ADMIN_PASS_HASH) {
-        document.getElementById("admin-pin-view").classList.add("hidden");
-        document.getElementById("admin-main-view").classList.remove("hidden");
-        loadAdminDeals();
-      } else {
-        alert("गलत पासवर्ड! पुनः प्रयास करें।");
-        document.getElementById("admin-pin-input").value = "";
-      }
     }
 
     function loadAdminDeals() {
