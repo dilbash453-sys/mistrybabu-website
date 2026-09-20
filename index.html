@@ -44,9 +44,9 @@
       <button onclick="openTermsModal()" class="text-[11px] font-bold text-slate-600 bg-slate-100 px-2 py-1 rounded-lg border border-slate-200">
         नियम
       </button>
-      <a href="mailto:mistrybabuhelp@gmail.com?subject=MistryBabu%20Help%20Desk%20Support" class="text-xs bg-amber-50 text-amber-900 font-semibold px-2 py-1 rounded-lg flex items-center space-x-1 border border-amber-200">
-        <i class="fa-solid fa-envelope text-amber-600 text-xs"></i>
-        <span class="text-[11px] font-bold">मदद</span>
+      <a href="https://wa.me/917033943841?text=नमस्ते%20मिस्त्रीबाबू,%20मुझे%20मदद%20चाहिए" target="_blank" class="text-xs bg-emerald-50 text-emerald-900 font-semibold px-2 py-1 rounded-lg flex items-center space-x-1 border border-emerald-200">
+        <i class="fa-brands fa-whatsapp text-emerald-600 text-xs"></i>
+        <span class="text-[11px] font-bold">हेल्प</span>
       </a>
     </div>
   </header>
@@ -551,8 +551,8 @@
     </div>
   </div>
 
-  <!-- Floating WhatsApp Support Button -->
-  <a href="https://wa.me/919999999999?text=Namaste%20MistryBabu%20Help%20Desk" target="_blank" class="fixed bottom-16 right-4 z-40 bg-emerald-600 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg border-2 border-white active:scale-95 transition">
+  <!-- Floating WhatsApp Support Button (With 7033943841) -->
+  <a href="https://wa.me/917033943841?text=नमस्ते%20मिस्त्रीबाबू,%20मुझे%20सहायता%20चाहिए" target="_blank" class="fixed bottom-16 right-4 z-40 bg-emerald-600 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg border-2 border-white active:scale-95 transition">
     <i class="fa-brands fa-whatsapp text-2xl"></i>
   </a>
 
@@ -673,7 +673,7 @@
     }
 
     function shareJobOnWhatsApp(workType, district, location, sixId) {
-      const text = `*मिस्त्रीबाबू (MistryBabu.com) पर नया काम आया है!*%0A%0A🔧 *काम:* ${workType}%0A📍 *जगह:* ${district} (${location})%0A🆔 *काम ID:* ${sixId}%0A%0Aअपना रेट व संदेश भेजने के लिए यहाँ खोलें:%0Ahttps://mistrybabu.com/#jobs`;
+      const text = `*मिस्त्रीबाबू (MistryBabu.com) पर नया काम आया है!*%0A%0A🔧 *काम:* ${workType}%0A📍 *जगह:* ${district} (${location})%0A🆔 *काम ID:* ${sixId}%0A%0Aअपना रेट व संदेश भेजने के लिए यहाँ खोलें:%0Ahttps://mistrybabu.com/#jobs%0A%0A📞 *हेल्पलाइन:* 7033943841`;
       window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
     }
 
