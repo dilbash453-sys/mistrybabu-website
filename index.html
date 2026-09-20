@@ -5,9 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>MistryBabu.com - बिहार के अपने मिस्त्री... अब ऑनलाइन!</title>
   
-  <!-- App Icon / Favicon & PWA Manifest -->
-  <link rel="icon" type="image/png" href="logo.png">
-  <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#f59e0b">
 
   <!-- Service Worker Registration -->
@@ -33,14 +30,28 @@
     <span id="notice-text">सूचना लोड हो रही है...</span>
   </div>
 
-  <!-- 2. App Top Header (With Real Logo) -->
+  <!-- 2. App Top Header (Direct Inline Logo Code) -->
   <header class="bg-white border-b border-slate-200 sticky top-0 z-40 px-4 py-2.5 shadow-xs flex justify-between items-center">
     <div class="flex items-center space-x-2.5 cursor-pointer" onclick="navTo('home')">
-      <!-- लोगो इमेज -->
-      <img src="logo.png" alt="MistryBabu Logo" class="w-10 h-10 rounded-lg object-contain border border-slate-100 shadow-xs">
+      <!-- Direct Inline Logo (No External File Needed) -->
+      <div class="w-10 h-10 rounded-xl bg-white border border-amber-300 shadow-xs flex items-center justify-center p-1 shrink-0">
+        <svg viewBox="0 0 100 100" class="w-full h-full">
+          <!-- House Frame -->
+          <polygon points="50,8 88,38 78,38 78,88 22,88 22,38 12,38" fill="#fef3c7" stroke="#f59e0b" stroke-width="4" stroke-linejoin="round"/>
+          <!-- Sun in Background -->
+          <circle cx="68" cy="36" r="14" fill="#fbbf24"/>
+          <!-- Construction Helmet -->
+          <path d="M30,58 C30,40 40,32 50,32 C60,32 70,40 70,58 Z" fill="#ea580c"/>
+          <rect x="25" y="56" width="50" height="6" rx="3" fill="#c2410c"/>
+          <path d="M46,32 L46,56 M54,32 L54,56" stroke="#fcd34d" stroke-width="2"/>
+          <!-- Trowel Tool -->
+          <polygon points="50,65 38,78 48,88 60,75" fill="#94a3b8" stroke="#475569" stroke-width="2"/>
+          <line x1="42" y1="74" x2="35" y2="82" stroke="#78350f" stroke-width="4" stroke-linecap="round"/>
+        </svg>
+      </div>
       <div>
-        <h1 class="text-sm font-black text-slate-900 leading-none">MistryBabu</h1>
-        <p class="text-[9px] text-slate-400 font-bold mt-0.5">बिहार के अपने मिस्त्री</p>
+        <h1 class="text-sm font-black text-slate-900 leading-none tracking-tight">MistryBabu</h1>
+        <p class="text-[9px] text-amber-600 font-bold mt-0.5">बिहार के अपने मिस्त्री</p>
       </div>
     </div>
     <a href="mailto:mistrybabuhelp@gmail.com" class="text-xs bg-slate-100 text-slate-700 font-semibold px-2.5 py-1.5 rounded-lg flex items-center space-x-1">
@@ -62,14 +73,16 @@
       </div>
     </div>
 
-    <!-- Banner Card -->
-    <div class="bg-gradient-to-r from-slate-900 to-slate-800 text-white p-4 rounded-2xl shadow-sm">
-      <span class="bg-amber-500 text-slate-900 text-[10px] font-black px-2 py-0.5 rounded-md uppercase">Zero Commission</span>
-      <h3 class="text-lg font-black mt-2 leading-snug">मिस्त्री खोजें या सीधा काम पाएं</h3>
-      <p class="text-xs text-slate-300 mt-1">बिना किसी दलाली या बिचौलिये के सीधा संपर्क।</p>
-      <div class="mt-3 flex space-x-2">
-        <button onclick="navTo('post')" class="bg-amber-500 text-slate-900 text-xs font-bold px-3 py-1.5 rounded-lg shadow-xs">काम दें</button>
-        <button onclick="handleJoinOrProfile()" id="home-join-btn" class="bg-slate-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg">मिस्त्री बनें</button>
+    <!-- Banner Card with Direct Graphic -->
+    <div class="bg-gradient-to-r from-slate-900 to-slate-800 text-white p-4 rounded-2xl shadow-sm relative overflow-hidden">
+      <div class="relative z-10">
+        <span class="bg-amber-500 text-slate-900 text-[10px] font-black px-2 py-0.5 rounded-md uppercase">Zero Commission</span>
+        <h3 class="text-lg font-black mt-2 leading-snug">मिस्त्री खोजें या सीधा काम पाएं</h3>
+        <p class="text-xs text-slate-300 mt-1">बिना किसी दलाली या बिचौलिये के सीधा संपर्क।</p>
+        <div class="mt-3 flex space-x-2">
+          <button onclick="navTo('post')" class="bg-amber-500 text-slate-900 text-xs font-bold px-3 py-1.5 rounded-lg shadow-xs">काम दें</button>
+          <button onclick="handleJoinOrProfile()" id="home-join-btn" class="bg-slate-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg">मिस्त्री बनें</button>
+        </div>
       </div>
     </div>
 
@@ -300,11 +313,17 @@
       </form>
     </div>
 
-    <!-- प्रोफ़ाइल कार्ड -->
+    <!-- प्रोफ़ाइल कार्ड (In-built Logo Design) -->
     <div id="worker-profile-view" class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden hidden">
       <div class="bg-slate-900 text-white p-5 text-center">
-        <!-- प्रोफ़ाइल में भी लोगो का टच -->
-        <img src="logo.png" alt="MB" class="w-16 h-16 rounded-full mx-auto shadow-md border-2 border-amber-400 object-cover bg-white p-0.5">
+        <div class="w-16 h-16 rounded-full mx-auto shadow-md border-2 border-amber-400 bg-white p-1 flex items-center justify-center">
+          <svg viewBox="0 0 100 100" class="w-full h-full">
+            <polygon points="50,8 88,38 78,38 78,88 22,88 22,38 12,38" fill="#fef3c7" stroke="#f59e0b" stroke-width="4"/>
+            <path d="M30,58 C30,40 40,32 50,32 C60,32 70,40 70,58 Z" fill="#ea580c"/>
+            <rect x="25" y="56" width="50" height="6" rx="3" fill="#c2410c"/>
+            <polygon points="50,65 38,78 48,88 60,75" fill="#94a3b8"/>
+          </svg>
+        </div>
         <h3 class="text-base font-black mt-2" id="my-prof-name">आपका नाम</h3>
         <p class="text-xs text-amber-400 font-bold mt-0.5" id="my-prof-skill">हुनर</p>
         <span class="inline-block mt-2 bg-emerald-500/20 text-emerald-300 text-[10px] font-bold px-2.5 py-0.5 rounded-full">
@@ -757,8 +776,11 @@
           grid.innerHTML += `
             <div class="bg-white p-3 rounded-xl border border-slate-200 flex items-center justify-between">
               <div class="flex items-center space-x-2.5">
-                <div class="w-10 h-10 bg-amber-100 text-amber-800 rounded-full flex items-center justify-center font-black text-sm">
-                  ${w.name.charAt(0)}
+                <div class="w-10 h-10 rounded-full flex items-center justify-center p-1 bg-amber-50 border border-amber-300">
+                  <svg viewBox="0 0 100 100" class="w-full h-full">
+                    <circle cx="50" cy="50" r="45" fill="#f59e0b"/>
+                    <text x="50%" y="55%" text-anchor="middle" fill="#0f172a" font-size="36" font-weight="900" font-family="sans-serif" dy=".3em">${w.name.charAt(0)}</text>
+                  </svg>
                 </div>
                 <div>
                   <h4 class="font-bold text-slate-800 text-xs leading-none">${w.name}</h4>
