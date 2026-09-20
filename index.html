@@ -3,7 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>MistryBabu.com - Bihar Home Services</title>
+  <title>MistryBabu.com - बिहार के अपने मिस्त्री... अब ऑनलाइन!</title>
+  
+  <!-- App Icon / Favicon & PWA Manifest -->
+  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#f59e0b">
+
+  <!-- Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js');
+    }
+  </script>
+
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- FontAwesome Icons -->
@@ -20,15 +33,14 @@
     <span id="notice-text">सूचना लोड हो रही है...</span>
   </div>
 
-  <!-- 2. App Top Header -->
-  <header class="bg-white border-b border-slate-200 sticky top-0 z-40 px-4 py-3 shadow-xs flex justify-between items-center">
-    <div class="flex items-center space-x-2 cursor-pointer" onclick="navTo('home')">
-      <div class="w-8 h-8 bg-amber-500 rounded-lg flex items-center justify-center text-slate-900 font-black text-base shadow-sm">
-        MB
-      </div>
+  <!-- 2. App Top Header (With Real Logo) -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-40 px-4 py-2.5 shadow-xs flex justify-between items-center">
+    <div class="flex items-center space-x-2.5 cursor-pointer" onclick="navTo('home')">
+      <!-- लोगो इमेज -->
+      <img src="logo.png" alt="MistryBabu Logo" class="w-10 h-10 rounded-lg object-contain border border-slate-100 shadow-xs">
       <div>
         <h1 class="text-sm font-black text-slate-900 leading-none">MistryBabu</h1>
-        <p class="text-[10px] text-slate-400">Bihar Worker Network</p>
+        <p class="text-[9px] text-slate-400 font-bold mt-0.5">बिहार के अपने मिस्त्री</p>
       </div>
     </div>
     <a href="mailto:mistrybabuhelp@gmail.com" class="text-xs bg-slate-100 text-slate-700 font-semibold px-2.5 py-1.5 rounded-lg flex items-center space-x-1">
@@ -214,14 +226,14 @@
 
   <!-- ==================== PAGE 5: WORKER REGISTER SCREEN / MY PROFILE ==================== -->
   <section id="page-register" class="max-w-md mx-auto px-4 py-4 hidden">
-    <!-- Screen A: Registration & Direct Phone Login -->
+    <!-- Registration & Phone Login -->
     <div id="worker-form-container" class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs block">
       <div class="text-center mb-4 border-b border-slate-100 pb-3">
         <h2 class="text-base font-black text-slate-900">मिस्त्री पंजीकरण / लॉगिन</h2>
         <p class="text-[11px] text-slate-500">एक बार जुड़े नंबर से कभी भी सीधे अपनी प्रोफ़ाइल खोलें</p>
       </div>
 
-      <!-- Quick Login Section (अगर किसी नए ब्राउज़र/फोन में खोला हो) -->
+      <!-- Quick Login Section -->
       <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-4">
         <span class="text-[11px] font-bold text-slate-800 block mb-1.5">पहले से जुड़े हैं? मोबाइल नंबर डालकर प्रोफ़ाइल खोलें:</span>
         <div class="flex gap-2">
@@ -248,7 +260,6 @@
             <span class="inline-flex items-center px-2.5 rounded-l-lg border border-r-0 border-slate-300 bg-slate-100 text-slate-600 text-xs font-bold">+91</span>
             <input type="tel" id="pw-phone" required maxlength="10" placeholder="10 अंकों का नंबर" class="flex-1 block w-full rounded-r-lg border border-slate-300 px-3 py-2 text-xs focus:outline-none">
           </div>
-          <span class="text-[10px] text-slate-400">यह नंबर सिर्फ़ आपकी पहचान और लॉगिन के लिए रहेगा।</span>
         </div>
 
         <div class="grid grid-cols-2 gap-2">
@@ -289,12 +300,11 @@
       </form>
     </div>
 
-    <!-- Screen B: प्रोफ़ाइल कार्ड (रजिस्ट्रेशन / लॉगिन के बाद) -->
+    <!-- प्रोफ़ाइल कार्ड -->
     <div id="worker-profile-view" class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden hidden">
       <div class="bg-slate-900 text-white p-5 text-center">
-        <div class="w-16 h-16 bg-amber-500 text-slate-900 rounded-full flex items-center justify-center font-black text-2xl mx-auto shadow-md" id="my-prof-avatar">
-          M
-        </div>
+        <!-- प्रोफ़ाइल में भी लोगो का टच -->
+        <img src="logo.png" alt="MB" class="w-16 h-16 rounded-full mx-auto shadow-md border-2 border-amber-400 object-cover bg-white p-0.5">
         <h3 class="text-base font-black mt-2" id="my-prof-name">आपका नाम</h3>
         <p class="text-xs text-amber-400 font-bold mt-0.5" id="my-prof-skill">हुनर</p>
         <span class="inline-block mt-2 bg-emerald-500/20 text-emerald-300 text-[10px] font-bold px-2.5 py-0.5 rounded-full">
@@ -506,7 +516,6 @@
         document.getElementById("my-prof-skill").innerText = localStorage.getItem("mb_worker_skill") || "मिस्त्री";
         document.getElementById("my-prof-location").innerText = localStorage.getItem("mb_worker_district") || "बिहार";
         document.getElementById("my-prof-phone").innerText = "+91 " + (localStorage.getItem("mb_worker_phone") || "XXXXXXXXXX");
-        document.getElementById("my-prof-avatar").innerText = workerName.charAt(0);
       } else {
         formBox.classList.remove("hidden");
         profileBox.classList.add("hidden");
@@ -546,7 +555,6 @@
       navTo('register');
     }
 
-    // सीधे मोबाइल नंबर से पुरानी प्रोफ़ाइल खोजना
     function loginWithPhone() {
       const phoneInput = document.getElementById("quick-login-phone").value.trim();
       if (phoneInput.length !== 10) return alert("कृपया 10 अंकों का मान्य मोबाइल नंबर डालें!");
@@ -611,7 +619,6 @@
       }
     }
 
-    // नया मिस्त्री जोड़ते समय डुप्लिकेट नंबर चेक करना (Duplicate Prevention)
     function saveWorkerProfile(e) {
       e.preventDefault();
       const name = document.getElementById("pw-name").value.trim();
@@ -628,17 +635,14 @@
 
       const fullPhone = "+91" + phone;
 
-      // 1. पहले चेक करें कि क्या यह नंबर पहले से है
       db.collection("workers").where("private_phone", "==", fullPhone).limit(1).get()
         .then(snap => {
           if (!snap.empty) {
-            // नंबर पहले से मौजूद है - डुप्लिकेट नहीं बनाएंगे
             const existingData = snap.docs[0].data();
             btn.innerText = "रजिस्ट्रेशन पूरा करें";
             setLoggedInWorker(existingData);
             alert("आपका खाता पहले से ही मौजूद है! आपकी प्रोफ़ाइल लोड कर दी गई है।");
           } else {
-            // 2. नया नंबर है - डेटाबेस में सेव करेंगे
             btn.innerText = "सेव हो रहा है...";
             const data = {
               name: name,
@@ -666,7 +670,6 @@
         });
     }
 
-    // ग्राहक काम पोस्ट
     function saveClientJob(e) {
       e.preventDefault();
       const phone = document.getElementById("pc-phone").value.trim();
