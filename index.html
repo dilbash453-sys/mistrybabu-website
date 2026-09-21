@@ -23,7 +23,6 @@
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-  <!-- Firebase Analytics SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-analytics.js"></script>
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans pb-28 select-none">
@@ -165,6 +164,18 @@
           <input type="text" id="pc-location" required placeholder="जैसे: स्टेशन रोड, नया बाजार" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs focus:outline-none">
         </div>
 
+        <!-- NEW: Job Live GPS Capture (Every time) -->
+        <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 space-y-1.5">
+          <label class="block text-[11px] font-bold text-amber-950">📍 काम की सही साइट लोकेशन (GPS)</label>
+          <button type="button" onclick="captureJobSiteLocation()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold py-2 rounded-lg text-xs flex items-center justify-center gap-1.5 shadow-xs transition">
+            <i class="fa-solid fa-location-crosshairs"></i>
+            <span>जहाँ काम कराना है, वहाँ की लोकेशन लें</span>
+          </button>
+          <p id="pc-gps-status" class="text-[10px] text-slate-500 text-center font-medium">GPS दर्ज नहीं है</p>
+          <input type="hidden" id="pc-lat">
+          <input type="hidden" id="pc-lng">
+        </div>
+
         <div>
           <label class="block text-[11px] font-bold text-slate-700 mb-1">काम का प्रकार चुनें *</label>
           <select id="pc-work" required class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs focus:outline-none"></select>
@@ -293,10 +304,11 @@
         <div id="worker-guide-content" class="hidden mt-2 pt-2 border-t border-amber-200 text-[11px] text-amber-900 space-y-1.5">
           <p>• <strong>काम कैसे पाएं:</strong> 'काम देखें' मेनू में जाएँ, काम चुनें और माइक 🎙️ बटन से बोलकर अपना रेट भेजें।</p>
           <p>• <strong>लाइव स्टेटस:</strong> खाली होने पर 🟢 'उपलब्ध' रखें। कहीं काम चल रहा हो तो 🔴 'व्यस्त' सेट करें।</p>
-          <p>• <strong>पहचान व फ़ोटो:</strong> काम की 3 तस्वीरें और आधार जोड़कर 🛡️ 'सत्यापित पहचान' बैज पाएं।</p>
+          <p>• <strong>पहचान व फ़ोटो:</strong> काम की 3 तस्वीरें और पहचान पत्र जोड़कर 🛡️ 'सत्यापित पहचान' बैज पाएं।</p>
         </div>
       </div>
 
+      <!-- WORKER REGISTRATION / PROFILE INCOMPLETE DYNAMIC FORM -->
       <div id="worker-form-container" class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs block">
         <div class="text-center mb-4 border-b border-slate-100 pb-3">
           <h2 class="text-base font-black text-slate-900">मिस्त्री पंजीकरण / लॉगिन</h2>
@@ -311,29 +323,29 @@
           </div>
         </div>
 
-        <form onsubmit="saveWorkerProfile(event)" class="space-y-3">
-          <div class="bg-slate-50 p-3 rounded-xl border border-dashed border-slate-300 text-center">
+        <form id="worker-main-form" onsubmit="saveWorkerProfile(event)" class="space-y-3">
+          <div id="fg-photo" class="bg-slate-50 p-3 rounded-xl border border-dashed border-slate-300 text-center">
             <label class="block text-[11px] font-bold text-slate-700 mb-1">अपनी प्रोफ़ाइल फ़ोटो</label>
             <input type="file" id="pw-photo-file" accept="image/*" class="text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:bg-amber-100 file:text-amber-800">
           </div>
 
-          <div class="bg-amber-50/50 p-3 rounded-xl border border-amber-200 text-center">
+          <div id="fg-work-photos" class="bg-amber-50/50 p-3 rounded-xl border border-amber-200 text-center">
             <label class="block text-[11px] font-bold text-amber-900 mb-0.5">📸 अपने पिछले काम की तस्वीरें (1 से 3 फ़ोटो)</label>
             <input type="file" id="pw-work-photos" accept="image/*" multiple class="text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:bg-amber-200 file:text-amber-900">
           </div>
 
-          <div class="bg-blue-50/50 p-3 rounded-xl border border-blue-200 text-center">
+          <div id="fg-id-card" class="bg-blue-50/50 p-3 rounded-xl border border-blue-200 text-center">
             <label class="block text-[11px] font-bold text-blue-900 mb-0.5">🛡️ पहचान पत्र (आधार या वोटर आईडी)</label>
             <p class="text-[9px] text-slate-500 mb-1">यह सिर्फ़ एडमिन को दिखेगी, प्रोफ़ाइल पर सत्यापित बैज लगेगा</p>
             <input type="file" id="pw-id-card" accept="image/*" class="text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:bg-blue-200 file:text-blue-900">
           </div>
 
-          <div>
+          <div id="fg-name">
             <label class="block text-[11px] font-bold text-slate-700 mb-1">पूरा नाम *</label>
             <input type="text" id="pw-name" required placeholder="जैसे: दिलबास अंसारी" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs focus:outline-none">
           </div>
 
-          <div>
+          <div id="fg-phone">
             <label class="block text-[11px] font-bold text-slate-700 mb-1">मोबाइल नंबर (सुरक्षित रहेगा) *</label>
             <div class="flex">
               <span class="inline-flex items-center px-2.5 rounded-l-lg border border-r-0 border-slate-300 bg-slate-100 text-slate-600 text-xs font-bold">+91</span>
@@ -341,7 +353,7 @@
             </div>
           </div>
 
-          <div class="grid grid-cols-2 gap-2">
+          <div id="fg-location" class="grid grid-cols-2 gap-2">
             <div>
               <label class="block text-[11px] font-bold text-slate-700 mb-1">ज़िला *</label>
               <select id="pw-district" onchange="updateBlocks('pw-district', 'pw-block')" required class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs focus:outline-none">
@@ -356,14 +368,26 @@
             </div>
           </div>
 
-          <div>
+          <!-- NEW: 1-Time Permanent Worker Location -->
+          <div id="fg-gps" class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1.5">
+            <label class="block text-[11px] font-bold text-slate-700">📍 आपकी स्थायी बेस लोकेशन (GPS - केवल 1 बार)</label>
+            <button type="button" onclick="captureWorkerLocation()" class="w-full bg-slate-900 text-white font-bold py-2 rounded-lg text-xs flex items-center justify-center gap-1 shadow-xs">
+              <i class="fa-solid fa-map-pin text-amber-400"></i>
+              <span>अपनी स्थायी लोकेशन सेट करें</span>
+            </button>
+            <p id="pw-gps-status" class="text-[10px] text-slate-500 text-center font-medium">GPS दर्ज नहीं है</p>
+            <input type="hidden" id="pw-lat">
+            <input type="hidden" id="pw-lng">
+          </div>
+
+          <div id="fg-skills">
             <label class="block text-[11px] font-bold text-slate-700 mb-1">आप कौन-सा काम जानते हैं? (टिक करें) *</label>
             <div id="worker-skills-checkboxes" class="grid grid-cols-1 gap-1.5 max-h-52 overflow-y-auto p-2 bg-slate-50 border border-slate-200 rounded-xl"></div>
           </div>
 
-          <div>
-            <label class="block text-[11px] font-bold text-slate-700 mb-1">काम का अनुभव (वर्ष में)</label>
-            <input type="number" id="pw-exp" placeholder="जैसे: 5" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs focus:outline-none">
+          <div id="fg-exp">
+            <label class="block text-[11px] font-bold text-slate-700 mb-1">काम का अनुभव (वर्ष में) *</label>
+            <input type="number" id="pw-exp" required placeholder="जैसे: 5" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs focus:outline-none">
           </div>
 
           <button type="submit" id="btn-save-worker" class="w-full bg-slate-900 hover:bg-slate-800 text-amber-400 font-bold py-2.5 rounded-xl text-xs shadow-xs transition">
@@ -372,7 +396,7 @@
         </form>
       </div>
 
-      <!-- Mistri Profile View -->
+      <!-- Mistri Profile View (Shown when 100% Complete) -->
       <div id="worker-profile-view" class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden hidden">
         <div class="bg-slate-900 text-white p-5 text-center relative">
           <div class="absolute top-3 right-3">
@@ -390,6 +414,7 @@
           <div class="flex items-center justify-center space-x-1.5 mt-1">
             <span id="badge-worker-level" class="bg-amber-400/20 text-amber-300 text-[9px] font-bold px-2 py-0.5 rounded-full border border-amber-400/30">कुशल कारीगर</span>
             <span id="badge-verified-id" class="hidden bg-blue-500/20 text-blue-300 text-[9px] font-bold px-2 py-0.5 rounded-full border border-blue-400/30">🛡️ सत्यापित पहचान</span>
+            <span id="badge-vip-worker" class="hidden bg-amber-400 text-slate-900 text-[9px] font-black px-2 py-0.5 rounded-full shadow">🌟 VIP मिस्त्री</span>
           </div>
         </div>
 
@@ -444,7 +469,7 @@
           <i class="fa-solid fa-shield-halved text-amber-400 text-base"></i>
           <div>
             <h3 class="text-xs font-black">मिस्त्रीबाबू एडमिन सुपर कंट्रोल रूम</h3>
-            <p class="text-[9px] text-slate-400">सर्च • एडिट • डिलीट • डील्स व चैट</p>
+            <p class="text-[9px] text-slate-400">सर्च • प्रोफाइल एडिट • डिलीट • डील्स व चैट</p>
           </div>
         </div>
         <button onclick="closeAdminModal()" class="text-slate-400 hover:text-white text-lg">
@@ -637,6 +662,60 @@
         localStorage.setItem("mb_device_fingerprint", fp);
       }
       return fp;
+    }
+
+    // ==========================================
+    // GPS & HAVERSINE DISTANCE LOGIC
+    // ==========================================
+    function calculateDistanceKM(lat1, lon1, lat2, lon2) {
+      if (!lat1 || !lon1 || !lat2 || !lon2) return null;
+      const R = 6371; // Earth Radius in KM
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = 
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return (R * c).toFixed(1);
+    }
+
+    // Capture Site Location (Customer)
+    function captureJobSiteLocation() {
+      const statusEl = document.getElementById("pc-gps-status");
+      if (!navigator.geolocation) {
+        statusEl.innerText = "❌ ब्राउज़र में GPS की सुविधा नहीं है।";
+        return;
+      }
+      statusEl.innerHTML = "🔄 लोकेशन जाँची जा रही है...";
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          document.getElementById("pc-lat").value = pos.coords.latitude;
+          document.getElementById("pc-lng").value = pos.coords.longitude;
+          statusEl.innerHTML = `<span class="text-emerald-700 font-bold">✓ साइट लोकेशन सुरक्षित (${Math.round(pos.coords.accuracy)}m सटीकता)</span>`;
+        },
+        () => { statusEl.innerHTML = `<span class="text-rose-600 font-bold">❌ कृपया GPS अनुमति दें।</span>`; },
+        { enableHighAccuracy: true, timeout: 8000 }
+      );
+    }
+
+    // Capture Worker Base Location (1-Time)
+    function captureWorkerLocation() {
+      const statusEl = document.getElementById("pw-gps-status");
+      if (!navigator.geolocation) {
+        statusEl.innerText = "❌ ब्राउज़र में GPS उपलब्ध नहीं है";
+        return;
+      }
+      statusEl.innerText = "🔄 लोकेशन ट्रेस हो रही है...";
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          document.getElementById("pw-lat").value = pos.coords.latitude;
+          document.getElementById("pw-lng").value = pos.coords.longitude;
+          statusEl.innerHTML = `<span class="text-emerald-700 font-bold">✓ स्थायी लोकेशन सुरक्षित</span>`;
+        },
+        () => { statusEl.innerHTML = `<span class="text-rose-600 font-bold">❌ GPS अनुमति नहीं मिली</span>`; },
+        { enableHighAccuracy: true }
+      );
     }
 
     function handleLogoClick() {
@@ -1103,956 +1182,14 @@
 
       let sitePhoto = "";
       const siteFile = document.getElementById("pc-site-photo").files[0];
-      if (siteFile) {
-        try { sitePhoto = await fileToBase64(siteFile); } catch(err) {}
-      }
+      if (siteFileआपका **MistryBabu.com** का कोड काफी व्यवस्थित, मोबाइल-फर्स्ट और व्यावहारिक आर्किटेक्चर पर बना है। बिहार के ज़िलों और प्रखंडों की मैपिंग, 30 श्रेणियों का ग्रिड, वॉइस इनपुट, प्राइवेसी प्रोटेक्शन (सीधा नंबर न दिखाना), और एडमिन कंट्रोल रूम जैसे फीचर्स लोकल सर्विस ऐप के लिए सटीक हैं।
 
-      const data = {
-        jobSixId: sixDigitId,
-        clientName: clientName,
-        phone: fullPhone,
-        district: document.getElementById("pc-district").value,
-        block: document.getElementById("pc-block").value,
-        location: document.getElementById("pc-location").value.trim(),
-        workType: document.getElementById("pc-work").value,
-        duration: document.getElementById("pc-duration").value,
-        workerCount: document.getElementById("pc-worker-count").value || 1,
-        materialType: document.getElementById("pc-material").value,
-        sitePhoto: sitePhoto || "",
-        desc: document.getElementById("pc-desc").value.trim(),
-        isUrgent: isUrgent,
-        isClosed: false,
-        deviceFingerprint: getDeviceFingerprint(),
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      };
+प्रोडक्शन में डिप्लॉय करने और बेहतर परफॉर्मेंस व सुरक्षा सुनिश्चित करने के लिए निम्नलिखित मुख्य बिंदुओं की समीक्षा और सुधार ज़रूरी हैं:
 
-      db.collection("job_posts").add(data).then(() => {
-        localStorage.setItem("mb_client_phone", fullPhone);
-        localStorage.setItem("mb_client_name", clientName);
-        localStorage.setItem("mb_device_locked_role", "client");
+---
 
-        if (analytics) {
-          analytics.logEvent('job_posted', { category: data.workType, district: data.district, urgent: isUrgent });
-        }
+### 1. सुरक्षा व क्रेडेंशियल्स (Security & Secrets)
 
-        alert(`बधाई हो! काम सफलतापूर्वक पोस्ट हो गया है।\nकाम ID: ${sixDigitId}\nयह काम ${isUrgent ? '24 घंटे (तत्काल)' : '7 दिनों'} तक लाइव रहेगा।`);
-        btn.innerText = "काम पोस्ट करें";
-        navTo('register');
-        switchRoleTab('client');
-      }).catch(err => {
-        alert("त्रुटि: " + err.message);
-        btn.innerText = "काम पोस्ट करें";
-      });
-    }
-
-    async function saveWorkerProfile(e) {
-      e.preventDefault();
-      const name = document.getElementById("pw-name").value.trim();
-      const phone = document.getElementById("pw-phone").value.trim();
-      const district = document.getElementById("pw-district").value;
-      const block = document.getElementById("pw-block").value;
-      const exp = parseInt(document.getElementById("pw-exp").value) || 0;
-
-      const checkedBoxes = document.querySelectorAll("input[name='worker_skill']:checked");
-      if (checkedBoxes.length === 0) return alert("कृपया कम से कम एक काम (हुनर) चुनें!");
-      const skillsArray = Array.from(checkedBoxes).map(cb => cb.value);
-
-      if (phone.length !== 10) return alert("10 अंकों का मोबाइल नंबर डालें!");
-
-      const fullPhone = "+91" + phone;
-
-      // Single Device Lock Check
-      const deviceLockedRole = localStorage.getItem("mb_device_locked_role");
-      if (deviceLockedRole === "client") {
-        return alert("🚫 इस मोबाइल फ़ोन से ग्राहक का खाता जुड़ा हुआ है। एक फ़ोन से मिस्त्री और काम दोनों पोस्ट नहीं हो सकते।");
-      }
-
-      const btn = document.getElementById("btn-save-worker");
-      btn.innerText = "जाँच हो रही है...";
-
-      let photoData = "";
-      const photoFile = document.getElementById("pw-photo-file").files[0];
-      if (photoFile) {
-        try { photoData = await fileToBase64(photoFile); } catch (err) {}
-      }
-
-      const workPhotosFiles = document.getElementById("pw-work-photos").files;
-      let workPhotosArray = [];
-      if (workPhotosFiles && workPhotosFiles.length > 0) {
-        for (let i = 0; i < Math.min(workPhotosFiles.length, 3); i++) {
-          try {
-            const b64 = await fileToBase64(workPhotosFiles[i]);
-            workPhotosArray.push(b64);
-          } catch(e) {}
-        }
-      }
-
-      let idCardData = "";
-      const idCardFile = document.getElementById("pw-id-card").files[0];
-      if (idCardFile) {
-        try { idCardData = await fileToBase64(idCardFile); } catch(e) {}
-      }
-
-      let workerLevel = "नया कारीगर";
-      if (exp >= 8) workerLevel = "सीनियर उस्ताद";
-      else if (exp >= 3) workerLevel = "कुशल कारीगर";
-
-      db.collection("workers").where("private_phone", "==", fullPhone).limit(1).get()
-        .then(snap => {
-          if (!snap.empty) {
-            btn.innerText = "पंजीकरण पूरा करें";
-            const existing = snap.docs[0].data();
-            existing.id = snap.docs[0].id;
-            setLoggedInWorker(existing);
-            alert("आपका खाता पहले से बना हुआ है! प्रोफ़ाइल खुल गई है।");
-          } else {
-            btn.innerText = "सेव हो रहा है...";
-            const proId = generateWorkerId();
-            const data = {
-              workerProId: proId,
-              name: name,
-              district: district,
-              block: block,
-              skills: skillsArray,
-              experience: exp,
-              level: workerLevel,
-              private_phone: fullPhone,
-              photo: photoData || "",
-              workPhotos: workPhotosArray,
-              idCardPhoto: idCardData || "",
-              isIdVerified: false,
-              isBlocked: false,
-              liveStatus: "available",
-              deviceFingerprint: getDeviceFingerprint(),
-              rating: 5.0,
-              createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            };
-
-            db.collection("workers").add(data).then(docRef => {
-              btn.innerText = "पंजीकरण पूरा करें";
-              data.id = docRef.id;
-              setLoggedInWorker(data);
-              localStorage.setItem("mb_device_locked_role", "worker");
-
-              if (analytics) {
-                analytics.logEvent('worker_registered', { district: district, experience: exp });
-              }
-
-              alert(`बधाई हो! आपका मिस्त्री पंजीकरण सफल रहा।\nआपकी मिस्त्री ID: ${proId}`);
-            }).catch(err => {
-              btn.innerText = "पंजीकरण पूरा करें";
-              alert("त्रुटि: " + err.message);
-            });
-          }
-        }).catch(err => {
-          btn.innerText = "पंजीकरण पूरा करें";
-          alert("त्रुटि: " + err.message);
-        });
-    }
-
-    function setLoggedInWorker(wData) {
-      if (wData.isBlocked) {
-        return alert("🚫 आपकी प्रोफ़ाइल को एडमिन द्वारा निलंबित (Block) कर दिया गया है। हेल्पलाइन पर संपर्क करें।");
-      }
-      localStorage.setItem("mb_worker_doc_id", wData.id || "");
-      localStorage.setItem("mb_worker_pro_id", wData.workerProId || "#MB-PRO-100000");
-      localStorage.setItem("mb_worker_name", wData.name);
-      localStorage.setItem("mb_worker_skills", JSON.stringify(wData.skills || [wData.skill]));
-      localStorage.setItem("mb_worker_district", wData.district + (wData.block ? " (" + wData.block + ")" : ""));
-      localStorage.setItem("mb_worker_phone", wData.private_phone.replace("+91", ""));
-      localStorage.setItem("mb_worker_photo", wData.photo || "");
-      localStorage.setItem("mb_worker_status", wData.liveStatus || "available");
-      localStorage.setItem("mb_worker_level", wData.level || "कुशल कारीगर");
-      localStorage.setItem("mb_worker_photos", JSON.stringify(wData.workPhotos || []));
-      localStorage.setItem("mb_worker_id_verified", wData.isIdVerified ? "true" : "false");
-      localStorage.setItem("mb_device_locked_role", "worker");
-      
-      updateRegisterScreenView();
-      listenWorkerInbox("+91" + localStorage.getItem("mb_worker_phone"));
-    }
-
-    function updateRegisterScreenView() {
-      const workerName = localStorage.getItem("mb_worker_name");
-      const formBox = document.getElementById("worker-form-container");
-      const profileBox = document.getElementById("worker-profile-view");
-
-      if (workerName) {
-        formBox.classList.add("hidden");
-        profileBox.classList.remove("hidden");
-
-        document.getElementById("my-prof-name").innerText = workerName;
-        document.getElementById("my-prof-pro-id").innerText = "ID: " + (localStorage.getItem("mb_worker_pro_id") || "#MB-PRO-000000");
-        document.getElementById("my-prof-location").innerText = localStorage.getItem("mb_worker_district") || "बिहार";
-        document.getElementById("badge-worker-level").innerText = localStorage.getItem("mb_worker_level") || "कुशल कारीगर";
-
-        const skillsContainer = document.getElementById("my-prof-skills-tags");
-        skillsContainer.innerHTML = "";
-        let skills = [];
-        try { skills = JSON.parse(localStorage.getItem("mb_worker_skills")) || []; } catch(e) { skills = []; }
-        skills.forEach(s => {
-          skillsContainer.innerHTML += `<span class="bg-amber-100 text-amber-900 text-[10px] font-bold px-2 py-0.5 rounded-full">${s}</span>`;
-        });
-
-        const photo = localStorage.getItem("mb_worker_photo");
-        document.getElementById("my-prof-img").src = photo || "logo.png";
-
-        const status = localStorage.getItem("mb_worker_status") || "available";
-        renderLiveStatusUI(status);
-
-        const isVerified = localStorage.getItem("mb_worker_id_verified") === "true";
-        const idBadge = document.getElementById("badge-verified-id");
-        if (isVerified) idBadge.classList.remove("hidden");
-        else idBadge.classList.add("hidden");
-
-        const myPortGrid = document.getElementById("my-portfolio-grid");
-        let workPhotos = [];
-        try { workPhotos = JSON.parse(localStorage.getItem("mb_worker_photos")) || []; } catch(e) {}
-        if (workPhotos.length > 0) {
-          myPortGrid.innerHTML = "";
-          workPhotos.forEach(p => {
-            myPortGrid.innerHTML += `<img src="${p}" class="w-16 h-16 rounded-lg object-cover border border-slate-200">`;
-          });
-        }
-      } else {
-        formBox.classList.remove("hidden");
-        profileBox.classList.add("hidden");
-      }
-    }
-
-    function loginWithPhone() {
-      const phoneInput = document.getElementById("quick-login-phone").value.trim();
-      if (phoneInput.length !== 10) return alert("10 अंकों का नंबर डालें!");
-
-      const btn = document.getElementById("btn-quick-login");
-      btn.innerText = "जाँच...";
-
-      const fullPhone = "+91" + phoneInput;
-      db.collection("workers").where("private_phone", "==", fullPhone).limit(1).get()
-        .then(snap => {
-          btn.innerText = "खोलें";
-          if (!snap.empty) {
-            const data = snap.docs[0].data();
-            data.id = snap.docs[0].id;
-            setLoggedInWorker(data);
-            alert("स्वागत है! आपकी मिस्त्री प्रोफ़ाइल खुल गई है।");
-          } else {
-            alert("यह नंबर रजिस्टर नहीं है! नीचे दिया गया फ़ॉर्म भरें।");
-            document.getElementById("pw-phone").value = phoneInput;
-          }
-        }).catch(err => {
-          btn.innerText = "खोलें";
-          alert("त्रुटि: " + err.message);
-        });
-    }
-
-    function logoutWorker() {
-      if (confirm("क्या आप लॉग आउट करना चाहते हैं?")) {
-        localStorage.clear();
-        updateRegisterScreenView();
-        alert("आप लॉग आउट हो चुके हैं।");
-      }
-    }
-
-    function loadFullWorkers(filterSkill = "") {
-      const grid = document.getElementById("full-worker-grid");
-      db.collection("workers").orderBy("createdAt", "desc").limit(25).get().then(snap => {
-        if (snap.empty) return grid.innerHTML = "<p class='text-xs text-slate-400'>कोई कारीगर नहीं मिला।</p>";
-        grid.innerHTML = "";
-        snap.forEach(doc => {
-          const w = doc.data();
-          if (w.isBlocked) return;
-          const skillsList = w.skills || (w.skill ? [w.skill] : ["कारीगर"]);
-          if (filterSkill && !skillsList.some(s => s.includes(filterSkill))) return;
-
-          const photoSrc = w.photo || 'logo.png';
-          const isBusy = w.liveStatus === 'busy';
-          const workPhotos = w.workPhotos || [];
-          const proId = w.workerProId || ("#MB-PRO-" + doc.id.substring(0, 6).toUpperCase());
-
-          grid.innerHTML += `
-            <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-2xs space-y-2">
-              <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-2.5">
-                  <div class="relative">
-                    <img src="${photoSrc}" onerror="this.src='https://placehold.co/100x100/f59e0b/0f172a.png?text=MB'" class="w-12 h-12 rounded-full object-cover border-2 border-amber-400">
-                    <span class="absolute bottom-0 right-0 w-3 h-3 rounded-full ${isBusy ? 'bg-rose-500' : 'bg-emerald-500'} border-2 border-white"></span>
-                  </div>
-                  <div>
-                    <div class="flex items-center space-x-1">
-                      <h4 class="font-bold text-slate-900 text-xs">${w.name}</h4>
-                      <span class="text-[8px] bg-amber-100 text-amber-800 px-1.5 py-0.2 rounded font-bold">${w.level || 'कुशल'}</span>
-                    </div>
-                    <span class="text-[9px] font-bold text-slate-400 block">${proId}</span>
-                    <span class="text-[9px] font-bold ${isBusy ? 'text-rose-500' : 'text-emerald-600'}">${isBusy ? 'काम में व्यस्त 🔴' : 'काम के लिए उपलब्ध 🟢'}</span>
-                    <p class="text-[9px] text-slate-400">${w.district} • ${w.experience || 0} साल अनुभव</p>
-                  </div>
-                </div>
-                <button onclick="navTo('post')" class="bg-amber-500 text-slate-900 px-3 py-1.5 rounded-lg text-[11px] font-bold shadow-xs">
-                  काम दें
-                </button>
-              </div>
-
-              ${workPhotos.length > 0 ? `
-                <div class="pt-1 flex items-center space-x-1.5 overflow-x-auto">
-                  <span class="text-[9px] text-slate-400 font-bold">काम की फ़ोटो:</span>
-                  ${workPhotos.map(img => `<img src="${img}" class="w-10 h-10 rounded-md object-cover border border-slate-100">`).join('')}
-                </div>
-              ` : ''}
-            </div>`;
-        });
-      });
-    }
-
-    function autoLoadClientIfSaved() {
-      const savedPhone = localStorage.getItem("mb_client_phone");
-      if (savedPhone) {
-        document.getElementById("dash-client-phone").value = savedPhone.replace("+91", "");
-        loadClientPosts();
-      }
-    }
-
-    function loadClientPosts() {
-      const p = document.getElementById("dash-client-phone").value.trim();
-      if (p.length !== 10) return alert("10 अंकों का नंबर डालें!");
-
-      const fullPhone = "+91" + p;
-      localStorage.setItem("mb_client_phone", fullPhone);
-
-      listenClientInbox(fullPhone);
-
-      const listDiv = document.getElementById("client-posts-list");
-      listDiv.innerHTML = "<p class='text-xs text-slate-400'>आपके काम और मिस्त्रियों के संदेश खोजे जा रहे हैं...</p>";
-
-      db.collection("job_posts")
-        .where("phone", "==", fullPhone)
-        .get()
-        .then(snap => {
-          if (snap.empty) {
-            listDiv.innerHTML = `
-              <div class="bg-white p-5 rounded-2xl border border-slate-200 text-center text-xs">
-                <p class="text-slate-500 font-bold">इस नंबर पर कोई काम पोस्ट नहीं है।</p>
-                <button onclick="navTo('post')" class="mt-2 bg-amber-500 text-slate-900 font-bold px-3 py-1.5 rounded-lg">नया काम पोस्ट करें</button>
-              </div>`;
-            return;
-          }
-
-          listDiv.innerHTML = "";
-          let validPosts = 0;
-
-          snap.forEach(jobDoc => {
-            const j = jobDoc.data();
-            const timeInfo = formatTimeDetails(j.createdAt, j.isUrgent);
-            if (timeInfo.isExpired) return;
-
-            validPosts++;
-            const jobId = jobDoc.id;
-            const sixId = j.jobSixId || ("#MB-JOB-" + jobId.substring(0, 6).toUpperCase());
-
-            const jobCard = document.createElement("div");
-            jobCard.className = "bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-3";
-            jobCard.innerHTML = `
-              <div class="flex justify-between items-start border-b border-slate-100 pb-2">
-                <div>
-                  <div class="flex items-center space-x-1.5">
-                    ${j.isUrgent ? '<span class="bg-red-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded">तत्काल</span>' : ''}
-                    <span class="bg-slate-900 text-amber-400 text-[10px] font-black px-2 py-0.5 rounded">${sixId}</span>
-                    ${j.isClosed ? '<span class="bg-rose-100 text-rose-800 text-[9px] font-bold px-2 py-0.5 rounded">काम पूरा हुआ (बंद)</span>' : ''}
-                  </div>
-                  <h4 class="font-bold text-slate-900 text-sm mt-1">${j.workType}</h4>
-                  <p class="text-[10px] text-slate-400">${j.district} (${j.location}) • समय: ${timeInfo.timeAgo}</p>
-                  <p class="text-[10px] text-emerald-700 font-bold mt-0.5">${timeInfo.timeLeft}</p>
-                </div>
-                ${!j.isClosed ? `
-                  <button onclick="markJobCompleted('${jobId}', '${sixId}', '', '')" class="bg-emerald-50 text-emerald-700 border border-emerald-300 text-[10px] font-bold px-2.5 py-1 rounded-lg">
-                    काम पूरा हुआ ✅
-                  </button>
-                ` : ''}
-              </div>
-              <div>
-                <h5 class="text-[11px] font-black text-slate-800 uppercase tracking-wide">मिस्त्रियों के आए संदेश व रेट:</h5>
-                <div id="bids-for-${jobId}" class="mt-2 space-y-2">
-                  <p class="text-[10px] text-slate-400">संदेश लोड हो रहे हैं...</p>
-                </div>
-              </div>
-            `;
-            listDiv.appendChild(jobCard);
-
-            db.collection("job_proposals")
-              .where("jobId", "==", jobId)
-              .get()
-              .then(pSnap => {
-                const bidsBox = document.getElementById("bids-for-" + jobId);
-                if (pSnap.empty) {
-                  bidsBox.innerHTML = "<p class='text-[10px] text-slate-400 italic'>अभी किसी मिस्त्री का संदेश नहीं आया है।</p>";
-                  return;
-                }
-                bidsBox.innerHTML = "";
-                pSnap.forEach(pDoc => {
-                  const prop = pDoc.data();
-                  bidsBox.innerHTML += `
-                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs">
-                      <div class="flex justify-between items-center mb-1">
-                        <span class="font-black text-slate-900"><i class="fa-solid fa-user-gear text-amber-600 mr-1"></i>${prop.workerName}</span>
-                        <span class="text-[9px] bg-slate-200 text-slate-600 px-1.5 py-0.5 rounded font-bold">🔒 नंबर सुरक्षित</span>
-                      </div>
-                      <p class="text-[11px] text-slate-700 bg-white p-2 rounded-lg border border-slate-100 font-medium">${prop.message}</p>
-                      
-                      <div class="mt-2 flex gap-1.5">
-                        <button onclick="confirmDealInApp('${sixId}', '${prop.workerName}', '${prop.workerPhone}', '${j.clientName}', '${j.phone}', '${j.workType}', '${j.district} (${j.location})', '${prop.message.replace(/'/g, "\\'")}')" 
-                          class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded-lg text-[10px] flex items-center justify-center space-x-1 shadow-xs transition">
-                          <i class="fa-solid fa-handshake"></i>
-                          <span>डील पक्की करें</span>
-                        </button>
-                        <button onclick="openReviewModal('${prop.workerPhone}', '${prop.workerName}', '${sixId}')" class="bg-amber-100 text-amber-900 px-2.5 py-2 rounded-lg text-[10px] font-bold">
-                          ⭐ रेटिंग दें
-                        </button>
-                      </div>
-                    </div>
-                  `;
-                });
-              });
-          });
-
-          if (validPosts === 0) {
-            listDiv.innerHTML = `
-              <div class="bg-white p-5 rounded-2xl border border-slate-200 text-center text-xs">
-                <p class="text-slate-500 font-bold">वर्तमान में कोई सक्रिय काम नहीं है।</p>
-                <button onclick="navTo('post')" class="mt-2 bg-amber-500 text-slate-900 font-bold px-3 py-1.5 rounded-lg">नया काम पोस्ट करें</button>
-              </div>`;
-          }
-        }).catch(err => {
-          listDiv.innerHTML = "<p class='text-xs text-red-500'>त्रुटि: " + err.message + "</p>";
-        });
-    }
-
-    function confirmDealInApp(sixId, workerName, workerPhone, clientName, clientPhone, workType, location, rateMsg) {
-      if (!confirm(`क्या आप ${sixId} के लिए ${workerName} की डील फाइनल करना चाहते हैं?`)) return;
-
-      const dealData = {
-        jobSixId: sixId,
-        clientName: clientName,
-        clientPhone: clientPhone,
-        workerName: workerName,
-        workerPhone: workerPhone,
-        workType: workType,
-        location: location,
-        rateMessage: rateMsg,
-        status: "Pending",
-        isArchived: false,
-        chatMessages: [],
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      };
-
-      db.collection("confirmed_deals").add(dealData).then(() => {
-        alert(`✅ डील दर्ज हो गई है! एडमिन द्वारा जाँचे जाने के बाद इनबॉक्स में नंबर आ जाएगा।`);
-      }).catch(err => {
-        alert("त्रुटि: " + err.message);
-      });
-    }
-
-    function listenClientInbox(phone) {
-      const inboxSec = document.getElementById("client-inbox-section");
-      const inboxList = document.getElementById("client-inbox-messages");
-
-      db.collection("inbox_messages")
-        .where("recipientPhone", "==", phone)
-        .onSnapshot(snap => {
-          if (!snap.empty) {
-            inboxSec.classList.remove("hidden");
-            inboxList.innerHTML = "";
-            snap.forEach(doc => {
-              const m = doc.data();
-              inboxList.innerHTML += `
-                <div class="bg-white p-2.5 rounded-xl border border-amber-300 shadow-2xs">
-                  <div class="flex justify-between items-center mb-1">
-                    <span class="font-black text-amber-800 text-[10px]">${m.title || 'मिस्त्रीबाबू सूचना'}</span>
-                    <span class="text-[9px] text-slate-400">${m.jobSixId || ''}</span>
-                  </div>
-                  <p class="text-slate-800 text-xs font-semibold leading-relaxed">${m.message}</p>
-                  ${m.contactNumber ? `<div class="mt-1.5 pt-1.5 border-t border-slate-100 flex items-center justify-between">
-                    <span class="text-[10px] text-slate-500 font-bold">संपर्क नंबर:</span>
-                    <a href="tel:${m.contactNumber}" class="bg-emerald-600 text-white px-2 py-0.5 rounded text-[10px] font-bold"><i class="fa-solid fa-phone mr-1"></i>${m.contactNumber}</a>
-                  </div>` : ''}
-                </div>
-              `;
-            });
-          }
-        });
-    }
-
-    function listenWorkerInbox(phone) {
-      const inboxList = document.getElementById("worker-inbox-messages");
-      db.collection("inbox_messages")
-        .where("recipientPhone", "==", phone)
-        .onSnapshot(snap => {
-          if (!snap.empty) {
-            inboxList.innerHTML = "";
-            snap.forEach(doc => {
-              const m = doc.data();
-              inboxList.innerHTML += `
-                <div class="bg-white p-2 rounded-lg border border-amber-200">
-                  <div class="flex justify-between items-center mb-0.5">
-                    <span class="font-black text-slate-900 text-[10px]">${m.title || 'काम की सूचना'}</span>
-                    <span class="text-[9px] text-slate-400">${m.jobSixId || ''}</span>
-                  </div>
-                  <p class="text-xs text-slate-800">${m.message}</p>
-                  ${m.contactNumber ? `<a href="tel:${m.contactNumber}" class="mt-1 inline-block bg-slate-900 text-amber-400 px-2 py-0.5 rounded text-[10px] font-bold"><i class="fa-solid fa-phone mr-1"></i>मालिक को कॉल करें: ${m.contactNumber}</a>` : ''}
-                </div>
-              `;
-            });
-          }
-        });
-    }
-
-    function openAdminModal() { document.getElementById("admin-modal").classList.remove("hidden"); }
-    function closeAdminModal() { document.getElementById("admin-modal").classList.add("hidden"); }
-
-    function switchAdminDealTab(tab) {
-      currentAdminDealTab = tab;
-      const btnPending = document.getElementById("tab-deal-pending");
-      const btnArchived = document.getElementById("tab-deal-archived");
-      if (tab === 'pending') {
-        btnPending.className = "flex-1 py-1 rounded-lg bg-white text-slate-900 shadow-xs";
-        btnArchived.className = "flex-1 py-1 rounded-lg text-slate-600";
-      } else {
-        btnArchived.className = "flex-1 py-1 rounded-lg bg-white text-slate-900 shadow-xs";
-        btnPending.className = "flex-1 py-1 rounded-lg text-slate-600";
-      }
-      loadAdminDeals();
-    }
-
-    function loadAdminDeals() {
-      const container = document.getElementById("admin-deals-container");
-      container.innerHTML = "<p class='text-xs text-slate-400 text-center py-4'>डील्स खोजी जा रही हैं...</p>";
-
-      const isArchived = (currentAdminDealTab === 'archived');
-
-      db.collection("confirmed_deals")
-        .where("isArchived", "==", isArchived)
-        .limit(30)
-        .get()
-        .then(snap => {
-          if (snap.empty) {
-            container.innerHTML = `<p class='text-xs text-slate-400 text-center py-4'>${isArchived ? 'कोई निपटाई गई (Archived) डील नहीं है।' : 'कोई नई लंबित (Pending) डील नहीं है।'}</p>`;
-            return;
-          }
-
-          container.innerHTML = "";
-          snap.forEach(doc => {
-            const d = doc.data();
-            const dealId = doc.id;
-
-            container.innerHTML += `
-              <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs space-y-2">
-                <div class="flex justify-between items-center border-b border-slate-200 pb-1.5">
-                  <span class="font-black bg-slate-900 text-amber-400 px-2 py-0.5 rounded text-[11px]">${d.jobSixId}</span>
-                  <span class="text-[10px] font-bold px-2 py-0.5 rounded ${d.status === 'Connected' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${d.status === 'Connected' ? 'जुड़ गया' : 'पेंडिंग'}</span>
-                </div>
-
-                <div class="grid grid-cols-2 gap-2 text-[11px]">
-                  <div class="bg-white p-2 rounded-lg border border-slate-200">
-                    <span class="text-slate-400 font-bold block text-[9px] uppercase">🏠 ग्राहक (मालिक)</span>
-                    <span class="font-black text-slate-900 block">${d.clientName}</span>
-                    <div class="flex gap-2 mt-1">
-                      <a href="tel:${d.clientPhone}" class="text-blue-600 font-bold"><i class="fa-solid fa-phone mr-1"></i>कॉल</a>
-                      <a href="https://wa.me/${d.clientPhone.replace('+', '')}" target="_blank" class="text-emerald-600 font-bold"><i class="fa-brands fa-whatsapp mr-1"></i>WhatsApp</a>
-                    </div>
-                  </div>
-                  <div class="bg-white p-2 rounded-lg border border-slate-200">
-                    <span class="text-slate-400 font-bold block text-[9px] uppercase">👷 मिस्त्री</span>
-                    <span class="font-black text-slate-900 block">${d.workerName}</span>
-                    <div class="flex gap-2 mt-1">
-                      <a href="tel:${d.workerPhone}" class="text-blue-600 font-bold"><i class="fa-solid fa-phone mr-1"></i>कॉल</a>
-                      <a href="https://wa.me/${d.workerPhone.replace('+', '')}" target="_blank" class="text-emerald-600 font-bold"><i class="fa-brands fa-whatsapp mr-1"></i>WhatsApp</a>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="bg-amber-50 p-2 rounded-lg border border-amber-200 text-[10px] text-slate-700">
-                  <span class="font-bold">तय रेट/संदेश:</span> ${d.rateMessage}
-                </div>
-
-                <!-- Custom In-App Chat input from Admin -->
-                <div class="bg-white p-2 rounded-lg border border-slate-200 space-y-1.5">
-                  <span class="text-[10px] font-bold text-slate-600 block">💬 इन-ऐप संदेश लिखकर भेजें:</span>
-                  <input type="text" id="chat-input-${dealId}" placeholder="यहाँ कुछ भी लिखें..." class="w-full rounded border border-slate-300 p-1 text-xs">
-                  <div class="flex gap-1.5 pt-1">
-                    <button onclick="adminSendCustomChat('${dealId}', '${d.clientPhone}', 'मालिक', '${d.jobSixId}')" class="flex-1 bg-slate-900 text-amber-400 py-1 rounded text-[9px] font-bold">मालिक को भेजें</button>
-                    <button onclick="adminSendCustomChat('${dealId}', '${d.workerPhone}', 'मिस्त्री', '${d.jobSixId}')" class="flex-1 bg-emerald-700 text-white py-1 rounded text-[9px] font-bold">मिस्त्री को भेजें</button>
-                  </div>
-                </div>
-
-                <div class="pt-1 flex gap-2">
-                  <button onclick="adminSendInboxMsg('${dealId}', '${d.clientPhone}', 'मालिक', '${d.workerName}', '${d.workerPhone}', '${d.jobSixId}')" class="flex-1 bg-slate-900 text-amber-400 py-1.5 rounded-lg text-[10px] font-bold">
-                    मालिक को नंबर दें
-                  </button>
-                  <button onclick="adminSendInboxMsg('${dealId}', '${d.workerPhone}', 'मिस्त्री', '${d.clientName}', '${d.clientPhone}', '${d.jobSixId}')" class="flex-1 bg-emerald-700 text-white py-1.5 rounded-lg text-[10px] font-bold">
-                    मिस्त्री को नंबर दें
-                  </button>
-                </div>
-
-                <!-- Archive Button -->
-                <button onclick="toggleDealArchive('${dealId}', ${!isArchived})" class="w-full ${isArchived ? 'bg-slate-200 text-slate-700' : 'bg-blue-50 text-blue-700 border border-blue-200'} py-1 rounded-lg text-[10px] font-bold">
-                  ${isArchived ? '↩️ वापस मुख्य इनबॉक्स में लाएं' : '🗂️ काम पूरा / साइड करें (Archive)'}
-                </button>
-              </div>
-            `;
-          });
-        });
-    }
-
-    function toggleDealArchive(dealId, newStatus) {
-      db.collection("confirmed_deals").doc(dealId).update({ isArchived: newStatus }).then(() => {
-        loadAdminDeals();
-      });
-    }
-
-    function adminSendCustomChat(dealId, recipientPhone, recipientType, jobSixId) {
-      const input = document.getElementById("chat-input-" + dealId);
-      const msg = input.value.trim();
-      if (!msg) return alert("कृपया कुछ संदेश लिखें!");
-
-      const payload = {
-        recipientPhone: recipientPhone,
-        title: `मिस्त्रीबाबू संदेश (${jobSixId})`,
-        jobSixId: jobSixId,
-        message: msg,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      };
-
-      db.collection("inbox_messages").add(payload).then(() => {
-        alert(`✅ ${recipientType} को संदेश भेज दिया गया!`);
-        input.value = "";
-      });
-    }
-
-    function adminSendInboxMsg(dealDocId, recipientPhone, recipientType, partnerName, partnerPhone, jobSixId) {
-      const defaultText = recipientType === 'मालिक' 
-        ? `नमस्ते! काम ${jobSixId} के लिए मिस्त्री ${partnerName} का संपर्क नंबर: ${partnerPhone} है। कृपया बात कर लें।`
-        : `नमस्ते! काम ${jobSixId} के लिए मालिक ${partnerName} का संपर्क नंबर: ${partnerPhone} है। कृपया तुरंत संपर्क करें।`;
-
-      const customMsg = prompt(`इस ${recipientType} को संदेश भेजें:`, defaultText);
-      if (!customMsg) return;
-
-      const payload = {
-        recipientPhone: recipientPhone,
-        title: `मिस्त्रीबाबू डील कनेक्ट (${jobSixId})`,
-        jobSixId: jobSixId,
-        message: customMsg,
-        contactNumber: partnerPhone,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      };
-
-      db.collection("inbox_messages").add(payload).then(() => {
-        db.collection("confirmed_deals").doc(dealDocId).update({ status: "Connected" });
-        alert(`✅ नंबर सुरक्षित भेज दिया गया!`);
-        loadAdminDeals();
-      }).catch(err => alert("त्रुटि: " + err.message));
-    }
-
-    // Admin Super Search
-    function adminExecuteSearch() {
-      const query = document.getElementById("admin-super-search-input").value.trim();
-      if (!query) return alert("आईडी या मोबाइल नंबर दर्ज करें!");
-
-      const resBox = document.getElementById("admin-search-result");
-      resBox.classList.remove("hidden");
-      resBox.innerHTML = "<p class='text-slate-400'>बायोडेटा खोजा जा रहा है...</p>";
-
-      // Search Jobs
-      db.collection("job_posts").get().then(jSnap => {
-        let foundJob = null;
-        jSnap.forEach(doc => {
-          const d = doc.data();
-          if (d.jobSixId === query || d.phone.includes(query) || doc.id === query) {
-            foundJob = { id: doc.id, ...d };
-          }
-        });
-
-        if (foundJob) {
-          resBox.innerHTML = `
-            <div class="border-b border-amber-200 pb-2">
-              <span class="bg-slate-900 text-amber-400 font-bold px-1.5 py-0.5 rounded text-[10px]">काम बायोडेटा (Job)</span>
-              <h4 class="font-bold text-slate-900 mt-1">${foundJob.workType} (${foundJob.jobSixId})</h4>
-              <p class="text-slate-600">👤 मालिक: <strong>${foundJob.clientName}</strong> (${foundJob.phone})</p>
-              <p class="text-slate-500">📍 स्थान: ${foundJob.district}, ${foundJob.block} (${foundJob.location})</p>
-              <p class="text-slate-600">विवरण: ${foundJob.desc || 'उपलब्ध नहीं'}</p>
-              <div class="mt-2 flex gap-2">
-                <button onclick="adminEditJobPrompt('${foundJob.id}', '${foundJob.jobSixId}', '${foundJob.clientName}', '${foundJob.location}', '${(foundJob.desc || '').replace(/'/g, "\\'")}')" class="bg-blue-600 text-white px-2 py-1 rounded font-bold">✏️ एडिट करें</button>
-                <button onclick="adminDeleteDoc('job_posts', '${foundJob.id}')" class="bg-red-600 text-white px-2 py-1 rounded font-bold">🗑️ डिलीट करें</button>
-              </div>
-            </div>
-          `;
-          return;
-        }
-
-        // Search Workers
-        db.collection("workers").get().then(wSnap => {
-          let foundWorker = null;
-          wSnap.forEach(doc => {
-            const d = doc.data();
-            if (d.workerProId === query || d.private_phone.includes(query) || doc.id === query) {
-              foundWorker = { id: doc.id, ...d };
-            }
-          });
-
-          if (foundWorker) {
-            resBox.innerHTML = `
-              <div class="border-b border-amber-200 pb-2">
-                <span class="bg-slate-900 text-amber-400 font-bold px-1.5 py-0.5 rounded text-[10px]">मिस्त्री बायोडेटा (Worker)</span>
-                <h4 class="font-bold text-slate-900 mt-1">${foundWorker.name} (${foundWorker.workerProId || 'N/A'})</h4>
-                <p class="text-slate-600">📞 फोन: ${foundWorker.private_phone}</p>
-                <p class="text-slate-500">📍 स्थान: ${foundWorker.district}, ${foundWorker.block || ''}</p>
-                <p class="text-slate-600">हुनर: ${(foundWorker.skills || []).join(', ')} • अनुभव: ${foundWorker.experience || 0} वर्ष</p>
-                <p class="font-bold ${foundWorker.isBlocked ? 'text-red-600' : 'text-emerald-600'}">स्थिति: ${foundWorker.isBlocked ? 'निलंबित (Blocked)' : 'सक्रिय (Active)'}</p>
-                <div class="mt-2 flex gap-2">
-                  <button onclick="adminEditWorkerPrompt('${foundWorker.id}', '${foundWorker.name}', '${foundWorker.experience || 0}')" class="bg-blue-600 text-white px-2 py-1 rounded font-bold">✏️ एडिट करें</button>
-                  <button onclick="adminToggleBlockWorker('${foundWorker.id}', ${!foundWorker.isBlocked})" class="bg-amber-600 text-white px-2 py-1 rounded font-bold">${foundWorker.isBlocked ? 'अनब्लॉक' : '🚫 ब्लॉक करें'}</button>
-                  <button onclick="adminDeleteDoc('workers', '${foundWorker.id}')" class="bg-red-600 text-white px-2 py-1 rounded font-bold">🗑️ डिलीट करें</button>
-                </div>
-              </div>
-            `;
-          } else {
-            resBox.innerHTML = "<p class='text-red-500'>इस आईडी या नंबर से कोई रिकॉर्ड नहीं मिला।</p>";
-          }
-        });
-      });
-    }
-
-    function adminEditJobPrompt(docId, sixId, oldName, oldLoc, oldDesc) {
-      const newName = prompt(`मालिक का नाम सुधारें (ID: ${sixId}):`, oldName);
-      if (newName === null) return;
-      const newLoc = prompt("साइट का इलाका/गाँव सुधारें:", oldLoc);
-      if (newLoc === null) return;
-      const newDesc = prompt("काम का विवरण सुधारें:", oldDesc);
-      if (newDesc === null) return;
-
-      db.collection("job_posts").doc(docId).update({
-        clientName: newName.trim(),
-        location: newLoc.trim(),
-        desc: newDesc.trim()
-      }).then(() => {
-        alert("✅ पोस्ट की जानकारी सफलतापूर्वक अपडेट कर दी गई!");
-        adminExecuteSearch();
-      });
-    }
-
-    function adminEditWorkerPrompt(docId, oldName, oldExp) {
-      const newName = prompt("मिस्त्री का नाम सुधारें:", oldName);
-      if (newName === null) return;
-      const newExp = prompt("अनुभव (वर्ष) सुधारें:", oldExp);
-      if (newExp === null) return;
-
-      db.collection("workers").doc(docId).update({
-        name: newName.trim(),
-        experience: parseInt(newExp) || 0
-      }).then(() => {
-        alert("✅ मिस्त्री की जानकारी अपडेट हो गई!");
-        adminExecuteSearch();
-      });
-    }
-
-    function adminToggleBlockWorker(docId, newStatus) {
-      db.collection("workers").doc(docId).update({ isBlocked: newStatus }).then(() => {
-        alert(newStatus ? "🚫 मिस्त्री को ब्लॉक कर दिया गया!" : "✅ मिस्त्री को अनब्लॉक कर दिया गया!");
-        adminExecuteSearch();
-      });
-    }
-
-    function adminDeleteDoc(coll, docId) {
-      if (!confirm("क्या आप वाकई इसे हमेशा के लिए डिलीट करना चाहते हैं?")) return;
-      db.collection(coll).doc(docId).delete().then(() => {
-        alert("🗑️ रिकॉर्ड डेटाबेस से हटा दिया गया!");
-        document.getElementById("admin-search-result").classList.add("hidden");
-      });
-    }
-
-    function loadRecentJobs() {
-      const feed = document.getElementById("home-recent-jobs");
-      db.collection("job_posts")
-        .orderBy("createdAt", "desc")
-        .limit(10)
-        .get()
-        .then(snap => {
-          if (snap.empty) return feed.innerHTML = "<p class='text-xs text-slate-400'>कोई काम दर्ज नहीं है।</p>";
-          feed.innerHTML = "";
-          let count = 0;
-          snap.forEach(doc => {
-            if (count >= 3) return;
-            const j = doc.data();
-            const timeInfo = formatTimeDetails(j.createdAt, j.isUrgent);
-            if (timeInfo.isExpired || j.isClosed === true) return;
-            count++;
-            const sixId = j.jobSixId || ("#MB-JOB-" + doc.id.substring(0, 6).toUpperCase());
-            feed.innerHTML += `
-              <div class="bg-white p-3 rounded-xl border border-slate-200 text-xs flex justify-between items-center">
-                <div>
-                  <div class="flex items-center space-x-1.5">
-                    ${j.isUrgent ? '<span class="bg-red-500 text-white text-[8px] font-black px-1 rounded">तत्काल</span>' : ''}
-                    <span class="text-[9px] font-bold text-amber-600">${sixId}</span>
-                  </div>
-                  <h5 class="font-bold text-slate-800 mt-0.5">${j.workType}</h5>
-                  <p class="text-[10px] text-slate-400">👤 ${j.clientName} • 📍 ${j.district} (${timeInfo.timeAgo})</p>
-                </div>
-                <button onclick="openProposalModal('${doc.id}', '${sixId}', '${j.phone}', '${j.workType}')" class="bg-amber-500 text-slate-900 px-2.5 py-1 rounded-lg text-[10px] font-bold">रेट भेजें</button>
-              </div>`;
-          });
-          if (count === 0) feed.innerHTML = "<p class='text-xs text-slate-400'>कोई नया काम नहीं है।</p>";
-        }).catch(() => { feed.innerHTML = "<p class='text-xs text-slate-400'>काम लोड नहीं हो सका।</p>"; });
-    }
-
-    function loadFullJobs(filterDist = "") {
-      const feed = document.getElementById("full-job-feed");
-      feed.innerHTML = "<p class='text-xs text-slate-400'>काम लोड हो रहे हैं...</p>";
-
-      db.collection("job_posts")
-        .orderBy("createdAt", "desc")
-        .limit(30)
-        .get()
-        .then(snap => {
-          if (snap.empty) {
-            feed.innerHTML = "<p class='text-xs text-slate-400'>कोई काम नहीं मिला।</p>";
-            return;
-          }
-
-          feed.innerHTML = "";
-          let count = 0;
-
-          snap.forEach(doc => {
-            const j = doc.data();
-            const timeInfo = formatTimeDetails(j.createdAt, j.isUrgent);
-            if (timeInfo.isExpired || j.isClosed === true) return;
-            if (filterDist && j.district !== filterDist) return;
-
-            count++;
-            const sixId = j.jobSixId || ("#MB-JOB-" + doc.id.substring(0, 6).toUpperCase());
-
-            feed.innerHTML += `
-              <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs space-y-2">
-                <div class="flex justify-between items-start">
-                  <div class="flex items-center space-x-1.5">
-                    ${j.isUrgent ? '<span class="bg-red-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded">🚨 तत्काल</span>' : '<span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded">सामान्य</span>'}
-                    <span class="bg-amber-50 text-amber-900 text-[10px] font-bold px-1.5 py-0.5 rounded">${j.duration || 'दिहाड़ी'}</span>
-                  </div>
-                  <span class="bg-slate-100 text-slate-700 text-[10px] font-bold px-2 py-0.5 rounded">${sixId}</span>
-                </div>
-
-                <div>
-                  <h4 class="font-bold text-slate-900 text-sm">${j.workType}</h4>
-                  <div class="flex items-center space-x-2 text-[11px] text-slate-500 mt-0.5">
-                    <span>👤 <strong>मालिक: ${j.clientName}</strong></span>
-                    <span>•</span>
-                    <span>⏱️ ${timeInfo.timeAgo}</span>
-                  </div>
-                  <p class="text-[10px] text-emerald-700 font-bold mt-0.5">${timeInfo.timeLeft}</p>
-                </div>
-
-                <p class="text-[11px] text-slate-500"><i class="fa-solid fa-location-dot text-amber-500 mr-1"></i>${j.district} (${j.location}) • ज़रूरत: <strong>${j.workerCount || 1} आदमी</strong></p>
-                <p class="text-[10px] text-slate-600 bg-slate-50 p-1.5 rounded">${j.materialType || 'सामान मालिक का'}</p>
-                ${j.sitePhoto ? `<img src="${j.sitePhoto}" class="w-full h-32 rounded-lg object-cover border border-slate-100">` : ''}
-                <p class="text-xs text-slate-500">${j.desc || 'विवरण उपलब्ध नहीं है'}</p>
-
-                <div class="pt-2 border-t border-slate-100 flex justify-between items-center">
-                  <button onclick="shareJobOnWhatsApp('${j.workType}', '${j.district}', '${j.location}', '${sixId}', '${j.clientName}')" class="text-[11px] bg-emerald-50 text-emerald-700 font-bold px-2 py-1.5 rounded-lg flex items-center space-x-1 border border-emerald-200">
-                    <i class="fa-brands fa-whatsapp text-emerald-600"></i>
-                    <span>WhatsApp शेयर</span>
-                  </button>
-                  <button onclick="openProposalModal('${doc.id}', '${sixId}', '${j.phone}', '${j.workType}')" class="bg-slate-900 text-amber-400 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center space-x-1 shadow-xs">
-                    <i class="fa-solid fa-comment-dots text-[10px]"></i>
-                    <span>रेट भेजें</span>
-                  </button>
-                </div>
-              </div>`;
-          });
-
-          if (count === 0) {
-            feed.innerHTML = "<p class='text-xs text-slate-400'>वर्तमान में कोई चालू काम नहीं मिला।</p>";
-          }
-        }).catch(err => {
-          console.error(err);
-          feed.innerHTML = "<p class='text-xs text-red-500'>काम लोड करने में समस्या आई।</p>";
-        });
-    }
-
-    function filterByDistrict() {
-      const dist = document.getElementById("home-district-filter").value;
-      navTo('jobs');
-      loadFullJobs(dist);
-    }
-
-    function filterCategory(skillTitle) {
-      navTo('workers');
-      loadFullWorkers(skillTitle);
-    }
-
-    function openProposalModal(jobId, sixId, clientPhone, workType) {
-      document.getElementById("prop-job-id").value = jobId;
-      document.getElementById("prop-six-id").value = sixId;
-      document.getElementById("prop-client-phone").value = clientPhone;
-      document.getElementById("prop-job-title").value = workType;
-
-      const loggedName = localStorage.getItem("mb_worker_name");
-      const loggedPhone = localStorage.getItem("mb_worker_phone");
-      if (loggedName) document.getElementById("prop-worker-name").value = loggedName;
-      if (loggedPhone) document.getElementById("prop-worker-phone").value = loggedPhone;
-
-      document.getElementById("proposal-modal").classList.remove("hidden");
-    }
-
-    function closeProposalModal() { document.getElementById("proposal-modal").classList.add("hidden"); }
-
-    function sendProposal(e) {
-      e.preventDefault();
-      const phone = document.getElementById("prop-worker-phone").value.trim();
-      if (phone.length !== 10) return alert("10 अंकों का नंबर डालें!");
-
-      const btn = document.getElementById("btn-prop-submit");
-      btn.innerText = "भेजा जा रहा है...";
-
-      const pData = {
-        jobId: document.getElementById("prop-job-id").value,
-        jobSixId: document.getElementById("prop-six-id").value,
-        clientPhone: document.getElementById("prop-client-phone").value,
-        workerName: document.getElementById("prop-worker-name").value.trim(),
-        workerPhone: "+91" + phone,
-        message: document.getElementById("prop-message").value.trim(),
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      };
-
-      db.collection("job_proposals").add(pData).then(() => {
-        alert("संदेश सफलतापूर्वक भेज दिया गया है! आपका नंबर पूरी तरह सुरक्षित है।");
-        btn.innerText = "रेट व संदेश भेजें";
-        document.getElementById("prop-message").value = "";
-        closeProposalModal();
-      }).catch(err => {
-        alert("त्रुटि: " + err.message);
-        btn.innerText = "रेट व संदेश भेजें";
-      });
-    }
-
-    window.addEventListener('DOMContentLoaded', () => {
-      history.replaceState({ page: 'home' }, "", "#home");
-      getDeviceFingerprint();
-      renderCategories();
-      populateDistricts();
-      loadRecentJobs();
-
-      const savedWorkerPhone = localStorage.getItem("mb_worker_phone");
-      if (savedWorkerPhone) {
-        listenWorkerInbox("+91" + savedWorkerPhone);
-      }
-
-      db.collection("settings").doc("announcement").onSnapshot(doc => {
-        const bar = document.getElementById("notice-bar");
-        const txt = document.getElementById("notice-text");
-        if (doc.exists && doc.data().active) {
-          txt.innerHTML = doc.data().text;
-          bar.classList.remove("hidden");
-        } else {
-          bar.classList.add("hidden");
-        }
-      }, err => console.log(err));
-    });
-  </script>
-</body>
-</html>
+* **हार्डकोडेड एडमिन पासवर्ड:**
+  ```javascript
+  if (entered.trim().toLowerCase() === "run1") { ... }
