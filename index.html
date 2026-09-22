@@ -165,6 +165,20 @@
           <input type="text" id="pc-location" required placeholder="जैसे: स्टेशन रोड, नया बाजार" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs focus:outline-none">
         </div>
 
+        <!-- GPS Location Field -->
+        <div class="bg-amber-50/50 p-2.5 rounded-xl border border-amber-200">
+          <div class="flex justify-between items-center mb-1">
+            <label class="text-[11px] font-bold text-slate-700">काम की GPS लाइव लोकेशन (वैकल्पिक)</label>
+            <button type="button" onclick="captureJobSiteLocation()" class="text-[10px] bg-amber-500 text-slate-900 font-bold px-2 py-1 rounded shadow-xs flex items-center space-x-1">
+              <i class="fa-solid fa-location-crosshairs"></i>
+              <span>लाइव लोकेशन लें</span>
+            </button>
+          </div>
+          <p id="pc-gps-status" class="text-[9px] text-slate-500">सटीक लोकेशन से नज़दीकी मिस्त्री तुरंत मिलेंगे</p>
+          <input type="hidden" id="pc-lat">
+          <input type="hidden" id="pc-lng">
+        </div>
+
         <div>
           <label class="block text-[11px] font-bold text-slate-700 mb-1">काम का प्रकार चुनें *</label>
           <select id="pc-work" required class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs focus:outline-none"></select>
@@ -194,7 +208,6 @@
           </select>
         </div>
 
-        <!-- Emergency Option Dropdown -->
         <div>
           <label class="block text-[11px] font-bold text-slate-700 mb-1">काम कब से शुरू करवाना है? *</label>
           <select id="pc-urgency-type" required class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs focus:outline-none">
@@ -293,7 +306,7 @@
         <div id="worker-guide-content" class="hidden mt-2 pt-2 border-t border-amber-200 text-[11px] text-amber-900 space-y-1.5">
           <p>• <strong>काम कैसे पाएं:</strong> 'काम देखें' मेनू में जाएँ, काम चुनें और माइक 🎙️ बटन से बोलकर अपना रेट भेजें।</p>
           <p>• <strong>लाइव स्टेटस:</strong> खाली होने पर 🟢 'उपलब्ध' रखें। कहीं काम चल रहा हो तो 🔴 'व्यस्त' सेट करें।</p>
-          <p>• <strong>पहचान व फ़ोटो:</strong> काम की 3 तस्वीरें और आधार जोड़कर 🛡️ 'सत्यापित पहचान' बैज पाएं।</p>
+          <p>• <strong>पहचान व फ़ोटो:</strong> काम की 3 तस्वीरें और पहचान पत्र जोड़कर 🛡️ 'सत्यापित पहचान' बैज पाएं।</p>
         </div>
       </div>
 
@@ -330,7 +343,7 @@
 
           <div>
             <label class="block text-[11px] font-bold text-slate-700 mb-1">पूरा नाम *</label>
-            <input type="text" id="pw-name" required placeholder="जैसे: दिलबास अंसारी" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs focus:outline-none">
+            <input type="text" id="pw-name" required placeholder="जैसे: रमेश शर्मा" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs focus:outline-none">
           </div>
 
           <div>
@@ -471,7 +484,6 @@
 
       <!-- Admin Main Multi-Tool View -->
       <div id="admin-main-view" class="p-3.5 space-y-3 overflow-y-auto flex-1 hidden text-xs">
-        <!-- Super Search Bar -->
         <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200">
           <span class="block text-[10px] font-bold text-slate-600 uppercase mb-1">🔍 सुपर सर्च (आईडी या मोबाइल नंबर से खोजें)</span>
           <div class="flex gap-2">
@@ -480,10 +492,8 @@
           </div>
         </div>
 
-        <!-- Search Result Box -->
         <div id="admin-search-result" class="hidden bg-white p-3 rounded-xl border border-amber-300 space-y-2 shadow-xs"></div>
 
-        <!-- Deals Sub Tabs -->
         <div class="flex bg-slate-200 p-1 rounded-xl font-bold text-[11px]">
           <button onclick="switchAdminDealTab('pending')" id="tab-deal-pending" class="flex-1 py-1 rounded-lg bg-white text-slate-900 shadow-xs">📥 नई डील्स (Pending)</button>
           <button onclick="switchAdminDealTab('archived')" id="tab-deal-archived" class="flex-1 py-1 rounded-lg text-slate-600">📁 निपटाई गई डील्स (Archive)</button>
@@ -592,7 +602,7 @@
     </div>
   </div>
 
-  <!-- Floating WhatsApp Support Button (7033943841) -->
+  <!-- Floating WhatsApp Support Button -->
   <a href="https://wa.me/917033943841?text=नमस्ते%20मिस्त्रीबाबू,%20मुझे%20सहायता%20चाहिए" target="_blank" class="fixed bottom-16 right-4 z-40 bg-emerald-600 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg border-2 border-white active:scale-95 transition">
     <i class="fa-brands fa-whatsapp text-2xl"></i>
   </a>
@@ -628,6 +638,7 @@
     let logoClickCount = 0;
     let logoClickTimer = null;
     let currentAdminDealTab = 'pending';
+    let currentWorkerCoords = null;
 
     // Device Fingerprint generator
     function getDeviceFingerprint() {
@@ -873,7 +884,6 @@
     if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
     const db = firebase.firestore();
 
-    // Firebase Analytics Initialization
     let analytics = null;
     try {
       analytics = firebase.analytics();
@@ -882,7 +892,6 @@
       console.log("Analytics loading bypassed:", e);
     }
 
-    // Time Ago & Validity Calculator
     function formatTimeDetails(createdAt, isUrgent) {
       if (!createdAt) return { timeAgo: "अभी-अभी", timeLeft: "7 दिन बाकी", isExpired: false };
       const createdDate = createdAt.toDate ? createdAt.toDate() : new Date(createdAt);
@@ -896,7 +905,6 @@
       else if (diffHrs < 24) timeAgo = `${diffHrs} घंटे पहले`;
       else timeAgo = `${diffDays} दिन पहले`;
 
-      // Max hours: Urgent = 24h, Normal = 7 days (168h)
       const maxHours = isUrgent ? 24 : 168;
       const hoursLeft = maxHours - diffHrs;
 
@@ -1016,13 +1024,14 @@
 
     function renderCategories() {
       const homeGrid = document.getElementById("home-categories-grid");
+      homeGrid.className = "grid grid-cols-3 gap-2 w-full";
       homeGrid.innerHTML = "";
       allCategories.forEach(c => {
         homeGrid.innerHTML += `
-          <div onclick="filterCategory('${c.title}')" class="bg-white p-2.5 rounded-xl border border-slate-200 text-center cursor-pointer active:scale-95 transition hover:border-amber-400 shadow-2xs">
-            <span class="text-xl block mb-1">${c.icon}</span>
-            <span class="text-[11px] font-bold text-slate-800 block truncate">${c.title}</span>
-            <span class="text-[8px] text-slate-400 block truncate leading-tight">${c.desc}</span>
+          <div onclick="filterCategory('${c.title}')" class="bg-white p-2 rounded-xl border border-slate-200 text-center cursor-pointer active:scale-95 transition hover:border-amber-400 shadow-xs flex flex-col items-center justify-center h-20">
+            <span class="text-2xl leading-none mb-1">${c.icon}</span>
+            <span class="text-[11px] font-bold text-slate-800 block truncate w-full px-1">${c.title}</span>
+            <span class="text-[8px] text-slate-400 block truncate w-full px-1">${c.desc}</span>
           </div>
         `;
       });
@@ -1087,7 +1096,6 @@
 
       const fullPhone = "+91" + phone;
 
-      // Device Lock Check
       const deviceLockedRole = localStorage.getItem("mb_device_locked_role");
       if (deviceLockedRole === "worker") {
         return alert("🚫 इस मोबाइल फ़ोन से मिस्त्री खाता जुड़ा हुआ है। काम पोस्ट करने के लिए ग्राहक के फ़ोन का उपयोग करें।");
@@ -1114,6 +1122,8 @@
         district: document.getElementById("pc-district").value,
         block: document.getElementById("pc-block").value,
         location: document.getElementById("pc-location").value.trim(),
+        lat: parseFloat(document.getElementById("pc-lat").value) || null,
+        lng: parseFloat(document.getElementById("pc-lng").value) || null,
         workType: document.getElementById("pc-work").value,
         duration: document.getElementById("pc-duration").value,
         workerCount: document.getElementById("pc-worker-count").value || 1,
@@ -1161,7 +1171,6 @@
 
       const fullPhone = "+91" + phone;
 
-      // Single Device Lock Check
       const deviceLockedRole = localStorage.getItem("mb_device_locked_role");
       if (deviceLockedRole === "client") {
         return alert("🚫 इस मोबाइल फ़ोन से ग्राहक का खाता जुड़ा हुआ है। एक फ़ोन से मिस्त्री और काम दोनों पोस्ट नहीं हो सकते।");
@@ -1672,7 +1681,6 @@
                   <span class="font-bold">तय रेट/संदेश:</span> ${d.rateMessage}
                 </div>
 
-                <!-- Custom In-App Chat input from Admin -->
                 <div class="bg-white p-2 rounded-lg border border-slate-200 space-y-1.5">
                   <span class="text-[10px] font-bold text-slate-600 block">💬 इन-ऐप संदेश लिखकर भेजें:</span>
                   <input type="text" id="chat-input-${dealId}" placeholder="यहाँ कुछ भी लिखें..." class="w-full rounded border border-slate-300 p-1 text-xs">
@@ -1691,7 +1699,6 @@
                   </button>
                 </div>
 
-                <!-- Archive Button -->
                 <button onclick="toggleDealArchive('${dealId}', ${!isArchived})" class="w-full ${isArchived ? 'bg-slate-200 text-slate-700' : 'bg-blue-50 text-blue-700 border border-blue-200'} py-1 rounded-lg text-[10px] font-bold">
                   ${isArchived ? '↩️ वापस मुख्य इनबॉक्स में लाएं' : '🗂️ काम पूरा / साइड करें (Archive)'}
                 </button>
@@ -1750,7 +1757,6 @@
       }).catch(err => alert("त्रुटि: " + err.message));
     }
 
-    // Admin Super Search
     function adminExecuteSearch() {
       const query = document.getElementById("admin-super-search-input").value.trim();
       if (!query) return alert("आईडी या मोबाइल नंबर दर्ज करें!");
@@ -1759,7 +1765,6 @@
       resBox.classList.remove("hidden");
       resBox.innerHTML = "<p class='text-slate-400'>बायोडेटा खोजा जा रहा है...</p>";
 
-      // Search Jobs
       db.collection("job_posts").get().then(jSnap => {
         let foundJob = null;
         jSnap.forEach(doc => {
@@ -1786,7 +1791,6 @@
           return;
         }
 
-        // Search Workers
         db.collection("workers").get().then(wSnap => {
           let foundWorker = null;
           wSnap.forEach(doc => {
@@ -1927,6 +1931,14 @@
             count++;
             const sixId = j.jobSixId || ("#MB-JOB-" + doc.id.substring(0, 6).toUpperCase());
 
+            let distanceText = "";
+            if (currentWorkerCoords && j.lat && j.lng) {
+              const km = calculateDistanceKM(currentWorkerCoords.latitude, currentWorkerCoords.longitude, j.lat, j.lng);
+              if (km !== null) {
+                distanceText = ` • 🛣️ आपसे <strong class="text-amber-700">${km} KM</strong> दूर`;
+              }
+            }
+
             feed.innerHTML += `
               <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs space-y-2">
                 <div class="flex justify-between items-start">
@@ -1947,7 +1959,7 @@
                   <p class="text-[10px] text-emerald-700 font-bold mt-0.5">${timeInfo.timeLeft}</p>
                 </div>
 
-                <p class="text-[11px] text-slate-500"><i class="fa-solid fa-location-dot text-amber-500 mr-1"></i>${j.district} (${j.location}) • ज़रूरत: <strong>${j.workerCount || 1} आदमी</strong></p>
+                <p class="text-[11px] text-slate-500"><i class="fa-solid fa-location-dot text-amber-500 mr-1"></i>${j.district} (${j.location})${distanceText} • ज़रूरत: <strong>${j.workerCount || 1} आदमी</strong></p>
                 <p class="text-[10px] text-slate-600 bg-slate-50 p-1.5 rounded">${j.materialType || 'सामान मालिक का'}</p>
                 ${j.sitePhoto ? `<img src="${j.sitePhoto}" class="w-full h-32 rounded-lg object-cover border border-slate-100">` : ''}
                 <p class="text-xs text-slate-500">${j.desc || 'विवरण उपलब्ध नहीं है'}</p>
@@ -2030,12 +2042,51 @@
       });
     }
 
+    function captureJobSiteLocation() {
+      var statusEl = document.getElementById("pc-gps-status");
+      if (!navigator.geolocation) {
+        alert("ब्राउज़र में GPS उपलब्ध नहीं है");
+        return;
+      }
+      statusEl.innerText = "लोकेशन जाँची जा रही है...";
+      navigator.geolocation.getCurrentPosition(
+        function(pos) {
+          document.getElementById("pc-lat").value = pos.coords.latitude;
+          document.getElementById("pc-lng").value = pos.coords.longitude;
+          statusEl.innerHTML = "<span class='text-emerald-700 font-bold'>✓ साइट लोकेशन सुरक्षित</span>";
+        },
+        function() {
+          statusEl.innerText = "❌ GPS अनुमति दें";
+        },
+        { enableHighAccuracy: true }
+      );
+    }
+
+    function calculateDistanceKM(lat1, lon1, lat2, lon2) {
+      if (!lat1 || !lon1 || !lat2 || !lon2) return null;
+      var R = 6371;
+      var dLat = (lat2 - lat1) * Math.PI / 180;
+      var dLon = (lon2 - lon1) * Math.PI / 180;
+      var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+              Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      return (R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))).toFixed(1);
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
       history.replaceState({ page: 'home' }, "", "#home");
       getDeviceFingerprint();
       renderCategories();
       populateDistricts();
       loadRecentJobs();
+
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          function(pos) { currentWorkerCoords = pos.coords; },
+          function() {},
+          { enableHighAccuracy: true }
+        );
+      }
 
       const savedWorkerPhone = localStorage.getItem("mb_worker_phone");
       if (savedWorkerPhone) {
