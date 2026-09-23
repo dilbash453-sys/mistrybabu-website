@@ -53,7 +53,7 @@
     </div>
   </header>
 
-  <!-- Anti-Fraud Advance Payment Notice (NEW ADDED) -->
+  <!-- Anti-Fraud Advance Payment Notice -->
   <div class="max-w-md mx-auto px-4 pt-3">
     <div class="bg-red-50 border-l-4 border-red-500 p-2.5 rounded-r-xl text-[11px] text-red-900 flex items-center justify-between">
       <span>⚠️ <strong>सुरक्षा सूचना:</strong> काम शुरू होने से पहले ऑनलाइन एडवांस न दें। साइट पर काम देखकर ही भुगतान करें।</span>
@@ -86,7 +86,7 @@
       </div>
     </div>
 
-    <!-- लोकल दुकान स्पॉन्सर बैनर (NEW ADDED) -->
+    <!-- Local Shop Sponsor Ad -->
     <div class="bg-blue-50 border border-blue-200 rounded-2xl p-3 flex items-center space-x-3 shadow-xs">
       <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-xl shadow-xs border border-blue-100">
         🏗️
@@ -137,7 +137,7 @@
     </div>
   </section>
 
-  <!-- ==================== PAGE 2: JOBS SCREEN (पेटी-ठेका विभाजन सहित) ==================== -->
+  <!-- ==================== PAGE 2: JOBS SCREEN ==================== -->
   <section id="page-jobs" class="max-w-md mx-auto px-4 py-4 space-y-4 hidden">
     <div class="flex justify-between items-center border-b border-slate-200 pb-2">
       <div>
@@ -146,7 +146,6 @@
       </div>
     </div>
 
-    <!-- Sub-Tabs: आम दिहाड़ी काम vs पेटी-ठेका (NEW ADDED) -->
     <div class="flex bg-slate-200 p-1 rounded-xl text-xs font-bold">
       <button onclick="switchJobFeedTab('normal')" id="tab-feed-normal" class="flex-1 py-1.5 rounded-lg bg-white text-slate-900 shadow-xs">
         दिहाड़ी व छोटा काम 🧱
@@ -161,7 +160,7 @@
     </div>
   </section>
 
-  <!-- ==================== PAGE 3: WORKERS SCREEN (₹49 टॉप प्लान सहित) ==================== -->
+  <!-- ==================== PAGE 3: WORKERS SCREEN ==================== -->
   <section id="page-workers" class="max-w-md mx-auto px-4 py-4 space-y-4 hidden">
     <div class="flex justify-between items-center border-b border-slate-200 pb-2">
       <div>
@@ -170,7 +169,6 @@
       </div>
     </div>
 
-    <!-- मिस्त्री टॉप लिस्टिंग बैनर (NEW ADDED) -->
     <div class="bg-amber-100 border border-amber-300 rounded-2xl p-3 flex justify-between items-center shadow-xs">
       <div>
         <span class="text-[10px] font-black text-amber-900 uppercase block">⚡ मिस्त्री टॉप प्रोफ़ाइल प्लान</span>
@@ -186,7 +184,7 @@
     </div>
   </section>
 
-  <!-- ==================== PAGE 4: POST A JOB SCREEN (GPS साइट लॉक सहित) ==================== -->
+  <!-- ==================== PAGE 4: POST A JOB SCREEN ==================== -->
   <section id="page-post" class="max-w-md mx-auto px-4 py-4 hidden">
     <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
       <div class="text-center mb-4 border-b border-slate-100 pb-3">
@@ -194,7 +192,6 @@
         <p class="text-[11px] text-slate-500">सामान्य काम 7 दिन और तत्काल काम 24 घंटे तक लाइव रहता है</p>
       </div>
 
-      <!-- Worker callback limit notification box -->
       <div id="worker-post-limit-box" class="hidden bg-amber-50 border border-amber-300 p-4 rounded-xl text-center space-y-2 mb-4">
         <span class="text-xs font-black text-amber-900 block">⚠️ आपकी 3 निःशुल्क पोस्ट की सीमा पूरी हो चुकी है</span>
         <p class="text-[11px] text-slate-600">अगला काम पोस्ट करने के लिए कंपनी से सत्यापन व बात करना आवश्यक है।</p>
@@ -205,8 +202,6 @@
       </div>
 
       <form id="form-post-job" onsubmit="saveClientJob(event)" class="space-y-3">
-        
-        <!-- काम का प्रकार (पेटी-ठेका या आम) (NEW ADDED) -->
         <div>
           <label class="block text-[11px] font-bold text-slate-700 mb-1">काम की श्रेणी चुनें *</label>
           <select id="pc-is-theka" class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs focus:outline-none bg-slate-50 font-bold">
@@ -258,7 +253,6 @@
           <input type="text" id="pc-location" required placeholder="जैसे: स्टेशन रोड, नया बाजार" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs focus:outline-none">
         </div>
 
-        <!-- Strict Site-Only GPS Verification Box (NEW ADDED) -->
         <div class="bg-amber-50/70 p-3 rounded-xl border border-amber-300 space-y-2">
           <label class="flex items-start space-x-2 cursor-pointer">
             <input type="checkbox" id="gps-site-confirm-check" onchange="toggleSiteGpsButton(this.checked)" class="mt-0.5 rounded text-amber-600 focus:ring-0">
@@ -350,21 +344,39 @@
       </button>
     </div>
 
-    <!-- 1. CUSTOMER DASHBOARD -->
+    <!-- 1. CUSTOMER DASHBOARD (KYC IDENTITY & PHOTO SECTION INCLUDED) -->
     <div id="client-dashboard-box" class="space-y-4 block">
-      <div class="bg-blue-50 border border-blue-200 rounded-2xl p-3 shadow-xs">
-        <button onclick="toggleGuide('client-guide-content', 'icon-client-guide')" class="w-full flex justify-between items-center text-left">
-          <span class="text-xs font-black text-blue-950 flex items-center">
-            <i class="fa-solid fa-book-open text-blue-600 mr-2"></i> मकान मालिक के लिए ज़रूरी दिशा-निर्देश व सुविधाएं
-          </span>
-          <i id="icon-client-guide" class="fa-solid fa-chevron-down text-blue-600 text-xs transition-transform"></i>
-        </button>
-        <div id="client-guide-content" class="hidden mt-2 pt-2 border-t border-blue-200 text-[11px] text-blue-900 space-y-1.5">
-          <p>• <strong>काम पोस्ट करें:</strong> इमरजेंसी काम में 'तत्काल' चुनें। सामान्य पोस्ट 7 दिन और तत्काल पोस्ट 24 घंटे चलेगी।</p>
-          <p>• <strong>रेट व मिस्त्री देखना:</strong> आपकी पोस्ट के नीचे मिस्त्रियों के भेजे रेट और अनुभव दिखेंगे।</p>
-          <p>• <strong>डील पक्की करें:</strong> पसंद आने पर 'डील पक्की करें' दबाएँ, एडमिन द्वारा इनबॉक्स में मिस्त्री का नंबर आ जाएगा।</p>
-          <p>• <strong>काम पूरा हुआ (Close):</strong> काम खत्म होने पर 'काम पूरा हुआ ✅' दबाकर पोस्ट बंद करें और मिस्त्री को 5-Star रेटिंग दें।</p>
+      
+      <!-- ग्राहक पहचान सत्यापन (KYC) बॉक्स -->
+      <div class="bg-blue-50/70 p-3.5 rounded-2xl border border-blue-200 space-y-2 shadow-xs">
+        <div class="flex items-center space-x-2">
+          <i class="fa-solid fa-id-card text-blue-600 text-base"></i>
+          <div>
+            <h4 class="text-xs font-black text-slate-900">मालिक पहचान सत्यापन (KYC)</h4>
+            <p class="text-[10px] text-slate-500">फ़ोटो व पहचान पत्र (वाटरमार्क सुरक्षित • काम पोस्ट हेतु अनिवार्य)</p>
+          </div>
         </div>
+
+        <div class="grid grid-cols-2 gap-2 pt-1">
+          <div class="bg-white p-2 rounded-xl border border-slate-200 text-center">
+            <label class="block text-[10px] font-bold text-slate-700 mb-1">मालिक फ़ोटो *</label>
+            <input type="file" id="client-kyc-photo" accept="image/*" class="text-[9px] text-slate-500 file:mr-1 file:py-0.5 file:px-1.5 file:rounded file:border-0 file:bg-blue-100 file:text-blue-800">
+            <div id="done-client-photo" class="hidden text-emerald-600 font-bold text-[9px] mt-1">✓ फ़ोटो सुरक्षित</div>
+          </div>
+          <div class="bg-white p-2 rounded-xl border border-slate-200 text-center">
+            <label class="block text-[10px] font-bold text-slate-700 mb-1">पहचान पत्र फ़ोटो *</label>
+            <input type="file" id="client-kyc-id" accept="image/*" class="text-[9px] text-slate-500 file:mr-1 file:py-0.5 file:px-1.5 file:rounded file:border-0 file:bg-blue-100 file:text-blue-800">
+            <div id="done-client-id" class="hidden text-emerald-600 font-bold text-[9px] mt-1">✓ आईडी सुरक्षित</div>
+          </div>
+        </div>
+
+        <div>
+          <input type="text" id="client-kyc-id-number" placeholder="पहचान पत्र संख्या दर्ज करें" class="w-full text-center rounded-lg border border-blue-300 p-1.5 text-xs uppercase focus:outline-none bg-white">
+        </div>
+
+        <button type="button" onclick="saveClientKYC()" id="btn-save-client-kyc" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded-xl text-xs shadow-xs">
+          🛡️ पहचान पत्र सुरक्षित जमा करें
+        </button>
       </div>
 
       <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
@@ -393,7 +405,7 @@
       <div id="client-posts-list" class="space-y-3"></div>
     </div>
 
-    <!-- 2. WORKER DASHBOARD (₹49 टॉप लिस्टिंग बटन सहित) -->
+    <!-- 2. WORKER DASHBOARD -->
     <div id="worker-dashboard-box" class="space-y-4 hidden">
       <div class="bg-amber-50 border border-amber-300 rounded-2xl p-3 shadow-xs">
         <button onclick="toggleGuide('worker-guide-content', 'icon-worker-guide')" class="w-full flex justify-between items-center text-left">
@@ -409,7 +421,6 @@
         </div>
       </div>
 
-      <!-- Field-by-Field Incomplete Alert -->
       <div id="worker-profile-status-alert" class="hidden bg-amber-50 border-l-4 border-amber-500 p-2.5 rounded-r-xl text-[11px] text-slate-700">
         <span class="font-bold block text-amber-900">🔔 आपकी प्रोफ़ाइल सक्रिय है!</span>
         <span id="worker-incomplete-note">बाकी बचे खाली बॉक्स भरें ताकि आपका खाता 100% पूरा हो सके।</span>
@@ -430,21 +441,18 @@
         </div>
 
         <form onsubmit="saveWorkerProfile(event)" class="space-y-3">
-          <!-- Profile Photo Box -->
           <div id="box-pw-photo" class="bg-slate-50 p-3 rounded-xl border border-dashed border-slate-300 text-center">
             <label class="block text-[11px] font-bold text-slate-700 mb-1">अपनी प्रोफ़ाइल फ़ोटो</label>
             <input type="file" id="pw-photo-file" accept="image/*" class="text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:bg-amber-100 file:text-amber-800">
             <div id="done-pw-photo" class="hidden text-emerald-600 font-bold text-[10px] mt-1">✓ फ़ोटो अपलोड हो चुकी है (सुरक्षित लॉक)</div>
           </div>
 
-          <!-- Work Photos Box -->
           <div id="box-pw-workphotos" class="bg-amber-50/50 p-3 rounded-xl border border-amber-200 text-center">
             <label class="block text-[11px] font-bold text-amber-900 mb-0.5">📸 अपने पिछले काम की तस्वीरें (1 से 3 फ़ोटो)</label>
             <input type="file" id="pw-work-photos" accept="image/*" multiple class="text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:bg-amber-200 file:text-amber-900">
             <div id="done-pw-workphotos" class="hidden text-emerald-600 font-bold text-[10px] mt-1">✓ काम की तस्वीरें अपलोड हो चुकी हैं (सुरक्षित लॉक)</div>
           </div>
 
-          <!-- Identity Card Box with Duplicate Check -->
           <div id="box-pw-idcard" class="bg-blue-50/50 p-3 rounded-xl border border-blue-200 text-center space-y-2">
             <div>
               <label class="block text-[11px] font-bold text-blue-900 mb-0.5">🛡️ पहचान पत्र (पहचान पत्र / वोटर आईडी)</label>
@@ -534,7 +542,6 @@
         </div>
 
         <div class="p-4 space-y-3 text-xs">
-          <!-- ₹49 Top Profile Boost Box (NEW ADDED) -->
           <div class="bg-amber-50 border border-amber-300 rounded-xl p-3 flex justify-between items-center">
             <div>
               <span class="font-bold text-slate-900 block">⚡ 7-दिन टॉप लिस्टिंग</span>
@@ -545,7 +552,6 @@
             </button>
           </div>
 
-          <!-- VIP Contractor Expiry Notice -->
           <div id="worker-vip-status-bar" class="hidden bg-amber-100 border border-amber-300 rounded-xl p-2.5 text-center text-[11px] text-slate-800">
             <span class="font-bold block">👑 ठेकेदार VIP सदस्यता सक्रिय</span>
             <span id="worker-vip-days-left" class="text-amber-900 font-bold">वैधता: 30 दिन शेष</span>
@@ -595,7 +601,7 @@
       </div>
     </div>
 
-    <!-- 3. CONTRACTOR VIP DASHBOARD (₹3,000 + ₹1,000 Model) -->
+    <!-- 3. CONTRACTOR VIP DASHBOARD -->
     <div id="contractor-dashboard-box" class="space-y-4 hidden">
       <div class="bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 p-4 rounded-2xl shadow-sm">
         <span class="bg-slate-900 text-amber-400 text-[10px] font-black px-2 py-0.5 rounded-md uppercase">VIP CONTRACTOR PASS</span>
@@ -706,7 +712,6 @@
           <button onclick="adminLogout()" class="text-[9px] text-rose-600 font-bold">लॉगआउट</button>
         </div>
 
-        <!-- Supervisor Live Bar (NEW ADDED) -->
         <div class="grid grid-cols-3 gap-2 text-center text-[10px] font-bold">
           <div class="bg-amber-50 border border-amber-200 p-1.5 rounded-lg text-amber-900">🔒 टकराव-रोक चालू</div>
           <div class="bg-blue-50 border border-blue-200 p-1.5 rounded-lg text-blue-900">💳 UTR फ़िल्टर चालू</div>
@@ -723,7 +728,6 @@
 
         <div id="admin-search-result" class="hidden bg-white p-3 rounded-xl border border-amber-300 space-y-2 shadow-xs"></div>
 
-        <!-- Admin Top Navigation Tabs -->
         <div class="grid grid-cols-4 gap-1 bg-slate-200 p-1 rounded-xl font-bold text-[10px] text-center">
           <button onclick="switchAdminSubTab('deals')" id="btn-adm-deals" class="py-1.5 rounded-lg bg-white text-slate-900 shadow-xs">डील्स</button>
           <button onclick="switchAdminSubTab('workers')" id="btn-adm-workers" class="py-1.5 rounded-lg text-slate-600">सभी मिस्त्री</button>
@@ -731,7 +735,6 @@
           <button onclick="switchAdminSubTab('contractors')" id="btn-adm-contractors" class="py-1.5 rounded-lg text-slate-600">ठेकेदारी VIP</button>
         </div>
 
-        <!-- Section 1: Deals (With Lock & Quick WhatsApp & Remark) -->
         <div id="sec-adm-deals" class="space-y-2">
           <div class="flex bg-slate-100 p-1 rounded-lg font-bold text-[10px]">
             <button onclick="switchAdminDealTab('pending')" id="tab-deal-pending" class="flex-1 py-1 rounded-md bg-white text-slate-900 shadow-2xs">📥 नई डील्स (Pending)</button>
@@ -742,7 +745,6 @@
           </div>
         </div>
 
-        <!-- Section 2: All Workers List & Editing -->
         <div id="sec-adm-workers" class="space-y-2 hidden">
           <div class="flex justify-between items-center">
             <span class="font-bold text-slate-800">पंजीकृत कारीगर (सभी राज्य)</span>
@@ -753,7 +755,6 @@
           </div>
         </div>
 
-        <!-- Section 3: Pending Callbacks -->
         <div id="sec-adm-callbacks" class="space-y-2 hidden">
           <span class="font-bold text-slate-800">कॉल बैक अनुरोध (3 पोस्ट पूरी होने के बाद)</span>
           <div id="admin-callbacks-container" class="space-y-2">
@@ -761,7 +762,6 @@
           </div>
         </div>
 
-        <!-- Section 4: Contractor VIP Requests (With UTR Check) -->
         <div id="sec-adm-contractors" class="space-y-2 hidden">
           <span class="font-bold text-slate-800">ठेकेदार VIP पेमेंट अनुरोध (₹3,000 जॉइनिंग / ₹1,000 रिन्यूअल)</span>
           <div id="admin-contractors-container" class="space-y-2">
@@ -772,7 +772,106 @@
     </div>
   </div>
 
-  <!-- Proposal Modal (With Voice Note Option) -->
+  <!-- ==================== ADMIN COMPREHENSIVE FULL EDIT MODAL ==================== -->
+  <div id="admin-full-edit-modal" class="fixed inset-0 bg-slate-900/80 z-[60] hidden flex items-center justify-center p-3">
+    <div class="bg-white rounded-2xl max-w-md w-full max-h-[92vh] flex flex-col shadow-2xl overflow-hidden text-xs">
+      
+      <div class="bg-slate-900 text-white p-3 flex justify-between items-center">
+        <div class="flex items-center space-x-2">
+          <i class="fa-solid fa-pen-to-square text-amber-400"></i>
+          <h3 class="font-bold text-xs" id="adm-edit-modal-title">प्रोफ़ाइल पूरा सुधारें (Admin Edit)</h3>
+        </div>
+        <button onclick="closeAdminFullEditModal()" class="text-slate-400 hover:text-white text-base">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="p-4 space-y-3 overflow-y-auto flex-1">
+        <input type="hidden" id="adm-edit-type">
+        <input type="hidden" id="adm-edit-doc-id">
+
+        <div id="adm-edit-photo-sec" class="bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-center space-y-1.5">
+          <label class="block font-bold text-slate-700 text-[11px]">प्रोफ़ाइल / साइट फ़ोटो</label>
+          <img id="adm-edit-preview-img" src="logo.png" class="w-16 h-16 rounded-full mx-auto object-cover border-2 border-amber-400">
+          <input type="file" id="adm-edit-new-photo" accept="image/*" class="text-[10px] text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:bg-amber-100 file:text-amber-800">
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-0.5" id="adm-lbl-name">पूरा नाम *</label>
+          <input type="text" id="adm-edit-name" class="w-full rounded-lg border border-slate-300 p-2 text-xs focus:outline-none">
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-0.5">मोबाइल नंबर *</label>
+          <input type="tel" id="adm-edit-phone" maxlength="10" class="w-full rounded-lg border border-slate-300 p-2 text-xs focus:outline-none">
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-0.5">राज्य चुनें *</label>
+          <select id="adm-edit-state" onchange="handleStateChange('adm-edit-state', 'adm-edit-district', 'adm-edit-block')" class="w-full rounded-lg border border-slate-300 p-2 text-xs">
+            <option value="बिहार">बिहार (Bihar)</option>
+            <option value="उत्तर प्रदेश">उत्तर प्रदेश (Uttar Pradesh)</option>
+            <option value="दिल्ली">दिल्ली (Delhi NCR)</option>
+            <option value="हरियाणा">हरियाणा (Haryana)</option>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-bold text-slate-700 mb-0.5">ज़िला *</label>
+            <select id="adm-edit-district" onchange="updateBlocks('adm-edit-district', 'adm-edit-block', 'adm-edit-state')" class="w-full rounded-lg border border-slate-300 p-2 text-xs">
+              <option value="">-- ज़िला चुनें --</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-0.5">प्रखंड / ब्लॉक *</label>
+            <select id="adm-edit-block" class="w-full rounded-lg border border-slate-300 p-2 text-xs">
+              <option value="">-- ब्लॉक चुनें --</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-0.5">गाँव / इलाका / वार्ड</label>
+          <input type="text" id="adm-edit-locality" class="w-full rounded-lg border border-slate-300 p-2 text-xs focus:outline-none">
+        </div>
+
+        <div id="adm-worker-specific-fields" class="space-y-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-0.5">काम का अनुभव (वर्ष)</label>
+            <input type="number" id="adm-edit-exp" class="w-full rounded-lg border border-slate-300 p-2 text-xs">
+          </div>
+
+          <div>
+            <label class="block font-bold text-slate-700 mb-0.5">हुनर / काम की श्रेणियां (टिक करें):</label>
+            <div id="adm-edit-skills-container" class="grid grid-cols-1 gap-1 max-h-36 overflow-y-auto p-2 bg-slate-50 border border-slate-200 rounded-xl"></div>
+          </div>
+        </div>
+
+        <div id="adm-job-specific-fields" class="space-y-3 hidden">
+          <div>
+            <label class="block font-bold text-slate-700 mb-0.5">काम का विवरण</label>
+            <textarea id="adm-edit-desc" rows="2" class="w-full rounded-lg border border-slate-300 p-2 text-xs"></textarea>
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-0.5">कितने मजदूर चाहिए?</label>
+            <input type="number" id="adm-edit-workercount" class="w-full rounded-lg border border-slate-300 p-2 text-xs">
+          </div>
+        </div>
+      </div>
+
+      <div class="p-3 bg-slate-50 border-t border-slate-200 flex gap-2">
+        <button onclick="saveAdminFullEdit()" id="btn-adm-save-full" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold py-2 rounded-xl text-xs shadow-xs">
+          💾 बदलाव सेव करें
+        </button>
+        <button onclick="closeAdminFullEditModal()" class="flex-1 bg-slate-200 text-slate-700 font-bold py-2 rounded-xl text-xs">
+          रद्द करें
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Proposal Modal -->
   <div id="proposal-modal" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-xs w-full p-5 shadow-2xl relative">
       <div class="flex justify-between items-center pb-2 border-b border-slate-100 mb-3">
@@ -812,7 +911,6 @@
           <textarea id="prop-message" rows="2" required placeholder="जैसे: ₹650/दिन या 2 दिन में काम पूरा कर दूंगा।" class="w-full rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs focus:outline-none"></textarea>
         </div>
 
-        <!-- 15-30 Sec Voice Note Recording Simulator (NEW ADDED) -->
         <div class="bg-amber-50 border border-amber-200 p-2 rounded-xl flex items-center justify-between">
           <span class="text-[10px] text-slate-700 font-bold">🎙️ वॉयस नोट (अनपढ़ कारीगरों हेतु):</span>
           <button type="button" id="btn-audio-memo" onclick="recordAudioMemo()" class="bg-red-500 text-white text-[9px] font-bold px-2 py-1 rounded shadow-xs flex items-center space-x-1">
@@ -828,7 +926,7 @@
     </div>
   </div>
 
-  <!-- Job Close Reason Modal (NEW ADDED) -->
+  <!-- Job Close Reason Modal -->
   <div id="job-close-modal" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-xs w-full p-5 shadow-2xl relative text-center space-y-3">
       <h4 class="text-xs font-black text-slate-900">काम बंद करने का कारण</h4>
@@ -873,7 +971,7 @@
     </div>
   </div>
 
-  <!-- Terms & Conditions Modal (कानूनी सुरक्षा व नो-एडवांस डिस्क्लेमर सहित) -->
+  <!-- Terms & Conditions Modal -->
   <div id="terms-modal" class="fixed inset-0 bg-slate-900/70 z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-md w-full p-5 shadow-2xl relative max-h-[85vh] flex flex-col">
       <div class="flex justify-between items-center pb-2 border-b border-slate-100 mb-3">
@@ -888,7 +986,7 @@
         <p><strong>1. केवल संपर्क माध्यम:</strong> MistryBabu.com केवल काम देने वाले और काम करने वाले को आपस में जोड़ता है। किसी भी लेबर दुर्घटना, विवाद या काम की गुणवत्ता के लिए कंपनी उत्तरदायी नहीं होगी।</p>
         <p><strong>2. नो-एडवांस दायित्व:</strong> काम शुरू होने से पहले किसी को भी ऑनलाइन एडवांस न भेजें। किसी भी व्यक्तिगत वित्तीय लेन-देन या नुकसान पर MistryBabu उत्तरदायी नहीं होगा।</p>
         <p><strong>3. नो-रिफंड पॉलिसी:</strong> VIP सदस्यता (₹3,000/₹1,000), ₹49 टॉप प्लान या दुकान विज्ञापन शुल्क सक्रिय होने के बाद नॉन-रिफंडेबल रहेगा।</p>
-        <p><strong>4. सुरक्षा व सत्यापन:</strong> कारीगर द्वारा दी गई पहचान पत्र (पहचान पत्र / वोटर आईडी) वाटरमार्क से सुरक्षित रहती है और केवल एडमिन द्वारा जाँची जाती है।</p>
+        <p><strong>4. सुरक्षा व सत्यापन:</strong> कारीगर व ग्राहक द्वारा दी गई पहचान पत्र (पहचान पत्र / वोटर आईडी) वाटरमार्क से सुरक्षित रहती है और केवल एडमिन द्वारा जाँची जाती है।</p>
         <p><strong>5. खाता ब्लॉक का अधिकार:</strong> फर्जी पहचान पत्र अपलोड करने, गलत लोकेशन दर्ज करने या गाली-गलौज करने पर खाता बिना नोटिस ब्लॉक कर दिया जाएगा।</p>
       </div>
       <button onclick="closeTermsModal()" class="mt-4 w-full bg-slate-900 text-amber-400 py-2 rounded-xl font-bold text-xs">
@@ -935,18 +1033,16 @@
     let currentAdminDealTab = 'pending';
     let currentWorkerCoords = null;
     let currentAdminSubTab = 'deals';
-    let currentJobFeedTab = 'normal'; // normal or theka
+    let currentJobFeedTab = 'normal';
     let currentOperator = localStorage.getItem("mb_active_operator") || "व्यवस्थापक";
 
-    // केवल 3 अधिकृत एडमिन नाम
     const ALLOWED_ADMIN_USERS = ["dilbas", "lehari", "monu"];
 
-    // सम्पूर्ण 4 राज्यों का मुकम्मल डेटा
     const multiStateData = {
       "बिहार": {
         "बक्सर": ["बक्सर", "डुमरांव", "इटाढ़ी", "राजपुर", "सिमरी", "ब्रह्मपुर", "नावानगर", "केसठ", "चक्की", "चौगाईं"],
         "भोजपुर (आरा)": ["आरा सदर", "बड़हरा", "कोइलवर", "संदेश", "सहार", "उदवंतनगर", "तरारी", "पीरो", "जगदीशपुर", "बिहिया", "शाहपुर", "गड़हनी", "अगिआंव", "चरपोखरी"],
-        "पटना": ["पटना सदर", "दानापुर", "फुलवारीशरीफ", "फतुहा", "बख्तियारपुर", "बाढ़", "मोकामा", "मसौढ़ी", "पुनपुन", "बिहटा", "मनेर", "पालीगंज", "दुल्हिन बाजार", "दनियावां", "खुसरूपुर", "बेलछी", "अथमलगोला", "घोसी", "संपतचक"],
+        "पटना": ["पटना सदर", "दानापुर", "फुलवारीशरीफ", "फतुहा", "बख्तियारपुर", "बाढ़", "मोकामा", "मसौढ़ी", "पुनपुन", "बिहता", "मनेर", "पालीगंज", "दुल्हिन बाजार", "दनियावां", "खुसरूपुर", "बेलछी", "अथमलगोला", "घोसी", "संपतचक"],
         "रोहतास (सासाराम)": ["सासाराम", "डेहरी", "नोखा", "करगहर", "दिनारा", "दावथ", "बिक्रमगंज", "सूर्यपुरा", "संझौली", "चेनारी", "शिवसागर", "तिलौथू", "रोहतास", "नौहट्टा", "अकोढ़ीगोला", "राजपुर", "कोचस", "काराकाट", "नासरीगंज"],
         "कैमूर (भभुआ)": ["भभुआ", "मोहनिया", "कुदरा", "दुर्गावती", "रामगढ़", "चैनपुर", "चांद", "भगवानपुर", "नुआंव", "अधौरा", "रामपुर"],
         "गया": ["गया सदर", "बोधगया", "बेलागंज", "टिकारी", "शेरघाटी", "इमामगंज", "डोभी", "फतेहपुर", "वजीरगंज", "मानपुर", "कोंच", "गुरुआ", "परैया", "आमस", "बांके बाजार", "डुमरिया", "बाराचट्टी", "मोहनपुर", "टनकुप्पा", "खिजरसराय", "नीमचक बथानी", "अतरी", "मोहड़ा"],
@@ -1134,17 +1230,18 @@
       }
     }
 
-    // सख्त एडमिन ऑपरेटर सत्यापन (dilbas, lehari, monu)
     function verifyAdminPin() {
-      const entered = document.getElementById("admin-pin-input").value;
-      const opName = document.getElementById("admin-operator-name").value.trim().toLowerCase();
+      const entered = document.getElementById("admin-pin-input").value.trim();
+      const opName = document.getElementById("admin-operator-name").value
+                        .replace(/[,.\s]/g, '')
+                        .toLowerCase();
 
       if (!ALLOWED_ADMIN_USERS.includes(opName)) {
         alert("⛔ अनाधिकृत यूज़र! केवल dilbas, lehari, या monu ही कंट्रोल रूम खोल सकते हैं।");
         return;
       }
 
-      if (entered.trim() === "Run1") {
+      if (entered.toLowerCase() === "run1") {
         currentOperator = opName;
         localStorage.setItem("mb_active_operator", opName);
         document.getElementById("lbl-active-operator").innerText = opName;
@@ -1202,7 +1299,6 @@
       recognition.start();
     }
 
-    // 15-30 Sec Audio Memo Recording Simulation
     function recordAudioMemo() {
       const btn = document.getElementById("btn-audio-memo");
       const txt = document.getElementById("txt-audio-memo");
@@ -1244,7 +1340,6 @@
       window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
     }
 
-    // Modal Based Job Close with Reason
     function openJobCloseModal(jobDocId, sixId, workerName, workerPhone) {
       document.getElementById("close-modal-job-id").value = jobDocId;
       document.getElementById("close-modal-six-id").value = sixId;
@@ -1309,7 +1404,6 @@
       });
     }
 
-    // ₹49 Boost Modal Prompt
     function promptMistriBoost49() {
       const utr = prompt("⚡ ₹49 टॉप प्रोफ़ाइल प्लान:\n7 दिन तक लिस्ट में सबसे ऊपर दिखें।\n\nUPI (mistrybabu@upi) पर ₹49 भेजकर 12-अंकों का UTR नंबर यहाँ दर्ज करें:");
       if (!utr || utr.trim().length !== 12) return alert("अमान्य UTR! कृपया 12 अंकों का वैध UTR नंबर दर्ज करें।");
@@ -1481,6 +1575,62 @@
       });
     }
 
+    // Save Client KYC Function
+    async function saveClientKYC() {
+      const phoneInput = document.getElementById("dash-client-phone").value.trim();
+      let phone = localStorage.getItem("mb_client_phone") || (phoneInput ? "+91" + phoneInput : "");
+      
+      if (!phone) {
+        return alert("कृपया पहले नीचे अपना मोबाइल नंबर दर्ज करके प्रोफ़ाइल खोलें!");
+      }
+
+      const idNum = document.getElementById("client-kyc-id-number").value.trim().toUpperCase();
+      const photoFile = document.getElementById("client-kyc-photo").files[0];
+      const idFile = document.getElementById("client-kyc-id").files[0];
+
+      if (!idNum) return alert("कृपया पहचान पत्र संख्या दर्ज करें!");
+      if (!idFile && !localStorage.getItem("mb_client_id_photo")) {
+        return alert("कृपया पहचान पत्र की फ़ोटो अपलोड करें!");
+      }
+
+      const btn = document.getElementById("btn-save-client-kyc");
+      btn.innerText = "सुरक्षित अपलोड हो रहा है...";
+
+      let photoBase64 = localStorage.getItem("mb_client_avatar") || "";
+      let idBase64 = localStorage.getItem("mb_client_id_photo") || "";
+
+      if (photoFile) {
+        try { photoBase64 = await fileToBase64(photoFile); } catch(e) {}
+      }
+      if (idFile) {
+        try { idBase64 = await fileToBase64WithWatermark(idFile); } catch(e) {}
+      }
+
+      db.collection("clients_kyc").doc(phone).set({
+        clientPhone: phone,
+        clientName: localStorage.getItem("mb_client_name") || "मालिक",
+        idNumber: idNum,
+        idCardPhoto: idBase64,
+        avatarPhoto: photoBase64,
+        isVerified: true,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true }).then(() => {
+        localStorage.setItem("mb_client_is_kyc", "true");
+        localStorage.setItem("mb_client_avatar", photoBase64);
+        localStorage.setItem("mb_client_id_photo", idBase64);
+        
+        document.getElementById("done-client-photo").classList.remove("hidden");
+        document.getElementById("done-client-id").classList.remove("hidden");
+        btn.innerText = "✓ पहचान पत्र सत्यापित और सुरक्षित";
+        btn.className = "w-full bg-emerald-600 text-white font-bold py-2 rounded-xl text-xs";
+        
+        alert("✅ आपकी पहचान और पहचान पत्र सुरक्षित रूप से जमा हो चुके हैं! अब आप काम पोस्ट कर सकते हैं।");
+      }).catch(err => {
+        btn.innerText = "🛡️ पहचान पत्र सुरक्षित जमा करें";
+        alert("त्रुटि: " + err.message);
+      });
+    }
+
     function switchRoleTab(role) {
       const clientBox = document.getElementById("client-dashboard-box");
       const workerBox = document.getElementById("worker-dashboard-box");
@@ -1503,6 +1653,8 @@
       } else if (role === 'worker') {
         workerBox.classList.remove("hidden");
         btnWorker.className = "flex-1 py-1.5 rounded-lg bg-white text-slate-900 shadow-xs";
+        
+        handleStateChange('pw-state', 'pw-district', 'pw-block');
         updateRegisterScreenView();
       } else {
         contractorBox.classList.remove("hidden");
@@ -1510,7 +1662,6 @@
       }
     }
 
-    // पेटी-ठेका बनाम आम काम स्विचिंग
     function switchJobFeedTab(tab) {
       currentJobFeedTab = tab;
       const bNormal = document.getElementById("tab-feed-normal");
@@ -1611,8 +1762,11 @@
     }
 
     function handleStateChange(stateSelectId, distSelectId, blockSelectId = null) {
-      const state = document.getElementById(stateSelectId).value;
+      const stateEl = document.getElementById(stateSelectId);
       const distSelect = document.getElementById(distSelectId);
+      if (!stateEl || !distSelect) return;
+
+      const state = stateEl.value;
       distSelect.innerHTML = '<option value="">-- ज़िला चुनें --</option>';
 
       if (multiStateData[state]) {
@@ -1631,9 +1785,13 @@
     }
 
     function updateBlocks(distId, blockId, stateId) {
-      const state = document.getElementById(stateId).value;
-      const dist = document.getElementById(distId).value;
+      const stateEl = document.getElementById(stateId);
+      const distEl = document.getElementById(distId);
       const block = document.getElementById(blockId);
+      if (!stateEl || !distEl || !block) return;
+
+      const state = stateEl.value;
+      const dist = distEl.value;
       block.innerHTML = '<option value="">-- ब्लॉक चुनें --</option>';
 
       if (state && dist && multiStateData[state] && multiStateData[state][dist]) {
@@ -1646,7 +1804,6 @@
       }
     }
 
-    // GPS Site-Verification Checkbox Control
     function toggleSiteGpsButton(isChecked) {
       const btn = document.getElementById("btn-gps-trigger");
       const status = document.getElementById("pc-gps-status");
@@ -1734,6 +1891,16 @@
 
     async function saveClientJob(e) {
       e.preventDefault();
+      
+      // Strict KYC Check: ID Card and Photo Required Before Posting
+      const isKycDone = localStorage.getItem("mb_client_is_kyc") === "true";
+      if (!isKycDone) {
+        alert("⚠️ सुरक्षा नियम:\nकाम पोस्ट करने से पहले आपको अपनी पहचान प्रमाणित करनी होगी ताकि फ़र्ज़ी काम पोस्ट न हों।\n\nकृपया पहले प्रोफ़ाइल (ग्राहक खाता) में जाकर 'पहचान पत्र व फ़ोटो' अपलोड करें।");
+        navTo('register');
+        switchRoleTab('client');
+        return;
+      }
+
       const phone = document.getElementById("pc-phone").value.trim();
       if (phone.length !== 10) return alert("10 अंकों का मोबाइल नंबर डालें!");
 
@@ -2130,7 +2297,6 @@
       }
     }
 
-    // Duplicate UTR Check on Contractor Submission
     async function submitContractorPayment(e) {
       e.preventDefault();
       const plan = document.getElementById("con-plan-select").value;
@@ -2146,7 +2312,6 @@
       const btn = document.getElementById("btn-submit-contractor");
       btn.innerText = "जाँच व जमा हो रहा है...";
 
-      // UTR Duplicate Filter
       const dupSnap = await db.collection("contractor_payments").where("utrNumber", "==", utr).get();
       if (!dupSnap.empty) {
         btn.innerText = "पुष्टि हेतु जमा करें";
@@ -2249,6 +2414,22 @@
       const fullPhone = "+91" + p;
       localStorage.setItem("mb_client_phone", fullPhone);
       listenClientInbox(fullPhone);
+
+      // Check KYC Status in DB
+      db.collection("clients_kyc").doc(fullPhone).get().then(doc => {
+        if (doc.exists && doc.data().isVerified) {
+          localStorage.setItem("mb_client_is_kyc", "true");
+          const btn = document.getElementById("btn-save-client-kyc");
+          if (btn) {
+            btn.innerText = "✓ पहचान पत्र सत्यापित और सुरक्षित";
+            btn.className = "w-full bg-emerald-600 text-white font-bold py-2 rounded-xl text-xs";
+          }
+          const dPhoto = document.getElementById("done-client-photo");
+          const dId = document.getElementById("done-client-id");
+          if (dPhoto) dPhoto.classList.remove("hidden");
+          if (dId) dId.classList.remove("hidden");
+        }
+      });
 
       const listDiv = document.getElementById("client-posts-list");
       listDiv.innerHTML = "<p class='text-xs text-slate-400'>आपके काम और मिस्त्रियों के संदेश खोजे जा रहे हैं...</p>";
@@ -2370,7 +2551,7 @@
         rateMessage: rateMsg,
         status: "Pending",
         isArchived: false,
-        isLockedBy: "", // ऑपरेटर टास्क लॉक
+        isLockedBy: "",
         handledBy: "",
         chatMessages: [],
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -2471,7 +2652,6 @@
       loadAdminDeals();
     }
 
-    // Task Lock Function (Collision Prevention for dilbas, lehari, monu)
     function adminLockTask(dealId) {
       db.collection("confirmed_deals").doc(dealId).update({
         isLockedBy: currentOperator,
@@ -2482,7 +2662,6 @@
       });
     }
 
-    // Quick WhatsApp Template Generator
     function adminQuickWhatsApp(phone, role, sixId, partnerName, partnerPhone) {
       const msg = encodeURIComponent(`नमस्ते! MistryBabu.com की तरफ से काम ${sixId} के लिए संपर्क। क्या आपकी ${partnerName} (${partnerPhone}) से बात हो गई? - ऑपरेटर: ${currentOperator}`);
       window.open(`https://wa.me/${phone.replace('+', '')}?text=${msg}`, '_blank');
@@ -2651,7 +2830,7 @@
               ` : ''}
 
               <div class="pt-1 flex gap-1.5 border-t border-slate-100">
-                <button onclick="adminDirectEditWorker('${docId}', '${w.name}', '${w.experience || 0}', '${w.state || 'बिहार'}', '${w.district}', '${w.block || ''}')" class="flex-1 bg-slate-900 text-amber-400 py-1 rounded text-[10px] font-bold">✏️ सुधारें (Edit)</button>
+                <button onclick="adminDirectEditWorker('${docId}')" class="flex-1 bg-slate-900 text-amber-400 py-1 rounded text-[10px] font-bold">✏️ पूरा प्रोफ़ाइल सुधारें</button>
                 <button onclick="adminToggleBlockWorker('${docId}', ${!w.isBlocked})" class="bg-amber-100 text-amber-900 px-2 py-1 rounded text-[10px] font-bold">${w.isBlocked ? 'अनब्लॉक' : 'ब्लॉक'}</button>
                 <button onclick="adminDeleteDoc('workers', '${docId}')" class="bg-rose-100 text-rose-800 px-2 py-1 rounded text-[10px] font-bold">🗑️</button>
               </div>
@@ -2671,23 +2850,143 @@
       });
     }
 
-    function adminDirectEditWorker(docId, oldName, oldExp, oldState, oldDist, oldBlk) {
-      const newName = prompt("मिस्त्री का नाम सुधारें:", oldName);
-      if (newName === null) return;
-      const newExp = prompt("अनुभव (वर्ष) सुधारें:", oldExp);
-      if (newExp === null) return;
-      const newDist = prompt("ज़िला सुधारें:", oldDist);
-      if (newDist === null) return;
+    // Admin Full Visual Edit Controls
+    function closeAdminFullEditModal() {
+      document.getElementById("admin-full-edit-modal").classList.add("hidden");
+    }
 
-      db.collection("workers").doc(docId).update({
-        name: newName.trim(),
-        experience: parseInt(newExp) || 0,
-        district: newDist.trim(),
-        handledBy: currentOperator
-      }).then(() => {
-        alert("✅ मिस्त्री प्रोफ़ाइल सफलतापूर्वक अपडेट हो गई!");
-        loadAdminWorkersList();
+    async function adminDirectEditWorker(docId) {
+      const snap = await db.collection("workers").doc(docId).get();
+      if (!snap.exists) return alert("मिस्त्री का रिकॉर्ड नहीं मिला!");
+      const w = snap.data();
+
+      document.getElementById("adm-edit-type").value = "worker";
+      document.getElementById("adm-edit-doc-id").value = docId;
+      document.getElementById("adm-edit-modal-title").innerText = `मिस्त्री प्रोफ़ाइल सुधार: ${w.name}`;
+      document.getElementById("adm-lbl-name").innerText = "मिस्त्री का पूरा नाम *";
+
+      document.getElementById("adm-edit-name").value = w.name || "";
+      document.getElementById("adm-edit-phone").value = (w.private_phone || "").replace("+91", "");
+      document.getElementById("adm-edit-state").value = w.state || "बिहार";
+      
+      handleStateChange('adm-edit-state', 'adm-edit-district', 'adm-edit-block');
+      document.getElementById("adm-edit-district").value = w.district || "";
+      
+      updateBlocks('adm-edit-district', 'adm-edit-block', 'adm-edit-state');
+      document.getElementById("adm-edit-block").value = w.block || "";
+      document.getElementById("adm-edit-locality").value = w.locality || "";
+      document.getElementById("adm-edit-exp").value = w.experience || 0;
+      document.getElementById("adm-edit-preview-img").src = w.photo || "logo.png";
+      document.getElementById("adm-edit-new-photo").value = "";
+
+      const skillsContainer = document.getElementById("adm-edit-skills-container");
+      skillsContainer.innerHTML = "";
+      const currentSkills = w.skills || [];
+      allCategories.forEach(c => {
+        const isChecked = currentSkills.includes(c.title) ? "checked" : "";
+        skillsContainer.innerHTML += `
+          <label class="flex items-center space-x-2 bg-white p-1.5 rounded border border-slate-200 cursor-pointer">
+            <input type="checkbox" name="adm_worker_skills" value="${c.title}" ${isChecked} class="rounded text-amber-500">
+            <span class="font-bold text-slate-800 text-[11px]">${c.icon} ${c.title}</span>
+          </label>
+        `;
       });
+
+      document.getElementById("adm-worker-specific-fields").classList.remove("hidden");
+      document.getElementById("adm-job-specific-fields").classList.add("hidden");
+      document.getElementById("admin-full-edit-modal").classList.remove("hidden");
+    }
+
+    async function adminEditJobPrompt(docId) {
+      const snap = await db.collection("job_posts").doc(docId).get();
+      if (!snap.exists) return alert("काम का रिकॉर्ड नहीं मिला!");
+      const j = snap.data();
+
+      document.getElementById("adm-edit-type").value = "job";
+      document.getElementById("adm-edit-doc-id").value = docId;
+      document.getElementById("adm-edit-modal-title").innerText = `काम सुधार (${j.jobSixId})`;
+      document.getElementById("adm-lbl-name").innerText = "मालिक का पूरा नाम *";
+
+      document.getElementById("adm-edit-name").value = j.clientName || "";
+      document.getElementById("adm-edit-phone").value = (j.phone || "").replace("+91", "");
+      document.getElementById("adm-edit-state").value = j.state || "बिहार";
+
+      handleStateChange('adm-edit-state', 'adm-edit-district', 'adm-edit-block');
+      document.getElementById("adm-edit-district").value = j.district || "";
+
+      updateBlocks('adm-edit-district', 'adm-edit-block', 'adm-edit-state');
+      document.getElementById("adm-edit-block").value = j.block || "";
+      document.getElementById("adm-edit-locality").value = j.location || "";
+
+      document.getElementById("adm-edit-desc").value = j.desc || "";
+      document.getElementById("adm-edit-workercount").value = j.workerCount || 1;
+      document.getElementById("adm-edit-preview-img").src = j.sitePhoto || "logo.png";
+      document.getElementById("adm-edit-new-photo").value = "";
+
+      document.getElementById("adm-worker-specific-fields").classList.add("hidden");
+      document.getElementById("adm-job-specific-fields").classList.remove("hidden");
+      document.getElementById("admin-full-edit-modal").classList.remove("hidden");
+    }
+
+    async function saveAdminFullEdit() {
+      const type = document.getElementById("adm-edit-type").value;
+      const docId = document.getElementById("adm-edit-doc-id").value;
+      const btn = document.getElementById("btn-adm-save-full");
+      btn.innerText = "अपडेट हो रहा है...";
+
+      let newPhotoBase64 = "";
+      const photoFile = document.getElementById("adm-edit-new-photo").files[0];
+      if (photoFile) {
+        try { newPhotoBase64 = await fileToBase64(photoFile); } catch(e) {}
+      }
+
+      if (type === "worker") {
+        const checkedSkills = Array.from(document.querySelectorAll("input[name='adm_worker_skills']:checked")).map(cb => cb.value);
+        const updateData = {
+          name: document.getElementById("adm-edit-name").value.trim(),
+          private_phone: "+91" + document.getElementById("adm-edit-phone").value.trim(),
+          state: document.getElementById("adm-edit-state").value,
+          district: document.getElementById("adm-edit-district").value,
+          block: document.getElementById("adm-edit-block").value,
+          locality: document.getElementById("adm-edit-locality").value.trim(),
+          experience: parseInt(document.getElementById("adm-edit-exp").value) || 0,
+          skills: checkedSkills,
+          handledBy: currentOperator,
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+
+        if (newPhotoBase64) updateData.photo = newPhotoBase64;
+
+        db.collection("workers").doc(docId).update(updateData).then(() => {
+          btn.innerText = "💾 बदलाव सेव करें";
+          alert("✅ मिस्त्री प्रोफ़ाइल की सभी जानकारियां सफलतापूर्वक अपडेट हो गईं!");
+          closeAdminFullEditModal();
+          loadAdminWorkersList();
+        });
+
+      } else {
+        const updateData = {
+          clientName: document.getElementById("adm-edit-name").value.trim(),
+          phone: "+91" + document.getElementById("adm-edit-phone").value.trim(),
+          state: document.getElementById("adm-edit-state").value,
+          district: document.getElementById("adm-edit-district").value,
+          block: document.getElementById("adm-edit-block").value,
+          location: document.getElementById("adm-edit-locality").value.trim(),
+          desc: document.getElementById("adm-edit-desc").value.trim(),
+          workerCount: document.getElementById("adm-edit-workercount").value || 1,
+          handledBy: currentOperator,
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+
+        if (newPhotoBase64) updateData.sitePhoto = newPhotoBase64;
+
+        db.collection("job_posts").doc(docId).update(updateData).then(() => {
+          btn.innerText = "💾 बदलाव सेव करें";
+          alert("✅ जॉब पोस्ट की सभी जानकारियां सफलतापूर्वक अपडेट हो गईं!");
+          closeAdminFullEditModal();
+          if (typeof adminExecuteSearch === "function") adminExecuteSearch();
+        });
+      }
     }
 
     function loadAdminCallbacks() {
@@ -2824,7 +3123,7 @@
               <p class="text-slate-500">📍 स्थान: ${foundJob.state || 'बिहार'}, ${foundJob.district} (${foundJob.location})</p>
               <p class="text-slate-600">विवरण: ${foundJob.desc || 'उपलब्ध नहीं'}</p>
               <div class="mt-2 flex gap-2">
-                <button onclick="adminEditJobPrompt('${foundJob.id}', '${foundJob.jobSixId}', '${foundJob.clientName}', '${foundJob.location}', '${(foundJob.desc || '').replace(/'/g, "\\'")}')" class="bg-blue-600 text-white px-2 py-1 rounded font-bold">✏️ एडिट करें</button>
+                <button onclick="adminEditJobPrompt('${foundJob.id}')" class="bg-blue-600 text-white px-2 py-1 rounded font-bold">✏️ पूरा काम सुधारें</button>
                 <button onclick="adminDeleteDoc('job_posts', '${foundJob.id}')" class="bg-red-600 text-white px-2 py-1 rounded font-bold">🗑️ डिलीट करें</button>
               </div>
             </div>
@@ -2851,7 +3150,7 @@
                 <p class="text-slate-600">हुनर: ${(foundWorker.skills || []).join(', ')} • अनुभव: ${foundWorker.experience || 0} वर्ष</p>
                 <p class="font-bold ${foundWorker.isBlocked ? 'text-red-600' : 'text-emerald-600'}">स्थिति: ${foundWorker.isBlocked ? 'निलंबित (Blocked)' : 'सक्रिय (Active)'}</p>
                 <div class="mt-2 flex gap-2">
-                  <button onclick="adminDirectEditWorker('${foundWorker.id}', '${foundWorker.name}', '${foundWorker.experience || 0}', '${foundWorker.state || 'बिहार'}', '${foundWorker.district}', '${foundWorker.block || ''}')" class="bg-blue-600 text-white px-2 py-1 rounded font-bold">✏️ एडिट करें</button>
+                  <button onclick="adminDirectEditWorker('${foundWorker.id}')" class="bg-blue-600 text-white px-2 py-1 rounded font-bold">✏️ पूरा प्रोफ़ाइल सुधारें</button>
                   <button onclick="adminToggleBlockWorker('${foundWorker.id}', ${!foundWorker.isBlocked})" class="bg-amber-600 text-white px-2 py-1 rounded font-bold">${foundWorker.isBlocked ? 'अनब्लॉक' : '🚫 ब्लॉक करें'}</button>
                   <button onclick="adminDeleteDoc('workers', '${foundWorker.id}')" class="bg-red-600 text-white px-2 py-1 rounded font-bold">🗑️ डिलीट करें</button>
                 </div>
@@ -2861,25 +3160,6 @@
             resBox.innerHTML = "<p class='text-red-500'>इस आईडी या नंबर से कोई रिकॉर्ड नहीं मिला।</p>";
           }
         });
-      });
-    }
-
-    function adminEditJobPrompt(docId, sixId, oldName, oldLoc, oldDesc) {
-      const newName = prompt(`मालिक का नाम सुधारें (ID: ${sixId}):`, oldName);
-      if (newName === null) return;
-      const newLoc = prompt("साइट का इलाका/गाँव सुधारें:", oldLoc);
-      if (newLoc === null) return;
-      const newDesc = prompt("काम का विवरण सुधारें:", oldDesc);
-      if (newDesc === null) return;
-
-      db.collection("job_posts").doc(docId).update({
-        clientName: newName.trim(),
-        location: newLoc.trim(),
-        desc: newDesc.trim(),
-        handledBy: currentOperator
-      }).then(() => {
-        alert("✅ पोस्ट की जानकारी सफलतापूर्वक अपडेट कर दी गई!");
-        adminExecuteSearch();
       });
     }
 
@@ -2936,7 +3216,6 @@
         }).catch(() => { feed.innerHTML = "<p class='text-xs text-slate-400'>काम लोड नहीं हो सका।</p>"; });
     }
 
-    // Full Jobs Loading with Separation of Normal vs Theka
     function loadFullJobs(filterDist = "") {
       const feed = document.getElementById("full-job-feed");
       feed.innerHTML = "<p class='text-xs text-slate-400'>काम लोड हो रहे हैं...</p>";
@@ -2960,7 +3239,6 @@
             if (timeInfo.isExpired || j.isClosed === true) return;
             if (filterDist && j.district !== filterDist) return;
 
-            // Separate Normal vs Theka Tab
             const isThisTheka = j.isTheka === true;
             if (currentJobFeedTab === 'theka' && !isThisTheka) return;
             if (currentJobFeedTab === 'normal' && isThisTheka) return;
@@ -3099,6 +3377,13 @@
       handleStateChange('home-state-filter', 'home-district-filter');
       handleStateChange('pc-state', 'pc-district', 'pc-block');
       handleStateChange('pw-state', 'pw-district', 'pw-block');
+
+      setTimeout(() => {
+        const defaultDist = document.getElementById("pw-district").value;
+        if (defaultDist) {
+          updateBlocks('pw-district', 'pw-block', 'pw-state');
+        }
+      }, 150);
       
       loadRecentJobs();
 
