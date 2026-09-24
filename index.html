@@ -23,6 +23,7 @@
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <!-- Firebase Analytics SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-analytics.js"></script>
   <style>
     .no-scrollbar::-webkit-scrollbar { display: none; }
@@ -95,6 +96,15 @@
           </select>
         </div>
       </div>
+    </div>
+
+    <!-- साइड-स्क्रॉलिंग विज्ञापन कार्ड (Horizontal Carousel) -->
+    <div id="home-shop-ads-wrapper" class="space-y-1.5 hidden">
+      <div class="flex justify-between items-center px-1">
+        <span class="text-[10px] font-black text-slate-700 uppercase tracking-wide">🏪 लोकल सप्लायर व दुकान पार्टनर</span>
+        <span class="text-[9px] text-blue-600 font-bold">स्वाइप करें ↔</span>
+      </div>
+      <div id="home-shop-ads-slider" class="flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scroll-smooth no-scrollbar"></div>
     </div>
 
     <div class="bg-gradient-to-r from-slate-900 to-slate-800 text-white p-4 rounded-2xl shadow-sm">
@@ -336,7 +346,7 @@
       </button>
     </div>
 
-    <!-- 1. CUSTOMER DASHBOARD (KYC OPTIONAL WITH VERIFIED BADGE) -->
+    <!-- 1. CUSTOMER DASHBOARD (KYC OPTIONAL + VERIFIED BADGE) -->
     <div id="client-dashboard-box" class="space-y-4 block">
       <div class="bg-blue-50/70 p-3.5 rounded-2xl border border-blue-200 space-y-2 shadow-xs">
         <div class="flex items-center justify-between">
@@ -448,7 +458,7 @@
 
           <div id="box-pw-idcard" class="bg-blue-50/50 p-3 rounded-xl border border-blue-200 text-center space-y-2">
             <div>
-              <label class="block text-[11px] font-bold text-blue-900 mb-0.5">🛡️ पहचान पत्र (पहचान पत्र / वोटर आईडी)</label>
+              <label class="block text-[11px] font-bold text-blue-900 mb-0.5">🛡️ पहचान पत्र (आईडी प्रूफ)</label>
               <p class="text-[9px] text-slate-500 mb-1">वाटरमार्क सुरक्षित • केवल एडमिन सत्यापन हेतु</p>
               <input type="file" id="pw-id-card" accept="image/*" class="text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:bg-blue-200 file:text-blue-900">
             </div>
@@ -1087,7 +1097,7 @@
         <p><strong>1. केवल संपर्क माध्यम:</strong> MistryBabu.com केवल काम देने वाले और काम करने वाले को आपस में जोड़ता है। किसी भी लेबर दुर्घटना, विवाद या काम की गुणवत्ता के लिए कंपनी उत्तरदायी नहीं होगी।</p>
         <p><strong>2. नो-एडवांस दायित्व:</strong> काम शुरू होने से पहले किसी को भी ऑनलाइन एडवांस न भेजें। किसी भी व्यक्तिगत वित्तीय लेन-देन या नुकसान पर MistryBabu उत्तरदायी नहीं होगा।</p>
         <p><strong>3. नो-रिफंड पॉलिसी:</strong> VIP सदस्यता (₹14,999/₹9,999 या ₹3,000/₹1,000), ₹49 टॉप प्लान या दुकान विज्ञापन शुल्क सक्रिय होने के बाद नॉन-रिफंडेबल रहेगा।</p>
-        <p><strong>4. सुरक्षा व सत्यापन:</strong> कारीगर व ग्राहक द्वारा दी गई पहचान पत्र वाटरमार्क से सुरक्षित रहती है और केवल एडमिन द्वारा जाँची जाती है।</p>
+        <p><strong>4. सुरक्षा व सत्यापन:</strong> कारीगर व ग्राहक द्वारा दी गई पहचान पत्र (पहचान पत्र / वोटर आईडी) वाटरमार्क से सुरक्षित रहती है और केवल एडमिन द्वारा जाँची जाती है।</p>
         <p><strong>5. खाता ब्लॉक का अधिकार:</strong> फर्जी पहचान पत्र अपलोड करने, गलत लोकेशन दर्ज करने या गाली-गलौज करने पर खाता बिना नोटिस ब्लॉक कर दिया जाएगा।</p>
       </div>
       <button onclick="closeTermsModal()" class="mt-4 w-full bg-slate-900 text-amber-400 py-2 rounded-xl font-bold text-xs">
@@ -1139,7 +1149,7 @@
 
     const ALLOWED_ADMIN_USERS = ["dilbas", "lehari", "monu"];
 
-    // बिहार (38 ज़िले) व उत्तर प्रदेश (75 ज़िले) का संपूर्ण डेटाबेस
+    // 1. बिहार (38 ज़िले), उत्तर प्रदेश (75 ज़िले), दिल्ली व हरियाणा का संपूर्ण डेटाबेस
     const multiStateData = {
       "बिहार": {
         "बक्सर": ["बक्सर", "डुमरांव", "इटाढ़ी", "राजपुर", "सिमरी", "ब्रह्मपुर", "नावानगर", "केसठ", "चक्की", "चौगाईं"],
@@ -1297,7 +1307,7 @@
       }
     };
 
-    // 30 मुख्य श्रेणियां
+    // 2. 30 मुख्य श्रेणियां
     const allCategories = [
       { id: 1, title: "राज मिस्त्री", desc: "ईंट का काम, दीवार, नींव, चिनाई", icon: "🧱" },
       { id: 2, title: "RCC/कंक्रीट", desc: "कॉलम, बीम, स्लैब, छत", icon: "🏗️" },
@@ -1678,13 +1688,19 @@
 
     function loadShopAds() {
       const box = document.getElementById("shop-ads-container");
+      const sliderBox = document.getElementById("home-shop-ads-slider");
+      const wrapperBox = document.getElementById("home-shop-ads-wrapper");
+
       db.collection("shop_ads").where("isActive", "==", true).onSnapshot(snap => {
         if (snap.empty) {
           if (box) box.innerHTML = "<p class='text-xs text-slate-400 text-center py-8'>वर्तमान में कोई सक्रिय विज्ञापन नहीं है।</p>";
+          if (wrapperBox) wrapperBox.classList.add("hidden");
           return;
         }
 
         let drawerHtml = "";
+        let sliderHtml = "";
+
         snap.forEach(doc => {
           const ad = doc.data();
           const imgUrl = ad.bannerUrl || 'https://placehold.co/100x100/2563eb/ffffff.png?text=Shop';
@@ -1708,9 +1724,33 @@
               </a>
             </div>
           `;
+
+          sliderHtml += `
+            <div class="min-w-[280px] max-w-[290px] bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-3 flex flex-col justify-between shadow-xs snap-center shrink-0">
+              <div>
+                <div class="flex justify-between items-center mb-1.5">
+                  <span class="text-[8px] bg-blue-600 text-white font-black px-1.5 py-0.5 rounded uppercase">⭐ स्पॉन्सर पार्टनर</span>
+                  <span class="text-[10px] text-slate-500 font-bold">${ad.location}</span>
+                </div>
+                <div class="flex items-center space-x-2.5">
+                  <img src="${imgUrl}" class="w-12 h-12 rounded-xl object-cover border border-blue-200 shrink-0">
+                  <div>
+                    <h4 class="text-xs font-black text-slate-900 leading-tight">${ad.shopName}</h4>
+                    <p class="text-[10px] text-slate-600 line-clamp-2 mt-0.5">${ad.description}</p>
+                  </div>
+                </div>
+              </div>
+              <a href="tel:${ad.phone}" class="mt-2.5 bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-bold py-1.5 rounded-xl flex items-center justify-center space-x-1 shadow-xs">
+                <i class="fa-solid fa-phone text-xs"></i>
+                <span>📞 डायरेक्ट दुकान कॉल करें</span>
+              </a>
+            </div>
+          `;
         });
 
         if (box) box.innerHTML = drawerHtml;
+        if (sliderBox) sliderBox.innerHTML = sliderHtml;
+        if (wrapperBox) wrapperBox.classList.remove("hidden");
       });
     }
 
@@ -3405,73 +3445,6 @@
       });
     }
 
-    function openTermsModal() { document.getElementById("terms-modal").classList.remove("hidden"); }
-    function closeTermsModal() { document.getElementById("terms-modal").classList.add("hidden"); }
-
-    function startVoiceInput(targetInputId, btnId) {
-      if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-        return alert("आपके फ़ोन में बोलकर लिखने का सपोर्ट नहीं है।");
-      }
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      const recognition = new SpeechRecognition();
-      recognition.lang = 'hi-IN';
-      recognition.interimResults = false;
-
-      const btn = document.getElementById(btnId);
-      const originalHTML = btn.innerHTML;
-      btn.innerHTML = `<i class="fa-solid fa-circle text-red-600 animate-ping"></i> <span>सुन रहा हूँ...</span>`;
-
-      recognition.onresult = function(event) {
-        const transcript = event.results[0][0].transcript;
-        const target = document.getElementById(targetInputId);
-        target.value = target.value ? target.value + " " + transcript : transcript;
-      };
-      recognition.onerror = function() { alert("आवाज़ समझ नहीं आई, कृपया दोबारा बोलें।"); };
-      recognition.onend = function() { btn.innerHTML = originalHTML; };
-      recognition.start();
-    }
-
-    function recordAudioMemo() {
-      const btn = document.getElementById("btn-audio-memo");
-      const txt = document.getElementById("txt-audio-memo");
-      if (btn.classList.contains("bg-emerald-600")) {
-        btn.className = "bg-red-500 text-white text-[9px] font-bold px-2 py-1 rounded shadow-xs flex items-center space-x-1";
-        txt.innerText = "ऑडियो रिकॉर्ड करें";
-        alert("✅ वॉयस नोट तैयार! मालिक को भेजने के लिए नीचे बटन दबाएँ।");
-        document.getElementById("prop-message").value = "[🎙️ 18-सेकंड वॉयस नोट अटैच किया गया] " + document.getElementById("prop-message").value;
-      } else {
-        btn.className = "bg-emerald-600 text-white text-[9px] font-bold px-2 py-1 rounded shadow-xs flex items-center space-x-1 animate-pulse";
-        txt.innerText = "रिकॉर्डिंग हो रही है... (रोकने हेतु दबाएँ)";
-      }
-    }
-
-    function toggleWorkerLiveStatus() {
-      const current = localStorage.getItem("mb_worker_status") || "available";
-      const newStatus = current === "available" ? "busy" : "available";
-      localStorage.setItem("mb_worker_status", newStatus);
-      const docId = localStorage.getItem("mb_worker_doc_id");
-      if (docId) { db.collection("workers").doc(docId).update({ liveStatus: newStatus }); }
-      renderLiveStatusUI(newStatus);
-    }
-
-    function renderLiveStatusUI(status) {
-      const btn = document.getElementById("btn-live-status");
-      const txt = document.getElementById("txt-live-status");
-      if (!btn || !txt) return;
-      if (status === "busy") {
-        btn.className = "bg-rose-600 text-white text-[10px] font-black px-2.5 py-1 rounded-full shadow flex items-center space-x-1";
-        txt.innerText = "काम में व्यस्त 🔴";
-      } else {
-        btn.className = "bg-emerald-500 text-slate-900 text-[10px] font-black px-2.5 py-1 rounded-full shadow flex items-center space-x-1";
-        txt.innerText = "काम के लिए उपलब्ध 🟢";
-      }
-    }
-
-    function shareJobOnWhatsApp(workType, district, location, sixId, clientName) {
-      const text = `*मिस्त्रीबाबू (MistryBabu.com) पर नया काम आया है!*%0A%0A👤 *मालिक:* ${clientName}%0A🔧 *काम:* ${workType}%0A📍 *जगह:* ${district} (${location})%0A🆔 *काम ID:* ${sixId}%0A%0Aअपना रेट व संदेश भेजने के लिए यहाँ खोलें:%0Ahttps://mistrybabu.com/#jobs%0A%0A📞 *हेल्पलाइन:* 7033943841`;
-      window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
-    }
-
     function loadFullWorkers(filterSkill = "") {
       const grid = document.getElementById("full-worker-grid");
       db.collection("workers").orderBy("createdAt", "desc").limit(30).get().then(snap => {
@@ -3526,6 +3499,7 @@
       });
     }
 
+    // 7. इनिशियलाइज़ेशन
     window.addEventListener('DOMContentLoaded', () => {
       history.replaceState({ page: 'home' }, "", "#home");
       getDeviceFingerprint();
