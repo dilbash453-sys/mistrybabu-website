@@ -97,15 +97,6 @@
       </div>
     </div>
 
-    <!-- साइड-स्क्रॉलिंग विज्ञापन कार्ड (Horizontal Carousel) -->
-    <div id="home-shop-ads-wrapper" class="space-y-1.5 hidden">
-      <div class="flex justify-between items-center px-1">
-        <span class="text-[10px] font-black text-slate-700 uppercase tracking-wide">🏪 लोकल सप्लायर व दुकान पार्टनर</span>
-        <span class="text-[9px] text-blue-600 font-bold">स्वाइप करें ↔</span>
-      </div>
-      <div id="home-shop-ads-slider" class="flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scroll-smooth no-scrollbar"></div>
-    </div>
-
     <div class="bg-gradient-to-r from-slate-900 to-slate-800 text-white p-4 rounded-2xl shadow-sm">
       <span class="bg-emerald-500 text-slate-900 text-[10px] font-black px-2 py-0.5 rounded-md uppercase">100% मुफ़्त सेवा</span>
       <h3 class="text-lg font-black mt-2 leading-snug">मिस्त्री खोजें या सीधा काम पाएं</h3>
@@ -407,7 +398,7 @@
       <div id="client-posts-list" class="space-y-3"></div>
     </div>
 
-    <!-- 2. WORKER DASHBOARD -->
+    <!-- 2. WORKER DASHBOARD (1no एक ID और फ़ील्ड-लॉक सुरक्षित) -->
     <div id="worker-dashboard-box" class="space-y-4 hidden">
       <div class="bg-amber-50 border border-amber-300 rounded-2xl p-3 shadow-xs">
         <button onclick="toggleGuide('worker-guide-content', 'icon-worker-guide')" class="w-full flex justify-between items-center text-left">
@@ -603,7 +594,7 @@
       </div>
     </div>
 
-    <!-- 3. CONTRACTOR TIERED VIP DASHBOARD (दस्तावेज़ पहले, पेमेंट बाद में) -->
+    <!-- 3. CONTRACTOR TIERED VIP DASHBOARD (दस्तावेज़ पहले, सत्यापन बाद पेमेंट) -->
     <div id="contractor-dashboard-box" class="space-y-4 hidden">
       <div class="bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 p-4 rounded-2xl shadow-sm">
         <span class="bg-slate-900 text-amber-400 text-[10px] font-black px-2 py-0.5 rounded-md uppercase">CONTRACTOR PASS</span>
@@ -847,7 +838,7 @@
           </div>
         </div>
 
-        <!-- नया एडमिन सेक्शन: दुकान विज्ञापन प्रबंधन -->
+        <!-- दुकान विज्ञापन प्रबंधन -->
         <div id="sec-adm-shopads" class="space-y-3 hidden">
           <div class="bg-blue-50 p-3 rounded-xl border border-blue-200 space-y-2">
             <h4 class="font-black text-slate-900 uppercase text-[11px]">➕ नया दुकान विज्ञापन बनाएँ</h4>
@@ -1687,19 +1678,13 @@
 
     function loadShopAds() {
       const box = document.getElementById("shop-ads-container");
-      const sliderBox = document.getElementById("home-shop-ads-slider");
-      const wrapperBox = document.getElementById("home-shop-ads-wrapper");
-
       db.collection("shop_ads").where("isActive", "==", true).onSnapshot(snap => {
         if (snap.empty) {
           if (box) box.innerHTML = "<p class='text-xs text-slate-400 text-center py-8'>वर्तमान में कोई सक्रिय विज्ञापन नहीं है।</p>";
-          if (wrapperBox) wrapperBox.classList.add("hidden");
           return;
         }
 
         let drawerHtml = "";
-        let sliderHtml = "";
-
         snap.forEach(doc => {
           const ad = doc.data();
           const imgUrl = ad.bannerUrl || 'https://placehold.co/100x100/2563eb/ffffff.png?text=Shop';
@@ -1723,33 +1708,9 @@
               </a>
             </div>
           `;
-
-          sliderHtml += `
-            <div class="min-w-[280px] max-w-[290px] bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-3 flex flex-col justify-between shadow-xs snap-center shrink-0">
-              <div>
-                <div class="flex justify-between items-center mb-1.5">
-                  <span class="text-[8px] bg-blue-600 text-white font-black px-1.5 py-0.5 rounded uppercase">⭐ स्पॉन्सर पार्टनर</span>
-                  <span class="text-[10px] text-slate-500 font-bold">${ad.location}</span>
-                </div>
-                <div class="flex items-center space-x-2.5">
-                  <img src="${imgUrl}" class="w-12 h-12 rounded-xl object-cover border border-blue-200 shrink-0">
-                  <div>
-                    <h4 class="text-xs font-black text-slate-900 leading-tight">${ad.shopName}</h4>
-                    <p class="text-[10px] text-slate-600 line-clamp-2 mt-0.5">${ad.description}</p>
-                  </div>
-                </div>
-              </div>
-              <a href="tel:${ad.phone}" class="mt-2.5 bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-bold py-1.5 rounded-xl flex items-center justify-center space-x-1 shadow-xs">
-                <i class="fa-solid fa-phone text-xs"></i>
-                <span>📞 डायरेक्ट दुकान कॉल करें</span>
-              </a>
-            </div>
-          `;
         });
 
         if (box) box.innerHTML = drawerHtml;
-        if (sliderBox) sliderBox.innerHTML = sliderHtml;
-        if (wrapperBox) wrapperBox.classList.remove("hidden");
       });
     }
 
@@ -1802,7 +1763,7 @@
       });
     }
 
-    // 4. मिस्त्री प्रोफ़ाइल, लॉगिन व ऑपरेशन्स
+    // 4. मिस्त्री प्रोफ़ाइल (1 मोबाइल / 1 आईडी लॉक चेक)
     async function saveWorkerProfile(e) {
       e.preventDefault();
       const name = document.getElementById("pw-name").value.trim();
@@ -1823,6 +1784,7 @@
       const btn = document.getElementById("btn-save-worker");
       btn.innerText = "जाँच हो रही है...";
 
+      // 1no एक ID रोकथाम चेक
       if (idNumber) {
         const idSnap = await db.collection("workers").where("idCardNumber", "==", idNumber).get();
         let isDup = false;
@@ -3445,6 +3407,124 @@
 
     function openTermsModal() { document.getElementById("terms-modal").classList.remove("hidden"); }
     function closeTermsModal() { document.getElementById("terms-modal").classList.add("hidden"); }
+
+    function startVoiceInput(targetInputId, btnId) {
+      if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        return alert("आपके फ़ोन में बोलकर लिखने का सपोर्ट नहीं है।");
+      }
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const recognition = new SpeechRecognition();
+      recognition.lang = 'hi-IN';
+      recognition.interimResults = false;
+
+      const btn = document.getElementById(btnId);
+      const originalHTML = btn.innerHTML;
+      btn.innerHTML = `<i class="fa-solid fa-circle text-red-600 animate-ping"></i> <span>सुन रहा हूँ...</span>`;
+
+      recognition.onresult = function(event) {
+        const transcript = event.results[0][0].transcript;
+        const target = document.getElementById(targetInputId);
+        target.value = target.value ? target.value + " " + transcript : transcript;
+      };
+      recognition.onerror = function() { alert("आवाज़ समझ नहीं आई, कृपया दोबारा बोलें।"); };
+      recognition.onend = function() { btn.innerHTML = originalHTML; };
+      recognition.start();
+    }
+
+    function recordAudioMemo() {
+      const btn = document.getElementById("btn-audio-memo");
+      const txt = document.getElementById("txt-audio-memo");
+      if (btn.classList.contains("bg-emerald-600")) {
+        btn.className = "bg-red-500 text-white text-[9px] font-bold px-2 py-1 rounded shadow-xs flex items-center space-x-1";
+        txt.innerText = "ऑडियो रिकॉर्ड करें";
+        alert("✅ वॉयस नोट तैयार! मालिक को भेजने के लिए नीचे बटन दबाएँ।");
+        document.getElementById("prop-message").value = "[🎙️ 18-सेकंड वॉयस नोट अटैच किया गया] " + document.getElementById("prop-message").value;
+      } else {
+        btn.className = "bg-emerald-600 text-white text-[9px] font-bold px-2 py-1 rounded shadow-xs flex items-center space-x-1 animate-pulse";
+        txt.innerText = "रिकॉर्डिंग हो रही है... (रोकने हेतु दबाएँ)";
+      }
+    }
+
+    function toggleWorkerLiveStatus() {
+      const current = localStorage.getItem("mb_worker_status") || "available";
+      const newStatus = current === "available" ? "busy" : "available";
+      localStorage.setItem("mb_worker_status", newStatus);
+      const docId = localStorage.getItem("mb_worker_doc_id");
+      if (docId) { db.collection("workers").doc(docId).update({ liveStatus: newStatus }); }
+      renderLiveStatusUI(newStatus);
+    }
+
+    function renderLiveStatusUI(status) {
+      const btn = document.getElementById("btn-live-status");
+      const txt = document.getElementById("txt-live-status");
+      if (!btn || !txt) return;
+      if (status === "busy") {
+        btn.className = "bg-rose-600 text-white text-[10px] font-black px-2.5 py-1 rounded-full shadow flex items-center space-x-1";
+        txt.innerText = "काम में व्यस्त 🔴";
+      } else {
+        btn.className = "bg-emerald-500 text-slate-900 text-[10px] font-black px-2.5 py-1 rounded-full shadow flex items-center space-x-1";
+        txt.innerText = "काम के लिए उपलब्ध 🟢";
+      }
+    }
+
+    function shareJobOnWhatsApp(workType, district, location, sixId, clientName) {
+      const text = `*मिस्त्रीबाबू (MistryBabu.com) पर नया काम आया है!*%0A%0A👤 *मालिक:* ${clientName}%0A🔧 *काम:* ${workType}%0A📍 *जगह:* ${district} (${location})%0A🆔 *काम ID:* ${sixId}%0A%0Aअपना रेट व संदेश भेजने के लिए यहाँ खोलें:%0Ahttps://mistrybabu.com/#jobs%0A%0A📞 *हेल्पलाइन:* 7033943841`;
+      window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+    }
+
+    function loadFullWorkers(filterSkill = "") {
+      const grid = document.getElementById("full-worker-grid");
+      db.collection("workers").orderBy("createdAt", "desc").limit(30).get().then(snap => {
+        if (snap.empty) return grid.innerHTML = "<p class='text-xs text-slate-400'>कोई कारीगर नहीं मिला।</p>";
+        grid.innerHTML = "";
+        snap.forEach(doc => {
+          const w = doc.data();
+          if (w.isBlocked) return;
+          const skillsList = w.skills || (w.skill ? [w.skill] : ["कारीगर"]);
+          if (filterSkill && !skillsList.some(s => s.includes(filterSkill))) return;
+
+          const photoSrc = w.photo || 'logo.png';
+          const isBusy = w.liveStatus === 'busy';
+          const workPhotos = w.workPhotos || [];
+          const proId = w.workerProId || ("#MB-PRO-" + doc.id.substring(0, 6).toUpperCase());
+          const isTopBoosted = w.isBoostedTop === true;
+
+          grid.innerHTML += `
+            <div class="bg-white p-3.5 rounded-2xl border ${isTopBoosted ? 'border-2 border-amber-500 shadow-md' : 'border-slate-200 shadow-2xs'} space-y-2">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2.5">
+                  <div class="relative">
+                    <img src="${photoSrc}" onerror="this.src='https://placehold.co/100x100/f59e0b/0f172a.png?text=MB'" class="w-12 h-12 rounded-full object-cover border-2 border-amber-400">
+                    <span class="absolute bottom-0 right-0 w-3 h-3 rounded-full ${isBusy ? 'bg-rose-500' : 'bg-emerald-500'} border-2 border-white"></span>
+                  </div>
+                  <div>
+                    <div class="flex items-center space-x-1">
+                      <h4 class="font-bold text-slate-900 text-xs">${w.name}</h4>
+                      ${isTopBoosted ? '<span class="text-[8px] bg-amber-500 text-slate-900 px-1 rounded font-black">⭐ TOP</span>' : ''}
+                      <span class="text-[8px] bg-amber-100 text-amber-800 px-1.5 py-0.2 rounded font-bold">${w.level || 'कुशल'}</span>
+                      ${w.isContractorVIP ? '<span class="text-[8px] bg-amber-400 text-slate-900 px-1 rounded font-black">👑 VIP</span>' : ''}
+                      ${w.isIdVerified ? '<span class="text-[8px] bg-blue-100 text-blue-800 px-1 rounded font-bold">🛡️ प्रमाणित</span>' : ''}
+                    </div>
+                    <span class="text-[9px] font-bold text-slate-400 block">${proId}</span>
+                    <span class="text-[9px] font-bold ${isBusy ? 'text-rose-500' : 'text-emerald-600'}">${isBusy ? 'काम में व्यस्त 🔴' : 'काम के लिए उपलब्ध 🟢'}</span>
+                    <p class="text-[9px] text-slate-400">${w.state || 'बिहार'} • ${w.district} • ${w.experience || 0} साल अनुभव</p>
+                  </div>
+                </div>
+                <button onclick="navTo('post')" class="bg-amber-500 text-slate-900 px-3 py-1.5 rounded-lg text-[11px] font-bold shadow-xs">
+                  काम दें
+                </button>
+              </div>
+
+              ${workPhotos.length > 0 ? `
+                <div class="pt-1 flex items-center space-x-1.5 overflow-x-auto">
+                  <span class="text-[9px] text-slate-400 font-bold">काम की फ़ोटो:</span>
+                  ${workPhotos.map(img => `<img src="${img}" class="w-10 h-10 rounded-md object-cover border border-slate-100">`).join('')}
+                </div>
+              ` : ''}
+            </div>`;
+        });
+      });
+    }
 
     window.addEventListener('DOMContentLoaded', () => {
       history.replaceState({ page: 'home' }, "", "#home");
