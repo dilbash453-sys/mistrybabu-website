@@ -3498,7 +3498,46 @@
         });
       });
     }
+function openTermsModal() {
+      const modal = document.getElementById("terms-modal");
+      if (modal) modal.classList.remove("hidden");
+    }
+    function closeTermsModal() {
+      const modal = document.getElementById("terms-modal");
+      if (modal) modal.classList.add("hidden");
+    }
 
+    function switchRoleTab(role) {
+      const clientBox = document.getElementById("client-dashboard-box");
+      const workerBox = document.getElementById("worker-dashboard-box");
+      const contractorBox = document.getElementById("contractor-dashboard-box");
+      const btnClient = document.getElementById("tab-btn-client");
+      const btnWorker = document.getElementById("tab-btn-worker");
+      const btnContractor = document.getElementById("tab-btn-contractor");
+
+      if (clientBox) clientBox.classList.add("hidden");
+      if (workerBox) workerBox.classList.add("hidden");
+      if (contractorBox) contractorBox.classList.add("hidden");
+
+      if (btnClient) btnClient.className = "flex-1 py-1.5 rounded-lg text-slate-600";
+      if (btnWorker) btnWorker.className = "flex-1 py-1.5 rounded-lg text-slate-600";
+      if (btnContractor) btnContractor.className = "flex-1 py-1.5 rounded-lg text-slate-600";
+
+      if (role === 'client') {
+        if (clientBox) clientBox.classList.remove("hidden");
+        if (btnClient) btnClient.className = "flex-1 py-1.5 rounded-lg bg-white text-slate-900 shadow-xs";
+        autoLoadClientIfSaved();
+      } else if (role === 'worker') {
+        if (workerBox) workerBox.classList.remove("hidden");
+        if (btnWorker) btnWorker.className = "flex-1 py-1.5 rounded-lg bg-white text-slate-900 shadow-xs";
+        try { handleStateChange('pw-state', 'pw-district', 'pw-block'); } catch(e){}
+        updateRegisterScreenView();
+      } else if (role === 'contractor') {
+        if (contractorBox) contractorBox.classList.remove("hidden");
+        if (btnContractor) btnContractor.className = "flex-1 py-1.5 rounded-lg bg-white text-slate-900 shadow-xs";
+        checkContractorStatus();
+      }
+    }
     // साइड ड्रॉअर व विज्ञापन फंक्शन्स
     function openShopDrawer() {
       const drawer = document.getElementById("shop-drawer");
