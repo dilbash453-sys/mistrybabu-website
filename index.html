@@ -3397,7 +3397,21 @@
       setRating(5);
       document.getElementById("review-modal").classList.remove("hidden");
     }
+function switchJobFeedTab(tab) {
+      currentJobFeedTab = tab;
+      const bNormal = document.getElementById("tab-feed-normal");
+      const bTheka = document.getElementById("tab-feed-theka");
+      if (!bNormal || !bTheka) return;
 
+      if (tab === 'normal') {
+        bNormal.className = "flex-1 py-1.5 rounded-lg bg-white text-slate-900 shadow-xs";
+        bTheka.className = "flex-1 py-1.5 rounded-lg text-slate-600";
+      } else {
+        bTheka.className = "flex-1 py-1.5 rounded-lg bg-white text-slate-900 shadow-xs";
+        bNormal.className = "flex-1 py-1.5 rounded-lg text-slate-600";
+      }
+      loadFullJobs();
+    
     function closeReviewModal() { document.getElementById("review-modal").classList.add("hidden"); }
 
     function setRating(num) {
