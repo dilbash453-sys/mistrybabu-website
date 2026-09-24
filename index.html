@@ -3499,26 +3499,101 @@
       });
     }
 
-    // 7. इनिशियलाइज़ेशन
+    // साइड ड्रॉअर व विज्ञापन फंक्शन्स
+    function openShopDrawer() {
+      const drawer = document.getElementById("shop-drawer");
+      const backdrop = document.getElementById("shop-drawer-backdrop");
+      if (drawer) drawer.classList.remove("translate-x-full");
+      if (backdrop) backdrop.classList.remove("hidden");
+      loadShopAds();
+    }
+
+    function closeShopDrawer() {
+      const drawer = document.getElementById("shop-drawer");
+      const backdrop = document.getElementById("shop-drawer-backdrop");
+      if (drawer) drawer.classList.add("translate-x-full");
+      if (backdrop) backdrop.classList.add("hidden");
+    }
+
+    function loadShopAds() {
+      const box = document.getElementById("shop-ads-container");
+      if (!box) return;
+      db.collection("shop_ads").where("isActive", "==", true).onSnapshot(snap => {
+        if (snap.empty) {
+          box.innerHTML = "<p class='text-xs text-slate-400 text-center py-8'>वर्तमान में कोई सक्रिय विज्ञापन नहीं है।</p>";
+          return;
+        }
+        let drawerHtml = "";
+        snap.forEach(doc => {
+          const ad = doc.data();
+          const imgUrl = ad.bannerUrl || 'https://placehold.co/100x100/2563eb/ffffff.png?text=Shop';
+          drawerHtml += `
+            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-3 shadow-xs space-y-2">
+              <div class="flex justify-between items-center">
+                <span class="text-[8px] bg-blue-600 text-white font-black px-1.5 py-0.5 rounded uppercase">⭐ स्पॉन्सर पार्टनर</span>
+                <span class="text-[9px] text-slate-500 font-bold">${ad.location}</span>
+              </div>
+              <div class="flex gap-2.5 items-center">
+                <img src="${imgUrl}" class="w-14 h-14 rounded-xl object-cover border border-blue-200 shrink-0">
+                <div>
+                  <h4 class="text-xs font-black text-slate-900">${ad.shopName}</h4>
+                  <p class="text-[10px] text-slate-600 leading-tight">${ad.description}</p>
+                </div>
+              </div>
+              <a href="tel:${ad.phone}" class="w-full bg-blue-600 text-white text-[11px] font-bold py-1.5 rounded-xl flex items-center justify-center gap-1 shadow-xs">
+                <i class="fa-solid fa-phone text-xs"></i>
+                <span>📞 डायरेक्ट दुकान कॉल करें</span>
+              </a>
+            </div>
+          `;
+        });
+        box.innerHTML = drawerHtml;
+      });
+    }
+
+    function checkContractorStatus() {
+      const appId = localStorage.getItem("mb_contractor_app_id");
+      if (!appId) return;
+      db.collection("contractor_applications").doc(appId).onSnapshot(doc => {
+        if (doc.exists) {
+          const d = doc.data();
+          const docBox = document.getElementById("con-step-doc-box");
+          const payBox = document.getElementById("con-step-pay-box");
+          const amtLabel = document.getElementById("con-pay-amount-label");
+          if (d.isEligible && d.status === "Approved_For_Payment") {
+            if (docBox) docBox.classList.add("hidden");
+            if (payBox) payBox.classList.remove("hidden");
+            const amt = d.contractorTier === 'vip' ? '₹14,999 (VIP जॉइनिंग)' : '₹3,000 (स्मॉल जॉइनिंग)';
+            if (amtLabel) amtLabel.innerText = `भुगतान राशि: ${amt}`;
+          }
+        }
+      });
+    }
+
+    // 7. सुरक्षित इनिशियलाइज़ेशन (पेज लोड)
     window.addEventListener('DOMContentLoaded', () => {
-      history.replaceState({ page: 'home' }, "", "#home");
-      getDeviceFingerprint();
-      renderCategories();
+      try { history.replaceState({ page: 'home' }, "", "#home"); } catch(e){}
+      try { getDeviceFingerprint(); } catch(e){}
+      try { renderCategories(); } catch(e){}
       
-      handleStateChange('home-state-filter', 'home-district-filter');
-      handleStateChange('pc-state', 'pc-district', 'pc-block');
-      handleStateChange('pw-state', 'pw-district', 'pw-block');
+      try {
+        handleStateChange('home-state-filter', 'home-district-filter');
+        handleStateChange('pc-state', 'pc-district', 'pc-block');
+        handleStateChange('pw-state', 'pw-district', 'pw-block');
+      } catch(e){}
 
       setTimeout(() => {
-        const defaultDist = document.getElementById("pw-district").value;
-        if (defaultDist) {
-          updateBlocks('pw-district', 'pw-block', 'pw-state');
-        }
+        try {
+          const defaultDist = document.getElementById("pw-district").value;
+          if (defaultDist) {
+            updateBlocks('pw-district', 'pw-block', 'pw-state');
+          }
+        } catch(e){}
       }, 150);
       
-      loadRecentJobs();
-      loadShopAds();
-      checkContractorStatus();
+      try { loadRecentJobs(); } catch(e){}
+      try { loadShopAds(); } catch(e){}
+      try { checkContractorStatus(); } catch(e){}
 
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
@@ -3530,19 +3605,21 @@
 
       const savedWorkerPhone = localStorage.getItem("mb_worker_phone");
       if (savedWorkerPhone) {
-        listenWorkerInbox("+91" + savedWorkerPhone);
+        try { listenWorkerInbox("+91" + savedWorkerPhone); } catch(e){}
       }
 
-      db.collection("settings").doc("announcement").onSnapshot(doc => {
-        const bar = document.getElementById("notice-bar");
-        const txt = document.getElementById("notice-text");
-        if (doc.exists && doc.data().active) {
-          txt.innerHTML = doc.data().text;
-          bar.classList.remove("hidden");
-        } else {
-          bar.classList.add("hidden");
-        }
-      }, err => console.log(err));
+      try {
+        db.collection("settings").doc("announcement").onSnapshot(doc => {
+          const bar = document.getElementById("notice-bar");
+          const txt = document.getElementById("notice-text");
+          if (doc.exists && doc.data().active) {
+            txt.innerHTML = doc.data().text;
+            bar.classList.remove("hidden");
+          } else {
+            bar.classList.add("hidden");
+          }
+        }, err => console.log(err));
+      } catch(e){}
     });
     function openShopDrawer() {
       const drawer = document.getElementById("shop-drawer");
