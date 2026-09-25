@@ -324,13 +324,43 @@
           </div>
           <textarea id="pc-desc" rows="2" placeholder="काम के बारे में समझाकर लिखें..." class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs focus:outline-none"></textarea>
         </div>
-
+<!-- पहचान पत्र (Front & Back) अपलोड करने का बॉक्स -->
+<div class="bg-slate-50 p-2.5 rounded-xl border border-dashed border-slate-300 mt-3 mb-3">
+  <label class="block text-[11px] font-bold text-slate-700 mb-1">पहचान पत्र (Front & Back) अपलोड करें *</label>
+  
+  <div class="space-y-2">
+    <div>
+      <span class="text-[10px] text-slate-500">सामने का भाग (Front Photo):</span>
+      <input type="file" id="doc-front-file" accept="image/*" class="w-full text-xs p-1.5 border border-slate-300 rounded-lg bg-white">
+    </div>
+    <div>
+      <span class="text-[10px] text-slate-500">पीछे का भाग (Back Photo):</span>
+      <input type="file" id="doc-back-file" accept="image/*" class="w-full text-xs p-1.5 border border-slate-300 rounded-lg bg-white">
+    </div>
+  </div>
+</div>
         <button type="submit" id="btn-post-job" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold py-2.5 rounded-xl text-xs shadow-xs transition">
           काम पोस्ट करें
         </button>
       </form>
     </div>
-  </section>
+ </form>
+  </div>
+</section>
+
+<!-- ⬇️ इस जगह पर (लाइन 348 के आसपास) अपना एडमिन पैनल वाला HTML कोड यहाँ पेस्ट कर दें ⬇️ -->
+<div class="bg-white p-4 rounded-xl shadow-md border border-slate-200 mt-4">
+  <h3 class="text-sm font-bold text-slate-800 mb-2">🛠️ एडमिन पैनल - पहचान सत्यापन</h3>
+  <button onclick="loadAdminVerifications()" class="w-full bg-slate-800 text-white text-xs font-bold py-2 rounded-lg mb-3">
+    🔄 पेंडिंग वेरिफिकेशन लिस्ट लोड करें
+  </button>
+  <div id="admin-pending-list" class="space-y-2">
+    <p class="text-xs text-slate-500">लिस्ट देखने के लिए ऊपर दिए गए बटन पर क्लिक करें।</p>
+  </div>
+</div>
+
+<!-- =================== PAGE 5: DASHBOARD =================== -->
+<section id="page-register" class="max-w-md mx-auto px-4 py-4 space-y-4 hidden"> </section>
 
   <!-- ==================== PAGE 5: DASHBOARD ==================== -->
   <section id="page-register" class="max-w-md mx-auto px-4 py-4 space-y-4 hidden">
@@ -3749,7 +3779,91 @@ function openTermsModal() {
       localStorage.setItem('device_fingerprint', fingerprint);
     }
     return fingerprint;
+   // यहाँ अपना अपलोड और एडमिन वेरिफिकेशन वाला जावास्क्रिप्ट कोड पेस्ट कर दें:
+  async function uploadAndRegisterUser() {
+    const frontFile = document.getElementById("doc-front-file").files[0];
+    const backFile = document.getElementById("doc-back-file").files[0];
+
+    if (!frontFile || !backFile) {
+      alert("⚠️ कृपया पहचान पत्र का दोनों (Front और Back) फोटो चुनें।");
+      return;
     }
+
+    try {
+      alert("⏳ फाइल अपलोड हो रही है, कृपया प्रतीक्षा करें...");
+
+      const frontRef = firebase.storage().ref('documents/front_' + Date.now() + '_' + frontFile.name);
+      const frontSnap = await frontRef.put(frontFile);
+      const frontUrl = await frontSnap.ref.getDownloadURL();
+
+      const backRef = firebase.storage().ref('documents/back_' + Date.now() + '_' + backFile.name);
+      const backSnap = await backRef.put(backFile);
+      const backUrl = await backSnap.ref.getDownloadURL();
+
+      await db.collection("contractor_applications").add({
+        frontPhotoUrl: frontUrl,
+        backPhotoUrl: backUrl,
+        status: "Pending",
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      alert("✅ रजिस्ट्रेशन और डॉक्यूमेंट सफलतापूर्वक जमा हो गया!");
+      document.getElementById("doc-front-file").value = "";
+      document.getElementById("doc-back-file").value = "";
+
+    } catch (error) {
+      alert("❌ त्रुटि: " + error.message);
+    }
+  } }
+    // एडमिन पैनल में पेंडिंग लिस्ट लोड करने का फंक्शन
+  function loadAdminVerifications() {
+    const container = document.getElementById("admin-pending-list");
+    if (!container) return;
+    
+    container.innerHTML = "<p class='text-xs text-slate-500'>लोड हो रहा है...</p>";
+
+    db.collection("contractor_applications").where("status", "==", "Pending").get().then((snapshot) => {
+      container.innerHTML = "<h3 class='text-sm font-bold text-slate-800 mb-2'>पेंडिंग वेरिफिकेशन लिस्ट</h3>";
+      
+      if (snapshot.empty) {
+        container.innerHTML += "<p class='text-xs text-slate-500'>कोई नया वेरिफिकेशन नहीं है।</p>";
+        return;
+      }
+
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+        const docId = doc.id;
+
+        const card = document.createElement("div");
+        card.className = "bg-white p-3 border rounded-lg shadow-sm space-y-2 mb-2";
+        card.innerHTML = `
+          <p class='text-xs font-bold text-slate-700'>आईडी: ${docId.substring(0, 8)}...</p>
+          <div class='flex gap-2'>
+            <a href="${data.frontPhotoUrl || '#'}" target="_blank" class='bg-blue-500 text-white px-2 py-1 rounded text-xs'>👁️ Front फोटो देखें</a>
+            <a href="${data.backPhotoUrl || '#'}" target="_blank" class='bg-blue-600 text-white px-2 py-1 rounded text-xs'>👁️ Back फोटो देखें</a>
+          </div>
+          <button onclick="approveAdminUser('${docId}')" class='w-full bg-green-600 text-white text-xs font-bold py-1.5 rounded mt-1'>
+            ✅ OK / सत्यापित करें
+          </button>
+        `;
+        container.appendChild(card);
+      });
+    });
+  }
+
+  // एडमिन द्वारा वेरिफाई (OK) करने का फंक्शन
+  function approveAdminUser(docId) {
+    db.collection("contractor_applications").doc(docId).update({
+      status: "Verified",
+      isEligible: true,
+      verifiedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }).then(() => {
+      alert("✅ सफलतापूर्वक सत्यापित (Verify) कर दिया गया है!");
+      loadAdminVerifications();
+    }).catch((error) => {
+      alert("त्रुटि: " + error.message);
+    });
+  }
   </script>
   <!-- दुकान पार्टनर साइड-ड्रॉअर -->
   <div id="shop-drawer" class="fixed inset-y-0 right-0 max-w-sm w-full bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
