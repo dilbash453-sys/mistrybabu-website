@@ -348,25 +348,21 @@
   </div>
 </section>
 
-
 <!-- =================== PAGE 5: DASHBOARD =================== -->
-<section id="page-register" class="max-w-md mx-auto px-4 py-4 space-y-4 hidden"> </section>
+<!-- PAGE 5: DASHBOARD -->
+<section id="page-register" class="max-w-md mx-auto px-4 py-4 space-y-4">
+  <div class="flex bg-slate-200 p-1 rounded-xl text-xs font-bold">
+    <button onclick="switchRoleTab('client')" id="tab-btn-client" class="flex-1 py-1.5 rounded-lg bg-white text-slate-800">
+      ग्राहक खाता 👤
+    </button>
+    <button onclick="switchRoleTab('worker')" id="tab-btn-worker" class="flex-1 py-1.5 rounded-lg text-slate-600">
+      मिस्त्री खाता 🛠️
+    </button>
+    <button onclick="switchRoleTab('contractor')" id="tab-btn-contractor" class="flex-1 py-1.5 rounded-lg text-slate-600">
+      ठेकेदार VIP 👑
+    </button>
 
-  <!-- ==================== PAGE 5: DASHBOARD ==================== -->
-  <section id="page-register" class="max-w-md mx-auto px-4 py-4 space-y-4 hidden">
-    <div class="flex bg-slate-200 p-1 rounded-xl text-xs font-bold">
-      <button onclick="switchRoleTab('client')" id="tab-btn-client" class="flex-1 py-1.5 rounded-lg bg-white text-slate-900 shadow-xs">
-        ग्राहक खाता 🏠
-      </button>
-      <button onclick="switchRoleTab('worker')" id="tab-btn-worker" class="flex-1 py-1.5 rounded-lg text-slate-600">
-        मिस्त्री खाता 🛠️
-      </button>
-      <button onclick="switchRoleTab('contractor')" id="tab-btn-contractor" class="flex-1 py-1.5 rounded-lg text-slate-600">
-        ठेकेदारी VIP 👑
-      </button>
-    </div>
-
-    <!-- 1. CUSTOMER DASHBOARD (KYC OPTIONAL + VERIFIED BADGE) -->
+<!-- 1. CUSTOMER DASHBOARD (KYC OPTIONAL + VERIFIED BADGE) -->
     <div id="client-dashboard-box" class="space-y-4 block">
       <div class="bg-blue-50/70 p-3.5 rounded-2xl border border-blue-200 space-y-2 shadow-xs">
         <div class="flex items-center justify-between">
