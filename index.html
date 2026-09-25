@@ -3545,38 +3545,38 @@ function openTermsModal() {
       const modal = document.getElementById("terms-modal");
       if (modal) modal.classList.add("hidden");
     }
-
-    function switchRoleTab(role) {
+function switchRoleTab(role) {
       const clientBox = document.getElementById("client-dashboard-box");
       const workerBox = document.getElementById("worker-dashboard-box");
       const contractorBox = document.getElementById("contractor-dashboard-box");
+
       const btnClient = document.getElementById("tab-btn-client");
       const btnWorker = document.getElementById("tab-btn-worker");
       const btnContractor = document.getElementById("tab-btn-contractor");
 
-      if (clientBox) clientBox.classList.add("hidden");
-      if (workerBox) workerBox.classList.add("hidden");
-      if (contractorBox) contractorBox.classList.add("hidden");
+      if (!clientBox || !workerBox || !contractorBox) return;
 
-      if (btnClient) btnClient.className = "flex-1 py-1.5 rounded-lg text-slate-600";
-      if (btnWorker) btnWorker.className = "flex-1 py-1.5 rounded-lg text-slate-600";
-      if (btnContractor) btnContractor.className = "flex-1 py-1.5 rounded-lg text-slate-600";
+      // सभी बॉक्स को छिपाएं
+      clientBox.style.display = "none";
+      workerBox.style.display = "none";
+      contractorBox.style.display = "none";
 
+      if(btnClient) btnClient.className = "flex-1 py-2 text-center rounded-lg text-slate-600 font-bold text-xs bg-slate-200";
+      if(btnWorker) btnWorker.className = "flex-1 py-2 text-center rounded-lg text-slate-600 font-bold text-xs bg-slate-200";
+      if(btnContractor) btnContractor.className = "flex-1 py-2 text-center rounded-lg text-slate-600 font-bold text-xs bg-slate-200";
+
+      // चुनी गई भूमिका को तुरंत दिखाएं
       if (role === 'client') {
-        if (clientBox) clientBox.classList.remove("hidden");
-        if (btnClient) btnClient.className = "flex-1 py-1.5 rounded-lg bg-white text-slate-900 shadow-xs";
-        autoLoadClientIfSaved();
+        clientBox.style.display = "block";
+        if(btnClient) btnClient.className = "flex-1 py-2 text-center rounded-lg bg-white text-slate-800 shadow-xs font-bold text-xs";
       } else if (role === 'worker') {
-        if (workerBox) workerBox.classList.remove("hidden");
-        if (btnWorker) btnWorker.className = "flex-1 py-1.5 rounded-lg bg-white text-slate-900 shadow-xs";
-        try { handleStateChange('pw-state', 'pw-district', 'pw-block'); } catch(e){}
-        updateRegisterScreenView();
+        workerBox.style.display = "block";
+        if(btnWorker) btnWorker.className = "flex-1 py-2 text-center rounded-lg bg-white text-slate-800 shadow-xs font-bold text-xs";
       } else if (role === 'contractor') {
-        if (contractorBox) contractorBox.classList.remove("hidden");
-        if (btnContractor) btnContractor.className = "flex-1 py-1.5 rounded-lg bg-white text-slate-900 shadow-xs";
-        checkContractorStatus();
+        contractorBox.style.display = "block";
+        if(btnContractor) btnContractor.className = "flex-1 py-2 text-center rounded-lg bg-white text-slate-800 shadow-xs font-bold text-xs";
       }
-    }
+}
     // साइड ड्रॉअर व विज्ञापन फंक्शन्स
     function openShopDrawer() {
       const drawer = document.getElementById("shop-drawer");
