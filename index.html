@@ -3857,6 +3857,28 @@ function openTermsModal() {
       alert("त्रुटि: " + error.message);
     });
   }
+    // मिस्त्री के अधूरे फॉर्म को एडिट करने और पुराना डेटा लोड करने का फंक्शन
+function unlockworkerFormForEdit() {
+  const dashBox = document.getElementById('worker-dashboard-box');
+  if(dashBox) dashBox.classList.add('hidden');
+  
+  const regPage = document.getElementById('page-register');
+  if(regPage) regPage.classList.remove('hidden');
+  
+  if(typeof switchRoleTab === 'function') {
+    switchRoleTab('worker');
+  }
+
+  const savedName = localStorage.getItem('mb_worker_name');
+  const savedPhone = localStorage.getItem('mb_worker_phone');
+
+  if(document.getElementById('worker-name') && savedName) {
+    document.getElementById('worker-name').value = savedName;
+  }
+  if(document.getElementById('worker-phone') && savedPhone) {
+    document.getElementById('worker-phone').value = savedPhone;
+  }
+}
   </script>
   <!-- दुकान पार्टनर साइड-ड्रॉअर -->
   <div id="shop-drawer" class="fixed inset-y-0 right-0 max-w-sm w-full bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
