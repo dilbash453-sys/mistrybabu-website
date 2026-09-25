@@ -3742,6 +3742,13 @@ function openTermsModal() {
           }
         }
       });
+    }function getDeviceFingerprint() {
+    let fingerprint = localStorage.getItem('device_fingerprint');
+    if (!fingerprint) {
+      fingerprint = 'FP_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
+      localStorage.setItem('device_fingerprint', fingerprint);
+    }
+    return fingerprint;
     }
   </script>
   <!-- दुकान पार्टनर साइड-ड्रॉअर -->
