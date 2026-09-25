@@ -3545,7 +3545,8 @@ function openTermsModal() {
       const modal = document.getElementById("terms-modal");
       if (modal) modal.classList.add("hidden");
     }
-function switchRoleTab(role) {
+
+    function switchRoleTab(role) {
       const clientBox = document.getElementById("client-dashboard-box");
       const workerBox = document.getElementById("worker-dashboard-box");
       const contractorBox = document.getElementById("contractor-dashboard-box");
@@ -3565,18 +3566,20 @@ function switchRoleTab(role) {
       if(btnWorker) btnWorker.className = "flex-1 py-2 text-center rounded-lg text-slate-600 font-bold text-xs bg-slate-200";
       if(btnContractor) btnContractor.className = "flex-1 py-2 text-center rounded-lg text-slate-600 font-bold text-xs bg-slate-200";
 
-      // चुनी गई भूमिका को तुरंत दिखाएं
+      // चुनी गई भूमिका को तुरंत दिखाएं और डेटा रिफ्रेश करें
       if (role === 'client') {
         clientBox.style.display = "block";
         if(btnClient) btnClient.className = "flex-1 py-2 text-center rounded-lg bg-white text-slate-800 shadow-xs font-bold text-xs";
       } else if (role === 'worker') {
         workerBox.style.display = "block";
         if(btnWorker) btnWorker.className = "flex-1 py-2 text-center rounded-lg bg-white text-slate-800 shadow-xs font-bold text-xs";
+        if(typeof updateRegisterScreenView === 'function') { updateRegisterScreenView(); }
       } else if (role === 'contractor') {
         contractorBox.style.display = "block";
         if(btnContractor) btnContractor.className = "flex-1 py-2 text-center rounded-lg bg-white text-slate-800 shadow-xs font-bold text-xs";
+        if(typeof checkContractorStatus === 'function') { checkContractorStatus(); }
       }
-}
+    }
     // साइड ड्रॉअर व विज्ञापन फंक्शन्स
     function openShopDrawer() {
       const drawer = document.getElementById("shop-drawer");
