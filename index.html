@@ -348,16 +348,6 @@
   </div>
 </section>
 
-<!-- ⬇️ इस जगह पर (लाइन 348 के आसपास) अपना एडमिन पैनल वाला HTML कोड यहाँ पेस्ट कर दें ⬇️ -->
-<div class="bg-white p-4 rounded-xl shadow-md border border-slate-200 mt-4">
-  <h3 class="text-sm font-bold text-slate-800 mb-2">🛠️ एडमिन पैनल - पहचान सत्यापन</h3>
-  <button onclick="loadAdminVerifications()" class="w-full bg-slate-800 text-white text-xs font-bold py-2 rounded-lg mb-3">
-    🔄 पेंडिंग वेरिफिकेशन लिस्ट लोड करें
-  </button>
-  <div id="admin-pending-list" class="space-y-2">
-    <p class="text-xs text-slate-500">लिस्ट देखने के लिए ऊपर दिए गए बटन पर क्लिक करें।</p>
-  </div>
-</div>
 
 <!-- =================== PAGE 5: DASHBOARD =================== -->
 <section id="page-register" class="max-w-md mx-auto px-4 py-4 space-y-4 hidden"> </section>
@@ -811,9 +801,16 @@
         </button>
       </div>
 
-      <!-- Admin Main View -->
       <div id="admin-main-view" class="p-3.5 space-y-3 overflow-y-auto flex-1 hidden text-xs">
-        <div class="flex items-center justify-between bg-slate-100 p-2 rounded-xl">
+       <div class="bg-white p-4 rounded-xl shadow-md border border-slate-200 mb-3">
+    <h3 class="text-sm font-bold text-slate-800 mb-2">🛠️ एडमिन पैनल - पहचान सत्यापन</h3>
+    <button onclick="loadAdminVerifications()" class="w-full bg-slate-800 text-white text-xs font-bold py-2 rounded-lg mb-3">
+      🔄 पेंडिंग वेरिफिकेशन लिस्ट लोड करें
+    </button>
+    <div id="admin-pending-list" class="space-y-2">
+      <p class="text-xs text-slate-500">लिस्ट देखने के लिए ऊपर दिए गए बटन पर क्लिक करें।</p>
+    </div>
+  </div> <div class="flex items-center justify-between bg-slate-100 p-2 rounded-xl">
           <span class="text-[10px] text-slate-600">लॉगिन ऑपरेटर: <strong id="lbl-active-operator" class="text-slate-900">dilbas</strong></span>
           <button onclick="adminLogout()" class="text-[9px] text-rose-600 font-bold">लॉगआउट</button>
         </div>
