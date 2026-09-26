@@ -23,7 +23,6 @@
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-  <!-- Firebase Analytics SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-analytics.js"></script>
   <style>
     .no-scrollbar::-webkit-scrollbar { display: none; }
@@ -71,7 +70,6 @@
       <span>⚠️ <strong>सुरक्षा सूचना:</strong> काम शुरू होने से पहले ऑनलाइन एडवांस न दें। साइट पर काम देखकर ही भुगतान करें।</span>
     </div>
   </div>
-
   <!-- ==================== PAGE 1: HOME SCREEN ==================== -->
   <section id="page-home" class="max-w-md mx-auto px-4 py-4 space-y-5 block">
     <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-xs space-y-2">
@@ -418,7 +416,6 @@
 
       <div id="client-posts-list" class="space-y-3"></div>
     </div>
-
     <!-- 2. WORKER DASHBOARD -->
     <div id="worker-dashboard-box" class="space-y-4 hidden">
       <div class="bg-amber-50 border border-amber-300 rounded-2xl p-3 shadow-xs">
@@ -614,7 +611,6 @@
         </div>
       </div>
     </div>
-
     <!-- 3. CONTRACTOR TIERED VIP DASHBOARD -->
     <div id="contractor-dashboard-box" class="space-y-4 hidden">
       <div class="bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 p-4 rounded-2xl shadow-sm">
@@ -725,8 +721,9 @@
         </form>
       </div>
     </div>
-            </section>
-            <!-- ==================== SIDE DRAWER: LOCAL SHOP PARTNERS ==================== -->
+    
+  </section>
+  <!-- ==================== SIDE DRAWER: LOCAL SHOP PARTNERS ==================== -->
   <div id="shop-drawer" class="fixed inset-y-0 right-0 max-w-sm w-full bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
     <div class="p-4 bg-blue-600 text-white flex justify-between items-center shadow-md">
       <div class="flex items-center gap-2">
@@ -1092,8 +1089,8 @@
         <button onclick="closeReviewModal()" class="flex-1 bg-slate-100 text-slate-600 font-bold py-1.5 rounded-lg text-xs">रद्द करें</button>
       </div>
     </div>
-  </div>
-  <!-- Terms & Conditions Modal -->
+          </div>
+          <!-- Terms & Conditions Modal -->
   <div id="terms-modal" class="fixed inset-0 bg-slate-900/70 z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-md w-full p-5 shadow-2xl relative max-h-[85vh] flex flex-col">
       <div class="flex justify-between items-center pb-2 border-b border-slate-100 mb-3">
@@ -1147,6 +1144,7 @@
       <span id="nav-reg-text" class="text-[9px] font-bold mt-0.5">प्रोफ़ाइल</span>
     </button>
   </nav>
+
   <!-- ==================== JavaScript Code ==================== -->
   <script>
     let logoClickCount = 0;
@@ -1468,6 +1466,7 @@
         reader.onerror = error => reject(error);
       });
     }
+
     // 1. ग्राहक KYC (ऐच्छिक) और काम पोस्ट
     async function saveClientKYC() {
       const phoneInput = document.getElementById("dash-client-phone").value.trim();
@@ -1933,7 +1932,7 @@
               data.id = docRef.id;
               setLoggedInWorker(data);
               localStorage.setItem("mb_device_locked_role", "worker");
-              alert(`बधाई हो! आपकी मिस्त्री प्रोफ़ाइल तुरंत लाइव हो गई है।\nमिस्त्री ID: ${proId}`);
+              alert(`बधाई हो! आपकी मिस्त्री प्रोफ़ाइल तुरंत लाइव हो गई है。\nमिस्त्री ID: ${proId}`);
             });
           }
         }).catch(err => {
@@ -3441,7 +3440,7 @@
     }
 
     function promptMistriBoost49() {
-      const utr = prompt("⚡ ₹49 टॉप प्रोफ़ाइल प्लान:\n7 दिन तक लिस्ट में सबसे ऊपर दिखें。\n\nUPI (mistrybabu@upi) पर ₹49 भेजकर 12-अंकों का UTR नंबर यहाँ दर्ज करें:");
+      const utr = prompt("⚡ ₹49 टॉप प्रोफ़ाइल प्लान:\n7 दिन तक लिस्ट में सबसे ऊपर दिखें।\n\nUPI (mistrybabu@upi) पर ₹49 भेजकर 12-अंकों का UTR नंबर यहाँ दर्ज करें:");
       if (!utr || utr.trim().length !== 12) return alert("अमान्य UTR! कृपया 12 अंकों का वैध UTR नंबर दर्ज करें।");
       
       const phone = localStorage.getItem("mb_worker_phone");
@@ -3702,4 +3701,4 @@
     });
   </script>
 </body>
-</html>
+  </html>
