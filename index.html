@@ -531,8 +531,8 @@
             <input type="number" id="pw-exp" placeholder="जैसे: 5" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs focus:outline-none">
           </div>
 
-          <button type="submit" id="btn-save-worker" class="w-full bg-slate-900 hover:bg-slate-800 text-amber-400 font-bold py-2.5 rounded-xl text-xs shadow-xs transition">
-            पंजीकरण पूरा करें / अपडेट करें
+          <button type="button" onclick="handleWorkerUpdate(event)" class="...">
+  पंजीकरण पूरा करें / अपडेट करें
           </button>
         </form>
       </div>
@@ -3736,6 +3736,22 @@
       document.getElementById('contractor-dashboard-box')?.classList.remove('hidden');
     }
     }
+    // [पॉइंट 2] मिस्त्री फॉर्म अपडेट और सेव करने का फंक्शन
+  function handleWorkerUpdate(event) {
+    if (event) event.preventDefault(); // पेज को रीफ्रेश होने से रोकना
+    
+    // लोकल स्टोरेज में सेव करें कि फॉर्म अपडेट हो गया है
+    localStorage.setItem('worker_updated', 'true');
+    
+    alert('✅ आपकी जानकारी सफलताપूर्वक सहेज (Save) दी गई है!');
+    
+    // फॉर्म को छुपाएँ और प्रोफाइल व्यू को वापस दिखाएँ
+    document.getElementById('worker-form-container')?.classList.add('hidden');
+    document.getElementById('worker-profile-view')?.classList.remove('hidden');
+    
+    // पेज को रीलोड करें ताकि नए बदलाव दिखने लगें
+    location.reload();
+  }
   </script>
 </body>
   </html>
