@@ -63,7 +63,28 @@
       <span class="[writing-mode:vertical-rl] tracking-wider text-[11px] font-black">🏪 दुकान पार्टनर यहाँ है</span>
     </button>
   </div>
+<!-- [पॉइंट 6] दुकान विज्ञापन फॉर्म और दोहरे विकल्प -->
+<div id="shop-ad-form-box" class="space-y-3 bg-blue-50/70 p-4 rounded-2xl border border-blue-300 mt-4">
+  <h4 class="font-black text-blue-900 text-xs uppercase border-b border-blue-200 pb-2">🛍️ दुकान विज्ञापन और बैनर विवरण</h4>
+  
+  <div>
+    <label class="block text-[11px] font-bold text-slate-700 mb-1">दुकान या स्टोर का नाम *</label>
+    <input type="text" id="shop-name-input" required placeholder="जैसे: सोनम जनरल स्टोर" class="w-full rounded-xl border border-slate-300 p-2.5 text-xs bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+  </div>
 
+  <div>
+    <label class="block text-[11px] font-bold text-slate-700 mb-1">विज्ञापन का प्रकार चुनें (दोहरा विकल्प) *</label>
+    <select id="shop-ad-type" class="w-full rounded-xl border border-slate-300 p-2.5 text-xs bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+      <option value="banner">बैनर और साइनबोर्ड विज्ञापन</option>
+      <option value="offers">दुकान की दैनिक ऑफर्स / छूट सूची</option>
+    </select>
+  </div>
+
+  <div>
+    <label class="block text-[11px] font-bold text-slate-700 mb-1">दुकान का बोर्ड फोटो / बैनर अपलोड करें *</label>
+    <input type="file" id="shop-banner-doc" required accept="image/*" class="w-full text-[11px] text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-blue-100 file:text-blue-800 hover:file:bg-blue-200">
+  </div>
+</div>
   <!-- Anti-Fraud Advance Payment Notice -->
   <div class="max-w-md mx-auto px-4 pt-3">
     <div class="bg-red-50 border-l-4 border-red-500 p-2.5 rounded-r-xl text-[11px] text-red-900 flex items-center justify-between">
@@ -586,6 +607,39 @@
               <p class="text-[10px] text-slate-400 italic">कोई नया संदेश नहीं है।</p>
             </div>
           </div>
+          <!-- [पॉइंट 8] प्रोफाइल टॉप-अप और बैलेंस रिचार्ज बॉक्स -->
+<div id="box-profile-topup" class="bg-gradient-to-br from-amber-50 to-orange-50 p-4 rounded-2xl border border-amber-300 shadow-sm my-3 space-y-3">
+  <div class="flex items-center justify-between">
+    <div class="flex items-center space-x-2">
+      <span class="text-lg">⚡</span>
+      <h4 class="font-black text-xs text-slate-900 uppercase">प्रोफाइल टॉप-अप / कॉल बैलेंस</h4>
+    </div>
+    <span class="text-[10px] font-bold bg-amber-200 text-amber-900 px-2 py-0.5 rounded-full" id="user-current-balance">बैलेंस: ₹0</span>
+  </div>
+
+  <p class="text-[11px] text-slate-600">ग्राहकों से सीधे कॉल प्राप्त करने के लिए प्लान चुनें:</p>
+
+  <div class="grid grid-cols-3 gap-2 text-center">
+    <button type="button" onclick="selectTopupPlan(99)" class="p-2 bg-white rounded-xl border border-amber-200 hover:border-amber-500 hover:shadow-md transition-all">
+      <span class="block text-xs font-black text-slate-900">₹99</span>
+      <span class="text-[9px] text-slate-500 font-medium">10 कॉल्स</span>
+    </button>
+    
+    <button type="button" onclick="selectTopupPlan(199)" class="p-2 bg-amber-500 text-slate-950 rounded-xl border border-amber-600 shadow-sm hover:bg-amber-400 transition-all">
+      <span class="block text-xs font-black">₹199</span>
+      <span class="text-[9px] font-bold text-slate-900">25 कॉल्स (बेस्ट)</span>
+    </button>
+
+    <button type="button" onclick="selectTopupPlan(499)" class="p-2 bg-white rounded-xl border border-amber-200 hover:border-amber-500 hover:shadow-md transition-all">
+      <span class="block text-xs font-black text-slate-900">₹499</span>
+      <span class="text-[9px] text-slate-500 font-medium">असीमित (महीना)</span>
+    </button>
+  </div>
+
+  <button type="button" onclick="processTopupPayment()" class="w-full bg-slate-900 hover:bg-slate-800 text-amber-400 font-black py-2.5 rounded-xl text-xs transition-all shadow-md mt-2">
+    💳 तुरंत रिचार्ज / टॉप-अप करें
+  </button>
+</div>
 
           <div id="my-portfolio-section" class="border-b border-slate-100 pb-3">
             <span class="text-slate-500 font-bold block mb-1.5">मेरे पिछले काम की तस्वीरें:</span>
@@ -653,16 +707,35 @@
               <option value="small">🔨 स्मॉल ठेकेदार (जॉइनिंग ₹3,000 / रिन्यूअल ₹1,000 माह)</option>
               <option value="vip">👑 VIP ठेकेदार (जॉइनिंग ₹14,999 / रिन्यूअल ₹9,999 माह)</option>
             </select>
-         <!-- [पॉइंट 4] स्मॉल और VIP ठेकेदार के दस्तावेज़ चयन विकल्प -->
-    <div id="contractor-docs-toggle-box" class="mt-3 p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+        <!-- [पॉइंट 4 & 5] ठेकेदार टियर और अनिवार्य दस्तावेज़ विकल्प फॉर्म -->
+    <div id="contractor-docs-toggle-box" class="mt-3 p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
       <span class="block text-[11px] font-bold text-slate-800">📋 श्रेणी अनुसार दस्तावेज़ नियम:</span>
-      <p class="text-[10px] text-slate-600">
-        • <strong>स्मॉल ठेकेदार:</strong> साधारण पहचान पत्र (आईडी प्रूफ) आवश्यक है।<br>
-        • <strong>VIP ठेकेदार:</strong> सरकारी/फर्म लाइसेंस, पैन कार्ड और बैंक विवरण अनिवार्य है।
-      </p>
-    </div> </div>
+      
+      <!-- यदि स्मॉल ठेकेदार चुना गया -->
+      <div id="fields-tier-small" class="space-y-2.5">
+        <div>
+          <label class="block text-[10px] font-bold text-slate-700 mb-1">उद्यम रजिस्ट्रेशन नंबर (Udyam) *</label>
+          <input type="text" id="con-udyam-no" placeholder="उद्यम नंबर दर्ज करें" class="w-full rounded-lg border border-slate-300 p-2 text-xs bg-white outline-none focus:ring-1 focus:ring-amber-500">
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-slate-700 mb-1">पैन कार्ड नंबर और फोटो *</label>
+          <input type="text" id="con-small-pan" placeholder="पैन नंबर दर्ज करें" class="w-full rounded-lg border border-slate-300 p-2 text-xs bg-white mb-1.5 outline-none focus:ring-1 focus:ring-amber-500">
+          <input type="file" id="con-small-pan-doc" accept="image/*" class="w-full text-[10px] text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-slate-200 file:text-slate-800">
+        </div>
+      </div>
 
-          <div>
+      <!-- यदि VIP ठेकेदार चुना गया -->
+      <div id="fields-tier-vip" class="space-y-2.5 pt-2 border-t border-slate-200">
+        <div>
+          <label class="block text-[10px] font-bold text-amber-900 mb-1">⭐ कंपनी / फर्म का नाम (VIP) *</label>
+          <input type="text" id="con-vip-company" placeholder="अपनी फर्म का नाम दर्ज करें" class="w-full rounded-lg border border-amber-300 p-2 text-xs bg-white outline-none focus:ring-1 focus:ring-amber-500">
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-amber-900 mb-1">पैन कार्ड और सरकारी लाइसेंस / ठेका प्रमाण पत्र *</label>
+          <input type="file" id="con-vip-license-doc" accept="image/*,.pdf" class="w-full text-[10px] text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-amber-100 file:text-amber-800">
+        </div>
+      </div>
+    </div>
             <label class="block font-bold text-slate-700 mb-1">ठेकेदार / फ़र्म का नाम *</label>
             <input type="text" id="con-app-name" required placeholder="जैसे: राज कंस्ट्रक्शन या मोहन ठेकेदार" class="w-full rounded-lg border border-slate-300 p-2 text-xs">
           </div>
@@ -782,7 +855,41 @@
         </div>
         <h4 class="text-sm font-black text-slate-900">सुरक्षित एडमिन ऑपरेटर प्रवेश</h4>
         <p class="text-[10px] text-slate-500">केवल 3 अधिकृत व्यक्ति ही प्रवेश कर सकते हैं</p>
-        
+        <form autocomplete="off" onsubmit="handleAdminLogin(event)" class="space-y-3 pt-2">
+    <!-- ऑटो-फिल और हिंट रोकने के लिए छिपे हुए डमी इनपुट -->
+    <input type="text" style="display:none" autocomplete="username">
+    <input type="password" style="display:none" autocomplete="current-password">
+
+    <div>
+      <input type="text" 
+             id="admin-operator-name" 
+             name="admin_usr_random_field" 
+             autocomplete="off" 
+             value="" 
+             placeholder="अधिकृत नाम (dilbas / lehari / monu)" 
+             required 
+             class="w-full text-center rounded-xl border border-slate-300 p-2.5 text-xs bg-slate-50 focus:bg-white focus:ring-2 focus:ring-amber-500 outline-none">
+    </div>
+
+    <div class="relative">
+      <input type="password" 
+             id="admin-pin-input" 
+             name="admin_pwd_random_field" 
+             autocomplete="new-password" 
+             value="" 
+             placeholder="पासवर्ड (Pin)" 
+             required 
+             class="w-full text-center rounded-xl border border-slate-300 p-2.5 text-xs bg-slate-50 focus:bg-white focus:ring-2 focus:ring-amber-500 outline-none">
+      <button type="button" onclick="togglePassVisibility()" class="absolute right-2.5 top-3 text-slate-400 hover:text-slate-600">
+        <i class="fa-solid fa-eye text-xs"></i>
+      </button>
+    </div>
+
+    <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-amber-400 font-black py-2.5 rounded-xl text-xs transition-all shadow-md">
+      लॉगिन करें →
+    </button>
+  </form>
+      </div>
         <div class="space-y-2 max-w-[220px] mx-auto">
           <input type="text" id="admin-operator-name" placeholder="अधिकृत नाम (dilbas / lehari / monu)" class="w-full text-center text-xs font-bold border-2 border-slate-300 rounded-xl py-2 px-3 focus:border-amber-500 focus:outline-none">
           <div class="relative">
@@ -806,6 +913,30 @@
       <p class="text-xs text-slate-500">लिस्ट देखने के लिए ऊपर दिए गए बटन पर क्लिक करें।</p>
     </div>
   </div> 
+        <!-- [पॉइंट 10] एडमिन दस्तावेज़ सत्यापन और अप्रूवल पैनल -->
+<div id="admin-verification-panel" class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm my-2 space-y-2">
+  <div class="flex items-center justify-between border-b border-slate-100 pb-1.5">
+    <h4 class="font-black text-[11px] text-slate-900 uppercase">🛡️ एडमिन अप्रूवल रूम</h4>
+    <span class="text-[10px] font-bold bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">लंबित: <span id="pending-count">1</span></span>
+  </div>
+
+  <div class="space-y-2 text-xs">
+    <div class="p-2.5 bg-slate-50 rounded-lg border border-slate-200 flex items-center justify-between">
+      <div>
+        <p class="font-bold text-slate-900" id="verify-user-name">राज कुमार (VIP ठेकेदार)</p>
+        <p class="text-[10px] text-slate-500">उद्यम / पैन / लाइसेंस अपलोड किया गया</p>
+      </div>
+      <div class="flex space-x-1.5">
+        <button type="button" onclick="approveUserAccount('vip')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded-lg font-bold text-[10px] transition-all">
+          स्वीकृत
+        </button>
+        <button type="button" onclick="rejectUserAccount()" class="bg-rose-100 hover:bg-rose-200 text-rose-700 px-2 py-1 rounded-lg font-bold text-[10px] transition-all">
+          रद्द
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
   <div class="flex items-center justify-between bg-slate-100 p-2 rounded-xl">
           <span class="text-[10px] text-slate-600">लॉगिन ऑपरेटर: <strong id="lbl-active-operator" class="text-slate-900">dilbas</strong></span>
           <button onclick="adminLogout()" class="text-[9px] text-rose-600 font-bold">लॉगआउट</button>
@@ -3751,6 +3882,141 @@
     
     // पेज को रीलोड करें ताकि नए बदलाव दिखने लगें
     location.reload();
+  }
+    // [पॉइंट 5] स्मॉल ठेकेदार के लिए उद्यम और पैन अनिवार्य जाँच
+  function validateSmallContractorSubmission(event) {
+    const tierSelect = document.getElementById('con-app-tier');
+    if (tierSelect && tierSelect.value === 'small') {
+      const udyamNo = document.getElementById('con-udyam-no')?.value.trim();
+      const panNo = document.getElementById('con-small-pan')?.value.trim();
+      
+      if (!udyamNo) {
+        if (event) event.preventDefault();
+        alert('⚠️ स्मॉल ठेकेदार के लिए "उद्यम रजिस्ट्रेशन नंबर" भरना अनिवार्य है!');
+        document.getElementById('con-udyam-no')?.focus();
+        return false;
+      }
+      if (!panNo) {
+        if (event) event.preventDefault();
+        alert('⚠️ स्मॉल ठेकेदार के लिए "पैन कार्ड नंबर" भरना अनिवार्य है!');
+        document.getElementById('con-small-pan')?.focus();
+        return false;
+      }
+    }
+    return true;
+  }
+    // [पॉइंट 7] डैशबोर्ड और एडमिन पैनल फ़िल्टरिंग फंक्शन
+  function filterDashboardTab(category) {
+    // सभी सेक्शन को छुपाएँ
+    document.querySelectorAll('.dashboard-section').forEach(el => {
+      el.classList.add('hidden');
+    });
+
+    // चुनी गई श्रेणी के आधार पर संबंधित सेक्शन दिखाएँ
+    const targetBox = document.getElementById(`box-${category}`);
+    if (targetBox) {
+      targetBox.classList.remove('hidden');
+    }
+
+    // एक्टिव टैब का रंग या स्टाइल बदलें
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.classList.remove('bg-slate-900', 'text-white');
+      btn.classList.add('bg-slate-100', 'text-slate-700');
+    });
+
+    const activeBtn = document.getElementById(`btn-tab-${category}`);
+    if (activeBtn) {
+      activeBtn.classList.remove('bg-slate-100', 'text-slate-700');
+      activeBtn.classList.add('bg-slate-900', 'text-white');
+    }
+  }
+    // [पॉइंट 8] प्रोफाइल टॉप-अप और बैलेंस अपडेट करने का लॉजिक
+  let selectedPlanAmount = 199;
+
+  function selectTopupPlan(amount) {
+    selectedPlanAmount = amount;
+    alert('चुना गया प्लान: ₹' + amount);
+  }
+
+  function processTopupPayment() {
+    // डेमो / यूपीआई पेमेंट अलर्ट
+    alert('✅ ₹' + selectedPlanAmount + ' का टॉप-अप सफलतापूर्वक स्वीकृत हुआ!');
+    
+    // बैलेंस अपडेट करें
+    const balanceElem = document.getElementById('user-current-balance');
+    if (balanceElem) {
+      balanceElem.innerText = 'बैलेंस: ₹' + selectedPlanAmount;
+    }
+    
+    localStorage.setItem('wallet_balance', selectedPlanAmount);
+  }
+    // [पॉइंट 9] अधूरी जानकारी भरने और सही फॉर्म/डैशबोर्ड खोलने का उन्नत लॉजिक
+  function openRemainingDetailsForm() {
+    const userRole = localStorage.getItem('current_user_role') || 'worker';
+
+    // पहले सभी मुख्य प्रोफाइल और फॉर्म व्यू को छुपाएँ
+    document.getElementById('worker-profile-view')?.classList.add('hidden');
+    document.getElementById('client-form-box')?.classList.add('hidden');
+    document.getElementById('worker-form-container')?.classList.add('hidden');
+    document.getElementById('contractor-dashboard-box')?.classList.add('hidden');
+
+    // यूजर के रोल के अनुसार सटीक फॉर्म या डैशबोर्ड खोलें और सही जगह स्क्रॉल करें
+    if (userRole === 'client') {
+      const clientBox = document.getElementById('client-form-box');
+      if (clientBox) {
+        clientBox.classList.remove('hidden');
+        clientBox.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else if (userRole === 'worker') {
+      const workerBox = document.getElementById('worker-form-container');
+      if (workerBox) {
+        workerBox.classList.remove('hidden');
+        // सीधे आईडी प्रूफ वाले बॉक्स पर स्क्रीन ले जाएँ ताकि वह आईडी/कैटेगरी भर सके
+        const idCardBox = document.getElementById('box-pw-idcard');
+        if (idCardBox) {
+          idCardBox.scrollIntoView({ behavior: 'smooth' });
+        } else {
+          workerBox.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+    } else if (userRole === 'contractor') {
+      const contractorBox = document.getElementById('contractor-dashboard-box');
+      if (contractorBox) {
+        contractorBox.classList.remove('hidden');
+        contractorBox.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  }
+    // [पॉइंट 10] एडमिन द्वारा अकाउंट वेरीफाई और अप्रूव करने का लॉजिक
+  function approveUserAccount(tierType) {
+    alert('✅ आवेदन सफलतापूर्वक सत्यापित (Verify) और स्वीकृत कर दिया गया है!');
+    
+    // लोकल स्टोरेज में स्टेटस सेव करें ताकि यूजर का अकाउंट एक्टिव हो जाए
+    localStorage.setItem('account_verified', 'true');
+    localStorage.setItem('verification_tier', tierType);
+    
+    // पेंडिंग काउंटर को अपडेट करें
+    const countElem = document.getElementById('pending-count');
+    if (countElem) {
+      countElem.innerText = '0';
+    }
+  }
+
+  function rejectUserAccount() {
+    alert('⚠️ आवेदन अस्वीकार कर दिया गया है।');
+  }
+    // [पॉइंट 11] अंतिम सुरक्षा, इनिशियलाइज़ेशन और बग परीक्षण लॉजिक
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 पोर्टल पूरी तरह से लोड और सुरक्षित हो गया है!');
+    
+    // यदि वॉलेट बैलेंस पहले से सेव है तो उसे रिस्टोर करें
+    const savedBalance = localStorage.getItem('wallet_balance');
+    if (savedBalance) {
+      const balanceElem = document.getElementById('user-current-balance');
+      if (balanceElem) {
+        balanceElem.innerText = 'बैलेंस: ₹' + savedBalance;
+      }
+    }
   }
   </script>
 </body>
