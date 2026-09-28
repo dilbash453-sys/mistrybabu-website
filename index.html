@@ -4097,6 +4097,20 @@
       clientBox.classList.remove('hidden');
     }
   }
+     // [मास्टर फिक्स] सभी पेजों और टैब को दिखने योग्य बनाने के लिए
+  window.addEventListener('DOMContentLoaded', function() {
+    // सभी मुख्य पेजों की आईडी जिनकी क्लास hidden हो सकती है
+    const pageIds = ['page-home', 'page-register', 'client-dashboard-box', 'worker-profile-view', 'contractor-dashboard-box'];
+    
+    pageIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        // जो मेन सेक्शन हैं उन्हें दिखाएँ
+        el.classList.remove('hidden');
+      }
+    });
+    console.log('✅ सभी छिपे हुए सेक्शंस को एक्टिव कर दिया गया है।');
+  }
   </script>
 </body>
   </html>
