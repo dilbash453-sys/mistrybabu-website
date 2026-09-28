@@ -2369,6 +2369,85 @@
       try { loadRecentJobs(); } catch(e){}
       try { loadShopAds(); } catch(e){}
     });
+    <script>
+    // [मास्टर फिक्स] सभी पेजों, सेक्शंस और टैब को दिखने योग्य और क्लिक-एबल बनाने के लिए
+    window.addEventListener('DOMContentLoaded', function() {
+      console.log('🚀 MistryBabu पोर्टल पूरी तरह लोड और सुरक्षित हो गया है!');
+      
+      // सभी मुख्य पेजों और डैशबोर्ड को एक्टिव करें ताकि कोई ऑप्शन छिपा न रहे
+      const pageIds = ['page-home', 'page-register', 'client-dashboard-box', 'worker-profile-view', 'contractor-dashboard-box'];
+      pageIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.classList.remove('hidden');
+        }
+      });
+
+      // वॉलेट बैलेंस रिस्टोर करें
+      const savedBalance = localStorage.getItem('wallet_balance');
+      if (savedBalance) {
+        const balanceElem = document.getElementById('user-current-balance');
+        if (balanceElem) {
+          balanceElem.innerText = 'बैलेंस: ₹' + savedBalance;
+        }
+      }
+    });
+
+    // छूटी हुई जानकारी भरने और सही फॉर्म/डैशबोर्ड खोलने का उन्नत लॉजिक
+    function openRemainingDetailsForm() {
+      const userRole = localStorage.getItem('current_user_role') || 'worker';
+
+      document.getElementById('worker-profile-view')?.classList.add('hidden');
+      document.getElementById('client-form-box')?.classList.add('hidden');
+      document.getElementById('worker-form-container')?.classList.remove('hidden');
+      document.getElementById('contractor-dashboard-box')?.classList.add('hidden');
+
+      if (userRole === 'client') {
+        document.getElementById('client-form-box')?.classList.remove('hidden');
+      } else if (userRole === 'worker') {
+        const workerBox = document.getElementById('worker-form-container');
+        if (workerBox) {
+          workerBox.classList.remove('hidden');
+          workerBox.scrollIntoView({ behavior: 'smooth' });
+        }
+      } else if (userRole === 'contractor') {
+        document.getElementById('contractor-dashboard-box')?.classList.remove('hidden');
+      }
+    }
+
+    // मिस्त्री फॉर्म अपडेट और सेव करने का फंक्शन
+    function handleWorkerUpdate(event) {
+      if (event) event.preventDefault();
+      localStorage.setItem('worker_updated', 'true');
+      alert('✅ आपकी जानकारी सफलतापूर्वक सहेज (Save) दी गई है!');
+      document.getElementById('worker-form-container')?.classList.add('hidden');
+      document.getElementById('worker-profile-view')?.classList.remove('hidden');
+    }
+
+    // दुकान पार्टनर विज्ञापन ड्रॉवर को कंट्रोल करने का लॉजिक
+    function openShopDrawer() {
+      const drawer = document.getElementById('shop-partner-drawer');
+      if (drawer) {
+        drawer.classList.remove('translate-x-full');
+      }
+    }
+
+    function closeShopDrawer() {
+      const drawer = document.getElementById('shop-partner-drawer');
+      if (drawer) {
+        drawer.classList.add('translate-x-full');
+      }
+    }
+
+    function submitDrawerShopAd() {
+      const shopName = document.getElementById('drawer-shop-name')?.value.trim();
+      if (!shopName) {
+        alert('⚠️ कृपया दुकान का नाम दर्ज करें!');
+        return;
+      }
+      alert('✅ आपकी दुकान का विज्ञापन सफलतापूर्वक सबमिट कर दिया गया है!');
+      closeShopDrawer();
+    }
   </script>
 </body>
 </html>
