@@ -3922,7 +3922,7 @@
     // सभी सेक्शन को छुपाएँ
     document.querySelectorAll('.dashboard-section').forEach(el => {
       el.classList.add('hidden');
-    });
+    }
 
     // चुनी गई श्रेणी के आधार पर संबंधित सेक्शन दिखाएँ
     const targetBox = document.getElementById(`box-${category}`);
@@ -3934,7 +3934,7 @@
     document.querySelectorAll('.tab-btn').forEach(btn => {
       btn.classList.remove('bg-slate-900', 'text-white');
       btn.classList.add('bg-slate-100', 'text-slate-700');
-    });
+    }
 
     const activeBtn = document.getElementById(`btn-tab-${category}`);
     if (activeBtn) {
@@ -4056,7 +4056,7 @@
         balanceElem.innerText = 'बैलेंस: ₹' + savedBalance;
       }
     }
-  });
+  }
     // दुकान पार्टनर विज्ञापन ड्रॉवर को खोलने और बंद करने का लॉजिक
   function openShopDrawer() {
     const drawer = document.getElementById('shop-partner-drawer');
@@ -4081,43 +4081,21 @@
     alert('✅ आपकी दुकान का विज्ञापन सफलतापूर्वक सबमिट कर दिया गया है!');
     closeShopDrawer();
   }
-    // प्रोफाइल के अंदर ग्राहक, मिस्त्री और ठेकेदार टैब बदलने का लॉजिक
-  function switchProfileTab(role) {
-    // सभी प्रोफाइल फॉर्म छुपाएँ
-    document.querySelectorAll('.profile-form-box').forEach(el => {
-      el.classList.add('hidden');
-    });
-
-    // सभी टैब बटन के रंग रीसेट करें
-    ['client', 'worker', 'contractor'].forEach(r => {
-      const btn = document.getElementById(`prof-btn-${r}`);
-      if (btn) {
-        btn.classList.remove('bg-slate-900', 'text-white', 'bg-amber-500', 'bg-blue-600');
-        btn.classList.add('text-slate-700');
-      }
-    });
-
-    // चुने गए रोल का फॉर्म और बटन एक्टिव करें
-    const targetForm = document.getElementById(`prof-form-${role}`);
-    const targetBtn = document.getElementById(`prof-btn-${role}`);
-
-    if (targetForm) targetForm.classList.remove('hidden');
-    if (targetBtn) {
-      targetBtn.classList.remove('text-slate-700');
-      if (role === 'client') targetBtn.classList.add('bg-slate-900', 'text-white');
-      if (role === 'worker') targetBtn.classList.add('bg-amber-500', 'text-slate-950');
-      if (role === 'contractor') targetBtn.classList.add('bg-blue-600', 'text-white');
+    // [अंतिम और पक्का समाधान] पेज लोड होते ही सही डैशबोर्ड और टैब दिखने का लॉजिक
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log('🔄 पोर्टल शुरू हो रहा है...');
+    
+    // यदि कोई रजिस्ट्रेशन या डैशबोर्ड पेज छिपा है, तो उसे मुख्य दृश्य में लाएँ
+    const registerPage = document.getElementById('page-register');
+    if (registerPage) {
+      registerPage.classList.remove('hidden');
     }
-  }
 
-  function saveProfileClient() {
-    alert('✅ ग्राहक प्रोफाइल सफलतापूर्वक सहेजी गई!');
-  }
-  function saveProfileWorker() {
-    alert('✅ मिस्त्री प्रोफाइल सफलतापूर्वक सहेजी गई!');
-  }
-  function saveProfileContractor() {
-    alert('✅ VIP ठेकेदार प्रोफाइल सफलतापूर्वक सहेजी गई!');
+    // डिफ़ॉल्ट रूप से ग्राहक खाता (Client) वाला बॉक्स एक्टिव करें
+    const clientBox = document.getElementById('client-dashboard-box');
+    if (clientBox) {
+      clientBox.classList.remove('hidden');
+    }
   }
   </script>
 </body>
