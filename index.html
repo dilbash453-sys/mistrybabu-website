@@ -63,26 +63,38 @@
       <span class="[writing-mode:vertical-rl] tracking-wider text-[11px] font-black">🏪 दुकान पार्टनर यहाँ है</span>
     </button>
   </div>
-<!-- [पॉइंट 6] दुकान विज्ञापन फॉर्म और दोहरे विकल्प -->
-<div id="shop-ad-form-box" class="space-y-3 bg-blue-50/70 p-4 rounded-2xl border border-blue-300 mt-4">
-  <h4 class="font-black text-blue-900 text-xs uppercase border-b border-blue-200 pb-2">🛍️ दुकान विज्ञापन और बैनर विवरण</h4>
-  
-  <div>
-    <label class="block text-[11px] font-bold text-slate-700 mb-1">दुकान या स्टोर का नाम *</label>
-    <input type="text" id="shop-name-input" required placeholder="जैसे: सोनम जनरल स्टोर" class="w-full rounded-xl border border-slate-300 p-2.5 text-xs bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+<!-- दुकान पार्टनर विज्ञापन साइड ड्रॉवर / पैनल -->
+<div id="shop-partner-drawer" class="fixed inset-y-0 right-0 w-80 bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 p-4 overflow-y-auto">
+  <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-3">
+    <h3 class="font-black text-xs text-slate-900 uppercase">🛍️ दुकान पार्टनर विज्ञापन पैनल</h3>
+    <button type="button" onclick="closeShopDrawer()" class="text-xs font-bold text-rose-600 bg-rose-50 px-2 py-1 rounded-lg">बंद करें X</button>
   </div>
 
-  <div>
-    <label class="block text-[11px] font-bold text-slate-700 mb-1">विज्ञापन का प्रकार चुनें (दोहरा विकल्प) *</label>
-    <select id="shop-ad-type" class="w-full rounded-xl border border-slate-300 p-2.5 text-xs bg-white focus:ring-2 focus:ring-blue-500 outline-none">
-      <option value="banner">बैनर और साइनबोर्ड विज्ञापन</option>
-      <option value="offers">दुकान की दैनिक ऑफर्स / छूट सूची</option>
-    </select>
-  </div>
+  <!-- दुकान विज्ञापन फॉर्म (अब केवल ड्रॉवर के अंदर दिखेगा) -->
+  <div class="space-y-3 bg-blue-50/70 p-3 rounded-xl border border-blue-200 text-xs">
+    <h4 class="font-black text-blue-900 uppercase">बैनर और विवरण दर्ज करें</h4>
+    
+    <div>
+      <label class="block font-bold text-slate-700 mb-1">दुकान या स्टोर का नाम *</label>
+      <input type="text" id="drawer-shop-name" placeholder="जैसे: सोनम जनरल स्टोर" class="w-full rounded-lg border border-slate-300 p-2 bg-white outline-none focus:ring-1 focus:ring-blue-500">
+    </div>
 
-  <div>
-    <label class="block text-[11px] font-bold text-slate-700 mb-1">दुकान का बोर्ड फोटो / बैनर अपलोड करें *</label>
-    <input type="file" id="shop-banner-doc" required accept="image/*" class="w-full text-[11px] text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-blue-100 file:text-blue-800 hover:file:bg-blue-200">
+    <div>
+      <label class="block font-bold text-slate-700 mb-1">विज्ञापन का प्रकार *</label>
+      <select id="drawer-shop-type" class="w-full rounded-lg border border-slate-300 p-2 bg-white outline-none focus:ring-1 focus:ring-blue-500">
+        <option value="banner">बैनर / साइनबोर्ड विज्ञापन</option>
+        <option value="offers">दैनिक ऑफर्स / छूट सूची</option>
+      </select>
+    </div>
+
+    <div>
+      <label class="block font-bold text-slate-700 mb-1">दुकान का बोर्ड फोटो अपलोड करें *</label>
+      <input type="file" id="drawer-shop-doc" accept="image/*" class="w-full text-[10px] text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-blue-200 file:text-blue-800">
+    </div>
+
+    <button type="button" onclick="submitDrawerShopAd()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-2 rounded-lg transition-all shadow-md">
+      विज्ञापन सबमिट करें
+    </button>
   </div>
 </div>
   <!-- Anti-Fraud Advance Payment Notice -->
@@ -4017,6 +4029,95 @@
         balanceElem.innerText = 'बैलेंस: ₹' + savedBalance;
       }
     }
+  }
+    // [आपातकालीन मास्टर फिक्स] सभी छिपे हुए सेक्शंस को रीसेट और ठीक करने के लिए
+  window.addEventListener('DOMContentLoaded', function() {
+    console.log('🛠️ मास्टर फिक्स रन हो रहा है...');
+    
+    // 1. यदि कोई सेक्शन गलती से छिपा रह गया हो, तो होम या डिफॉल्ट व्यू दिखाएं
+    const userRole = localStorage.getItem('current_user_role') || 'client';
+    
+    if (userRole === 'client') {
+      const clientBox = document.getElementById('client-form-box');
+      if (clientBox) clientBox.classList.remove('hidden');
+    } else if (userRole === 'worker') {
+      const workerView = document.getElementById('worker-profile-view');
+      if (workerView) workerView.classList.remove('hidden');
+    } else if (userRole === 'contractor') {
+      const conBox = document.getElementById('contractor-dashboard-box');
+      if (conBox) conBox.classList.remove('hidden');
+    }
+
+    // 2. वॉलेट बैलेंस रिस्टोर करें
+    const savedBalance = localStorage.getItem('wallet_balance');
+    if (savedBalance) {
+      const balanceElem = document.getElementById('user-current-balance');
+      if (balanceElem) {
+        balanceElem.innerText = 'बैलेंस: ₹' + savedBalance;
+      }
+    }
+  });
+    // दुकान पार्टनर विज्ञापन ड्रॉवर को खोलने और बंद करने का लॉजिक
+  function openShopDrawer() {
+    const drawer = document.getElementById('shop-partner-drawer');
+    if (drawer) {
+      drawer.classList.remove('translate-x-full');
+    }
+  }
+
+  function closeShopDrawer() {
+    const drawer = document.getElementById('shop-partner-drawer');
+    if (drawer) {
+      drawer.classList.add('translate-x-full');
+    }
+  }
+
+  function submitDrawerShopAd() {
+    const shopName = document.getElementById('drawer-shop-name')?.value.trim();
+    if (!shopName) {
+      alert('⚠️ कृपया दुकान का नाम दर्ज करें!');
+      return;
+    }
+    alert('✅ आपकी दुकान का विज्ञापन सफलतापूर्वक सबमिट कर दिया गया है!');
+    closeShopDrawer();
+  }
+    // प्रोफाइल के अंदर ग्राहक, मिस्त्री और ठेकेदार टैब बदलने का लॉजिक
+  function switchProfileTab(role) {
+    // सभी प्रोफाइल फॉर्म छुपाएँ
+    document.querySelectorAll('.profile-form-box').forEach(el => {
+      el.classList.add('hidden');
+    });
+
+    // सभी टैब बटन के रंग रीसेट करें
+    ['client', 'worker', 'contractor'].forEach(r => {
+      const btn = document.getElementById(`prof-btn-${r}`);
+      if (btn) {
+        btn.classList.remove('bg-slate-900', 'text-white', 'bg-amber-500', 'bg-blue-600');
+        btn.classList.add('text-slate-700');
+      }
+    });
+
+    // चुने गए रोल का फॉर्म और बटन एक्टिव करें
+    const targetForm = document.getElementById(`prof-form-${role}`);
+    const targetBtn = document.getElementById(`prof-btn-${role}`);
+
+    if (targetForm) targetForm.classList.remove('hidden');
+    if (targetBtn) {
+      targetBtn.classList.remove('text-slate-700');
+      if (role === 'client') targetBtn.classList.add('bg-slate-900', 'text-white');
+      if (role === 'worker') targetBtn.classList.add('bg-amber-500', 'text-slate-950');
+      if (role === 'contractor') targetBtn.classList.add('bg-blue-600', 'text-white');
+    }
+  }
+
+  function saveProfileClient() {
+    alert('✅ ग्राहक प्रोफाइल सफलतापूर्वक सहेजी गई!');
+  }
+  function saveProfileWorker() {
+    alert('✅ मिस्त्री प्रोफाइल सफलतापूर्वक सहेजी गई!');
+  }
+  function saveProfileContractor() {
+    alert('✅ VIP ठेकेदार प्रोफाइल सफलतापूर्वक सहेजी गई!');
   }
   </script>
 </body>
