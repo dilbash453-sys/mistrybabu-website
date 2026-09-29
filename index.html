@@ -4195,5 +4195,71 @@
 </script>
 <!-- ==================== END CUSTOMER PROFILE + FOUR-ROLE LOCK ==================== -->
 
+
+<!-- Category registration / approval rules -->
+<script>
+(function(){
+  const KEY = 'mb_category_registry_v3';
+  const ROLES = ['client','worker','vip_contractor','small_contractor'];
+
+  function registry(){
+    try { return JSON.parse(localStorage.getItem(KEY) || '{}'); }
+    catch(e){ return {}; }
+  }
+  function save(r){ localStorage.setItem(KEY, JSON.stringify(r)); }
+
+  window.MBCategoryRules = {
+    get(){ return registry(); },
+
+    register(role, phone, data){
+      phone = String(phone || '').replace(/\D/g,'').slice(-10);
+      if(phone.length !== 10) return {ok:false, message:'सही 10 अंकों का मोबाइल नंबर डालें।'};
+      const r = registry();
+
+      // One mobile number can belong to only one category.
+      const existing = Object.keys(r).find(p => r[p] && r[p].role && r[p].role !== role);
+      if(existing === phone){
+        return {ok:false, message:'यह मोबाइल नंबर पहले से दूसरी category में registered है।'};
+      }
+
+      if(r[phone] && r[phone].role === role){
+        return {ok:true, existing:true, status:r[phone].status};
+      }
+
+      const status = (role === 'vip_contractor' || role === 'small_contractor')
+        ? 'pending_approval'
+        : 'active';
+
+      r[phone] = { role:role, status:status, data:data || {}, createdAt:Date.now() };
+      save(r);
+      return {ok:true, status:status};
+    },
+
+    approve(phone){
+      const r = registry();
+      phone = String(phone || '').replace(/\D/g,'').slice(-10);
+      if(!r[phone]) return false;
+      r[phone].status='active';
+      r[phone].approvedAt=Date.now();
+      save(r);
+      return true;
+    },
+
+    canAccess(role, phone){
+      phone = String(phone || '').replace(/\D/g,'').slice(-10);
+      const r=registry(), item=r[phone];
+      return !!item && item.role===role && item.status==='active';
+    },
+
+    canPostCustomer(phone){
+      return this.canAccess('client', phone);
+    }
+  };
+
+  // Category visibility: only the active/registered role is exposed.
+  window.MB_ALLOWED_CATEGORY_ROLES = ROLES;
+})();
+</script>
+
 </body>
   </html>
