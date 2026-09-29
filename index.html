@@ -20,10 +20,7 @@
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js');
     }
-  // Update 6: पेज खुलते ही लॉक किए गए मुख्य रोल का ही डैशबोर्ड दिखाएँ।
-document.addEventListener("DOMContentLoaded", applyDedicatedRoleUI);
-
-</script>
+  </script>
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -363,6 +360,34 @@ document.addEventListener("DOMContentLoaded", applyDedicatedRoleUI);
       <button onclick="switchRoleTab('contractor')" id="tab-btn-contractor" class="flex-1 py-2 text-center rounded-lg text-slate-600">
         ठेकेदार VIP 👑
       </button>
+      <button onclick="switchRoleTab('smallContractor')" id="tab-btn-smallContractor" class="flex-1 py-2 text-center rounded-lg text-slate-600">
+        स्मॉल ठेकेदार 🔨
+      </button>
+    </div>
+
+    <!-- ROLE-BASED PROFILE SYSTEM: 6/7 UPDATE -->
+    <div id="role-profile-panel" class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs mb-4">
+      <div class="flex items-center justify-between mb-3">
+        <div>
+          <h3 id="role-profile-title" class="text-sm font-black text-slate-900">मेरी प्रोफ़ाइल</h3>
+          <p class="text-[10px] text-slate-500">फॉर्म पूरा करना अनिवार्य नहीं है। खाली जानकारी बाद में कभी भी भर सकते हैं।</p>
+        </div>
+        <span id="role-profile-badge" class="text-[9px] bg-slate-100 text-slate-700 font-bold px-2 py-1 rounded-full">अधूरी प्रोफ़ाइल भी सुरक्षित</span>
+      </div>
+      <form id="role-profile-form" class="space-y-2" onsubmit="saveRoleProfile(event)">
+        <div class="grid grid-cols-2 gap-2">
+          <input id="role-profile-name" type="text" placeholder="नाम" class="w-full rounded-lg border border-slate-300 px-2.5 py-2 text-xs">
+          <input id="role-profile-phone" type="tel" maxlength="10" placeholder="मोबाइल नंबर" class="w-full rounded-lg border border-slate-300 px-2.5 py-2 text-xs">
+        </div>
+        <input id="role-profile-photo" type="file" accept="image/*" class="w-full text-[10px] text-slate-500">
+        <input id="role-profile-location" type="text" placeholder="गाँव / शहर / जिला (वैकल्पिक)" class="w-full rounded-lg border border-slate-300 px-2.5 py-2 text-xs">
+        <textarea id="role-profile-about" rows="2" placeholder="अपने बारे में / काम का विवरण (वैकल्पिक)" class="w-full rounded-lg border border-slate-300 px-2.5 py-2 text-xs"></textarea>
+        <div class="flex gap-2">
+          <button type="submit" class="flex-1 bg-slate-900 text-amber-400 font-bold py-2 rounded-xl text-xs">💾 सेव करें</button>
+          <button type="button" onclick="unlockRoleProfileFields()" class="flex-1 bg-slate-100 text-slate-800 font-bold py-2 rounded-xl text-xs">✏️ बाकी जानकारी भरें</button>
+        </div>
+        <p class="text-[9px] text-slate-400">जो जानकारी भरेंगे वह सेव होगी; बाकी बॉक्स खाली रख सकते हैं और बाद में भर सकते हैं।</p>
+      </form>
     </div>
 
     <!-- 1. CUSTOMER DASHBOARD -->
@@ -386,14 +411,9 @@ document.addEventListener("DOMContentLoaded", applyDedicatedRoleUI);
             <div id="done-client-photo" class="hidden text-emerald-600 font-bold text-[9px] mt-1">✓ फ़ोटो सुरक्षित</div>
           </div>
           <div class="bg-white p-2 rounded-xl border border-slate-200 text-center">
-            <label class="block text-[10px] font-bold text-slate-700 mb-1">आधार Front</label>
-            <input type="file" id="client-kyc-id-front" accept="image/*" class="text-[9px] text-slate-500 file:mr-1 file:py-0.5 file:px-1.5 file:rounded file:border-0 file:bg-blue-100 file:text-blue-800">
-            <div id="done-client-id-front" class="hidden text-emerald-600 font-bold text-[9px] mt-1">✓ Front सुरक्षित</div>
-          </div>
-          <div class="bg-white p-2 rounded-xl border border-slate-200 text-center col-span-2">
-            <label class="block text-[10px] font-bold text-slate-700 mb-1">आधार Back</label>
-            <input type="file" id="client-kyc-id-back" accept="image/*" class="text-[9px] text-slate-500 file:mr-1 file:py-0.5 file:px-1.5 file:rounded file:border-0 file:bg-blue-100 file:text-blue-800">
-            <div id="done-client-id-back" class="hidden text-emerald-600 font-bold text-[9px] mt-1">✓ Back सुरक्षित</div>
+            <label class="block text-[10px] font-bold text-slate-700 mb-1">पहचान पत्र (आईडी)</label>
+            <input type="file" id="client-kyc-id" accept="image/*" class="text-[9px] text-slate-500 file:mr-1 file:py-0.5 file:px-1.5 file:rounded file:border-0 file:bg-blue-100 file:text-blue-800">
+            <div id="done-client-id" class="hidden text-emerald-600 font-bold text-[9px] mt-1">✓ आईडी सुरक्षित</div>
           </div>
         </div>
 
@@ -749,7 +769,16 @@ document.addEventListener("DOMContentLoaded", applyDedicatedRoleUI);
           </button>
         </form>
       </div>
+    
+    <!-- 4. SMALL CONTRACTOR DEDICATED PROFILE -->
+    <div id="small-contractor-dashboard-box" class="space-y-4 hidden">
+      <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-4">
+        <h3 class="text-base font-black text-slate-900">🔨 स्मॉल ठेकेदार प्रोफ़ाइल</h3>
+        <p class="text-[10px] text-slate-600 mt-1">यह प्रोफ़ाइल केवल स्मॉल ठेकेदार के लॉगिन पर दिखाई देगी। VIP, मिस्त्री और ग्राहक की प्रोफ़ाइल यहाँ नहीं दिखेगी।</p>
+        <button onclick="logoutRoleSession()" class="mt-3 bg-rose-50 text-rose-600 font-bold py-2 px-3 rounded-xl text-xs">लॉग आउट</button>
+      </div>
     </div>
+</div>
   </section>
   <!-- ==================== SHOP PARTNER INVITE / PAYMENT FORM ==================== -->
   <div id="shop-partner-modal" class="fixed inset-0 bg-slate-900/80 z-[60] hidden items-center justify-center p-3">
@@ -1561,29 +1590,57 @@ document.addEventListener("DOMContentLoaded", applyDedicatedRoleUI);
     async function saveClientKYC() {
       const phoneInput = document.getElementById("dash-client-phone").value.trim();
       let phone = localStorage.getItem("mb_client_phone") || (phoneInput ? "+91" + phoneInput : "");
-      if (!phone) return alert("कृपया पहले नीचे अपना मोबाइल नंबर दर्ज करके प्रोफ़ाइल खोलें!");
+      
+      if (!phone) {
+        return alert("कृपया पहले नीचे अपना मोबाइल नंबर दर्ज करके प्रोफ़ाइल खोलें!");
+      }
 
       const idNum = document.getElementById("client-kyc-id-number").value.trim().toUpperCase();
       const photoFile = document.getElementById("client-kyc-photo").files[0];
-      const frontFile = document.getElementById("client-kyc-id-front").files[0];
-      const backFile = document.getElementById("client-kyc-id-back").files[0];
-      if (!photoFile && !frontFile && !backFile && !idNum) return alert("आधार सत्यापन वैकल्पिक है। चाहें तो आधार Front और Back अपलोड करें।");
-      if ((frontFile && !backFile) || (!frontFile && backFile)) return alert("Verified टैग के लिए आधार का Front और Back दोनों अपलोड करें।");
+      const idFile = document.getElementById("client-kyc-id").files[0];
 
-      const btn = document.getElementById("btn-save-client-kyc"); btn.innerText = "सुरक्षित अपलोड हो रहा है...";
+      if (!photoFile && !idFile && !idNum) {
+        return alert("कृपया फ़ोटो या पहचान पत्र चुनें!");
+      }
+
+      const btn = document.getElementById("btn-save-client-kyc");
+      btn.innerText = "सुरक्षित अपलोड हो रहा है...";
+
       let photoBase64 = localStorage.getItem("mb_client_avatar") || "";
-      let frontBase64 = localStorage.getItem("mb_client_id_front") || "";
-      let backBase64 = localStorage.getItem("mb_client_id_back") || "";
-      try { if(photoFile) photoBase64 = await fileToBase64(photoFile); if(frontFile) frontBase64 = await fileToBase64WithWatermark(frontFile); if(backFile) backBase64 = await fileToBase64WithWatermark(backFile); } catch(e) {}
-      const isVerified = !!(frontBase64 && backBase64);
-      db.collection("clients_kyc").doc(phone).set({clientPhone:phone, clientName:localStorage.getItem("mb_client_name")||"मालिक", idNumber:idNum, idCardFront:frontBase64, idCardBack:backBase64, idCardPhoto:frontBase64, avatarPhoto:photoBase64, isVerified, updatedAt:firebase.firestore.FieldValue.serverTimestamp()}, {merge:true}).then(()=>{
-        localStorage.setItem("mb_client_is_kyc", isVerified ? "true" : "false"); localStorage.setItem("mb_client_avatar",photoBase64); localStorage.setItem("mb_client_id_front",frontBase64); localStorage.setItem("mb_client_id_back",backBase64);
-        if(photoFile) document.getElementById("done-client-photo").classList.remove("hidden");
-        if(frontBase64) document.getElementById("done-client-id-front").classList.remove("hidden"); if(backBase64) document.getElementById("done-client-id-back").classList.remove("hidden");
-        const badge=document.getElementById("client-kyc-badge-status"); badge.innerText=isVerified?"🛡️ सत्यापित":"सामान्य खाता"; badge.className=isVerified?"text-[9px] bg-blue-600 text-white font-black px-2 py-0.5 rounded-full":"text-[9px] bg-slate-200 text-slate-700 font-bold px-2 py-0.5 rounded-full";
-        btn.innerText=isVerified?"✓ पहचान सत्यापित और सुरक्षित":"✓ जानकारी सुरक्षित"; btn.className=isVerified?"w-full bg-emerald-600 text-white font-bold py-2 rounded-xl text-xs":"w-full bg-blue-600 text-white font-bold py-2 rounded-xl text-xs";
-        alert(isVerified?"✅ आधार Front और Back सुरक्षित जमा हो गए। अब Verified टैग मिलेगा।":"✅ जानकारी सुरक्षित जमा हो गई। आधार देना वैकल्पिक है।");
-      }).catch(err=>{btn.innerText="🛡️ पहचान पत्र सुरक्षित जमा करें"; alert("त्रुटि: "+err.message);});
+      let idBase64 = localStorage.getItem("mb_client_id_photo") || "";
+
+      if (photoFile) {
+        try { photoBase64 = await fileToBase64(photoFile); } catch(e) {}
+      }
+      if (idFile) {
+        try { idBase64 = await fileToBase64WithWatermark(idFile); } catch(e) {}
+      }
+
+      db.collection("clients_kyc").doc(phone).set({
+        clientPhone: phone,
+        clientName: localStorage.getItem("mb_client_name") || "मालिक",
+        idNumber: idNum,
+        idCardPhoto: idBase64,
+        avatarPhoto: photoBase64,
+        isVerified: true,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true }).then(() => {
+        localStorage.setItem("mb_client_is_kyc", "true");
+        localStorage.setItem("mb_client_avatar", photoBase64);
+        localStorage.setItem("mb_client_id_photo", idBase64);
+        
+        document.getElementById("done-client-photo").classList.remove("hidden");
+        document.getElementById("done-client-id").classList.remove("hidden");
+        document.getElementById("client-kyc-badge-status").innerText = "🛡️ सत्यापित";
+        document.getElementById("client-kyc-badge-status").className = "text-[9px] bg-blue-600 text-white font-black px-2 py-0.5 rounded-full";
+        btn.innerText = "✓ पहचान पत्र सत्यापित और सुरक्षित";
+        btn.className = "w-full bg-emerald-600 text-white font-bold py-2 rounded-xl text-xs";
+        
+        alert("✅ आपकी पहचान सुरक्षित रूप से जमा हो चुकी है! अब आपकी पोस्ट को '🛡️ सत्यापित मालिक' का दर्जा मिलेगा।");
+      }).catch(err => {
+        btn.innerText = "🛡️ पहचान पत्र सुरक्षित जमा करें";
+        alert("त्रुटि: " + err.message);
+      });
     }
 
     async function saveClientJob(e) {
@@ -1643,6 +1700,8 @@ document.addEventListener("DOMContentLoaded", applyDedicatedRoleUI);
 
       db.collection("job_posts").add(data).then(() => {
         localStorage.setItem("mb_client_phone", fullPhone);
+      activateRoleSession('client');
+      updateRoleProfilePanel('client');
         localStorage.setItem("mb_client_name", clientName);
         if (deviceLockedRole === "worker") {
           localStorage.setItem("mb_worker_posts_count", (postsCount + 1).toString());
@@ -1708,6 +1767,8 @@ document.addEventListener("DOMContentLoaded", applyDedicatedRoleUI);
       }).then(docRef => {
         localStorage.setItem("mb_contractor_app_id", docRef.id);
         localStorage.setItem("mb_contractor_app_tier", tier);
+        activateRoleSession(tier === 'vip' ? 'contractor' : 'smallContractor');
+        updateRoleProfilePanel(tier === 'vip' ? 'contractor' : 'smallContractor');
         alert("✅ आपके दस्तावेज़ सत्यापन हेतु जमा हो गए हैं!\nकंपनी द्वारा कागज़ात पास करने के बाद आपको पेमेंट करने का विकल्प मिलेगा।");
         btn.innerText = "⏳ कागज़ात जाँचे जा रहे हैं...";
         btn.disabled = true;
@@ -2143,6 +2204,8 @@ document.addEventListener("DOMContentLoaded", applyDedicatedRoleUI);
       localStorage.setItem("mb_worker_level", wData.level || "कुशल कारीगर");
       localStorage.setItem("mb_worker_photos", JSON.stringify(wData.workPhotos || []));
       localStorage.setItem("mb_worker_id_verified", wData.isIdVerified ? "true" : "false");
+      activateRoleSession('worker');
+      updateRoleProfilePanel('worker');
       
       let isVipActive = false;
       if (wData.isContractorVIP && wData.contractorExpiry) {
@@ -3715,46 +3778,78 @@ document.addEventListener("DOMContentLoaded", applyDedicatedRoleUI);
     }
 
     function switchRoleTab(role) {
-      const lockedRole = localStorage.getItem("mb_device_locked_role");
-      // Update 6: एक डिवाइस/यूज़र का मुख्य रोल लॉक होने के बाद दूसरे रोल का डैशबोर्ड नहीं खुलेगा।
-      if (lockedRole && lockedRole !== role) {
-        const roleNames = {client:"ग्राहक", worker:"मिस्त्री", contractor:"ठेकेदार"};
-        alert(`🔒 यह प्रोफ़ाइल ${roleNames[lockedRole] || lockedRole} रोल के लिए लॉक है। दूसरे रोल में जाने की अनुमति नहीं है।`);
-        role = lockedRole;
+      const active = localStorage.getItem('mb_active_role');
+      if (active && active !== role) {
+        alert('🔒 आप अभी ' + roleLabel(active) + ' प्रोफ़ाइल में लॉगिन हैं। दूसरे रोल की प्रोफ़ाइल देखने के लिए पहले लॉग आउट करें।');
+        return;
       }
-
-      const clientBox = document.getElementById("client-dashboard-box");
-      const workerBox = document.getElementById("worker-dashboard-box");
-      const contractorBox = document.getElementById("contractor-dashboard-box");
-      const btnClient = document.getElementById("tab-btn-client");
-      const btnWorker = document.getElementById("tab-btn-worker");
-      const btnContractor = document.getElementById("tab-btn-contractor");
-      if (!clientBox || !workerBox || !contractorBox) return;
-
-      clientBox.style.display = "none"; workerBox.style.display = "none"; contractorBox.style.display = "none";
-      if (lockedRole) {
-        [btnClient,btnWorker,btnContractor].forEach(b => { if(b) b.className = "hidden"; });
-      } else {
-        if(btnClient) btnClient.className = "flex-1 py-2 text-center rounded-lg text-slate-600 font-bold text-xs bg-slate-200";
-        if(btnWorker) btnWorker.className = "flex-1 py-2 text-center rounded-lg text-slate-600 font-bold text-xs bg-slate-200";
-        if(btnContractor) btnContractor.className = "flex-1 py-2 text-center rounded-lg text-slate-600 font-bold text-xs bg-slate-200";
-      }
-
-      if (role === 'client') {
-        clientBox.style.display = "block"; if(btnClient) btnClient.className = "flex-1 py-2 text-center rounded-lg bg-white text-slate-800 shadow-xs font-bold text-xs";
-      } else if (role === 'worker') {
-        workerBox.style.display = "block"; if(btnWorker) btnWorker.className = "flex-1 py-2 text-center rounded-lg bg-white text-slate-800 shadow-xs font-bold text-xs";
-        if(typeof updateRegisterScreenView === 'function') updateRegisterScreenView();
-      } else if (role === 'contractor') {
-        contractorBox.style.display = "block"; if(btnContractor) btnContractor.className = "flex-1 py-2 text-center rounded-lg bg-white text-slate-800 shadow-xs font-bold text-xs";
-        if(typeof checkContractorStatus === 'function') checkContractorStatus();
-      }
+      const clientBox = document.getElementById('client-dashboard-box');
+      const workerBox = document.getElementById('worker-dashboard-box');
+      const contractorBox = document.getElementById('contractor-dashboard-box');
+      const smallBox = document.getElementById('small-contractor-dashboard-box');
+      const boxes = [clientBox, workerBox, contractorBox, smallBox];
+      boxes.forEach(b => { if (b) { b.style.display = 'none'; b.classList.add('hidden'); } });
+      ['client','worker','contractor','smallContractor'].forEach(r => {
+        const b = document.getElementById('tab-btn-' + r);
+        if (b) b.className = 'flex-1 py-2 text-center rounded-lg text-slate-600 font-bold text-xs bg-slate-200';
+      });
+      const target = document.getElementById(role === 'smallContractor' ? 'small-contractor-dashboard-box' : role + '-dashboard-box');
+      if (target) { target.style.display = 'block'; target.classList.remove('hidden'); }
+      const btn = document.getElementById('tab-btn-' + role);
+      if (btn) btn.className = 'flex-1 py-2 text-center rounded-lg bg-white text-slate-800 shadow-xs font-bold text-xs';
+      if (typeof updateRoleProfilePanel === 'function') updateRoleProfilePanel(role);
+      if (role === 'worker' && typeof updateRegisterScreenView === 'function') updateRegisterScreenView();
+      if ((role === 'contractor' || role === 'smallContractor') && typeof checkContractorStatus === 'function') checkContractorStatus();
     }
 
-    function applyDedicatedRoleUI() {
-      const lockedRole = localStorage.getItem("mb_device_locked_role");
-      if (lockedRole && ["client","worker","contractor"].includes(lockedRole)) switchRoleTab(lockedRole);
+    function roleLabel(role) {
+      return ({client:'ग्राहक',worker:'मिस्त्री',contractor:'VIP ठेकेदार',smallContractor:'स्मॉल ठेकेदार'})[role] || role;
     }
+
+    function updateRoleProfilePanel(role) {
+      const title = document.getElementById('role-profile-title');
+      const badge = document.getElementById('role-profile-badge');
+      if (title) title.innerText = 'मेरी प्रोफ़ाइल — ' + roleLabel(role);
+      if (badge) badge.innerText = '🔒 केवल ' + roleLabel(role) + ' प्रोफ़ाइल';
+      const key = 'mb_profile_' + role;
+      const d = JSON.parse(localStorage.getItem(key) || '{}');
+      ['name','phone','location','about'].forEach(k => { const el=document.getElementById('role-profile-'+k); if(el) el.value=d[k]||''; });
+    }
+
+    function saveRoleProfile(e) {
+      e.preventDefault();
+      const role = localStorage.getItem('mb_active_role') || 'client';
+      const d = {
+        name: document.getElementById('role-profile-name').value.trim(),
+        phone: document.getElementById('role-profile-phone').value.trim(),
+        location: document.getElementById('role-profile-location').value.trim(),
+        about: document.getElementById('role-profile-about').value.trim(),
+        updatedAt: Date.now()
+      };
+      localStorage.setItem('mb_profile_' + role, JSON.stringify(d));
+      const f=document.getElementById('role-profile-photo');
+      if(f && f.files[0]) { const r=new FileReader(); r.onload=()=>{ d.photo=r.result; localStorage.setItem('mb_profile_'+role,JSON.stringify(d)); }; r.readAsDataURL(f.files[0]); }
+      alert('✅ ' + roleLabel(role) + ' की प्रोफ़ाइल सेव हो गई। अधूरी जानकारी बाद में कभी भी भर सकते हैं।');
+    }
+
+    function unlockRoleProfileFields() {
+      ['role-profile-name','role-profile-phone','role-profile-location','role-profile-about','role-profile-photo'].forEach(id=>{const e=document.getElementById(id); if(e)e.disabled=false;});
+      alert('✏️ बाकी जानकारी भरने के लिए प्रोफ़ाइल खुल गई है।');
+    }
+
+    function activateRoleSession(role) {
+      const current = localStorage.getItem('mb_active_role');
+      if (current && current !== role) { alert('🔒 पहले ' + roleLabel(current) + ' से लॉग आउट करें।'); return false; }
+      localStorage.setItem('mb_active_role', role);
+      return true;
+    }
+
+    function logoutRoleSession() {
+      localStorage.removeItem('mb_active_role');
+      alert('✅ प्रोफ़ाइल से लॉग आउट हो गया। अब दूसरा रोल लॉगिन कर सकता है।');
+      switchRoleTab('client');
+    }
+
 
     function getDeviceFingerprint() {
       let fingerprint = localStorage.getItem('device_fingerprint');
