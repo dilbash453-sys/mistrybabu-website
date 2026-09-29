@@ -365,28 +365,65 @@
       </button>
     </div>
 
-    <!-- ROLE-BASED PROFILE SYSTEM: 6/7 UPDATE -->
+    <!-- ROLE-BASED PROFILE SYSTEM: 6/7 FINAL UPDATE -->
     <div id="role-profile-panel" class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs mb-4">
       <div class="flex items-center justify-between mb-3">
         <div>
           <h3 id="role-profile-title" class="text-sm font-black text-slate-900">मेरी प्रोफ़ाइल</h3>
-          <p class="text-[10px] text-slate-500">फॉर्म पूरा करना अनिवार्य नहीं है। खाली जानकारी बाद में कभी भी भर सकते हैं।</p>
+          <p class="text-[10px] text-slate-500">अपनी प्रोफ़ाइल खुद बनाएं। जो जानकारी भरकर सेव करेंगे, वही फ़ील्ड लॉक हो जाएगी। खाली फ़ील्ड बाद में कभी भी भर सकते हैं।</p>
         </div>
         <span id="role-profile-badge" class="text-[9px] bg-slate-100 text-slate-700 font-bold px-2 py-1 rounded-full">अधूरी प्रोफ़ाइल भी सुरक्षित</span>
       </div>
+
       <form id="role-profile-form" class="space-y-2" onsubmit="saveRoleProfile(event)">
         <div class="grid grid-cols-2 gap-2">
-          <input id="role-profile-name" type="text" placeholder="नाम" class="w-full rounded-lg border border-slate-300 px-2.5 py-2 text-xs">
-          <input id="role-profile-phone" type="tel" maxlength="10" placeholder="मोबाइल नंबर" class="w-full rounded-lg border border-slate-300 px-2.5 py-2 text-xs">
+          <div>
+            <label class="block text-[9px] font-bold text-slate-600 mb-1">नाम</label>
+            <input id="role-profile-name" type="text" placeholder="पूरा नाम" class="w-full rounded-lg border border-slate-300 px-2.5 py-2 text-xs">
+            <span id="role-profile-name-status" class="hidden text-[9px] text-emerald-600 font-bold">✓ नाम लॉक है</span>
+          </div>
+          <div>
+            <label class="block text-[9px] font-bold text-slate-600 mb-1">मोबाइल नंबर</label>
+            <input id="role-profile-phone" type="tel" maxlength="10" placeholder="10 अंकों का नंबर" class="w-full rounded-lg border border-slate-300 px-2.5 py-2 text-xs">
+            <span id="role-profile-phone-status" class="hidden text-[9px] text-emerald-600 font-bold">✓ नंबर लॉक है</span>
+          </div>
         </div>
-        <input id="role-profile-photo" type="file" accept="image/*" class="w-full text-[10px] text-slate-500">
+
+        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+          <label class="block text-[10px] font-bold text-slate-700 mb-1">📷 प्रोफ़ाइल फ़ोटो</label>
+          <input id="role-profile-photo" type="file" accept="image/*" class="w-full text-[10px] text-slate-500">
+          <div id="role-profile-photo-done" class="hidden text-[9px] text-emerald-600 font-bold mt-1">✓ फ़ोटो सुरक्षित और लॉक है</div>
+        </div>
+
         <input id="role-profile-location" type="text" placeholder="गाँव / शहर / जिला (वैकल्पिक)" class="w-full rounded-lg border border-slate-300 px-2.5 py-2 text-xs">
+        <span id="role-profile-location-status" class="hidden text-[9px] text-emerald-600 font-bold">✓ लोकेशन लॉक है</span>
         <textarea id="role-profile-about" rows="2" placeholder="अपने बारे में / काम का विवरण (वैकल्पिक)" class="w-full rounded-lg border border-slate-300 px-2.5 py-2 text-xs"></textarea>
-        <div class="flex gap-2">
-          <button type="submit" class="flex-1 bg-slate-900 text-amber-400 font-bold py-2 rounded-xl text-xs">💾 सेव करें</button>
-          <button type="button" onclick="unlockRoleProfileFields()" class="flex-1 bg-slate-100 text-slate-800 font-bold py-2 rounded-xl text-xs">✏️ बाकी जानकारी भरें</button>
+        <span id="role-profile-about-status" class="hidden text-[9px] text-emerald-600 font-bold">✓ जानकारी लॉक है</span>
+
+        <div class="bg-blue-50/70 p-3 rounded-xl border border-blue-200 space-y-2">
+          <div>
+            <label class="block text-[10px] font-bold text-blue-900 mb-1">🛡️ पहचान पत्र / आधार (वैकल्पिक)</label>
+            <p class="text-[9px] text-slate-500 mb-2">Verified टैग के लिए Front और Back दोनों देना जरूरी है। आधार देना अनिवार्य नहीं है।</p>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <span class="text-[9px] text-slate-500 block mb-1">Front</span>
+              <input id="role-profile-id-front" type="file" accept="image/*" class="w-full text-[9px] p-1 border border-slate-300 rounded-lg bg-white">
+              <span id="role-profile-id-front-done" class="hidden text-[9px] text-emerald-600 font-bold">✓ Front लॉक</span>
+            </div>
+            <div>
+              <span class="text-[9px] text-slate-500 block mb-1">Back</span>
+              <input id="role-profile-id-back" type="file" accept="image/*" class="w-full text-[9px] p-1 border border-slate-300 rounded-lg bg-white">
+              <span id="role-profile-id-back-done" class="hidden text-[9px] text-emerald-600 font-bold">✓ Back लॉक</span>
+            </div>
+          </div>
+          <input id="role-profile-id-number" type="text" placeholder="पहचान पत्र संख्या (वैकल्पिक)" class="w-full rounded-lg border border-blue-300 px-2.5 py-2 text-xs uppercase bg-white">
+          <span id="role-profile-id-number-status" class="hidden text-[9px] text-emerald-600 font-bold">✓ पहचान संख्या लॉक है</span>
+          <div id="role-profile-verified-status" class="hidden text-[10px] text-emerald-700 font-black bg-emerald-50 rounded-lg p-2">🛡️ Front + Back प्राप्त — Verified टैग के लिए तैयार</div>
         </div>
-        <p class="text-[9px] text-slate-400">जो जानकारी भरेंगे वह सेव होगी; बाकी बॉक्स खाली रख सकते हैं और बाद में भर सकते हैं।</p>
+
+        <button type="submit" class="w-full bg-slate-900 text-amber-400 font-bold py-2.5 rounded-xl text-xs">💾 भरी हुई जानकारी सेव करें</button>
+        <p class="text-[9px] text-slate-400">नियम: जो फ़ील्ड सेव करते समय भरा होगा वह लॉक हो जाएगा। जो खाली रहेगा वह खुला रहेगा और बाद में भरा जा सकेगा।</p>
       </form>
     </div>
 
@@ -3806,35 +3843,97 @@
       return ({client:'ग्राहक',worker:'मिस्त्री',contractor:'VIP ठेकेदार',smallContractor:'स्मॉल ठेकेदार'})[role] || role;
     }
 
+    function roleProfileKey(role) { return 'mb_profile_' + role; }
+
     function updateRoleProfilePanel(role) {
       const title = document.getElementById('role-profile-title');
       const badge = document.getElementById('role-profile-badge');
       if (title) title.innerText = 'मेरी प्रोफ़ाइल — ' + roleLabel(role);
       if (badge) badge.innerText = '🔒 केवल ' + roleLabel(role) + ' प्रोफ़ाइल';
-      const key = 'mb_profile_' + role;
-      const d = JSON.parse(localStorage.getItem(key) || '{}');
-      ['name','phone','location','about'].forEach(k => { const el=document.getElementById('role-profile-'+k); if(el) el.value=d[k]||''; });
+
+      const d = JSON.parse(localStorage.getItem(roleProfileKey(role)) || '{}');
+      const fields = ['name','phone','location','about','id-number'];
+      fields.forEach(k => {
+        const el = document.getElementById('role-profile-' + k);
+        if (!el) return;
+        const val = d[k] || '';
+        el.value = val;
+        el.disabled = !!val;
+        el.classList.toggle('bg-slate-100', !!val);
+      });
+
+      const photo = document.getElementById('role-profile-photo');
+      if (photo) { photo.value = ''; photo.disabled = !!d.photo; }
+      const photoDone = document.getElementById('role-profile-photo-done');
+      if (photoDone) photoDone.classList.toggle('hidden', !d.photo);
+
+      ['name','phone','location','about','id-number'].forEach(k => {
+        const st = document.getElementById('role-profile-' + k + '-status');
+        if (st) st.classList.toggle('hidden', !(d[k] || ''));
+      });
+
+      ['front','back'].forEach(side => {
+        const input = document.getElementById('role-profile-id-' + side);
+        const done = document.getElementById('role-profile-id-' + side + '-done');
+        if (input) { input.value = ''; input.disabled = !!d['id-' + side]; }
+        if (done) done.classList.toggle('hidden', !d['id-' + side]);
+      });
+
+      const verified = !!(d['id-front'] && d['id-back']);
+      const vs = document.getElementById('role-profile-verified-status');
+      if (vs) vs.classList.toggle('hidden', !verified);
     }
 
-    function saveRoleProfile(e) {
+    async function saveRoleProfile(e) {
       e.preventDefault();
       const role = localStorage.getItem('mb_active_role') || 'client';
+      const key = roleProfileKey(role);
+      const old = JSON.parse(localStorage.getItem(key) || '{}');
+
+      const val = id => (document.getElementById(id)?.value || '').trim();
       const d = {
-        name: document.getElementById('role-profile-name').value.trim(),
-        phone: document.getElementById('role-profile-phone').value.trim(),
-        location: document.getElementById('role-profile-location').value.trim(),
-        about: document.getElementById('role-profile-about').value.trim(),
+        ...old,
+        name: old.name || val('role-profile-name'),
+        phone: old.phone || val('role-profile-phone'),
+        location: old.location || val('role-profile-location'),
+        about: old.about || val('role-profile-about'),
+        'id-number': old['id-number'] || val('role-profile-id-number'),
         updatedAt: Date.now()
       };
-      localStorage.setItem('mb_profile_' + role, JSON.stringify(d));
-      const f=document.getElementById('role-profile-photo');
-      if(f && f.files[0]) { const r=new FileReader(); r.onload=()=>{ d.photo=r.result; localStorage.setItem('mb_profile_'+role,JSON.stringify(d)); }; r.readAsDataURL(f.files[0]); }
-      alert('✅ ' + roleLabel(role) + ' की प्रोफ़ाइल सेव हो गई। अधूरी जानकारी बाद में कभी भी भर सकते हैं।');
-    }
 
-    function unlockRoleProfileFields() {
-      ['role-profile-name','role-profile-phone','role-profile-location','role-profile-about','role-profile-photo'].forEach(id=>{const e=document.getElementById(id); if(e)e.disabled=false;});
-      alert('✏️ बाकी जानकारी भरने के लिए प्रोफ़ाइल खुल गई है।');
+      const files = [
+        ['role-profile-photo','photo'],
+        ['role-profile-id-front','id-front'],
+        ['role-profile-id-back','id-back']
+      ];
+      for (const [inputId, field] of files) {
+        const input = document.getElementById(inputId);
+        if (input && !d[field] && input.files && input.files[0]) {
+          try { d[field] = await fileToBase64(input.files[0]); } catch (err) { return alert('फोटो सेव नहीं हो पाई: ' + err.message); }
+        }
+      }
+
+      localStorage.setItem(key, JSON.stringify(d));
+      updateRoleProfilePanel(role);
+
+      const missing = [];
+      if (!d.name) missing.push('नाम');
+      if (!d.phone) missing.push('मोबाइल');
+      if (!d.photo) missing.push('प्रोफ़ाइल फ़ोटो');
+      if (!d['id-front']) missing.push('पहचान पत्र Front (वैकल्पिक)');
+      if (!d['id-back']) missing.push('पहचान पत्र Back (वैकल्पिक)');
+
+      if (d['id-front'] && d['id-back']) {
+        d.isVerified = true;
+        localStorage.setItem(key, JSON.stringify(d));
+        updateRoleProfilePanel(role);
+      }
+
+      if (missing.length) {
+        alert('✅ ' + roleLabel(role) + ' की भरी हुई जानकारी लॉक हो गई।\n\nजो जानकारी खाली है, वह बाद में भर सकते हैं।');
+      } else {
+        alert('🎉 ' + roleLabel(role) + ' की प्रोफ़ाइल पूरी हो गई और सभी भरे हुए फ़ील्ड लॉक हैं।');
+      }
     }
 
     function activateRoleSession(role) {
