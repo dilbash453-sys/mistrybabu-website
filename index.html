@@ -743,6 +743,41 @@
       </div>
     </div>
   </section>
+  <!-- ==================== SHOP PARTNER INVITE / PAYMENT FORM ==================== -->
+  <div id="shop-partner-modal" class="fixed inset-0 bg-slate-900/80 z-[60] hidden items-center justify-center p-3">
+    <div class="bg-white rounded-2xl max-w-lg w-full max-h-[92vh] overflow-y-auto shadow-2xl">
+      <div class="bg-blue-600 text-white p-4 flex justify-between items-center">
+        <div>
+          <h3 class="text-sm font-black">🏪 दुकान पार्टनर विज्ञापन</h3>
+          <p class="text-[10px] text-blue-100">फॉर्म भरें → पेमेंट करें → Admin जाँच के बाद विज्ञापन Live होगा</p>
+        </div>
+        <button onclick="closeShopPartnerForm()" class="w-8 h-8 bg-blue-700 rounded-full font-bold">✕</button>
+      </div>
+      <form id="shop-partner-form" onsubmit="submitShopPartnerForm(event)" class="p-4 space-y-3 text-xs">
+        <div class="bg-amber-50 border border-amber-200 rounded-xl p-3">
+          <div class="font-black text-amber-900">📢 विज्ञापन शुल्क</div>
+          <div id="shop-partner-price" class="text-lg font-black text-amber-700 mt-1">₹1,000</div>
+          <div class="text-[10px] text-amber-800 mt-1">चुने गए प्लान के अनुसार राशि पहले से दिखाई जाएगी।</div>
+        </div>
+        <input type="hidden" id="shop-partner-token">
+        <input type="hidden" id="shop-partner-plan">
+        <input type="text" id="shop-partner-name" required placeholder="दुकान का नाम" class="w-full rounded-lg border border-slate-300 p-2">
+        <input type="tel" id="shop-partner-phone" required maxlength="10" inputmode="numeric" placeholder="10 अंकों का दुकान मोबाइल नंबर" class="w-full rounded-lg border border-slate-300 p-2">
+        <input type="text" id="shop-partner-location" required placeholder="दुकान का स्थान" class="w-full rounded-lg border border-slate-300 p-2">
+        <textarea id="shop-partner-desc" required placeholder="दुकान/सामान का विवरण" class="w-full rounded-lg border border-slate-300 p-2 min-h-[70px]"></textarea>
+        <input type="file" id="shop-partner-photo" accept="image/*" required class="w-full text-[10px]">
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 space-y-2">
+          <div class="font-black text-slate-800">💳 पेमेंट</div>
+          <div>UPI ID: <strong class="text-amber-700">mistrybabu@upi</strong></div>
+          <div class="text-[10px] text-slate-500">ऊपर दिखाई गई राशि भेजने के बाद UTR नंबर नीचे दर्ज करें।</div>
+          <input type="text" id="shop-partner-utr" required maxlength="20" placeholder="पेमेंट का UTR नंबर" class="w-full rounded-lg border border-slate-300 p-2">
+        </div>
+        <button type="submit" class="w-full bg-blue-600 text-white font-black py-2.5 rounded-xl">📨 आवेदन + पेमेंट विवरण भेजें</button>
+        <p id="shop-partner-status" class="text-center text-[10px] text-slate-500"></p>
+      </form>
+    </div>
+  </div>
+
   <!-- ==================== SIDE DRAWER: LOCAL SHOP PARTNERS ==================== -->
   <div id="shop-drawer" class="fixed inset-y-0 right-0 max-w-sm w-full bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
     <div class="p-4 bg-blue-600 text-white flex justify-between items-center shadow-md">
@@ -900,6 +935,33 @@
                 दुकान विज्ञापन तुरंत लाइव करें
               </button>
             </form>
+          </div>
+
+          <div class="bg-amber-50 p-3 rounded-xl border border-amber-200 space-y-2">
+            <h4 class="font-black text-slate-900 text-[11px]">🔗 दुकानदार को फॉर्म लिंक भेजें</h4>
+            <p class="text-[10px] text-slate-600">प्लान चुनें और लिंक बनाएँ। दुकानदार खुद फॉर्म भरेगा और पेमेंट/UTR भेजेगा।</p>
+            <div class="grid grid-cols-2 gap-2">
+              <select id="adm-shop-link-plan" class="rounded-lg border border-slate-300 p-1.5 bg-white font-bold text-amber-800">
+                <option value="1000">1 महीना (₹1,000)</option>
+                <option value="2500">3 महीना (₹2,500)</option>
+              </select>
+              <button type="button" onclick="createShopPartnerLink()" class="bg-amber-500 text-slate-900 font-black rounded-lg">🔗 लिंक बनाएँ</button>
+            </div>
+            <div id="adm-shop-link-result" class="hidden bg-white border border-amber-200 rounded-lg p-2 space-y-2">
+              <input id="adm-shop-link-output" readonly class="w-full rounded-lg border border-slate-300 p-1.5 text-[10px]">
+              <button type="button" onclick="copyShopPartnerLink()" class="w-full bg-slate-900 text-white font-bold py-1.5 rounded-lg">📋 लिंक कॉपी करें</button>
+              <a id="adm-shop-link-whatsapp" target="_blank" rel="noopener" class="block w-full text-center bg-emerald-600 text-white font-bold py-1.5 rounded-lg">⚡ WhatsApp से भेजें</a>
+            </div>
+          </div>
+
+          <div class="bg-violet-50 p-3 rounded-xl border border-violet-200 space-y-2">
+            <div class="flex justify-between items-center">
+              <span class="font-black text-slate-800">📥 दुकानदार के आवेदन / पेमेंट</span>
+              <button type="button" onclick="loadShopPartnerRequests()" class="text-violet-700 font-bold">रिफ्रेश ↻</button>
+            </div>
+            <div id="admin-shop-requests-list" class="space-y-2">
+              <p class="text-slate-400 text-center py-2">लोड हो रहा है...</p>
+            </div>
           </div>
 
           <div class="space-y-2">
@@ -1704,6 +1766,9 @@
     }
 
     // 3. साइड ड्रॉअर व दुकान पार्टनर ऐड्स
+    window.addEventListener("hashchange", openShopPartnerFromHash);
+    document.addEventListener("DOMContentLoaded", () => setTimeout(openShopPartnerFromHash, 300));
+
     function openShopDrawer() {
       document.getElementById("shop-drawer").classList.remove("translate-x-full");
       document.getElementById("shop-drawer-backdrop").classList.remove("hidden");
@@ -1780,6 +1845,127 @@
         if (sliderBox) sliderBox.innerHTML = sliderHtml;
         if (wrapperBox) wrapperBox.classList.remove("hidden");
       });
+    }
+
+    function closeShopPartnerForm() {
+      const m = document.getElementById("shop-partner-modal");
+      m.classList.add("hidden");
+      m.classList.remove("flex");
+    }
+
+    function openShopPartnerFromHash() {
+      const match = location.hash.match(/^#shop-partner=([^&]+)/);
+      if (!match) return;
+      const token = decodeURIComponent(match[1]);
+      db.collection("shop_partner_invites").doc(token).get().then(doc => {
+        if (!doc.exists || doc.data().status === "used") {
+          alert("यह दुकान पार्टनर लिंक मान्य नहीं है या पहले इस्तेमाल हो चुका है।");
+          return;
+        }
+        const data = doc.data();
+        document.getElementById("shop-partner-token").value = token;
+        document.getElementById("shop-partner-plan").value = String(data.planAmount || "1000");
+        document.getElementById("shop-partner-price").innerText = "₹" + Number(data.planAmount || 1000).toLocaleString("en-IN");
+        const m = document.getElementById("shop-partner-modal");
+        m.classList.remove("hidden");
+        m.classList.add("flex");
+      }).catch(() => alert("दुकान पार्टनर लिंक खोलने में समस्या हुई। कृपया Admin से नया लिंक लें।"));
+    }
+
+    async function submitShopPartnerForm(e) {
+      e.preventDefault();
+      const token = document.getElementById("shop-partner-token").value.trim();
+      const plan = document.getElementById("shop-partner-plan").value;
+      const name = document.getElementById("shop-partner-name").value.trim();
+      const phone = document.getElementById("shop-partner-phone").value.trim();
+      const loc = document.getElementById("shop-partner-location").value.trim();
+      const desc = document.getElementById("shop-partner-desc").value.trim();
+      const utr = document.getElementById("shop-partner-utr").value.trim();
+      const file = document.getElementById("shop-partner-photo").files[0];
+      if (!/^\d{10}$/.test(phone)) return alert("कृपया 10 अंकों का मोबाइल नंबर दर्ज करें।");
+      if (!utr) return alert("पेमेंट के बाद UTR नंबर दर्ज करें।");
+      if (!file) return alert("दुकान की फोटो चुनें।");
+      const status = document.getElementById("shop-partner-status");
+      status.innerText = "⏳ आवेदन जमा हो रहा है...";
+      try {
+        const inviteRef = db.collection("shop_partner_invites").doc(token);
+        const invite = await inviteRef.get();
+        if (!invite.exists || invite.data().status === "used") throw new Error("invalid-link");
+        const bannerBase64 = await fileToBase64(file);
+        await db.collection("shop_ad_requests").add({
+          token, shopName:name, phone:"+91"+phone, location:loc, description:desc,
+          planAmount:String(plan), utr, bannerUrl:bannerBase64, status:"pending",
+          createdAt:firebase.firestore.FieldValue.serverTimestamp()
+        });
+        await inviteRef.update({status:"used", usedAt:firebase.firestore.FieldValue.serverTimestamp()});
+        status.innerText = "✅ आवेदन और पेमेंट विवरण Admin को भेज दिया गया है। सत्यापन के बाद विज्ञापन Live होगा।";
+        document.getElementById("shop-partner-form").reset();
+      } catch (err) {
+        status.innerText = "❌ आवेदन नहीं भेजा गया। कृपया Admin से संपर्क करें।";
+      }
+    }
+
+    function createShopPartnerLink() {
+      const plan = document.getElementById("adm-shop-link-plan").value;
+      const token = (crypto.randomUUID ? crypto.randomUUID() : (Date.now().toString(36)+Math.random().toString(36).slice(2))).replace(/-/g, "");
+      db.collection("shop_partner_invites").doc(token).set({
+        planAmount: plan, status:"new", createdBy:currentOperator,
+        createdAt:firebase.firestore.FieldValue.serverTimestamp()
+      }).then(() => {
+        const link = location.origin + location.pathname + "#shop-partner=" + encodeURIComponent(token);
+        document.getElementById("adm-shop-link-output").value = link;
+        document.getElementById("adm-shop-link-result").classList.remove("hidden");
+        document.getElementById("adm-shop-link-whatsapp").href = "https://wa.me/?text=" + encodeURIComponent("मिस्त्रीबाबू दुकान विज्ञापन फॉर्म\nपेमेंट राशि: ₹" + Number(plan).toLocaleString("en-IN") + "\nफॉर्म भरने के लिए लिंक: " + link);
+      }).catch(() => alert("लिंक बनाने में समस्या हुई।"));
+    }
+
+    async function copyShopPartnerLink() {
+      const input = document.getElementById("adm-shop-link-output");
+      try { await navigator.clipboard.writeText(input.value); alert("✅ लिंक कॉपी हो गया।"); }
+      catch { input.select(); document.execCommand("copy"); alert("✅ लिंक कॉपी हो गया।"); }
+    }
+
+    function loadShopPartnerRequests() {
+      const box = document.getElementById("admin-shop-requests-list");
+      if (!box) return;
+      db.collection("shop_ad_requests").orderBy("createdAt", "desc").limit(30).onSnapshot(snap => {
+        if (snap.empty) { box.innerHTML = "<p class='text-slate-400 text-center py-2'>कोई आवेदन नहीं है।</p>"; return; }
+        box.innerHTML = "";
+        snap.forEach(doc => {
+          const a = doc.data();
+          const pending = a.status === "pending";
+          box.innerHTML += `<div class="bg-white p-2 rounded-lg border border-violet-200 space-y-1">
+            <div class="flex justify-between gap-2"><strong>${escapeHtml(a.shopName || '')}</strong><span class="font-bold ${pending?'text-amber-600':'text-emerald-600'}">${pending?'PENDING':'APPROVED'}</span></div>
+            <p class="text-[10px] text-slate-500">${escapeHtml(a.location || '')} • ${escapeHtml(a.phone || '')} • ₹${Number(a.planAmount||0).toLocaleString('en-IN')}</p>
+            <p class="text-[10px] text-slate-600">UTR: <strong>${escapeHtml(a.utr || '')}</strong></p>
+            ${pending ? `<div class="grid grid-cols-2 gap-2"><button onclick="approveShopPartnerRequest('${doc.id}')" class="bg-emerald-600 text-white rounded-lg py-1.5 font-bold">✅ पेमेंट जाँचकर Live</button><button onclick="rejectShopPartnerRequest('${doc.id}')" class="bg-rose-50 text-rose-700 rounded-lg py-1.5 font-bold">❌ Reject</button></div>` : ''}
+          </div>`;
+        });
+      });
+    }
+
+    async function approveShopPartnerRequest(id) {
+      const ref = db.collection("shop_ad_requests").doc(id);
+      const snap = await ref.get();
+      if (!snap.exists) return alert("आवेदन नहीं मिला।");
+      const a = snap.data();
+      await db.collection("shop_ads").add({
+        shopName:a.shopName, phone:a.phone, location:a.location, description:a.description,
+        planAmount:a.planAmount, bannerUrl:a.bannerUrl || "", isActive:true,
+        createdBy:currentOperator, sourceRequestId:id, utr:a.utr || "",
+        createdAt:firebase.firestore.FieldValue.serverTimestamp()
+      });
+      await ref.update({status:"approved", approvedBy:currentOperator, approvedAt:firebase.firestore.FieldValue.serverTimestamp()});
+      alert("✅ पेमेंट/आवेदन जाँच के बाद दुकान विज्ञापन Live कर दिया गया।");
+    }
+
+    async function rejectShopPartnerRequest(id) {
+      if (!confirm("इस दुकान आवेदन को Reject करना है?")) return;
+      await db.collection("shop_ad_requests").doc(id).update({status:"rejected", rejectedBy:currentOperator, rejectedAt:firebase.firestore.FieldValue.serverTimestamp()});
+    }
+
+    function escapeHtml(v) {
+      return String(v ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','\"':'&quot;'}[c]));
     }
 
     async function adminSaveShopAd(e) {
@@ -2198,6 +2384,7 @@
         loadAdminDeals();
         loadAdminContractors();
         loadAdminShopAdsList();
+        loadShopPartnerRequests();
       } else {
         alert("गलत पासवर्ड! कृपया सही पासवर्ड दर्ज करें।");
         document.getElementById("admin-pin-input").value = "";
@@ -2229,7 +2416,7 @@
       else if (tab === 'workers') loadAdminWorkersList();
       else if (tab === 'callbacks') loadAdminCallbacks();
       else if (tab === 'contractors') loadAdminContractors();
-      else if (tab === 'shopads') loadAdminShopAdsList();
+      else if (tab === 'shopads') { loadAdminShopAdsList(); loadShopPartnerRequests(); }
     }
 
     function switchAdminDealTab(tab) {
