@@ -1,6 +1,13 @@
 <meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
 <html lang="hi">
 <head>
+
+<!-- MistryBabu Master File
+     Base: Dilbas1.html
+     Version: 17 Updates Master
+     Future small changes should be made through the external configuration/admin layer.
+-->
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>MistryBabu.com - बिहार, यूपी, दिल्ली व हरियाणा के मिस्त्री और मजदूर ऑनलाइन</title>
@@ -767,7 +774,7 @@
           <i class="fa-solid fa-shield-halved text-amber-400 text-base"></i>
           <div>
             <h3 class="text-xs font-black">मिस्त्रीबाबू सुपर कंट्रोल रूम</h3>
-            <p class="text-[9px] text-slate-400" id="admin-op-indicator">अधिकृत ऑपरेटर टीम (dilbas, lehari, monu)</p>
+            <p class="text-[9px] text-slate-400" id="admin-op-indicator">अधिकृत ऑपरेटर टीम</p>
           </div>
         </div>
         <button onclick="closeAdminModal()" class="text-slate-400 hover:text-white text-lg">
@@ -784,9 +791,9 @@
         <p class="text-[10px] text-slate-500">केवल 3 अधिकृत व्यक्ति ही प्रवेश कर सकते हैं</p>
         
         <div class="space-y-2 max-w-[220px] mx-auto">
-          <input type="text" id="admin-operator-name" placeholder="अधिकृत नाम (dilbas / lehari / monu)" class="w-full text-center text-xs font-bold border-2 border-slate-300 rounded-xl py-2 px-3 focus:border-amber-500 focus:outline-none">
+          <input type="text" id="admin-operator-name" placeholder="अधिकृत ऑपरेटर नाम" class="w-full text-center text-xs font-bold border-2 border-slate-300 rounded-xl py-2 px-3 focus:border-amber-500 focus:outline-none">
           <div class="relative">
-            <input type="password" id="admin-pin-input" placeholder="पासवर्ड (Run1)" class="w-full text-center text-sm font-bold border-2 border-slate-300 rounded-xl py-2 px-8 focus:border-amber-500 focus:outline-none">
+            <input type="password" id="admin-pin-input" placeholder="पासवर्ड दर्ज करें" class="w-full text-center text-sm font-bold border-2 border-slate-300 rounded-xl py-2 px-8 focus:border-amber-500 focus:outline-none">
             <button type="button" onclick="togglePassVisibility()" class="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600">
               <i id="eye-icon" class="fa-solid fa-eye text-xs"></i>
             </button>
@@ -2166,18 +2173,23 @@
       }
     }
 
-    function verifyAdminPin() {
+    async function verifyAdminPin() {
       const entered = document.getElementById("admin-pin-input").value.trim();
       const opName = document.getElementById("admin-operator-name").value
                             .replace(/[,.\s]/g, '')
                             .toLowerCase();
 
       if (!ALLOWED_ADMIN_USERS.includes(opName)) {
-        alert("⛔ अनाधिकृत यूज़र! केवल dilbas, lehari, या monu ही कंट्रोल रूम खोल सकते हैं।");
+        alert("⛔ अनधिकृत ऑपरेटर! प्रवेश की अनुमति नहीं है।");
         return;
       }
 
-      if (entered.toLowerCase() === "run1") {
+      // पासवर्ड का plaintext अब UI/कोड में नहीं दिखाया जाता।
+      const passwordHash = "34e9aedefffddf04c3cf3f9e055ba714e9ebe21b828e6170eeb7b610123d9f7d";
+      const enteredHash = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(entered.toLowerCase()));
+      const enteredHex = Array.from(new Uint8Array(enteredHash)).map(b => b.toString(16).padStart(2, "0")).join("");
+
+      if (enteredHex === passwordHash) {
         currentOperator = opName;
         localStorage.setItem("mb_active_operator", opName);
         document.getElementById("lbl-active-operator").innerText = opName;
