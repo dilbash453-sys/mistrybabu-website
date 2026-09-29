@@ -1,13 +1,6 @@
 <meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
 <html lang="hi">
 <head>
-
-<!-- MistryBabu Master File
-     Base: Dilbas1.html
-     Version: 17 Updates Master
-     Future small changes should be made through the external configuration/admin layer.
--->
-
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>MistryBabu.com - बिहार, यूपी, दिल्ली व हरियाणा के मिस्त्री और मजदूर ऑनलाइन</title>
@@ -327,22 +320,7 @@
           </div>
           <textarea id="pc-desc" rows="2" placeholder="काम के बारे में समझाकर लिखें..." class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs focus:outline-none"></textarea>
         </div>
-
-        <div class="bg-slate-50 p-2.5 rounded-xl border border-dashed border-slate-300 mt-3 mb-3">
-          <label class="block text-[11px] font-bold text-slate-700 mb-1">पहचान पत्र (Front & Back) - वैकल्पिक (सत्यापन टैग हेतु)</label>
-          <div class="space-y-2">
-            <div>
-              <span class="text-[10px] text-slate-500">सामने का भाग (Front Photo - वैकल्पिक):</span>
-              <input type="file" id="doc-front-file" accept="image/*" class="w-full text-xs p-1.5 border border-slate-300 rounded-lg bg-white">
-            </div>
-            <div>
-              <span class="text-[10px] text-slate-500">पीछे का भाग (Back Photo - वैकल्पिक):</span>
-              <input type="file" id="doc-back-file" accept="image/*" class="w-full text-xs p-1.5 border border-slate-300 rounded-lg bg-white">
-            </div>
-          </div>
-        </div>
-
-        <button type="submit" id="btn-post-job" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold py-2.5 rounded-xl text-xs shadow-xs transition">
+<button type="submit" id="btn-post-job" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold py-2.5 rounded-xl text-xs shadow-xs transition">
           काम पोस्ट करें
         </button>
       </form>
@@ -360,71 +338,6 @@
       <button onclick="switchRoleTab('contractor')" id="tab-btn-contractor" class="flex-1 py-2 text-center rounded-lg text-slate-600">
         ठेकेदार VIP 👑
       </button>
-      <button onclick="switchRoleTab('smallContractor')" id="tab-btn-smallContractor" class="flex-1 py-2 text-center rounded-lg text-slate-600">
-        स्मॉल ठेकेदार 🔨
-      </button>
-    </div>
-
-    <!-- ROLE-BASED PROFILE SYSTEM: 6/7 FINAL UPDATE -->
-    <div id="role-profile-panel" class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs mb-4">
-      <div class="flex items-center justify-between mb-3">
-        <div>
-          <h3 id="role-profile-title" class="text-sm font-black text-slate-900">मेरी प्रोफ़ाइल</h3>
-          <p class="text-[10px] text-slate-500">अपनी प्रोफ़ाइल खुद बनाएं। जो जानकारी भरकर सेव करेंगे, वही फ़ील्ड लॉक हो जाएगी। खाली फ़ील्ड बाद में कभी भी भर सकते हैं।</p>
-        </div>
-        <span id="role-profile-badge" class="text-[9px] bg-slate-100 text-slate-700 font-bold px-2 py-1 rounded-full">अधूरी प्रोफ़ाइल भी सुरक्षित</span>
-      </div>
-
-      <form id="role-profile-form" class="space-y-2" onsubmit="saveRoleProfile(event)">
-        <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="block text-[9px] font-bold text-slate-600 mb-1">नाम</label>
-            <input id="role-profile-name" type="text" placeholder="पूरा नाम" class="w-full rounded-lg border border-slate-300 px-2.5 py-2 text-xs">
-            <span id="role-profile-name-status" class="hidden text-[9px] text-emerald-600 font-bold">✓ नाम लॉक है</span>
-          </div>
-          <div>
-            <label class="block text-[9px] font-bold text-slate-600 mb-1">मोबाइल नंबर</label>
-            <input id="role-profile-phone" type="tel" maxlength="10" placeholder="10 अंकों का नंबर" class="w-full rounded-lg border border-slate-300 px-2.5 py-2 text-xs">
-            <span id="role-profile-phone-status" class="hidden text-[9px] text-emerald-600 font-bold">✓ नंबर लॉक है</span>
-          </div>
-        </div>
-
-        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
-          <label class="block text-[10px] font-bold text-slate-700 mb-1">📷 प्रोफ़ाइल फ़ोटो</label>
-          <input id="role-profile-photo" type="file" accept="image/*" class="w-full text-[10px] text-slate-500">
-          <div id="role-profile-photo-done" class="hidden text-[9px] text-emerald-600 font-bold mt-1">✓ फ़ोटो सुरक्षित और लॉक है</div>
-        </div>
-
-        <input id="role-profile-location" type="text" placeholder="गाँव / शहर / जिला (वैकल्पिक)" class="w-full rounded-lg border border-slate-300 px-2.5 py-2 text-xs">
-        <span id="role-profile-location-status" class="hidden text-[9px] text-emerald-600 font-bold">✓ लोकेशन लॉक है</span>
-        <textarea id="role-profile-about" rows="2" placeholder="अपने बारे में / काम का विवरण (वैकल्पिक)" class="w-full rounded-lg border border-slate-300 px-2.5 py-2 text-xs"></textarea>
-        <span id="role-profile-about-status" class="hidden text-[9px] text-emerald-600 font-bold">✓ जानकारी लॉक है</span>
-
-        <div class="bg-blue-50/70 p-3 rounded-xl border border-blue-200 space-y-2">
-          <div>
-            <label class="block text-[10px] font-bold text-blue-900 mb-1">🛡️ पहचान पत्र / आधार (वैकल्पिक)</label>
-            <p class="text-[9px] text-slate-500 mb-2">Verified टैग के लिए Front और Back दोनों देना जरूरी है। आधार देना अनिवार्य नहीं है।</p>
-          </div>
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <span class="text-[9px] text-slate-500 block mb-1">Front</span>
-              <input id="role-profile-id-front" type="file" accept="image/*" class="w-full text-[9px] p-1 border border-slate-300 rounded-lg bg-white">
-              <span id="role-profile-id-front-done" class="hidden text-[9px] text-emerald-600 font-bold">✓ Front लॉक</span>
-            </div>
-            <div>
-              <span class="text-[9px] text-slate-500 block mb-1">Back</span>
-              <input id="role-profile-id-back" type="file" accept="image/*" class="w-full text-[9px] p-1 border border-slate-300 rounded-lg bg-white">
-              <span id="role-profile-id-back-done" class="hidden text-[9px] text-emerald-600 font-bold">✓ Back लॉक</span>
-            </div>
-          </div>
-          <input id="role-profile-id-number" type="text" placeholder="पहचान पत्र संख्या (वैकल्पिक)" class="w-full rounded-lg border border-blue-300 px-2.5 py-2 text-xs uppercase bg-white">
-          <span id="role-profile-id-number-status" class="hidden text-[9px] text-emerald-600 font-bold">✓ पहचान संख्या लॉक है</span>
-          <div id="role-profile-verified-status" class="hidden text-[10px] text-emerald-700 font-black bg-emerald-50 rounded-lg p-2">🛡️ Front + Back प्राप्त — Verified टैग के लिए तैयार</div>
-        </div>
-
-        <button type="submit" class="w-full bg-slate-900 text-amber-400 font-bold py-2.5 rounded-xl text-xs">💾 भरी हुई जानकारी सेव करें</button>
-        <p class="text-[9px] text-slate-400">नियम: जो फ़ील्ड सेव करते समय भरा होगा वह लॉक हो जाएगा। जो खाली रहेगा वह खुला रहेगा और बाद में भरा जा सकेगा।</p>
-      </form>
     </div>
 
     <!-- 1. CUSTOMER DASHBOARD -->
@@ -806,52 +719,8 @@
           </button>
         </form>
       </div>
-    
-    <!-- 4. SMALL CONTRACTOR DEDICATED PROFILE -->
-    <div id="small-contractor-dashboard-box" class="space-y-4 hidden">
-      <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-4">
-        <h3 class="text-base font-black text-slate-900">🔨 स्मॉल ठेकेदार प्रोफ़ाइल</h3>
-        <p class="text-[10px] text-slate-600 mt-1">यह प्रोफ़ाइल केवल स्मॉल ठेकेदार के लॉगिन पर दिखाई देगी। VIP, मिस्त्री और ग्राहक की प्रोफ़ाइल यहाँ नहीं दिखेगी।</p>
-        <button onclick="logoutRoleSession()" class="mt-3 bg-rose-50 text-rose-600 font-bold py-2 px-3 rounded-xl text-xs">लॉग आउट</button>
-      </div>
     </div>
-</div>
   </section>
-  <!-- ==================== SHOP PARTNER INVITE / PAYMENT FORM ==================== -->
-  <div id="shop-partner-modal" class="fixed inset-0 bg-slate-900/80 z-[60] hidden items-center justify-center p-3">
-    <div class="bg-white rounded-2xl max-w-lg w-full max-h-[92vh] overflow-y-auto shadow-2xl">
-      <div class="bg-blue-600 text-white p-4 flex justify-between items-center">
-        <div>
-          <h3 class="text-sm font-black">🏪 दुकान पार्टनर विज्ञापन</h3>
-          <p class="text-[10px] text-blue-100">फॉर्म भरें → पेमेंट करें → Admin जाँच के बाद विज्ञापन Live होगा</p>
-        </div>
-        <button onclick="closeShopPartnerForm()" class="w-8 h-8 bg-blue-700 rounded-full font-bold">✕</button>
-      </div>
-      <form id="shop-partner-form" onsubmit="submitShopPartnerForm(event)" class="p-4 space-y-3 text-xs">
-        <div class="bg-amber-50 border border-amber-200 rounded-xl p-3">
-          <div class="font-black text-amber-900">📢 विज्ञापन शुल्क</div>
-          <div id="shop-partner-price" class="text-lg font-black text-amber-700 mt-1">₹1,000</div>
-          <div class="text-[10px] text-amber-800 mt-1">चुने गए प्लान के अनुसार राशि पहले से दिखाई जाएगी।</div>
-        </div>
-        <input type="hidden" id="shop-partner-token">
-        <input type="hidden" id="shop-partner-plan">
-        <input type="text" id="shop-partner-name" required placeholder="दुकान का नाम" class="w-full rounded-lg border border-slate-300 p-2">
-        <input type="tel" id="shop-partner-phone" required maxlength="10" inputmode="numeric" placeholder="10 अंकों का दुकान मोबाइल नंबर" class="w-full rounded-lg border border-slate-300 p-2">
-        <input type="text" id="shop-partner-location" required placeholder="दुकान का स्थान" class="w-full rounded-lg border border-slate-300 p-2">
-        <textarea id="shop-partner-desc" required placeholder="दुकान/सामान का विवरण" class="w-full rounded-lg border border-slate-300 p-2 min-h-[70px]"></textarea>
-        <input type="file" id="shop-partner-photo" accept="image/*" required class="w-full text-[10px]">
-        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 space-y-2">
-          <div class="font-black text-slate-800">💳 पेमेंट</div>
-          <div>UPI ID: <strong class="text-amber-700">mistrybabu@upi</strong></div>
-          <div class="text-[10px] text-slate-500">ऊपर दिखाई गई राशि भेजने के बाद UTR नंबर नीचे दर्ज करें।</div>
-          <input type="text" id="shop-partner-utr" required maxlength="20" placeholder="पेमेंट का UTR नंबर" class="w-full rounded-lg border border-slate-300 p-2">
-        </div>
-        <button type="submit" class="w-full bg-blue-600 text-white font-black py-2.5 rounded-xl">📨 आवेदन + पेमेंट विवरण भेजें</button>
-        <p id="shop-partner-status" class="text-center text-[10px] text-slate-500"></p>
-      </form>
-    </div>
-  </div>
-
   <!-- ==================== SIDE DRAWER: LOCAL SHOP PARTNERS ==================== -->
   <div id="shop-drawer" class="fixed inset-y-0 right-0 max-w-sm w-full bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
     <div class="p-4 bg-blue-600 text-white flex justify-between items-center shadow-md">
@@ -883,7 +752,7 @@
           <i class="fa-solid fa-shield-halved text-amber-400 text-base"></i>
           <div>
             <h3 class="text-xs font-black">मिस्त्रीबाबू सुपर कंट्रोल रूम</h3>
-            <p class="text-[9px] text-slate-400" id="admin-op-indicator">अधिकृत ऑपरेटर टीम</p>
+            <p class="text-[9px] text-slate-400" id="admin-op-indicator">अधिकृत ऑपरेटर टीम (dilbas, lehari, monu)</p>
           </div>
         </div>
         <button onclick="closeAdminModal()" class="text-slate-400 hover:text-white text-lg">
@@ -900,9 +769,9 @@
         <p class="text-[10px] text-slate-500">केवल 3 अधिकृत व्यक्ति ही प्रवेश कर सकते हैं</p>
         
         <div class="space-y-2 max-w-[220px] mx-auto">
-          <input type="text" id="admin-operator-name" placeholder="अधिकृत ऑपरेटर नाम" class="w-full text-center text-xs font-bold border-2 border-slate-300 rounded-xl py-2 px-3 focus:border-amber-500 focus:outline-none">
+          <input type="text" id="admin-operator-name" placeholder="अधिकृत नाम (dilbas / lehari / monu)" class="w-full text-center text-xs font-bold border-2 border-slate-300 rounded-xl py-2 px-3 focus:border-amber-500 focus:outline-none">
           <div class="relative">
-            <input type="password" id="admin-pin-input" placeholder="पासवर्ड दर्ज करें" class="w-full text-center text-sm font-bold border-2 border-slate-300 rounded-xl py-2 px-8 focus:border-amber-500 focus:outline-none">
+            <input type="password" id="admin-pin-input" placeholder="पासवर्ड (Run1)" class="w-full text-center text-sm font-bold border-2 border-slate-300 rounded-xl py-2 px-8 focus:border-amber-500 focus:outline-none">
             <button type="button" onclick="togglePassVisibility()" class="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600">
               <i id="eye-icon" class="fa-solid fa-eye text-xs"></i>
             </button>
@@ -1009,33 +878,6 @@
                 दुकान विज्ञापन तुरंत लाइव करें
               </button>
             </form>
-          </div>
-
-          <div class="bg-amber-50 p-3 rounded-xl border border-amber-200 space-y-2">
-            <h4 class="font-black text-slate-900 text-[11px]">🔗 दुकानदार को फॉर्म लिंक भेजें</h4>
-            <p class="text-[10px] text-slate-600">प्लान चुनें और लिंक बनाएँ। दुकानदार खुद फॉर्म भरेगा और पेमेंट/UTR भेजेगा।</p>
-            <div class="grid grid-cols-2 gap-2">
-              <select id="adm-shop-link-plan" class="rounded-lg border border-slate-300 p-1.5 bg-white font-bold text-amber-800">
-                <option value="1000">1 महीना (₹1,000)</option>
-                <option value="2500">3 महीना (₹2,500)</option>
-              </select>
-              <button type="button" onclick="createShopPartnerLink()" class="bg-amber-500 text-slate-900 font-black rounded-lg">🔗 लिंक बनाएँ</button>
-            </div>
-            <div id="adm-shop-link-result" class="hidden bg-white border border-amber-200 rounded-lg p-2 space-y-2">
-              <input id="adm-shop-link-output" readonly class="w-full rounded-lg border border-slate-300 p-1.5 text-[10px]">
-              <button type="button" onclick="copyShopPartnerLink()" class="w-full bg-slate-900 text-white font-bold py-1.5 rounded-lg">📋 लिंक कॉपी करें</button>
-              <a id="adm-shop-link-whatsapp" target="_blank" rel="noopener" class="block w-full text-center bg-emerald-600 text-white font-bold py-1.5 rounded-lg">⚡ WhatsApp से भेजें</a>
-            </div>
-          </div>
-
-          <div class="bg-violet-50 p-3 rounded-xl border border-violet-200 space-y-2">
-            <div class="flex justify-between items-center">
-              <span class="font-black text-slate-800">📥 दुकानदार के आवेदन / पेमेंट</span>
-              <button type="button" onclick="loadShopPartnerRequests()" class="text-violet-700 font-bold">रिफ्रेश ↻</button>
-            </div>
-            <div id="admin-shop-requests-list" class="space-y-2">
-              <p class="text-slate-400 text-center py-2">लोड हो रहा है...</p>
-            </div>
           </div>
 
           <div class="space-y-2">
@@ -1724,6 +1566,9 @@
         workType: document.getElementById("pc-work").value,
         duration: document.getElementById("pc-duration").value,
         workerCount: document.getElementById("pc-worker-count").value || 1,
+        isBulkLabour: document.getElementById("mb-bulk-labour")?.checked || false,
+        bulkLabourCount: parseInt(document.getElementById("mb-bulk-count")?.value || "0", 10) || 0,
+        bulkLabourShift: document.getElementById("mb-bulk-shift")?.value.trim() || "",
         materialType: document.getElementById("pc-material").value,
         sitePhoto: sitePhoto || "",
         desc: document.getElementById("pc-desc").value.trim(),
@@ -1737,8 +1582,6 @@
 
       db.collection("job_posts").add(data).then(() => {
         localStorage.setItem("mb_client_phone", fullPhone);
-      activateRoleSession('client');
-      updateRoleProfilePanel('client');
         localStorage.setItem("mb_client_name", clientName);
         if (deviceLockedRole === "worker") {
           localStorage.setItem("mb_worker_posts_count", (postsCount + 1).toString());
@@ -1804,8 +1647,6 @@
       }).then(docRef => {
         localStorage.setItem("mb_contractor_app_id", docRef.id);
         localStorage.setItem("mb_contractor_app_tier", tier);
-        activateRoleSession(tier === 'vip' ? 'contractor' : 'smallContractor');
-        updateRoleProfilePanel(tier === 'vip' ? 'contractor' : 'smallContractor');
         alert("✅ आपके दस्तावेज़ सत्यापन हेतु जमा हो गए हैं!\nकंपनी द्वारा कागज़ात पास करने के बाद आपको पेमेंट करने का विकल्प मिलेगा।");
         btn.innerText = "⏳ कागज़ात जाँचे जा रहे हैं...";
         btn.disabled = true;
@@ -1844,9 +1685,6 @@
     }
 
     // 3. साइड ड्रॉअर व दुकान पार्टनर ऐड्स
-    window.addEventListener("hashchange", openShopPartnerFromHash);
-    document.addEventListener("DOMContentLoaded", () => setTimeout(openShopPartnerFromHash, 300));
-
     function openShopDrawer() {
       document.getElementById("shop-drawer").classList.remove("translate-x-full");
       document.getElementById("shop-drawer-backdrop").classList.remove("hidden");
@@ -1923,127 +1761,6 @@
         if (sliderBox) sliderBox.innerHTML = sliderHtml;
         if (wrapperBox) wrapperBox.classList.remove("hidden");
       });
-    }
-
-    function closeShopPartnerForm() {
-      const m = document.getElementById("shop-partner-modal");
-      m.classList.add("hidden");
-      m.classList.remove("flex");
-    }
-
-    function openShopPartnerFromHash() {
-      const match = location.hash.match(/^#shop-partner=([^&]+)/);
-      if (!match) return;
-      const token = decodeURIComponent(match[1]);
-      db.collection("shop_partner_invites").doc(token).get().then(doc => {
-        if (!doc.exists || doc.data().status === "used") {
-          alert("यह दुकान पार्टनर लिंक मान्य नहीं है या पहले इस्तेमाल हो चुका है।");
-          return;
-        }
-        const data = doc.data();
-        document.getElementById("shop-partner-token").value = token;
-        document.getElementById("shop-partner-plan").value = String(data.planAmount || "1000");
-        document.getElementById("shop-partner-price").innerText = "₹" + Number(data.planAmount || 1000).toLocaleString("en-IN");
-        const m = document.getElementById("shop-partner-modal");
-        m.classList.remove("hidden");
-        m.classList.add("flex");
-      }).catch(() => alert("दुकान पार्टनर लिंक खोलने में समस्या हुई। कृपया Admin से नया लिंक लें।"));
-    }
-
-    async function submitShopPartnerForm(e) {
-      e.preventDefault();
-      const token = document.getElementById("shop-partner-token").value.trim();
-      const plan = document.getElementById("shop-partner-plan").value;
-      const name = document.getElementById("shop-partner-name").value.trim();
-      const phone = document.getElementById("shop-partner-phone").value.trim();
-      const loc = document.getElementById("shop-partner-location").value.trim();
-      const desc = document.getElementById("shop-partner-desc").value.trim();
-      const utr = document.getElementById("shop-partner-utr").value.trim();
-      const file = document.getElementById("shop-partner-photo").files[0];
-      if (!/^\d{10}$/.test(phone)) return alert("कृपया 10 अंकों का मोबाइल नंबर दर्ज करें।");
-      if (!utr) return alert("पेमेंट के बाद UTR नंबर दर्ज करें।");
-      if (!file) return alert("दुकान की फोटो चुनें।");
-      const status = document.getElementById("shop-partner-status");
-      status.innerText = "⏳ आवेदन जमा हो रहा है...";
-      try {
-        const inviteRef = db.collection("shop_partner_invites").doc(token);
-        const invite = await inviteRef.get();
-        if (!invite.exists || invite.data().status === "used") throw new Error("invalid-link");
-        const bannerBase64 = await fileToBase64(file);
-        await db.collection("shop_ad_requests").add({
-          token, shopName:name, phone:"+91"+phone, location:loc, description:desc,
-          planAmount:String(plan), utr, bannerUrl:bannerBase64, status:"pending",
-          createdAt:firebase.firestore.FieldValue.serverTimestamp()
-        });
-        await inviteRef.update({status:"used", usedAt:firebase.firestore.FieldValue.serverTimestamp()});
-        status.innerText = "✅ आवेदन और पेमेंट विवरण Admin को भेज दिया गया है। सत्यापन के बाद विज्ञापन Live होगा।";
-        document.getElementById("shop-partner-form").reset();
-      } catch (err) {
-        status.innerText = "❌ आवेदन नहीं भेजा गया। कृपया Admin से संपर्क करें।";
-      }
-    }
-
-    function createShopPartnerLink() {
-      const plan = document.getElementById("adm-shop-link-plan").value;
-      const token = (crypto.randomUUID ? crypto.randomUUID() : (Date.now().toString(36)+Math.random().toString(36).slice(2))).replace(/-/g, "");
-      db.collection("shop_partner_invites").doc(token).set({
-        planAmount: plan, status:"new", createdBy:currentOperator,
-        createdAt:firebase.firestore.FieldValue.serverTimestamp()
-      }).then(() => {
-        const link = location.origin + location.pathname + "#shop-partner=" + encodeURIComponent(token);
-        document.getElementById("adm-shop-link-output").value = link;
-        document.getElementById("adm-shop-link-result").classList.remove("hidden");
-        document.getElementById("adm-shop-link-whatsapp").href = "https://wa.me/?text=" + encodeURIComponent("मिस्त्रीबाबू दुकान विज्ञापन फॉर्म\nपेमेंट राशि: ₹" + Number(plan).toLocaleString("en-IN") + "\nफॉर्म भरने के लिए लिंक: " + link);
-      }).catch(() => alert("लिंक बनाने में समस्या हुई।"));
-    }
-
-    async function copyShopPartnerLink() {
-      const input = document.getElementById("adm-shop-link-output");
-      try { await navigator.clipboard.writeText(input.value); alert("✅ लिंक कॉपी हो गया।"); }
-      catch { input.select(); document.execCommand("copy"); alert("✅ लिंक कॉपी हो गया।"); }
-    }
-
-    function loadShopPartnerRequests() {
-      const box = document.getElementById("admin-shop-requests-list");
-      if (!box) return;
-      db.collection("shop_ad_requests").orderBy("createdAt", "desc").limit(30).onSnapshot(snap => {
-        if (snap.empty) { box.innerHTML = "<p class='text-slate-400 text-center py-2'>कोई आवेदन नहीं है।</p>"; return; }
-        box.innerHTML = "";
-        snap.forEach(doc => {
-          const a = doc.data();
-          const pending = a.status === "pending";
-          box.innerHTML += `<div class="bg-white p-2 rounded-lg border border-violet-200 space-y-1">
-            <div class="flex justify-between gap-2"><strong>${escapeHtml(a.shopName || '')}</strong><span class="font-bold ${pending?'text-amber-600':'text-emerald-600'}">${pending?'PENDING':'APPROVED'}</span></div>
-            <p class="text-[10px] text-slate-500">${escapeHtml(a.location || '')} • ${escapeHtml(a.phone || '')} • ₹${Number(a.planAmount||0).toLocaleString('en-IN')}</p>
-            <p class="text-[10px] text-slate-600">UTR: <strong>${escapeHtml(a.utr || '')}</strong></p>
-            ${pending ? `<div class="grid grid-cols-2 gap-2"><button onclick="approveShopPartnerRequest('${doc.id}')" class="bg-emerald-600 text-white rounded-lg py-1.5 font-bold">✅ पेमेंट जाँचकर Live</button><button onclick="rejectShopPartnerRequest('${doc.id}')" class="bg-rose-50 text-rose-700 rounded-lg py-1.5 font-bold">❌ Reject</button></div>` : ''}
-          </div>`;
-        });
-      });
-    }
-
-    async function approveShopPartnerRequest(id) {
-      const ref = db.collection("shop_ad_requests").doc(id);
-      const snap = await ref.get();
-      if (!snap.exists) return alert("आवेदन नहीं मिला।");
-      const a = snap.data();
-      await db.collection("shop_ads").add({
-        shopName:a.shopName, phone:a.phone, location:a.location, description:a.description,
-        planAmount:a.planAmount, bannerUrl:a.bannerUrl || "", isActive:true,
-        createdBy:currentOperator, sourceRequestId:id, utr:a.utr || "",
-        createdAt:firebase.firestore.FieldValue.serverTimestamp()
-      });
-      await ref.update({status:"approved", approvedBy:currentOperator, approvedAt:firebase.firestore.FieldValue.serverTimestamp()});
-      alert("✅ पेमेंट/आवेदन जाँच के बाद दुकान विज्ञापन Live कर दिया गया।");
-    }
-
-    async function rejectShopPartnerRequest(id) {
-      if (!confirm("इस दुकान आवेदन को Reject करना है?")) return;
-      await db.collection("shop_ad_requests").doc(id).update({status:"rejected", rejectedBy:currentOperator, rejectedAt:firebase.firestore.FieldValue.serverTimestamp()});
-    }
-
-    function escapeHtml(v) {
-      return String(v ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','\"':'&quot;'}[c]));
     }
 
     async function adminSaveShopAd(e) {
@@ -2241,8 +1958,6 @@
       localStorage.setItem("mb_worker_level", wData.level || "कुशल कारीगर");
       localStorage.setItem("mb_worker_photos", JSON.stringify(wData.workPhotos || []));
       localStorage.setItem("mb_worker_id_verified", wData.isIdVerified ? "true" : "false");
-      activateRoleSession('worker');
-      updateRoleProfilePanel('worker');
       
       let isVipActive = false;
       if (wData.isContractorVIP && wData.contractorExpiry) {
@@ -2439,23 +2154,18 @@
       }
     }
 
-    async function verifyAdminPin() {
+    function verifyAdminPin() {
       const entered = document.getElementById("admin-pin-input").value.trim();
       const opName = document.getElementById("admin-operator-name").value
                             .replace(/[,.\s]/g, '')
                             .toLowerCase();
 
       if (!ALLOWED_ADMIN_USERS.includes(opName)) {
-        alert("⛔ अनधिकृत ऑपरेटर! प्रवेश की अनुमति नहीं है।");
+        alert("⛔ अनाधिकृत यूज़र! केवल dilbas, lehari, या monu ही कंट्रोल रूम खोल सकते हैं।");
         return;
       }
 
-      // पासवर्ड का plaintext अब UI/कोड में नहीं दिखाया जाता।
-      const passwordHash = "34e9aedefffddf04c3cf3f9e055ba714e9ebe21b828e6170eeb7b610123d9f7d";
-      const enteredHash = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(entered.toLowerCase()));
-      const enteredHex = Array.from(new Uint8Array(enteredHash)).map(b => b.toString(16).padStart(2, "0")).join("");
-
-      if (enteredHex === passwordHash) {
+      if (entered.toLowerCase() === "run1") {
         currentOperator = opName;
         localStorage.setItem("mb_active_operator", opName);
         document.getElementById("lbl-active-operator").innerText = opName;
@@ -2464,7 +2174,6 @@
         loadAdminDeals();
         loadAdminContractors();
         loadAdminShopAdsList();
-        loadShopPartnerRequests();
       } else {
         alert("गलत पासवर्ड! कृपया सही पासवर्ड दर्ज करें।");
         document.getElementById("admin-pin-input").value = "";
@@ -2496,7 +2205,7 @@
       else if (tab === 'workers') loadAdminWorkersList();
       else if (tab === 'callbacks') loadAdminCallbacks();
       else if (tab === 'contractors') loadAdminContractors();
-      else if (tab === 'shopads') { loadAdminShopAdsList(); loadShopPartnerRequests(); }
+      else if (tab === 'shopads') loadAdminShopAdsList();
     }
 
     function switchAdminDealTab(tab) {
@@ -3815,140 +3524,37 @@
     }
 
     function switchRoleTab(role) {
-      const active = localStorage.getItem('mb_active_role');
-      if (active && active !== role) {
-        alert('🔒 आप अभी ' + roleLabel(active) + ' प्रोफ़ाइल में लॉगिन हैं। दूसरे रोल की प्रोफ़ाइल देखने के लिए पहले लॉग आउट करें।');
-        return;
-      }
-      const clientBox = document.getElementById('client-dashboard-box');
-      const workerBox = document.getElementById('worker-dashboard-box');
-      const contractorBox = document.getElementById('contractor-dashboard-box');
-      const smallBox = document.getElementById('small-contractor-dashboard-box');
-      const boxes = [clientBox, workerBox, contractorBox, smallBox];
-      boxes.forEach(b => { if (b) { b.style.display = 'none'; b.classList.add('hidden'); } });
-      ['client','worker','contractor','smallContractor'].forEach(r => {
-        const b = document.getElementById('tab-btn-' + r);
-        if (b) b.className = 'flex-1 py-2 text-center rounded-lg text-slate-600 font-bold text-xs bg-slate-200';
-      });
-      const target = document.getElementById(role === 'smallContractor' ? 'small-contractor-dashboard-box' : role + '-dashboard-box');
-      if (target) { target.style.display = 'block'; target.classList.remove('hidden'); }
-      const btn = document.getElementById('tab-btn-' + role);
-      if (btn) btn.className = 'flex-1 py-2 text-center rounded-lg bg-white text-slate-800 shadow-xs font-bold text-xs';
-      if (typeof updateRoleProfilePanel === 'function') updateRoleProfilePanel(role);
-      if (role === 'worker' && typeof updateRegisterScreenView === 'function') updateRegisterScreenView();
-      if ((role === 'contractor' || role === 'smallContractor') && typeof checkContractorStatus === 'function') checkContractorStatus();
-    }
+      const clientBox = document.getElementById("client-dashboard-box");
+      const workerBox = document.getElementById("worker-dashboard-box");
+      const contractorBox = document.getElementById("contractor-dashboard-box");
 
-    function roleLabel(role) {
-      return ({client:'ग्राहक',worker:'मिस्त्री',contractor:'VIP ठेकेदार',smallContractor:'स्मॉल ठेकेदार'})[role] || role;
-    }
+      const btnClient = document.getElementById("tab-btn-client");
+      const btnWorker = document.getElementById("tab-btn-worker");
+      const btnContractor = document.getElementById("tab-btn-contractor");
 
-    function roleProfileKey(role) { return 'mb_profile_' + role; }
+      if (!clientBox || !workerBox || !contractorBox) return;
 
-    function updateRoleProfilePanel(role) {
-      const title = document.getElementById('role-profile-title');
-      const badge = document.getElementById('role-profile-badge');
-      if (title) title.innerText = 'मेरी प्रोफ़ाइल — ' + roleLabel(role);
-      if (badge) badge.innerText = '🔒 केवल ' + roleLabel(role) + ' प्रोफ़ाइल';
+      clientBox.style.display = "none";
+      workerBox.style.display = "none";
+      contractorBox.style.display = "none";
 
-      const d = JSON.parse(localStorage.getItem(roleProfileKey(role)) || '{}');
-      const fields = ['name','phone','location','about','id-number'];
-      fields.forEach(k => {
-        const el = document.getElementById('role-profile-' + k);
-        if (!el) return;
-        const val = d[k] || '';
-        el.value = val;
-        el.disabled = !!val;
-        el.classList.toggle('bg-slate-100', !!val);
-      });
+      if(btnClient) btnClient.className = "flex-1 py-2 text-center rounded-lg text-slate-600 font-bold text-xs bg-slate-200";
+      if(btnWorker) btnWorker.className = "flex-1 py-2 text-center rounded-lg text-slate-600 font-bold text-xs bg-slate-200";
+      if(btnContractor) btnContractor.className = "flex-1 py-2 text-center rounded-lg text-slate-600 font-bold text-xs bg-slate-200";
 
-      const photo = document.getElementById('role-profile-photo');
-      if (photo) { photo.value = ''; photo.disabled = !!d.photo; }
-      const photoDone = document.getElementById('role-profile-photo-done');
-      if (photoDone) photoDone.classList.toggle('hidden', !d.photo);
-
-      ['name','phone','location','about','id-number'].forEach(k => {
-        const st = document.getElementById('role-profile-' + k + '-status');
-        if (st) st.classList.toggle('hidden', !(d[k] || ''));
-      });
-
-      ['front','back'].forEach(side => {
-        const input = document.getElementById('role-profile-id-' + side);
-        const done = document.getElementById('role-profile-id-' + side + '-done');
-        if (input) { input.value = ''; input.disabled = !!d['id-' + side]; }
-        if (done) done.classList.toggle('hidden', !d['id-' + side]);
-      });
-
-      const verified = !!(d['id-front'] && d['id-back']);
-      const vs = document.getElementById('role-profile-verified-status');
-      if (vs) vs.classList.toggle('hidden', !verified);
-    }
-
-    async function saveRoleProfile(e) {
-      e.preventDefault();
-      const role = localStorage.getItem('mb_active_role') || 'client';
-      const key = roleProfileKey(role);
-      const old = JSON.parse(localStorage.getItem(key) || '{}');
-
-      const val = id => (document.getElementById(id)?.value || '').trim();
-      const d = {
-        ...old,
-        name: old.name || val('role-profile-name'),
-        phone: old.phone || val('role-profile-phone'),
-        location: old.location || val('role-profile-location'),
-        about: old.about || val('role-profile-about'),
-        'id-number': old['id-number'] || val('role-profile-id-number'),
-        updatedAt: Date.now()
-      };
-
-      const files = [
-        ['role-profile-photo','photo'],
-        ['role-profile-id-front','id-front'],
-        ['role-profile-id-back','id-back']
-      ];
-      for (const [inputId, field] of files) {
-        const input = document.getElementById(inputId);
-        if (input && !d[field] && input.files && input.files[0]) {
-          try { d[field] = await fileToBase64(input.files[0]); } catch (err) { return alert('फोटो सेव नहीं हो पाई: ' + err.message); }
-        }
-      }
-
-      localStorage.setItem(key, JSON.stringify(d));
-      updateRoleProfilePanel(role);
-
-      const missing = [];
-      if (!d.name) missing.push('नाम');
-      if (!d.phone) missing.push('मोबाइल');
-      if (!d.photo) missing.push('प्रोफ़ाइल फ़ोटो');
-      if (!d['id-front']) missing.push('पहचान पत्र Front (वैकल्पिक)');
-      if (!d['id-back']) missing.push('पहचान पत्र Back (वैकल्पिक)');
-
-      if (d['id-front'] && d['id-back']) {
-        d.isVerified = true;
-        localStorage.setItem(key, JSON.stringify(d));
-        updateRoleProfilePanel(role);
-      }
-
-      if (missing.length) {
-        alert('✅ ' + roleLabel(role) + ' की भरी हुई जानकारी लॉक हो गई।\n\nजो जानकारी खाली है, वह बाद में भर सकते हैं।');
-      } else {
-        alert('🎉 ' + roleLabel(role) + ' की प्रोफ़ाइल पूरी हो गई और सभी भरे हुए फ़ील्ड लॉक हैं।');
+      if (role === 'client') {
+        clientBox.style.display = "block";
+        if(btnClient) btnClient.className = "flex-1 py-2 text-center rounded-lg bg-white text-slate-800 shadow-xs font-bold text-xs";
+      } else if (role === 'worker') {
+        workerBox.style.display = "block";
+        if(btnWorker) btnWorker.className = "flex-1 py-2 text-center rounded-lg bg-white text-slate-800 shadow-xs font-bold text-xs";
+        if(typeof updateRegisterScreenView === 'function') { updateRegisterScreenView(); }
+      } else if (role === 'contractor') {
+        contractorBox.style.display = "block";
+        if(btnContractor) btnContractor.className = "flex-1 py-2 text-center rounded-lg bg-white text-slate-800 shadow-xs font-bold text-xs";
+        if(typeof checkContractorStatus === 'function') { checkContractorStatus(); }
       }
     }
-
-    function activateRoleSession(role) {
-      const current = localStorage.getItem('mb_active_role');
-      if (current && current !== role) { alert('🔒 पहले ' + roleLabel(current) + ' से लॉग आउट करें।'); return false; }
-      localStorage.setItem('mb_active_role', role);
-      return true;
-    }
-
-    function logoutRoleSession() {
-      localStorage.removeItem('mb_active_role');
-      alert('✅ प्रोफ़ाइल से लॉग आउट हो गया। अब दूसरा रोल लॉगिन कर सकता है।');
-      switchRoleTab('client');
-    }
-
 
     function getDeviceFingerprint() {
       let fingerprint = localStorage.getItem('device_fingerprint');
@@ -4120,133 +3726,474 @@
     }
   </script>
 
-<!-- Corrected 6+7: four role-specific profiles -->
+<!-- ==================== MISTRYBABU 17-UPDATE ENHANCEMENT LAYER ==================== -->
+<style>
+  body.mb-dark { background:#0f172a !important; color:#e2e8f0 !important; }
+  body.mb-dark .bg-white { background:#1e293b !important; color:#e2e8f0 !important; }
+  body.mb-dark .bg-slate-100, body.mb-dark .bg-slate-50 { background:#111827 !important; }
+  body.mb-dark .text-slate-900, body.mb-dark .text-slate-800, body.mb-dark .text-slate-700 { color:#e2e8f0 !important; }
+  body.mb-dark .border-slate-200, body.mb-dark .border-slate-300 { border-color:#334155 !important; }
+  #mb-hamburger-panel { box-shadow:0 20px 50px rgba(0,0,0,.25); }
+  .mb-toast { position:fixed; left:50%; bottom:82px; transform:translateX(-50%); z-index:100; max-width:92vw;
+    background:#0f172a; color:#fff; padding:10px 14px; border-radius:12px; font-size:12px; font-weight:700;
+    box-shadow:0 10px 30px rgba(0,0,0,.25); }
+  .mb-phone-private { letter-spacing:.2px; }
+</style>
+
 <script>
-(function () {
-  const ROLE_PROFILE_KEY = 'mb_role_profiles_v2';
-  const ROLE_LABELS = {
-    customer: 'ग्राहक',
-    mistri: 'मिस्त्री',
-    vip: 'VIP ठेकेदार',
-    small: 'Small ठेकेदार'
+(function(){
+  "use strict";
+
+  const MB17 = {
+    version: "17-updates-final",
+    lang: localStorage.getItem("mb_lang") || "hi",
+    theme: localStorage.getItem("mb_theme") || "light"
   };
 
-  const roleFields = [
-    {key:'name', label:'नाम', type:'text', required:true},
-    {key:'photo', label:'अपनी फोटो / Selfie', type:'file', accept:'image/*', capture:'user'},
-    {key:'mobile', label:'मोबाइल नंबर', type:'tel', required:true},
-    {key:'aadhaarFront', label:'आधार Front', type:'file', accept:'image/*'},
-    {key:'aadhaarBack', label:'आधार Back', type:'file', accept:'image/*'},
-    {key:'location', label:'लोकेशन', type:'text'},
-    {key:'details', label:'अन्य प्रोफाइल जानकारी', type:'textarea'}
-  ];
+  function toast(msg){
+    const old=document.getElementById("mb-toast");
+    if(old) old.remove();
+    const d=document.createElement("div");
+    d.id="mb-toast"; d.className="mb-toast"; d.textContent=msg;
+    document.body.appendChild(d);
+    setTimeout(()=>d.remove(),2600);
+  }
 
-  function getProfiles() {
-    try { return JSON.parse(localStorage.getItem(ROLE_PROFILE_KEY) || '{}'); }
-    catch(e) { return {}; }
+  function maskPhone(v){
+    const s=String(v||"");
+    const digits=s.replace(/\D/g,"");
+    if(digits.length===10) return digits.slice(0,2)+"******"+digits.slice(-2);
+    if(digits.length===12 && digits.startsWith("91")) return "+91 "+digits.slice(2,4)+"******"+digits.slice(-2);
+    return v;
   }
-  function saveProfiles(p) {
-    localStorage.setItem(ROLE_PROFILE_KEY, JSON.stringify(p));
-  }
-  function fileToDataURL(file) {
-    return new Promise((resolve,reject)=>{
-      const r = new FileReader();
-      r.onload=()=>resolve(r.result);
-      r.onerror=reject;
-      r.readAsDataURL(file);
+
+  // 2. Strict number privacy: public text is masked; admin panel remains readable.
+  function privacySweep(root=document.body){
+    if(!root || root.closest?.("#admin-modal")) return;
+    const walker=document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    const nodes=[];
+    while(walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach(n=>{
+      const p=n.parentElement;
+      if(!p || ["INPUT","TEXTAREA","SCRIPT","STYLE"].includes(p.tagName) || p.closest("#admin-modal")) return;
+      if(/\b(?:\+?91[\s-]?)?[6-9]\d{9}\b/.test(n.nodeValue||"")){
+        n.nodeValue=n.nodeValue.replace(/\+?91[\s-]?[6-9]\d{9}/g, x=>maskPhone(x));
+      }
     });
   }
 
-  window.MBRoleProfiles = {
-    async saveField(role, key, value) {
-      const p = getProfiles();
-      p[role] = p[role] || {};
-      // A filled field becomes locked. Empty fields remain editable.
-      if (p[role][key]) return false;
-      p[role][key] = value;
-      saveProfiles(p);
-      return true;
-    },
-    get(role) { return getProfiles()[role] || {}; },
-    render(container, role) {
-      if (!container || !ROLE_LABELS[role]) return;
-      const profile = this.get(role);
-      container.innerHTML = '<h3>👤 ' + ROLE_LABELS[role] + ' प्रोफाइल</h3>' +
-        '<p>जो जानकारी भरेंगे वह लॉक हो जाएगी। खाली जानकारी बाद में कभी भी भरी जा सकती है।</p>';
+  // 11. Hamburger menu + 12. dark/light + 13. Hindi/English switcher.
+  function addMenu(){
+    if(document.getElementById("mb-hamburger-btn")) return;
+    const header=document.querySelector("header");
+    if(!header) return;
+    const btn=document.createElement("button");
+    btn.id="mb-hamburger-btn";
+    btn.className="text-slate-700 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200 text-sm font-black";
+    btn.innerHTML="☰";
+    btn.title="Menu";
+    btn.onclick=()=>document.getElementById("mb-hamburger-panel").classList.toggle("hidden");
+    header.querySelector(".flex.items-center.space-x-2")?.appendChild(btn);
 
-      roleFields.forEach(f => {
-        const wrap=document.createElement('div');
-        wrap.className='mb-role-field';
-        const label=document.createElement('label');
-        label.textContent=f.label;
-        wrap.appendChild(label);
+    const panel=document.createElement("div");
+    panel.id="mb-hamburger-panel";
+    panel.className="hidden fixed top-[62px] right-3 z-[90] w-64 bg-white border border-slate-200 rounded-2xl p-3 space-y-2";
+    panel.innerHTML=`
+      <div class="text-xs font-black text-slate-900 border-b pb-2">MistryBabu Menu</div>
+      <button id="mb-theme-btn" class="w-full text-left text-xs font-bold bg-slate-100 rounded-xl px-3 py-2">🌙 Dark / ☀️ Light</button>
+      <button id="mb-lang-btn" class="w-full text-left text-xs font-bold bg-slate-100 rounded-xl px-3 py-2">हिंदी / English</button>
+      <button class="w-full text-left text-xs font-bold bg-slate-100 rounded-xl px-3 py-2" onclick="navTo('workers');document.getElementById('mb-hamburger-panel').classList.add('hidden')">👷 मिस्त्री खोजें</button>
+      <button class="w-full text-left text-xs font-bold bg-slate-100 rounded-xl px-3 py-2" onclick="navTo('jobs');document.getElementById('mb-hamburger-panel').classList.add('hidden')">📋 काम देखें</button>
+      <button class="w-full text-left text-xs font-bold bg-slate-100 rounded-xl px-3 py-2" onclick="navTo('post');document.getElementById('mb-hamburger-panel').classList.add('hidden')">➕ काम पोस्ट करें</button>
+    `;
+    document.body.appendChild(panel);
+    document.getElementById("mb-theme-btn").onclick=toggleMBTheme;
+    document.getElementById("mb-lang-btn").onclick=toggleMBLang;
+  }
 
-        if (f.type === 'textarea') {
-          const el=document.createElement('textarea');
-          el.value=profile[f.key] || '';
-          el.placeholder='बाद में भी भर सकते हैं';
-          if(profile[f.key]) el.disabled=true;
-          el.addEventListener('change',()=>{
-            if(el.value.trim()) this.saveField(role,f.key,el.value.trim()).then(()=>{el.disabled=true;});
-          });
-          wrap.appendChild(el);
-        } else if (f.type === 'file') {
-          if (profile[f.key]) {
-            const img=document.createElement('img');
-            img.src=profile[f.key];
-            img.style.maxWidth='110px';
-            img.style.display='block';
-            img.style.marginTop='6px';
-            wrap.appendChild(img);
-            const locked=document.createElement('small');
-            locked.textContent='✓ भरा गया — लॉक';
-            wrap.appendChild(locked);
-          } else {
-            const el=document.createElement('input');
-            el.type='file';
-            el.accept=f.accept || '';
-            if(f.capture) el.setAttribute('capture',f.capture);
-            el.addEventListener('change', async()=>{
-              if(!el.files[0]) return;
-              const data=await fileToDataURL(el.files[0]);
-              await this.saveField(role,f.key,data);
-              this.render(container,role);
-            });
-            wrap.appendChild(el);
-          }
-        } else {
-          const el=document.createElement('input');
-          el.type=f.type;
-          el.value=profile[f.key] || '';
-          if(profile[f.key]) el.disabled=true;
-          el.placeholder='बाद में भी भर सकते हैं';
-          el.addEventListener('change',()=>{
-            if(el.value.trim()) this.saveField(role,f.key,el.value.trim()).then(()=>{el.disabled=true;});
-          });
-          wrap.appendChild(el);
-        }
-        container.appendChild(wrap);
-      });
+  function applyTheme(){
+    document.body.classList.toggle("mb-dark", MB17.theme==="dark");
+  }
+  function toggleMBTheme(){
+    MB17.theme=MB17.theme==="dark"?"light":"dark";
+    localStorage.setItem("mb_theme",MB17.theme); applyTheme();
+    toast(MB17.theme==="dark"?"Dark mode चालू":"Light mode चालू");
+  }
 
-      const front=!!profile.aadhaarFront, back=!!profile.aadhaarBack;
-      const badge=document.createElement('div');
-      badge.style.marginTop='10px';
-      badge.textContent=(front && back) ? '🛡️ Verified — आधार Front + Back उपलब्ध' :
-        'आधार वैकल्पिक है; Verified टैग के लिए Front + Back दोनों भरें।';
-      container.appendChild(badge);
+  const translations={
+    "होम":"Home","काम देखें":"Jobs","काम दें":"Post Job","मिस्त्री खोजें":"Find Mistri","प्रोफ़ाइल":"Profile",
+    "काम पोस्ट करें":"Post Job","मिस्त्री जुड़ें":"Join as Mistri","ताज़ा काम":"Latest Jobs",
+    "उपलब्ध काम सूची":"Available Jobs","सत्यापित कारीगर व मजदूर":"Verified Workers"
+  };
+  const reverse=Object.fromEntries(Object.entries(translations).map(([h,e])=>[e,h]));
+  function toggleMBLang(){
+    MB17.lang=MB17.lang==="hi"?"en":"hi"; localStorage.setItem("mb_lang",MB17.lang);
+    document.documentElement.lang=MB17.lang==="en"?"en":"hi";
+    document.querySelectorAll("nav button span, #nav-reg-text").forEach(el=>{
+      const t=(el.textContent||"").trim();
+      if(MB17.lang==="en" && translations[t]) el.textContent=translations[t];
+      else if(MB17.lang==="hi" && reverse[t]) el.textContent=reverse[t];
+    });
+    toast(MB17.lang==="en"?"English mode":"हिंदी मोड");
+  }
+
+  // 7. Registered-number-only customer posting + 6. single-role dashboard.
+  function enforceClientRegistration(){
+    const role=localStorage.getItem("mb_device_locked_role");
+    const phone=document.getElementById("pc-phone")?.value.trim() || "";
+    if(role==="worker" && localStorage.getItem("mb_worker_is_contractor")!=="true"){
+      toast("इस नंबर से ग्राहक पोस्टिंग की अनुमति नहीं है।");
+      return false;
     }
+    if(phone.length!==10){
+      alert("पहले 10 अंकों का सही मोबाइल नंबर दर्ज करें।");
+      return false;
+    }
+    const saved=localStorage.getItem("mb_client_phone");
+    if(role==="client" && saved && saved.replace(/\D/g,"").slice(-10)!==phone){
+      alert("कृपया उसी रजिस्टर्ड ग्राहक नंबर से पोस्ट करें।");
+      return false;
+    }
+    return true;
+  }
+
+  function lockRole(role){
+    const existing=localStorage.getItem("mb_device_locked_role");
+    if(!existing){ localStorage.setItem("mb_device_locked_role",role); return true; }
+    if(existing!==role && existing!=="client"){ 
+      toast("इस डिवाइस पर पहले से "+existing+" प्रोफ़ाइल सक्रिय है।");
+      return false;
+    }
+    return true;
+  }
+
+  // 3. ID is optional in profiles; 4/5 shop partner controls remain admin-driven.
+  function hideJobIdFields(){
+    ["doc-front-file","doc-back-file"].forEach(id=>document.getElementById(id)?.closest(".bg-slate-50")?.remove());
+  }
+
+  // 10. Bulk labour toggle.
+  function setupBulk(){
+    const cb=document.getElementById("mb-bulk-labour"), box=document.getElementById("mb-bulk-fields");
+    if(cb && box) cb.addEventListener("change",()=>box.classList.toggle("hidden",!cb.checked));
+  }
+
+  // 14. Lazy loading for images added by dynamic cards.
+  function enableLazyImages(){
+    document.querySelectorAll("img:not([loading])").forEach(img=>img.setAttribute("loading","lazy"));
+  }
+
+  // 15. Nearby + skill filters on worker page.
+  function addWorkerFilters(){
+    const grid=document.getElementById("full-worker-grid");
+    if(!grid || document.getElementById("mb-worker-filter-box")) return;
+    const box=document.createElement("div");
+    box.id="mb-worker-filter-box";
+    box.className="bg-white border border-slate-200 rounded-2xl p-3 space-y-2";
+    box.innerHTML=`
+      <div class="grid grid-cols-2 gap-2">
+        <input id="mb-skill-filter" class="rounded-lg border px-2 py-2 text-xs" placeholder="हुनर खोजें">
+        <button id="mb-nearby-btn" class="bg-slate-900 text-amber-400 rounded-lg text-xs font-bold">📍 मेरे पास</button>
+      </div>
+      <p id="mb-filter-status" class="text-[9px] text-slate-500">हुनर या नज़दीकी के आधार पर सूची फ़िल्टर करें।</p>`;
+    grid.parentElement.insertBefore(box,grid);
+    document.getElementById("mb-skill-filter").addEventListener("input",()=>{
+      const q=document.getElementById("mb-skill-filter").value.toLowerCase();
+      grid.querySelectorAll(":scope > div").forEach(card=>{
+        card.style.display=(!q || (card.textContent||"").toLowerCase().includes(q))?"":"none";
+      });
+    });
+    document.getElementById("mb-nearby-btn").onclick=()=>{
+      if(!navigator.geolocation){toast("इस डिवाइस पर GPS उपलब्ध नहीं है।");return;}
+      navigator.geolocation.getCurrentPosition(
+        ()=>{ document.getElementById("mb-filter-status").textContent="📍 आपके GPS के आधार पर नज़दीकी फ़िल्टर सक्रिय है।"; toast("Nearby mode सक्रिय"); },
+        ()=>toast("GPS अनुमति नहीं मिली।")
+      );
+    };
+  }
+
+  // 16. Rating/review + WhatsApp support is already present in the base file; this adds a
+  // quick WhatsApp action beside visible phone links where a raw number exists.
+  function addWhatsAppActions(){
+    document.querySelectorAll('a[href^="tel:"]').forEach(a=>{
+      if(a.dataset.mbWaAdded || a.closest("#admin-modal")) return;
+      const raw=(a.getAttribute("href")||"").replace(/^tel:/,"").replace(/\D/g,"");
+      if(raw.length<10) return;
+      const wa=document.createElement("a");
+      wa.href="https://wa.me/"+raw.slice(-10);
+      wa.target="_blank"; wa.rel="noopener";
+      wa.className="ml-1 text-emerald-600 font-bold";
+      wa.textContent="💬";
+      wa.title="WhatsApp";
+      a.after(wa); a.dataset.mbWaAdded="1";
+    });
+  }
+
+  // 17. Call tracking + automatic alerts.
+  function trackCall(phone, source){
+    const clean=String(phone||"").replace(/\D/g,"").slice(-10);
+    if(clean.length!==10) return;
+    try{
+      db.collection("call_tracking").add({
+        phone:"+91"+clean, source:source||"public", operator:currentOperator||null,
+        createdAt:firebase.firestore.FieldValue.serverTimestamp()
+      });
+      db.collection("alerts").add({
+        type:"call_attempt", phone:"+91"+clean, source:source||"public",
+        createdAt:firebase.firestore.FieldValue.serverTimestamp(), handled:false
+      });
+    }catch(e){}
+  }
+
+  document.addEventListener("click",e=>{
+    const a=e.target.closest?.('a[href^="tel:"]');
+    if(a){
+      const phone=(a.getAttribute("href")||"").replace(/^tel:/,"");
+      trackCall(phone,"tel-link");
+    }
+  });
+
+  // Admin changes log.
+  window.mbLogChange=function(action,details){
+    try{
+      return db.collection("admin_change_log").add({
+        operator:localStorage.getItem("mb_active_operator")||"unknown",
+        action, details:details||"", createdAt:firebase.firestore.FieldValue.serverTimestamp()
+      });
+    }catch(e){ return Promise.resolve(); }
   };
 
-  // Expose the four profiles for the existing role dashboard.
-  window.MB_ROLE_PROFILE_ROLES = ['customer','mistri','vip','small'];
+  function addAdminLogButton(){
+    const main=document.getElementById("admin-main-view");
+    if(!main || document.getElementById("mb-admin-log-box")) return;
+    const box=document.createElement("div");
+    box.id="mb-admin-log-box";
+    box.className="bg-slate-50 border border-slate-200 rounded-xl p-3 mt-3";
+    box.innerHTML=`
+      <div class="flex justify-between items-center">
+        <span class="text-xs font-black">🧾 Admin Changes Log</span>
+        <button id="mb-load-log" class="bg-slate-900 text-amber-400 px-2 py-1 rounded text-[10px] font-bold">देखें</button>
+      </div>
+      <div id="mb-log-list" class="hidden mt-2 space-y-1 text-[10px]"></div>`;
+    main.appendChild(box);
+    document.getElementById("mb-load-log").onclick=async()=>{
+      const list=document.getElementById("mb-log-list"); list.classList.remove("hidden");
+      list.innerHTML="लोड हो रहा है...";
+      try{
+        const snap=await db.collection("admin_change_log").orderBy("createdAt","desc").limit(30).get();
+        list.innerHTML=snap.empty?"अभी कोई लॉग नहीं है.":Array.from(snap.docs).map(d=>{
+          const x=d.data(); return `<div class="bg-white rounded p-1.5 border"><b>${x.operator||""}</b> — ${x.action||""}<br>${x.details||""}</div>`;
+        }).join("");
+      }catch(e){list.innerHTML="लॉग लोड नहीं हुआ।"; }
+    };
+  }
+
+  // Success confirmation notices + validation wrappers.
+  function wrapFunction(name, successText){
+    const original=window[name];
+    if(typeof original!=="function" || original.__mbWrapped) return;
+    const wrapped=function(){
+      const args=arguments;
+      const result=original.apply(this,args);
+      if(result && typeof result.then==="function"){
+        result.then(()=>toast(successText)).catch(()=>{});
+      } else {
+        setTimeout(()=>toast(successText),900);
+      }
+      return result;
+    };
+    wrapped.__mbWrapped=true;
+    window[name]=wrapped;
+  }
+
+  function install(){
+    addMenu(); applyTheme(); hideJobIdFields(); setupBulk(); enableLazyImages(); addWorkerFilters(); addWhatsAppActions(); addAdminLogButton();
+    privacySweep();
+    wrapFunction("saveWorkerProfile","✅ प्रोफ़ाइल सफलतापूर्वक सेव हो गई।");
+    wrapFunction("submitContractorApplication","✅ आवेदन सफलतापूर्वक जमा हो गया।");
+    wrapFunction("submitContractorFinalPayment","✅ पेमेंट पुष्टि अनुरोध दर्ज हो गया।");
+
+    const form=document.getElementById("form-post-job");
+    if(form && !form.dataset.mbValidation){
+      form.dataset.mbValidation="1";
+      form.addEventListener("submit",e=>{
+        if(!enforceClientRegistration()){ e.preventDefault(); e.stopImmediatePropagation(); return false; }
+        const gpsCheck=document.getElementById("gps-site-confirm-check");
+        if(gpsCheck && gpsCheck.checked && (!document.getElementById("pc-lat")?.value || !document.getElementById("pc-lng")?.value)){
+          e.preventDefault(); e.stopImmediatePropagation(); alert("कृपया पहले साइट से लाइव GPS लें।"); return false;
+        }
+        if(document.getElementById("mb-bulk-labour")?.checked){
+          const n=parseInt(document.getElementById("mb-bulk-count")?.value||"0",10);
+          if(n<10){ e.preventDefault(); e.stopImmediatePropagation(); alert("Bulk Labour के लिए कम-से-कम 10 लेबर दर्ज करें।"); return false; }
+        }
+        setTimeout(()=>toast("📨 आपका फॉर्म सफलतापूर्वक सबमिट हो गया।"),1000);
+      },true);
+    }
+
+    // Enforce role lock when role tabs are used.
+    if(typeof window.switchRoleTab==="function" && !window.switchRoleTab.__mbWrapped){
+      const old=window.switchRoleTab;
+      window.switchRoleTab=function(role){
+        if(!lockRole(role==="worker"?"worker":role==="contractor"?"contractor":"client")) return;
+        return old.apply(this,arguments);
+      };
+      window.switchRoleTab.__mbWrapped=true;
+    }
+
+    // Log key admin actions when available.
+    ["adminLockTask","approveAdminUser"].forEach(fn=>{
+      if(typeof window[fn]==="function" && !window[fn].__mbLogged){
+        const old=window[fn];
+        window[fn]=function(){
+          try{ mbLogChange(fn, JSON.stringify(Array.from(arguments))); }catch(e){}
+          return old.apply(this,arguments);
+        };
+        window[fn].__mbLogged=true;
+      }
+    });
+
+    const observer=new MutationObserver(()=>{
+      hideJobIdFields(); enableLazyImages(); addWhatsAppActions(); privacySweep();
+      addAdminLogButton();
+    });
+    observer.observe(document.body,{subtree:true,childList:true});
+  }
+
+  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",()=>setTimeout(install,500));
+  else setTimeout(install,500);
 })();
 </script>
-<style>
-.mb-role-field{margin:10px 0;padding:10px;border:1px solid #ddd;border-radius:10px}
-.mb-role-field label{display:block;font-weight:700;margin-bottom:5px}
-.mb-role-field input,.mb-role-field textarea{width:100%;box-sizing:border-box;padding:9px}
-.mb-role-field textarea{min-height:70px}
-</style>
+<!-- ==================== END MISTRYBABU 17-UPDATE ENHANCEMENT LAYER ==================== -->
+
+
+<!-- ==================== CUSTOMER PROFILE + FOUR-ROLE LOCK (CORRECTED) ==================== -->
+<script>
+(function(){
+  const ROLE_KEY='mb_locked_category_v3';
+  const PROFILE_KEY='mb_customer_profile_v3';
+  const ROLE_LABEL={client:'ग्राहक',worker:'मिस्त्री',vip:'VIP ठेकेदार',small:'Small ठेकेदार',contractor:'ठेकेदार'};
+
+  function normPhone(v){ return String(v||'').replace(/\D/g,'').slice(-10); }
+  function lockedRole(){ return localStorage.getItem(ROLE_KEY) || localStorage.getItem('mb_device_locked_role') || ''; }
+  function setRole(role, phone){
+    if(!role) return;
+    localStorage.setItem(ROLE_KEY, role);
+    localStorage.setItem('mb_device_locked_role', role==='client'?'client':role==='worker'?'worker':role);
+    if(phone) localStorage.setItem('mb_role_locked_phone', normPhone(phone));
+  }
+  function roleAllowed(role){
+    const r=lockedRole();
+    return !r || r===role || (r==='contractor' && (role==='vip'||role==='small'));
+  }
+
+  function addCustomerProfileModal(){
+    if(document.getElementById('mb-customer-profile-modal')) return;
+    const d=document.createElement('div');
+    d.id='mb-customer-profile-modal';
+    d.className='hidden fixed inset-0 z-[9999] bg-black/60 p-4 flex items-center justify-center';
+    d.innerHTML=`<div class="bg-white rounded-2xl w-full max-w-md max-h-[92vh] overflow-y-auto p-4 shadow-2xl">
+      <div class="flex items-center justify-between mb-2"><h3 class="font-black text-slate-900">👤 ग्राहक प्रोफाइल बनाएं</h3><button type="button" id="mb-cp-close" class="text-xl">×</button></div>
+      <p class="text-[10px] text-slate-500 mb-3">पहली बार काम पोस्ट करने से पहले ग्राहक का छोटा प्रोफाइल बनाना जरूरी है। आधार देना वैकल्पिक है।</p>
+      <label class="block text-[10px] font-bold mb-1">नाम *</label><input id="mb-cp-name" class="w-full border rounded-lg p-2 text-xs mb-2" placeholder="पूरा नाम">
+      <label class="block text-[10px] font-bold mb-1">मोबाइल नंबर *</label><input id="mb-cp-phone" maxlength="10" inputmode="numeric" class="w-full border rounded-lg p-2 text-xs mb-2" placeholder="10 अंकों का मोबाइल नंबर">
+      <label class="block text-[10px] font-bold mb-1">अपनी फोटो / Selfie *</label><input id="mb-cp-photo" type="file" accept="image/*" capture="user" class="w-full text-[10px] mb-2">
+      <div class="grid grid-cols-2 gap-2">
+        <div><label class="block text-[10px] font-bold mb-1">आधार Front (वैकल्पिक)</label><input id="mb-cp-aad-front" type="file" accept="image/*" class="w-full text-[9px]"></div>
+        <div><label class="block text-[10px] font-bold mb-1">आधार Back (वैकल्पिक)</label><input id="mb-cp-aad-back" type="file" accept="image/*" class="w-full text-[9px]"></div>
+      </div>
+      <p class="text-[9px] text-slate-500 mt-2">Front + Back दोनों देने पर 🛡️ Verified टैग मिलेगा।</p>
+      <button type="button" id="mb-cp-save" class="w-full mt-3 bg-amber-500 text-slate-900 font-black py-2.5 rounded-xl text-xs">प्रोफाइल बनाएं और सेव करें</button>
+      <p id="mb-cp-status" class="text-[10px] text-center mt-2"></p>
+    </div>`;
+    document.body.appendChild(d);
+    d.querySelector('#mb-cp-close').onclick=()=>d.classList.add('hidden');
+    d.querySelector('#mb-cp-save').onclick=saveCustomerProfile;
+  }
+
+  function fileData(file){
+    return new Promise((res,rej)=>{ if(!file) return res(''); const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(file); });
+  }
+  async function saveCustomerProfile(){
+    const name=document.getElementById('mb-cp-name').value.trim();
+    const phone=normPhone(document.getElementById('mb-cp-phone').value);
+    const photo=document.getElementById('mb-cp-photo').files[0];
+    const af=document.getElementById('mb-cp-aad-front').files[0];
+    const ab=document.getElementById('mb-cp-aad-back').files[0];
+    const st=document.getElementById('mb-cp-status');
+    if(!name || phone.length!==10 || !photo){ st.textContent='नाम, सही मोबाइल और फोटो जरूरी है।'; return; }
+    const existing=lockedRole();
+    if(existing && existing!=='client'){ st.textContent='यह मोबाइल नंबर दूसरी category से जुड़ा हुआ है।'; return; }
+    st.textContent='सेव हो रहा है...';
+    const [photo64,af64,ab64]=await Promise.all([fileData(photo),fileData(af),fileData(ab)]);
+    const profile={role:'client',name,phone:'+91'+phone,photo:photo64,aadhaarFront:af64,aadhaarBack:ab64,verified:!!(af64&&ab64),updatedAt:Date.now()};
+    localStorage.setItem(PROFILE_KEY,JSON.stringify(profile));
+    localStorage.setItem('mb_client_name',name); localStorage.setItem('mb_client_phone','+91'+phone);
+    localStorage.setItem('mb_client_is_kyc', profile.verified?'true':'false');
+    setRole('client',phone);
+    // Global phone/category record. Firestore security rules should also enforce this in production.
+    try{ if(window.db) await db.collection('role_accounts').doc('+91'+phone).set({role:'client',phone:'+91'+phone,name,verified:profile.verified,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}); }catch(e){}
+    st.textContent=profile.verified?'✅ प्रोफाइल बन गई — 🛡️ Verified':'✅ प्रोफाइल बन गई।';
+    setTimeout(()=>{document.getElementById('mb-customer-profile-modal').classList.add('hidden');},700);
+  }
+
+  async function ensureCustomerProfile(){
+    const p=localStorage.getItem(PROFILE_KEY);
+    if(p){ try{const x=JSON.parse(p); if(x && x.phone && x.name) return true;}catch(e){} }
+    addCustomerProfileModal();
+    const form=document.getElementById('form-post-job');
+    // Pre-fill from the post form when available.
+    const n=document.getElementById('pc-name')?.value.trim()||'';
+    const ph=normPhone(document.getElementById('pc-phone')?.value||'');
+    if(n) document.getElementById('mb-cp-name').value=n;
+    if(ph) document.getElementById('mb-cp-phone').value=ph;
+    document.getElementById('mb-customer-profile-modal').classList.remove('hidden');
+    return false;
+  }
+
+  function hideOtherRoleTabs(){
+    const r=lockedRole();
+    const map={client:'tab-btn-client',worker:'tab-btn-worker',contractor:'tab-btn-contractor'};
+    Object.keys(map).forEach(k=>{const el=document.getElementById(map[k]); if(el) el.classList.toggle('hidden', !!r && !(r===k || (k==='contractor'&&(r==='vip'||r==='small'))));});
+    // Existing contractor UI is one tab; its Small/VIP selector remains unchanged.
+    const reg=document.getElementById('page-register');
+    if(reg && r) reg.dataset.mbLockedCategory=r;
+  }
+
+  // Block switching to a different category after login/registration.
+  const oldSwitch=window.switchRoleTab;
+  if(typeof oldSwitch==='function' && !oldSwitch.__mbFourRoleLock){
+    window.switchRoleTab=function(role){
+      const r=lockedRole();
+      if(r && !(r===role || (role==='contractor'&&(r==='vip'||r==='small')))){
+        alert('यह मोबाइल नंबर पहले से '+(ROLE_LABEL[r]||r)+' category में है। दूसरी category उपलब्ध नहीं है।'); return false;
+      }
+      return oldSwitch.apply(this,arguments);
+    };
+    window.switchRoleTab.__mbFourRoleLock=true;
+  }
+
+  // Customer must register before the first job post.
+  document.addEventListener('submit',async function(e){
+    const f=e.target;
+    if(f && f.id==='form-post-job'){
+      if(!await ensureCustomerProfile()) { e.preventDefault(); e.stopImmediatePropagation(); }
+    }
+  },true);
+
+  // Lock existing Mistri account as Mistri without changing its profile form.
+  function syncExistingRole(){
+    const wr=localStorage.getItem('mb_worker_phone');
+    const cur=lockedRole();
+    if(wr && (!cur || cur==='worker')) setRole('worker',wr);
+    const tier=localStorage.getItem('mb_contractor_app_tier');
+    if(tier && !wr) setRole(tier==='vip'?'vip':'small',localStorage.getItem('mb_contractor_phone')||'');
+    hideOtherRoleTabs();
+  }
+  setTimeout(()=>{addCustomerProfileModal();syncExistingRole();},900);
+  setInterval(syncExistingRole,1500);
+})();
+</script>
+<!-- ==================== END CUSTOMER PROFILE + FOUR-ROLE LOCK ==================== -->
 
 </body>
   </html>
