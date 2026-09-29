@@ -4119,5 +4119,134 @@
     }
     }
   </script>
+
+<!-- Corrected 6+7: four role-specific profiles -->
+<script>
+(function () {
+  const ROLE_PROFILE_KEY = 'mb_role_profiles_v2';
+  const ROLE_LABELS = {
+    customer: 'ग्राहक',
+    mistri: 'मिस्त्री',
+    vip: 'VIP ठेकेदार',
+    small: 'Small ठेकेदार'
+  };
+
+  const roleFields = [
+    {key:'name', label:'नाम', type:'text', required:true},
+    {key:'photo', label:'अपनी फोटो / Selfie', type:'file', accept:'image/*', capture:'user'},
+    {key:'mobile', label:'मोबाइल नंबर', type:'tel', required:true},
+    {key:'aadhaarFront', label:'आधार Front', type:'file', accept:'image/*'},
+    {key:'aadhaarBack', label:'आधार Back', type:'file', accept:'image/*'},
+    {key:'location', label:'लोकेशन', type:'text'},
+    {key:'details', label:'अन्य प्रोफाइल जानकारी', type:'textarea'}
+  ];
+
+  function getProfiles() {
+    try { return JSON.parse(localStorage.getItem(ROLE_PROFILE_KEY) || '{}'); }
+    catch(e) { return {}; }
+  }
+  function saveProfiles(p) {
+    localStorage.setItem(ROLE_PROFILE_KEY, JSON.stringify(p));
+  }
+  function fileToDataURL(file) {
+    return new Promise((resolve,reject)=>{
+      const r = new FileReader();
+      r.onload=()=>resolve(r.result);
+      r.onerror=reject;
+      r.readAsDataURL(file);
+    });
+  }
+
+  window.MBRoleProfiles = {
+    async saveField(role, key, value) {
+      const p = getProfiles();
+      p[role] = p[role] || {};
+      // A filled field becomes locked. Empty fields remain editable.
+      if (p[role][key]) return false;
+      p[role][key] = value;
+      saveProfiles(p);
+      return true;
+    },
+    get(role) { return getProfiles()[role] || {}; },
+    render(container, role) {
+      if (!container || !ROLE_LABELS[role]) return;
+      const profile = this.get(role);
+      container.innerHTML = '<h3>👤 ' + ROLE_LABELS[role] + ' प्रोफाइल</h3>' +
+        '<p>जो जानकारी भरेंगे वह लॉक हो जाएगी। खाली जानकारी बाद में कभी भी भरी जा सकती है।</p>';
+
+      roleFields.forEach(f => {
+        const wrap=document.createElement('div');
+        wrap.className='mb-role-field';
+        const label=document.createElement('label');
+        label.textContent=f.label;
+        wrap.appendChild(label);
+
+        if (f.type === 'textarea') {
+          const el=document.createElement('textarea');
+          el.value=profile[f.key] || '';
+          el.placeholder='बाद में भी भर सकते हैं';
+          if(profile[f.key]) el.disabled=true;
+          el.addEventListener('change',()=>{
+            if(el.value.trim()) this.saveField(role,f.key,el.value.trim()).then(()=>{el.disabled=true;});
+          });
+          wrap.appendChild(el);
+        } else if (f.type === 'file') {
+          if (profile[f.key]) {
+            const img=document.createElement('img');
+            img.src=profile[f.key];
+            img.style.maxWidth='110px';
+            img.style.display='block';
+            img.style.marginTop='6px';
+            wrap.appendChild(img);
+            const locked=document.createElement('small');
+            locked.textContent='✓ भरा गया — लॉक';
+            wrap.appendChild(locked);
+          } else {
+            const el=document.createElement('input');
+            el.type='file';
+            el.accept=f.accept || '';
+            if(f.capture) el.setAttribute('capture',f.capture);
+            el.addEventListener('change', async()=>{
+              if(!el.files[0]) return;
+              const data=await fileToDataURL(el.files[0]);
+              await this.saveField(role,f.key,data);
+              this.render(container,role);
+            });
+            wrap.appendChild(el);
+          }
+        } else {
+          const el=document.createElement('input');
+          el.type=f.type;
+          el.value=profile[f.key] || '';
+          if(profile[f.key]) el.disabled=true;
+          el.placeholder='बाद में भी भर सकते हैं';
+          el.addEventListener('change',()=>{
+            if(el.value.trim()) this.saveField(role,f.key,el.value.trim()).then(()=>{el.disabled=true;});
+          });
+          wrap.appendChild(el);
+        }
+        container.appendChild(wrap);
+      });
+
+      const front=!!profile.aadhaarFront, back=!!profile.aadhaarBack;
+      const badge=document.createElement('div');
+      badge.style.marginTop='10px';
+      badge.textContent=(front && back) ? '🛡️ Verified — आधार Front + Back उपलब्ध' :
+        'आधार वैकल्पिक है; Verified टैग के लिए Front + Back दोनों भरें।';
+      container.appendChild(badge);
+    }
+  };
+
+  // Expose the four profiles for the existing role dashboard.
+  window.MB_ROLE_PROFILE_ROLES = ['customer','mistri','vip','small'];
+})();
+</script>
+<style>
+.mb-role-field{margin:10px 0;padding:10px;border:1px solid #ddd;border-radius:10px}
+.mb-role-field label{display:block;font-weight:700;margin-bottom:5px}
+.mb-role-field input,.mb-role-field textarea{width:100%;box-sizing:border-box;padding:9px}
+.mb-role-field textarea{min-height:70px}
+</style>
+
 </body>
   </html>
