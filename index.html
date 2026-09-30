@@ -35,10 +35,6 @@
     #mb11-overlay{position:fixed;inset:0;z-index:93;background:rgba(15,23,42,.38);display:none}
     #mb11-overlay.open{display:block}
     .mb11-menu-item{width:100%;display:flex;align-items:center;gap:9px;text-align:left;padding:11px 10px;margin-top:7px;border-radius:12px;border:1px solid #e2e8f0;background:#f8fafc;color:#0f172a;font-size:13px;font-weight:800}
-    /* ===== MENU CATEGORY COMPACT: सभी 30 कैटेगरी रहेंगी, केवल मेनू में छोटा/कॉम्पैक्ट दिखेंगी ===== */
-    #mb11-category-links{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;margin-top:4px}
-    #mb11-category-links .mb11-menu-item{width:100%;min-width:0;margin-top:0;padding:6px 4px;border-radius:7px;gap:3px;font-size:9px;line-height:1.05;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    #mb11-category-links .mb11-menu-item span:last-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
     .mb11-menu-item:active{transform:scale(.98)}
     .mb11-close{border:0;background:#f1f5f9;border-radius:10px;padding:7px 10px;font-weight:900}
     body.mb11-dark{background:#0f172a!important;color:#e2e8f0!important}
@@ -3919,10 +3915,97 @@
       mb11BuildCategories();
     });
 
+    <!-- ===== UPDATE 13: Hindi / English Language Switcher ===== -->
+<style>
+  #mb13-lang-toggle{cursor:pointer;}
+  body.mb13-en [data-mb-hi]{display:none!important;}
+  body.mb13-hi [data-mb-en]{display:none!important;}
+</style>
+<script>
+(function(){
+  function mb13ApplyLang(){
+    const lang=localStorage.getItem('mb13_lang')||'hi';
+    document.body.classList.toggle('mb13-en',lang==='en');
+    document.body.classList.toggle('mb13-hi',lang!=='en');
+    const b=document.getElementById('mb13-lang-toggle');
+    if(b) b.innerHTML=lang==='en'?'🇮🇳 हिंदी':'🇬🇧 English';
+    document.documentElement.lang=lang;
+  }
+  window.mb13ToggleLang=function(){
+    const lang=localStorage.getItem('mb13_lang')||'hi';
+    localStorage.setItem('mb13_lang',lang==='hi'?'en':'hi');
+    mb13ApplyLang();
+  };
+  document.addEventListener('DOMContentLoaded',function(){
+    const drawer=document.getElementById('mb11-drawer');
+    if(drawer && !document.getElementById('mb13-lang-toggle')){
+      const wrap=document.createElement('div');
+      wrap.className='mt-2';
+      wrap.innerHTML='<button id="mb13-lang-toggle" type="button" class="mb11-menu-item" onclick="mb13ToggleLang()">🇬🇧 English</button>';
+      const theme=document.getElementById('mb12-theme-toggle');
+      if(theme && theme.parentElement) theme.parentElement.parentElement.appendChild(wrap);
+      else drawer.appendChild(wrap);
+    }
+    mb13ApplyLang();
+  });
+})();
+</script>
+<!-- ===== END UPDATE 13 ===== -->
+
     /* ===== UPDATE 14 + UPDATE 15 =====
        14: सभी फोटो/प्रोफाइल इमेज lazy-load.
        15: GPS आधारित nearest-worker sorting + specialization filter.
     */
 </script>
+<!-- ===== UPDATE 1: Hidden Admin Login ===== -->
+<style id="mb1-hidden-admin-style">
+  /* Public page पर admin username/password fields दिखाई नहीं देंगे. */
+  #admin-pin-view .mb1-auth-fields,
+  #admin-pin-view .mb1-auth-submit { display:none !important; }
+  #mb1-hidden-admin-note { display:block; }
+</style>
+<script id="mb1-hidden-admin-script">
+(function(){
+  const allowed = ['dilbas','lehari','monu'];
+  function mb1RestoreAdmin(){
+    const op = (localStorage.getItem('mb_active_operator') || '').replace(/[,\.\s]/g,'').toLowerCase();
+    if(!allowed.includes(op)) return false;
+    const pinView=document.getElementById('admin-pin-view');
+    const mainView=document.getElementById('admin-main-view');
+    const label=document.getElementById('lbl-active-operator');
+    if(pinView && mainView){
+      pinView.classList.add('hidden');
+      mainView.classList.remove('hidden');
+      if(label) label.innerText=op;
+      if(typeof loadAdminDeals==='function') loadAdminDeals();
+      if(typeof loadAdminContractors==='function') loadAdminContractors();
+      if(typeof loadAdminShopAdsList==='function') loadAdminShopAdsList();
+      return true;
+    }
+    return false;
+  }
+  document.addEventListener('DOMContentLoaded', function(){
+    const fields=document.querySelector('#admin-pin-view .space-y-2');
+    if(fields) fields.classList.add('mb1-auth-fields');
+    const btn=document.querySelector('#admin-pin-view button[onclick="verifyAdminPin()"]');
+    if(btn) btn.classList.add('mb1-auth-submit');
+    const view=document.getElementById('admin-pin-view');
+    if(view && !document.getElementById('mb1-hidden-admin-note')){
+      const note=document.createElement('div');
+      note.id='mb1-hidden-admin-note';
+      note.className='text-[10px] text-slate-500 mt-2';
+      note.textContent='गुप्त एडमिन प्रवेश';
+      view.appendChild(note);
+    }
+  });
+  const oldOpen = window.openAdminModal;
+  window.openAdminModal = function(){
+    if(typeof oldOpen==='function') oldOpen();
+    setTimeout(mb1RestoreAdmin, 0);
+  };
+})();
+</script>
+<!-- ===== END UPDATE 1 ===== -->
+
 </body>
   </html>
