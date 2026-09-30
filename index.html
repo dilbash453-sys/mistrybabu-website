@@ -85,7 +85,7 @@
   <!-- App Top Header -->
   <header class="bg-white border-b border-slate-200 sticky top-0 z-40 px-4 py-3 shadow-sm flex justify-between items-center mt-0">
     <div class="flex items-center space-x-2.5 cursor-pointer" onclick="handleLogoClick()">
-      <img src="logo.png" onerror="this.src='https://placehold.co/100x100/f59e0b/0f172a.png?text=MB'" alt="MistryBabu Logo" class="w-10 h-10 rounded-lg object-contain border border-slate-100 shadow-xs">
+      <img loading="lazy" src="logo.png" onerror="this.src='https://placehold.co/100x100/f59e0b/0f172a.png?text=MB'" alt="MistryBabu Logo" class="w-10 h-10 rounded-lg object-contain border border-slate-100 shadow-xs">
       <div>
         <h1 class="text-sm font-black text-slate-900 leading-none">मिस्त्रीबाबू</h1>
         <p class="text-[9px] text-amber-600 font-bold mt-0.5">बिहार • यूपी • दिल्ली • हरियाणा • 100% मुफ़्त सेवा</p>
@@ -222,6 +222,17 @@
       <button onclick="promptMistriBoost49()" class="bg-slate-900 text-amber-400 px-3 py-1.5 rounded-lg text-xs font-bold">
         ₹49 एक्टिव करें
       </button>
+    </div>
+
+    <!-- UPDATE 15: लोकेशन-बेस्ड सॉर्टिंग + स्पेशलाइजेशन फिल्टर -->
+    <div id="mb15-worker-controls" class="bg-white border border-slate-200 rounded-2xl p-3 space-y-2 shadow-xs">
+      <div class="flex gap-2">
+        <select id="mb15-skill-filter" onchange="mb15ApplyWorkerFilter()" class="flex-1 rounded-lg border border-slate-300 px-2 py-2 text-xs font-bold bg-white">
+          <option value="">🔧 सभी हुनर / कैटेगरी</option>
+        </select>
+        <button type="button" onclick="mb15SortNearestWorkers()" class="bg-emerald-600 text-white px-3 py-2 rounded-lg text-xs font-bold whitespace-nowrap">📍 पास के मिस्त्री</button>
+      </div>
+      <p id="mb15-status" class="text-[10px] text-slate-500">हुनर के हिसाब से फ़िल्टर करें या GPS से पास के मिस्त्री देखें।</p>
     </div>
 
     <div id="full-worker-grid" class="space-y-3">
@@ -593,7 +604,7 @@
           </div>
 
           <div class="relative w-20 h-20 mx-auto mt-2">
-            <img id="my-prof-img" src="logo.png" onerror="this.src='https://placehold.co/100x100/f59e0b/0f172a.png?text=MB'" alt="Profile Photo" class="w-20 h-20 rounded-full mx-auto shadow-md border-2 border-amber-400 object-cover bg-white">
+            <img loading="lazy" id="my-prof-img" src="logo.png" onerror="this.src='https://placehold.co/100x100/f59e0b/0f172a.png?text=MB'" alt="Profile Photo" class="w-20 h-20 rounded-full mx-auto shadow-md border-2 border-amber-400 object-cover bg-white">
           </div>
 
           <h3 class="text-base font-black mt-2" id="my-prof-name">कारीगर का नाम</h3>
@@ -762,7 +773,7 @@
         </div>
 
         <div class="text-center p-3 bg-slate-50 border border-slate-200 rounded-xl">
-          <img src="https://placehold.co/180x180/0f172a/f59e0b.png?text=MistryBabu+UPI+QR" alt="MistryBabu UPI QR" class="w-36 h-36 mx-auto rounded-lg shadow-xs mb-2">
+          <img loading="lazy" src="https://placehold.co/180x180/0f172a/f59e0b.png?text=MistryBabu+UPI+QR" alt="MistryBabu UPI QR" class="w-36 h-36 mx-auto rounded-lg shadow-xs mb-2">
           <p id="con-pay-amount-label" class="text-sm font-black text-slate-900">भुगतान राशि: ₹3,000</p>
           <div class="mt-2 text-[10px] bg-white p-2 rounded border border-slate-200 inline-block text-left">
             <p><strong>UPI ID:</strong> <span class="select-all text-amber-700">mistrybabu@upi</span></p>
@@ -971,7 +982,7 @@
 
         <div id="adm-edit-photo-sec" class="bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-center space-y-1.5">
           <label class="block font-bold text-slate-700 text-[11px]">प्रोफ़ाइल / साइट फ़ोटो</label>
-          <img id="adm-edit-preview-img" src="logo.png" class="w-16 h-16 rounded-full mx-auto object-cover border-2 border-amber-400">
+          <img loading="lazy" id="adm-edit-preview-img" src="logo.png" class="w-16 h-16 rounded-full mx-auto object-cover border-2 border-amber-400">
           <input type="file" id="adm-edit-new-photo" accept="image/*" class="text-[10px] text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:bg-amber-100 file:text-amber-800">
         </div>
 
@@ -1779,7 +1790,7 @@
                 <span class="text-[9px] text-slate-500 font-bold">${ad.location}</span>
               </div>
               <div class="flex gap-2.5 items-center">
-                <img src="${imgUrl}" class="w-14 h-14 rounded-xl object-cover border border-blue-200 shrink-0">
+                <img loading="lazy" src="${imgUrl}" class="w-14 h-14 rounded-xl object-cover border border-blue-200 shrink-0">
                 <div>
                   <h4 class="text-xs font-black text-slate-900">${ad.shopName}</h4>
                   <p class="text-[10px] text-slate-600 leading-tight">${ad.description}</p>
@@ -1800,7 +1811,7 @@
                   <span class="text-[10px] text-slate-500 font-bold">${ad.location}</span>
                 </div>
                 <div class="flex items-center space-x-2.5">
-                  <img src="${imgUrl}" class="w-12 h-12 rounded-xl object-cover border border-blue-200 shrink-0">
+                  <img loading="lazy" src="${imgUrl}" class="w-12 h-12 rounded-xl object-cover border border-blue-200 shrink-0">
                   <div>
                     <h4 class="text-xs font-black text-slate-900 leading-tight">${ad.shopName}</h4>
                     <p class="text-[10px] text-slate-600 line-clamp-2 mt-0.5">${ad.description}</p>
@@ -1943,6 +1954,10 @@
               skills: skillsArray.length ? skillsArray : existing.skills,
               experience: exp || existing.experience
             };
+            if (currentWorkerCoords) {
+              updatePayload.lat = currentWorkerCoords.latitude;
+              updatePayload.lng = currentWorkerCoords.longitude;
+            }
 
             if (photoData) updatePayload.photo = photoData;
             if (workPhotosArray.length) updatePayload.workPhotos = workPhotosArray;
@@ -1982,6 +1997,8 @@
               postsCount: 0,
               allowJobPosting: false,
               deviceFingerprint: getDeviceFingerprint(),
+              lat: currentWorkerCoords ? currentWorkerCoords.latitude : null,
+              lng: currentWorkerCoords ? currentWorkerCoords.longitude : null,
               rating: 5.0,
               createdAt: firebase.firestore.FieldValue.serverTimestamp()
             };
@@ -2142,7 +2159,7 @@
         if (workPhotos.length > 0) {
           myPortGrid.innerHTML = "";
           workPhotos.forEach(p => {
-            myPortGrid.innerHTML += `<img src="${p}" class="w-16 h-16 rounded-lg object-cover border border-slate-200">`;
+            myPortGrid.innerHTML += `<img loading="lazy" src="${p}" class="w-16 h-16 rounded-lg object-cover border border-slate-200">`;
           });
         }
       } else {
@@ -2898,7 +2915,7 @@
 
                 <p class="text-[11px] text-slate-500"><i class="fa-solid fa-location-dot text-amber-500 mr-1"></i>${j.state || 'बिहार'} • ${j.district} (${j.location})${distanceText} • ज़रूरत: <strong>${j.workerCount || 1} आदमी</strong></p>
                 <p class="text-[10px] text-slate-600 bg-slate-50 p-1.5 rounded">${j.materialType || 'सामान मालिक का'}</p>
-                ${j.sitePhoto ? `<img src="${j.sitePhoto}" class="w-full h-32 rounded-lg object-cover border border-slate-100">` : ''}
+                ${j.sitePhoto ? `<img loading="lazy" src="${j.sitePhoto}" class="w-full h-32 rounded-lg object-cover border border-slate-100">` : ''}
                 <p class="text-xs text-slate-500">${j.desc || 'विवरण उपलब्ध नहीं है'}</p>
 
                 <div class="pt-2 border-t border-slate-100 flex justify-between items-center">
@@ -3520,32 +3537,59 @@
 
     function loadFullWorkers(filterSkill = "") {
       const grid = document.getElementById("full-worker-grid");
-      db.collection("workers").orderBy("createdAt", "desc").limit(30).get().then(snap => {
+      if (!grid) return;
+      grid.innerHTML = "<p class='text-xs text-slate-400'>कारीगर लोड हो रहे हैं...</p>";
+
+      db.collection("workers").orderBy("createdAt", "desc").limit(50).get().then(snap => {
         if (snap.empty) return grid.innerHTML = "<p class='text-xs text-slate-400'>कोई कारीगर नहीं मिला।</p>";
-        grid.innerHTML = "";
+
+        let workers = [];
         snap.forEach(doc => {
           const w = doc.data();
           if (w.isBlocked) return;
           const skillsList = w.skills || (w.skill ? [w.skill] : ["कारीगर"]);
-          if (filterSkill && !skillsList.some(s => s.includes(filterSkill))) return;
+          if (filterSkill && !skillsList.some(s => String(s).includes(filterSkill))) return;
+          let distanceKm = null;
+          if (currentWorkerCoords && Number.isFinite(Number(w.lat)) && Number.isFinite(Number(w.lng))) {
+            distanceKm = calculateDistanceKM(currentWorkerCoords.latitude, currentWorkerCoords.longitude, Number(w.lat), Number(w.lng));
+          }
+          workers.push({ ...w, id: doc.id, skillsList, distanceKm });
+        });
 
+        // UPDATE 15: GPS उपलब्ध होने पर सबसे पास के मिस्त्री पहले; बाकी प्रोफाइल बाद में।
+        if (window.mb15NearestMode) {
+          workers.sort((a,b) => {
+            if (a.distanceKm === null && b.distanceKm === null) return 0;
+            if (a.distanceKm === null) return 1;
+            if (b.distanceKm === null) return -1;
+            return a.distanceKm - b.distanceKm;
+          });
+        }
+
+        if (!workers.length) {
+          return grid.innerHTML = "<p class='text-xs text-slate-400'>इस कैटेगरी में कोई कारीगर नहीं मिला।</p>";
+        }
+
+        grid.innerHTML = "";
+        workers.forEach(w => {
           const photoSrc = w.photo || 'logo.png';
           const isBusy = w.liveStatus === 'busy';
           const workPhotos = w.workPhotos || [];
-          const proId = w.workerProId || ("#MB-PRO-" + doc.id.substring(0, 6).toUpperCase());
+          const proId = w.workerProId || ("#MB-PRO-" + w.id.substring(0, 6).toUpperCase());
           const isTopBoosted = w.isBoostedTop === true;
+          const distanceText = w.distanceKm !== null ? ` • 📍 <strong class="text-emerald-700">${Number(w.distanceKm).toFixed(1)} KM</strong>` : '';
 
           grid.innerHTML += `
             <div class="bg-white p-3.5 rounded-2xl border ${isTopBoosted ? 'border-2 border-amber-500 shadow-md' : 'border-slate-200 shadow-2xs'} space-y-2">
               <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-2.5">
                   <div class="relative">
-                    <img src="${photoSrc}" onerror="this.src='https://placehold.co/100x100/f59e0b/0f172a.png?text=MB'" class="w-12 h-12 rounded-full object-cover border-2 border-amber-400">
+                    <img loading="lazy" src="${photoSrc}" onerror="this.src='https://placehold.co/100x100/f59e0b/0f172a.png?text=MB'" class="w-12 h-12 rounded-full object-cover border-2 border-amber-400">
                     <span class="absolute bottom-0 right-0 w-3 h-3 rounded-full ${isBusy ? 'bg-rose-500' : 'bg-emerald-500'} border-2 border-white"></span>
                   </div>
                   <div>
-                    <div class="flex items-center space-x-1">
-                      <h4 class="font-bold text-slate-900 text-xs">${w.name}</h4>
+                    <div class="flex items-center space-x-1 flex-wrap">
+                      <h4 class="font-bold text-slate-900 text-xs">${w.name || 'मिस्त्री'}</h4>
                       ${isTopBoosted ? '<span class="text-[8px] bg-amber-500 text-slate-900 px-1 rounded font-black">⭐ TOP</span>' : ''}
                       <span class="text-[8px] bg-amber-100 text-amber-800 px-1.5 py-0.2 rounded font-bold">${w.level || 'कुशल'}</span>
                       ${w.isContractorVIP ? '<span class="text-[8px] bg-amber-400 text-slate-900 px-1 rounded font-black">👑 VIP</span>' : ''}
@@ -3553,23 +3597,63 @@
                     </div>
                     <span class="text-[9px] font-bold text-slate-400 block">${proId}</span>
                     <span class="text-[9px] font-bold ${isBusy ? 'text-rose-500' : 'text-emerald-600'}">${isBusy ? 'काम में व्यस्त 🔴' : 'काम के लिए उपलब्ध 🟢'}</span>
-                    <p class="text-[9px] text-slate-400">${w.state || 'बिहार'} • ${w.district} • ${w.experience || 0} साल अनुभव</p>
+                    <p class="text-[9px] text-slate-400">${w.state || 'बिहार'} • ${w.district || ''} • ${w.experience || 0} साल अनुभव${distanceText}</p>
                   </div>
                 </div>
-                <button onclick="navTo('post')" class="bg-amber-500 text-slate-900 px-3 py-1.5 rounded-lg text-[11px] font-bold shadow-xs">
-                  काम दें
-                </button>
+                <button onclick="navTo('post')" class="bg-amber-500 text-slate-900 px-3 py-1.5 rounded-lg text-[11px] font-bold shadow-xs">काम दें</button>
               </div>
 
               ${workPhotos.length > 0 ? `
                 <div class="pt-1 flex items-center space-x-1.5 overflow-x-auto">
                   <span class="text-[9px] text-slate-400 font-bold">काम की फ़ोटो:</span>
-                  ${workPhotos.map(img => `<img src="${img}" class="w-10 h-10 rounded-md object-cover border border-slate-100">`).join('')}
+                  ${workPhotos.map(img => `<img loading="lazy" src="${img}" class="w-10 h-10 rounded-md object-cover border border-slate-100">`).join('')}
                 </div>
               ` : ''}
             </div>`;
         });
+      }).catch(err => {
+        console.error(err);
+        grid.innerHTML = "<p class='text-xs text-red-500'>कारीगर लोड करने में समस्या आई।</p>";
       });
+    }
+
+    // UPDATE 15: हुनर/कैटेगरी फिल्टर
+    function mb15PopulateSkillFilter() {
+      const select = document.getElementById('mb15-skill-filter');
+      if (!select || typeof categories === 'undefined') return;
+      const titles = categories.map(c => c.title).filter(Boolean);
+      const unique = [...new Set(titles)];
+      unique.forEach(title => {
+        const opt = document.createElement('option');
+        opt.value = title;
+        opt.textContent = title;
+        select.appendChild(opt);
+      });
+    }
+
+    function mb15ApplyWorkerFilter() {
+      const select = document.getElementById('mb15-skill-filter');
+      const skill = select ? select.value : '';
+      window.mb15NearestMode = false;
+      const status = document.getElementById('mb15-status');
+      if (status) status.textContent = skill ? `🔧 ${skill} के मिस्त्री दिखाए जा रहे हैं।` : 'सभी हुनर / कैटेगरी के मिस्त्री दिखाए जा रहे हैं।';
+      loadFullWorkers(skill);
+    }
+
+    function mb15SortNearestWorkers() {
+      if (!navigator.geolocation) return alert('आपके ब्राउज़र में GPS उपलब्ध नहीं है।');
+      const status = document.getElementById('mb15-status');
+      if (status) status.textContent = '📍 आपकी लोकेशन ली जा रही है...';
+      navigator.geolocation.getCurrentPosition(pos => {
+        currentWorkerCoords = pos.coords;
+        window.mb15NearestMode = true;
+        const skill = document.getElementById('mb15-skill-filter')?.value || '';
+        if (status) status.textContent = '✅ सबसे पास के उपलब्ध मिस्त्री पहले दिखाए जा रहे हैं।';
+        loadFullWorkers(skill);
+      }, () => {
+        if (status) status.textContent = '❌ GPS अनुमति नहीं मिली।';
+        alert('पास के मिस्त्री दिखाने के लिए GPS की अनुमति दें।');
+      }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 });
     }
 
     function openTermsModal() {
@@ -3712,6 +3796,8 @@
       try { history.replaceState({ page: 'home' }, "", "#home"); } catch(e){}
       try { getDeviceFingerprint(); } catch(e){}
       try { renderCategories(); } catch(e){}
+      try { mb15PopulateSkillFilter(); } catch(e){}
+      window.mb15NearestMode = false;
       
       try {
         handleStateChange('home-state-filter', 'home-district-filter');
@@ -3828,6 +3914,11 @@
       mb12ApplyTheme();
       mb11BuildCategories();
     });
+
+    /* ===== UPDATE 14 + UPDATE 15 =====
+       14: सभी फोटो/प्रोफाइल इमेज lazy-load.
+       15: GPS आधारित nearest-worker sorting + specialization filter.
+    */
 </script>
 </body>
   </html>
