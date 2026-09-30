@@ -35,6 +35,10 @@
     #mb11-overlay{position:fixed;inset:0;z-index:93;background:rgba(15,23,42,.38);display:none}
     #mb11-overlay.open{display:block}
     .mb11-menu-item{width:100%;display:flex;align-items:center;gap:9px;text-align:left;padding:11px 10px;margin-top:7px;border-radius:12px;border:1px solid #e2e8f0;background:#f8fafc;color:#0f172a;font-size:13px;font-weight:800}
+    /* ===== MENU CATEGORY COMPACT: सभी 30 कैटेगरी रहेंगी, केवल मेनू में छोटा/कॉम्पैक्ट दिखेंगी ===== */
+    #mb11-category-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:6px}
+    #mb11-category-links .mb11-menu-item{width:100%;min-width:0;margin-top:0;padding:8px 7px;border-radius:9px;gap:5px;font-size:11px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    #mb11-category-links .mb11-menu-item span:last-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
     .mb11-menu-item:active{transform:scale(.98)}
     .mb11-close{border:0;background:#f1f5f9;border-radius:10px;padding:7px 10px;font-weight:900}
     body.mb11-dark{background:#0f172a!important;color:#e2e8f0!important}
@@ -48,11 +52,6 @@
     body.mb11-dark .mb11-menu-item{background:#1f2937;color:#f8fafc;border-color:#374151}
     body.mb11-dark .mb11-close{background:#374151;color:#f8fafc}
     @media (max-width:480px){#mb11-menu-btn{top:76px;right:10px}}
-
-    /* ===== UPDATE 13: Hindi / English Language Switcher ===== */
-    #mb13-lang-toggle{cursor:pointer;}
-    body.mb13-en [data-mb-hi]{display:none!important;}
-    body.mb13-hi [data-mb-en]{display:none!important;}
 
   </style>
 </head>
@@ -79,8 +78,6 @@
     <div id="mb11-category-links"></div>
     <div class="mt-4 border-t border-slate-200 pt-3">
       <button id="mb12-theme-toggle" type="button" class="mb11-menu-item" onclick="mb12ToggleTheme()">🌙 डार्क मोड / ☀️ लाइट मोड</button>
-      <!-- ===== UPDATE 13: Hindi / English Switcher ===== -->
-      <button id="mb13-lang-toggle" type="button" class="mb11-menu-item" onclick="mb13ToggleLang()">🇬🇧 English</button>
     </div>
   </aside>
 
@@ -3921,23 +3918,6 @@
       mb12ApplyTheme();
       mb11BuildCategories();
     });
-
-
-    // ===== UPDATE 13: Hindi / English Language Switcher =====
-    function mb13ApplyLang(){
-      const lang=localStorage.getItem('mb13_lang')||'hi';
-      document.body.classList.toggle('mb13-en',lang==='en');
-      document.body.classList.toggle('mb13-hi',lang!=='en');
-      const b=document.getElementById('mb13-lang-toggle');
-      if(b) b.innerHTML=lang==='en'?'🇮🇳 हिंदी':'🇬🇧 English';
-      document.documentElement.lang=lang;
-    }
-    function mb13ToggleLang(){
-      const lang=localStorage.getItem('mb13_lang')||'hi';
-      localStorage.setItem('mb13_lang',lang==='hi'?'en':'hi');
-      mb13ApplyLang();
-    }
-    document.addEventListener('DOMContentLoaded',()=>{ mb13ApplyLang(); });
 
     /* ===== UPDATE 14 + UPDATE 15 =====
        14: सभी फोटो/प्रोफाइल इमेज lazy-load.
