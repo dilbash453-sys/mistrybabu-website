@@ -28,11 +28,6 @@
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-    /* Update 1: Hidden Admin Login - username/password are not shown on the page. */
-    #admin-operator-name, #admin-pin-input, #admin-pin-view .relative, #admin-pin-view .admin-login-visible-fields {
-      display: none !important;
-    }
-
     /* ===== MistryBabu Update 11 + 12 ===== */
     #mb11-menu-btn{position:fixed;top:78px;right:12px;z-index:95;width:42px;height:42px;border-radius:12px;border:1px solid #e2e8f0;background:#fff;color:#0f172a;box-shadow:0 6px 18px rgba(15,23,42,.14);font-size:20px;font-weight:900;display:flex;align-items:center;justify-content:center}
     #mb11-drawer{position:fixed;top:0;right:0;width:min(86vw,340px);height:100vh;z-index:94;background:#fff;border-left:1px solid #e2e8f0;box-shadow:-10px 0 30px rgba(15,23,42,.18);transform:translateX(105%);transition:transform .22s ease;overflow-y:auto;padding:18px 14px 30px}
@@ -40,6 +35,10 @@
     #mb11-overlay{position:fixed;inset:0;z-index:93;background:rgba(15,23,42,.38);display:none}
     #mb11-overlay.open{display:block}
     .mb11-menu-item{width:100%;display:flex;align-items:center;gap:9px;text-align:left;padding:11px 10px;margin-top:7px;border-radius:12px;border:1px solid #e2e8f0;background:#f8fafc;color:#0f172a;font-size:13px;font-weight:800}
+    /* ===== MENU CATEGORY COMPACT: सभी 30 कैटेगरी रहेंगी, केवल मेनू में छोटा/कॉम्पैक्ट दिखेंगी ===== */
+    #mb11-category-links{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;margin-top:4px}
+    #mb11-category-links .mb11-menu-item{width:100%;min-width:0;margin-top:0;padding:6px 4px;border-radius:7px;gap:3px;font-size:9px;line-height:1.05;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    #mb11-category-links .mb11-menu-item span:last-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
     .mb11-menu-item:active{transform:scale(.98)}
     .mb11-close{border:0;background:#f1f5f9;border-radius:10px;padding:7px 10px;font-weight:900}
     body.mb11-dark{background:#0f172a!important;color:#e2e8f0!important}
@@ -829,7 +828,7 @@
           <i class="fa-solid fa-shield-halved text-amber-400 text-base"></i>
           <div>
             <h3 class="text-xs font-black">मिस्त्रीबाबू सुपर कंट्रोल रूम</h3>
-            <p class="text-[9px] text-slate-400" id="admin-op-indicator">सुरक्षित अधिकृत ऑपरेटर प्रवेश</p>
+            <p class="text-[9px] text-slate-400" id="admin-op-indicator">अधिकृत ऑपरेटर टीम (dilbas, lehari, monu)</p>
           </div>
         </div>
         <button onclick="closeAdminModal()" class="text-slate-400 hover:text-white text-lg">
@@ -845,13 +844,17 @@
         <h4 class="text-sm font-black text-slate-900">सुरक्षित एडमिन ऑपरेटर प्रवेश</h4>
         <p class="text-[10px] text-slate-500">केवल 3 अधिकृत व्यक्ति ही प्रवेश कर सकते हैं</p>
         
-        <div class="space-y-2 max-w-[220px] mx-auto" aria-hidden="true">
-          <!-- Credentials intentionally hidden. Authorized operators enter them only in the secure prompt. -->
-          <input type="text" id="admin-operator-name" autocomplete="off" tabindex="-1">
-          <input type="password" id="admin-pin-input" autocomplete="off" tabindex="-1">
+        <div class="space-y-2 max-w-[220px] mx-auto">
+          <input type="text" id="admin-operator-name" placeholder="अधिकृत नाम (dilbas / lehari / monu)" class="w-full text-center text-xs font-bold border-2 border-slate-300 rounded-xl py-2 px-3 focus:border-amber-500 focus:outline-none">
+          <div class="relative">
+            <input type="password" id="admin-pin-input" placeholder="पासवर्ड (Run1)" class="w-full text-center text-sm font-bold border-2 border-slate-300 rounded-xl py-2 px-8 focus:border-amber-500 focus:outline-none">
+            <button type="button" onclick="togglePassVisibility()" class="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600">
+              <i id="eye-icon" class="fa-solid fa-eye text-xs"></i>
+            </button>
+          </div>
         </div>
-        <button onclick="verifyHiddenAdminLogin()" class="w-full bg-slate-900 hover:bg-slate-800 text-amber-400 font-bold py-2.5 rounded-xl text-xs transition shadow-xs">
-          🔐 सुरक्षित प्रवेश करें
+        <button onclick="verifyAdminPin()" class="w-full bg-slate-900 hover:bg-slate-800 text-amber-400 font-bold py-2.5 rounded-xl text-xs transition shadow-xs">
+          सुरक्षित प्रवेश करें
         </button>
       </div>
       <div id="admin-main-view" class="p-3.5 space-y-3 overflow-y-auto flex-1 hidden text-xs">
@@ -2228,32 +2231,6 @@
         input.type = "password";
         icon.className = "fa-solid fa-eye text-xs";
       }
-    }
-
-    // Update 1: credentials are requested only through a secure prompt, never displayed in the page UI.
-    function verifyHiddenAdminLogin() {
-      const opName = (prompt("अधिकृत ऑपरेटर नाम दर्ज करें") || "")
-        .replace(/[,\.\s]/g, "")
-        .toLowerCase();
-      if (!ALLOWED_ADMIN_USERS.includes(opName)) {
-        alert("⛔ अनाधिकृत ऑपरेटर।");
-        return;
-      }
-
-      const entered = (prompt("सुरक्षित पासवर्ड दर्ज करें") || "").trim();
-      if (entered.toLowerCase() !== "run1") {
-        alert("गलत पासवर्ड! प्रवेश अस्वीकार किया गया।");
-        return;
-      }
-
-      currentOperator = opName;
-      localStorage.setItem("mb_active_operator", opName);
-      document.getElementById("lbl-active-operator").innerText = opName;
-      document.getElementById("admin-pin-view").classList.add("hidden");
-      document.getElementById("admin-main-view").classList.remove("hidden");
-      loadAdminDeals();
-      loadAdminContractors();
-      loadAdminShopAdsList();
     }
 
     function verifyAdminPin() {
@@ -3941,43 +3918,6 @@
       mb12ApplyTheme();
       mb11BuildCategories();
     });
-
-    <!-- ===== UPDATE 13: Hindi / English Language Switcher ===== -->
-<style>
-  #mb13-lang-toggle{cursor:pointer;}
-  body.mb13-en [data-mb-hi]{display:none!important;}
-  body.mb13-hi [data-mb-en]{display:none!important;}
-</style>
-<script>
-(function(){
-  function mb13ApplyLang(){
-    const lang=localStorage.getItem('mb13_lang')||'hi';
-    document.body.classList.toggle('mb13-en',lang==='en');
-    document.body.classList.toggle('mb13-hi',lang!=='en');
-    const b=document.getElementById('mb13-lang-toggle');
-    if(b) b.innerHTML=lang==='en'?'🇮🇳 हिंदी':'🇬🇧 English';
-    document.documentElement.lang=lang;
-  }
-  window.mb13ToggleLang=function(){
-    const lang=localStorage.getItem('mb13_lang')||'hi';
-    localStorage.setItem('mb13_lang',lang==='hi'?'en':'hi');
-    mb13ApplyLang();
-  };
-  document.addEventListener('DOMContentLoaded',function(){
-    const drawer=document.getElementById('mb11-drawer');
-    if(drawer && !document.getElementById('mb13-lang-toggle')){
-      const wrap=document.createElement('div');
-      wrap.className='mt-2';
-      wrap.innerHTML='<button id="mb13-lang-toggle" type="button" class="mb11-menu-item" onclick="mb13ToggleLang()">🇬🇧 English</button>';
-      const theme=document.getElementById('mb12-theme-toggle');
-      if(theme && theme.parentElement) theme.parentElement.parentElement.appendChild(wrap);
-      else drawer.appendChild(wrap);
-    }
-    mb13ApplyLang();
-  });
-})();
-</script>
-<!-- ===== END UPDATE 13 ===== -->
 
     /* ===== UPDATE 14 + UPDATE 15 =====
        14: सभी फोटो/प्रोफाइल इमेज lazy-load.
