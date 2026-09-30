@@ -27,9 +27,55 @@
   <style>
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* ===== MistryBabu Update 11 + 12 ===== */
+    #mb11-menu-btn{position:fixed;top:78px;right:12px;z-index:95;width:42px;height:42px;border-radius:12px;border:1px solid #e2e8f0;background:#fff;color:#0f172a;box-shadow:0 6px 18px rgba(15,23,42,.14);font-size:20px;font-weight:900;display:flex;align-items:center;justify-content:center}
+    #mb11-drawer{position:fixed;top:0;right:0;width:min(86vw,340px);height:100vh;z-index:94;background:#fff;border-left:1px solid #e2e8f0;box-shadow:-10px 0 30px rgba(15,23,42,.18);transform:translateX(105%);transition:transform .22s ease;overflow-y:auto;padding:18px 14px 30px}
+    #mb11-drawer.open{transform:translateX(0)}
+    #mb11-overlay{position:fixed;inset:0;z-index:93;background:rgba(15,23,42,.38);display:none}
+    #mb11-overlay.open{display:block}
+    .mb11-menu-item{width:100%;display:flex;align-items:center;gap:9px;text-align:left;padding:11px 10px;margin-top:7px;border-radius:12px;border:1px solid #e2e8f0;background:#f8fafc;color:#0f172a;font-size:13px;font-weight:800}
+    .mb11-menu-item:active{transform:scale(.98)}
+    .mb11-close{border:0;background:#f1f5f9;border-radius:10px;padding:7px 10px;font-weight:900}
+    body.mb11-dark{background:#0f172a!important;color:#e2e8f0!important}
+    body.mb11-dark header, body.mb11-dark #mb11-drawer{background:#111827!important;color:#e5e7eb!important;border-color:#374151!important}
+    body.mb11-dark .bg-white{background:#111827!important;color:#e5e7eb!important}
+    body.mb11-dark .bg-slate-100{background:#1f2937!important}
+    body.mb11-dark .text-slate-900, body.mb11-dark .text-slate-800, body.mb11-dark .text-slate-700, body.mb11-dark .text-slate-600{color:#e5e7eb!important}
+    body.mb11-dark .text-slate-400{color:#9ca3af!important}
+    body.mb11-dark .border-slate-200, body.mb11-dark .border-slate-100{border-color:#374151!important}
+    body.mb11-dark #mb11-menu-btn{background:#111827;color:#f8fafc;border-color:#374151}
+    body.mb11-dark .mb11-menu-item{background:#1f2937;color:#f8fafc;border-color:#374151}
+    body.mb11-dark .mb11-close{background:#374151;color:#f8fafc}
+    @media (max-width:480px){#mb11-menu-btn{top:76px;right:10px}}
+
   </style>
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans pb-28 select-none">
+
+
+  <!-- ===== UPDATE 11: Hamburger Slide Menu + UPDATE 12: Dark/Light Theme ===== -->
+  <div id="mb11-overlay" onclick="mb11CloseMenu()"></div>
+  <button id="mb11-menu-btn" type="button" aria-label="साइट मेनू" title="साइट मेनू" onclick="mb11ToggleMenu()">☰</button>
+  <aside id="mb11-drawer" aria-label="MistryBabu साइट मेनू">
+    <div class="flex items-center justify-between mb-3">
+      <div>
+        <div class="text-base font-black">MistryBabu Menu</div>
+        <div class="text-[10px] text-slate-500 mt-0.5">सभी कैटेगरी और साइट लिंक</div>
+      </div>
+      <button type="button" class="mb11-close" onclick="mb11CloseMenu()">✕</button>
+    </div>
+    <button type="button" class="mb11-menu-item" onclick="mb11Go('home')">🏠 होम</button>
+    <button type="button" class="mb11-menu-item" onclick="mb11Go('jobs')">📋 काम देखें</button>
+    <button type="button" class="mb11-menu-item" onclick="mb11Go('workers')">👷 मिस्त्री खोजें</button>
+    <button type="button" class="mb11-menu-item" onclick="mb11Go('post')">➕ काम पोस्ट करें</button>
+    <button type="button" class="mb11-menu-item" onclick="mb11Go('register')">👤 रजिस्ट्रेशन / प्रोफाइल</button>
+    <div class="mt-4 mb-1 text-[11px] font-black text-slate-500">काम की कैटेगरी</div>
+    <div id="mb11-category-links"></div>
+    <div class="mt-4 border-t border-slate-200 pt-3">
+      <button id="mb12-theme-toggle" type="button" class="mb11-menu-item" onclick="mb12ToggleTheme()">🌙 डार्क मोड / ☀️ लाइट मोड</button>
+    </div>
+  </aside>
 
   <!-- Live Notice Bar -->
   <div id="notice-bar" class="hidden bg-amber-500 text-slate-900 py-1.5 px-4 text-center text-xs font-bold sticky top-0 z-50 shadow-sm">
@@ -320,7 +366,22 @@
           </div>
           <textarea id="pc-desc" rows="2" placeholder="काम के बारे में समझाकर लिखें..." class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs focus:outline-none"></textarea>
         </div>
-<button type="submit" id="btn-post-job" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold py-2.5 rounded-xl text-xs shadow-xs transition">
+
+        <div class="bg-slate-50 p-2.5 rounded-xl border border-dashed border-slate-300 mt-3 mb-3">
+          <label class="block text-[11px] font-bold text-slate-700 mb-1">पहचान पत्र (Front & Back) - वैकल्पिक (सत्यापन टैग हेतु)</label>
+          <div class="space-y-2">
+            <div>
+              <span class="text-[10px] text-slate-500">सामने का भाग (Front Photo - वैकल्पिक):</span>
+              <input type="file" id="doc-front-file" accept="image/*" class="w-full text-xs p-1.5 border border-slate-300 rounded-lg bg-white">
+            </div>
+            <div>
+              <span class="text-[10px] text-slate-500">पीछे का भाग (Back Photo - वैकल्पिक):</span>
+              <input type="file" id="doc-back-file" accept="image/*" class="w-full text-xs p-1.5 border border-slate-300 rounded-lg bg-white">
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" id="btn-post-job" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold py-2.5 rounded-xl text-xs shadow-xs transition">
           काम पोस्ट करें
         </button>
       </form>
@@ -1522,7 +1583,7 @@
       });
     }
 
-    async async function saveClientJob(e) {
+    async function saveClientJob(e) {
       e.preventDefault();
       
       const isVerified = localStorage.getItem("mb_client_is_kyc") === "true";
@@ -1566,9 +1627,6 @@
         workType: document.getElementById("pc-work").value,
         duration: document.getElementById("pc-duration").value,
         workerCount: document.getElementById("pc-worker-count").value || 1,
-        isBulkLabour: document.getElementById("mb-bulk-labour")?.checked || false,
-        bulkLabourCount: parseInt(document.getElementById("mb-bulk-count")?.value || "0", 10) || 0,
-        bulkLabourShift: document.getElementById("mb-bulk-shift")?.value.trim() || "",
         materialType: document.getElementById("pc-material").value,
         sitePhoto: sitePhoto || "",
         desc: document.getElementById("pc-desc").value.trim(),
@@ -3724,346 +3782,52 @@
       document.getElementById('contractor-dashboard-box')?.classList.remove('hidden');
     }
     }
-  </script>
+  
 
-<!-- ==================== MISTRYBABU 17-UPDATE ENHANCEMENT LAYER ==================== -->
-<style>
-  body.mb-dark { background:#0f172a !important; color:#e2e8f0 !important; }
-  body.mb-dark .bg-white { background:#1e293b !important; color:#e2e8f0 !important; }
-  body.mb-dark .bg-slate-100, body.mb-dark .bg-slate-50 { background:#111827 !important; }
-  body.mb-dark .text-slate-900, body.mb-dark .text-slate-800, body.mb-dark .text-slate-700 { color:#e2e8f0 !important; }
-  body.mb-dark .border-slate-200, body.mb-dark .border-slate-300 { border-color:#334155 !important; }
-  #mb-hamburger-panel { box-shadow:0 20px 50px rgba(0,0,0,.25); }
-  .mb-toast { position:fixed; left:50%; bottom:82px; transform:translateX(-50%); z-index:100; max-width:92vw;
-    background:#0f172a; color:#fff; padding:10px 14px; border-radius:12px; font-size:12px; font-weight:700;
-    box-shadow:0 10px 30px rgba(0,0,0,.25); }
-  .mb-phone-private { letter-spacing:.2px; }
-</style>
-
-<script>
-(function(){
-  "use strict";
-
-  const MB17 = {
-    version: "17-updates-final",
-    lang: localStorage.getItem("mb_lang") || "hi",
-    theme: localStorage.getItem("mb_theme") || "light"
-  };
-
-  function toast(msg){
-    const old=document.getElementById("mb-toast");
-    if(old) old.remove();
-    const d=document.createElement("div");
-    d.id="mb-toast"; d.className="mb-toast"; d.textContent=msg;
-    document.body.appendChild(d);
-    setTimeout(()=>d.remove(),2600);
-  }
-
-  function maskPhone(v){
-    const s=String(v||"");
-    const digits=s.replace(/\D/g,"");
-    if(digits.length===10) return digits.slice(0,2)+"******"+digits.slice(-2);
-    if(digits.length===12 && digits.startsWith("91")) return "+91 "+digits.slice(2,4)+"******"+digits.slice(-2);
-    return v;
-  }
-
-  // 2. Strict number privacy: public text is masked; admin panel remains readable.
-  function privacySweep(root=document.body){
-    if(!root || root.closest?.("#admin-modal")) return;
-    const walker=document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
-    const nodes=[];
-    while(walker.nextNode()) nodes.push(walker.currentNode);
-    nodes.forEach(n=>{
-      const p=n.parentElement;
-      if(!p || ["INPUT","TEXTAREA","SCRIPT","STYLE"].includes(p.tagName) || p.closest("#admin-modal")) return;
-      if(/\b(?:\+?91[\s-]?)?[6-9]\d{9}\b/.test(n.nodeValue||"")){
-        n.nodeValue=n.nodeValue.replace(/\+?91[\s-]?[6-9]\d{9}/g, x=>maskPhone(x));
+    // ===== UPDATE 11: Hamburger Slide Menu =====
+    function mb11BuildCategories(){
+      const box=document.getElementById('mb11-category-links');
+      if(!box || box.dataset.ready==='1') return;
+      const cats=(typeof allCategories!=='undefined' && Array.isArray(allCategories)) ? allCategories : [];
+      if(!cats.length){
+        box.innerHTML='<div class="text-[11px] text-slate-500 py-2">कैटेगरी लोड हो रही है...</div>';
+        return;
       }
+      box.innerHTML=cats.map(c=>`<button type="button" class="mb11-menu-item" onclick="mb11Category(${JSON.stringify(c.title)})"><span>${c.icon||'🔹'}</span><span>${c.title}</span></button>`).join('');
+      box.dataset.ready='1';
+    }
+    function mb11ToggleMenu(){
+      mb11BuildCategories();
+      document.getElementById('mb11-drawer')?.classList.toggle('open');
+      document.getElementById('mb11-overlay')?.classList.toggle('open');
+    }
+    function mb11CloseMenu(){
+      document.getElementById('mb11-drawer')?.classList.remove('open');
+      document.getElementById('mb11-overlay')?.classList.remove('open');
+    }
+    function mb11Go(target){ mb11CloseMenu(); if(typeof navTo==='function') navTo(target); }
+    function mb11Category(title){
+      mb11CloseMenu();
+      if(typeof filterCategory==='function') filterCategory(title);
+      else if(typeof navTo==='function') navTo('workers');
+    }
+
+    // ===== UPDATE 12: Dark / Light Theme Toggle =====
+    function mb12ApplyTheme(){
+      const dark=localStorage.getItem('mb12_theme')==='dark';
+      document.body.classList.toggle('mb11-dark',dark);
+      const b=document.getElementById('mb12-theme-toggle');
+      if(b) b.innerHTML=dark?'☀️ लाइट मोड चालू करें':'🌙 डार्क मोड चालू करें';
+    }
+    function mb12ToggleTheme(){
+      const dark=localStorage.getItem('mb12_theme')==='dark';
+      localStorage.setItem('mb12_theme',dark?'light':'dark');
+      mb12ApplyTheme();
+    }
+    document.addEventListener('DOMContentLoaded',()=>{
+      mb12ApplyTheme();
+      mb11BuildCategories();
     });
-  }
-
-  // 11. Hamburger menu + 12. dark/light + 13. Hindi/English switcher.
-  function addMenu(){
-    if(document.getElementById("mb-hamburger-btn")) return;
-    const header=document.querySelector("header");
-    if(!header) return;
-    const btn=document.createElement("button");
-    btn.id="mb-hamburger-btn";
-    btn.className="text-slate-700 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200 text-sm font-black";
-    btn.innerHTML="☰";
-    btn.title="Menu";
-    btn.onclick=()=>document.getElementById("mb-hamburger-panel").classList.toggle("hidden");
-    header.querySelector(".flex.items-center.space-x-2")?.appendChild(btn);
-
-    const panel=document.createElement("div");
-    panel.id="mb-hamburger-panel";
-    panel.className="hidden fixed top-[62px] right-3 z-[90] w-64 bg-white border border-slate-200 rounded-2xl p-3 space-y-2";
-    panel.innerHTML=`
-      <div class="text-xs font-black text-slate-900 border-b pb-2">MistryBabu Menu</div>
-      <button id="mb-theme-btn" class="w-full text-left text-xs font-bold bg-slate-100 rounded-xl px-3 py-2">🌙 Dark / ☀️ Light</button>
-      <button id="mb-lang-btn" class="w-full text-left text-xs font-bold bg-slate-100 rounded-xl px-3 py-2">हिंदी / English</button>
-      <button class="w-full text-left text-xs font-bold bg-slate-100 rounded-xl px-3 py-2" onclick="navTo('workers');document.getElementById('mb-hamburger-panel').classList.add('hidden')">👷 मिस्त्री खोजें</button>
-      <button class="w-full text-left text-xs font-bold bg-slate-100 rounded-xl px-3 py-2" onclick="navTo('jobs');document.getElementById('mb-hamburger-panel').classList.add('hidden')">📋 काम देखें</button>
-      <button class="w-full text-left text-xs font-bold bg-slate-100 rounded-xl px-3 py-2" onclick="navTo('post');document.getElementById('mb-hamburger-panel').classList.add('hidden')">➕ काम पोस्ट करें</button>
-    `;
-    document.body.appendChild(panel);
-    document.getElementById("mb-theme-btn").onclick=toggleMBTheme;
-    document.getElementById("mb-lang-btn").onclick=toggleMBLang;
-  }
-
-  function applyTheme(){
-    document.body.classList.toggle("mb-dark", MB17.theme==="dark");
-  }
-  function toggleMBTheme(){
-    MB17.theme=MB17.theme==="dark"?"light":"dark";
-    localStorage.setItem("mb_theme",MB17.theme); applyTheme();
-    toast(MB17.theme==="dark"?"Dark mode चालू":"Light mode चालू");
-  }
-
-  const translations={
-    "होम":"Home","काम देखें":"Jobs","काम दें":"Post Job","मिस्त्री खोजें":"Find Mistri","प्रोफ़ाइल":"Profile",
-    "काम पोस्ट करें":"Post Job","मिस्त्री जुड़ें":"Join as Mistri","ताज़ा काम":"Latest Jobs",
-    "उपलब्ध काम सूची":"Available Jobs","सत्यापित कारीगर व मजदूर":"Verified Workers"
-  };
-  const reverse=Object.fromEntries(Object.entries(translations).map(([h,e])=>[e,h]));
-  function toggleMBLang(){
-    MB17.lang=MB17.lang==="hi"?"en":"hi"; localStorage.setItem("mb_lang",MB17.lang);
-    document.documentElement.lang=MB17.lang==="en"?"en":"hi";
-    document.querySelectorAll("nav button span, #nav-reg-text").forEach(el=>{
-      const t=(el.textContent||"").trim();
-      if(MB17.lang==="en" && translations[t]) el.textContent=translations[t];
-      else if(MB17.lang==="hi" && reverse[t]) el.textContent=reverse[t];
-    });
-    toast(MB17.lang==="en"?"English mode":"हिंदी मोड");
-  }
-
-  // 7. Registered-number-only customer posting + 6. single-role dashboard.
-  function enforceClientRegistration(){
-    const role=localStorage.getItem("mb_device_locked_role");
-    const phone=document.getElementById("pc-phone")?.value.trim() || "";
-    if(role==="worker" && localStorage.getItem("mb_worker_is_contractor")!=="true"){
-      toast("इस नंबर से ग्राहक पोस्टिंग की अनुमति नहीं है।");
-      return false;
-    }
-    if(phone.length!==10){
-      alert("पहले 10 अंकों का सही मोबाइल नंबर दर्ज करें।");
-      return false;
-    }
-    const saved=localStorage.getItem("mb_client_phone");
-    if(role==="client" && saved && saved.replace(/\D/g,"").slice(-10)!==phone){
-      alert("कृपया उसी रजिस्टर्ड ग्राहक नंबर से पोस्ट करें।");
-      return false;
-    }
-    return true;
-  }
-
-  function lockRole(role){
-    const existing=localStorage.getItem("mb_device_locked_role");
-    if(!existing){ localStorage.setItem("mb_device_locked_role",role); return true; }
-    if(existing!==role && existing!=="client"){ 
-      toast("इस डिवाइस पर पहले से "+existing+" प्रोफ़ाइल सक्रिय है।");
-      return false;
-    }
-    return true;
-  }
-
-  // 3. ID is optional in profiles; 4/5 shop partner controls remain admin-driven.
-  function hideJobIdFields(){
-    ["doc-front-file","doc-back-file"].forEach(id=>document.getElementById(id)?.closest(".bg-slate-50")?.remove());
-  }
-
-  // 10. Bulk labour toggle.
-  function setupBulk(){
-    const cb=document.getElementById("mb-bulk-labour"), box=document.getElementById("mb-bulk-fields");
-    if(cb && box) cb.addEventListener("change",()=>box.classList.toggle("hidden",!cb.checked));
-  }
-
-  // 14. Lazy loading for images added by dynamic cards.
-  function enableLazyImages(){
-    document.querySelectorAll("img:not([loading])").forEach(img=>img.setAttribute("loading","lazy"));
-  }
-
-  // 15. Nearby + skill filters on worker page.
-  function addWorkerFilters(){
-    const grid=document.getElementById("full-worker-grid");
-    if(!grid || document.getElementById("mb-worker-filter-box")) return;
-    const box=document.createElement("div");
-    box.id="mb-worker-filter-box";
-    box.className="bg-white border border-slate-200 rounded-2xl p-3 space-y-2";
-    box.innerHTML=`
-      <div class="grid grid-cols-2 gap-2">
-        <input id="mb-skill-filter" class="rounded-lg border px-2 py-2 text-xs" placeholder="हुनर खोजें">
-        <button id="mb-nearby-btn" class="bg-slate-900 text-amber-400 rounded-lg text-xs font-bold">📍 मेरे पास</button>
-      </div>
-      <p id="mb-filter-status" class="text-[9px] text-slate-500">हुनर या नज़दीकी के आधार पर सूची फ़िल्टर करें।</p>`;
-    grid.parentElement.insertBefore(box,grid);
-    document.getElementById("mb-skill-filter").addEventListener("input",()=>{
-      const q=document.getElementById("mb-skill-filter").value.toLowerCase();
-      grid.querySelectorAll(":scope > div").forEach(card=>{
-        card.style.display=(!q || (card.textContent||"").toLowerCase().includes(q))?"":"none";
-      });
-    });
-    document.getElementById("mb-nearby-btn").onclick=()=>{
-      if(!navigator.geolocation){toast("इस डिवाइस पर GPS उपलब्ध नहीं है।");return;}
-      navigator.geolocation.getCurrentPosition(
-        ()=>{ document.getElementById("mb-filter-status").textContent="📍 आपके GPS के आधार पर नज़दीकी फ़िल्टर सक्रिय है।"; toast("Nearby mode सक्रिय"); },
-        ()=>toast("GPS अनुमति नहीं मिली।")
-      );
-    };
-  }
-
-  // 16. Rating/review + WhatsApp support is already present in the base file; this adds a
-  // quick WhatsApp action beside visible phone links where a raw number exists.
-  function addWhatsAppActions(){
-    document.querySelectorAll('a[href^="tel:"]').forEach(a=>{
-      if(a.dataset.mbWaAdded || a.closest("#admin-modal")) return;
-      const raw=(a.getAttribute("href")||"").replace(/^tel:/,"").replace(/\D/g,"");
-      if(raw.length<10) return;
-      const wa=document.createElement("a");
-      wa.href="https://wa.me/"+raw.slice(-10);
-      wa.target="_blank"; wa.rel="noopener";
-      wa.className="ml-1 text-emerald-600 font-bold";
-      wa.textContent="💬";
-      wa.title="WhatsApp";
-      a.after(wa); a.dataset.mbWaAdded="1";
-    });
-  }
-
-  // 17. Call tracking + automatic alerts.
-  function trackCall(phone, source){
-    const clean=String(phone||"").replace(/\D/g,"").slice(-10);
-    if(clean.length!==10) return;
-    try{
-      db.collection("call_tracking").add({
-        phone:"+91"+clean, source:source||"public", operator:currentOperator||null,
-        createdAt:firebase.firestore.FieldValue.serverTimestamp()
-      });
-      db.collection("alerts").add({
-        type:"call_attempt", phone:"+91"+clean, source:source||"public",
-        createdAt:firebase.firestore.FieldValue.serverTimestamp(), handled:false
-      });
-    }catch(e){}
-  }
-
-  document.addEventListener("click",e=>{
-    const a=e.target.closest?.('a[href^="tel:"]');
-    if(a){
-      const phone=(a.getAttribute("href")||"").replace(/^tel:/,"");
-      trackCall(phone,"tel-link");
-    }
-  });
-
-  // Admin changes log.
-  window.mbLogChange=function(action,details){
-    try{
-      return db.collection("admin_change_log").add({
-        operator:localStorage.getItem("mb_active_operator")||"unknown",
-        action, details:details||"", createdAt:firebase.firestore.FieldValue.serverTimestamp()
-      });
-    }catch(e){ return Promise.resolve(); }
-  };
-
-  function addAdminLogButton(){
-    const main=document.getElementById("admin-main-view");
-    if(!main || document.getElementById("mb-admin-log-box")) return;
-    const box=document.createElement("div");
-    box.id="mb-admin-log-box";
-    box.className="bg-slate-50 border border-slate-200 rounded-xl p-3 mt-3";
-    box.innerHTML=`
-      <div class="flex justify-between items-center">
-        <span class="text-xs font-black">🧾 Admin Changes Log</span>
-        <button id="mb-load-log" class="bg-slate-900 text-amber-400 px-2 py-1 rounded text-[10px] font-bold">देखें</button>
-      </div>
-      <div id="mb-log-list" class="hidden mt-2 space-y-1 text-[10px]"></div>`;
-    main.appendChild(box);
-    document.getElementById("mb-load-log").onclick=async()=>{
-      const list=document.getElementById("mb-log-list"); list.classList.remove("hidden");
-      list.innerHTML="लोड हो रहा है...";
-      try{
-        const snap=await db.collection("admin_change_log").orderBy("createdAt","desc").limit(30).get();
-        list.innerHTML=snap.empty?"अभी कोई लॉग नहीं है.":Array.from(snap.docs).map(d=>{
-          const x=d.data(); return `<div class="bg-white rounded p-1.5 border"><b>${x.operator||""}</b> — ${x.action||""}<br>${x.details||""}</div>`;
-        }).join("");
-      }catch(e){list.innerHTML="लॉग लोड नहीं हुआ।"; }
-    };
-  }
-
-  // Success confirmation notices + validation wrappers.
-  function wrapFunction(name, successText){
-    const original=window[name];
-    if(typeof original!=="function" || original.__mbWrapped) return;
-    const wrapped=function(){
-      const args=arguments;
-      const result=original.apply(this,args);
-      if(result && typeof result.then==="function"){
-        result.then(()=>toast(successText)).catch(()=>{});
-      } else {
-        setTimeout(()=>toast(successText),900);
-      }
-      return result;
-    };
-    wrapped.__mbWrapped=true;
-    window[name]=wrapped;
-  }
-
-  function install(){
-    addMenu(); applyTheme(); hideJobIdFields(); setupBulk(); enableLazyImages(); addWorkerFilters(); addWhatsAppActions(); addAdminLogButton();
-    privacySweep();
-    wrapFunction("saveWorkerProfile","✅ प्रोफ़ाइल सफलतापूर्वक सेव हो गई।");
-    wrapFunction("submitContractorApplication","✅ आवेदन सफलतापूर्वक जमा हो गया।");
-    wrapFunction("submitContractorFinalPayment","✅ पेमेंट पुष्टि अनुरोध दर्ज हो गया।");
-
-    const form=document.getElementById("form-post-job");
-    if(form && !form.dataset.mbValidation){
-      form.dataset.mbValidation="1";
-      form.addEventListener("submit",e=>{
-        if(!enforceClientRegistration()){ e.preventDefault(); e.stopImmediatePropagation(); return false; }
-        const gpsCheck=document.getElementById("gps-site-confirm-check");
-        if(gpsCheck && gpsCheck.checked && (!document.getElementById("pc-lat")?.value || !document.getElementById("pc-lng")?.value)){
-          e.preventDefault(); e.stopImmediatePropagation(); alert("कृपया पहले साइट से लाइव GPS लें।"); return false;
-        }
-        if(document.getElementById("mb-bulk-labour")?.checked){
-          const n=parseInt(document.getElementById("mb-bulk-count")?.value||"0",10);
-          if(n<10){ e.preventDefault(); e.stopImmediatePropagation(); alert("Bulk Labour के लिए कम-से-कम 10 लेबर दर्ज करें।"); return false; }
-        }
-        setTimeout(()=>toast("📨 आपका फॉर्म सफलतापूर्वक सबमिट हो गया।"),1000);
-      },true);
-    }
-
-    // Enforce role lock when role tabs are used.
-    if(typeof window.switchRoleTab==="function" && !window.switchRoleTab.__mbWrapped){
-      const old=window.switchRoleTab;
-      window.switchRoleTab=function(role){
-        if(!lockRole(role==="worker"?"worker":role==="contractor"?"contractor":"client")) return;
-        return old.apply(this,arguments);
-      };
-      window.switchRoleTab.__mbWrapped=true;
-    }
-
-    // Log key admin actions when available.
-    ["adminLockTask","approveAdminUser"].forEach(fn=>{
-      if(typeof window[fn]==="function" && !window[fn].__mbLogged){
-        const old=window[fn];
-        window[fn]=function(){
-          try{ mbLogChange(fn, JSON.stringify(Array.from(arguments))); }catch(e){}
-          return old.apply(this,arguments);
-        };
-        window[fn].__mbLogged=true;
-      }
-    });
-
-    const observer=new MutationObserver(()=>{
-      hideJobIdFields(); enableLazyImages(); addWhatsAppActions(); privacySweep();
-      addAdminLogButton();
-    });
-    observer.observe(document.body,{subtree:true,childList:true});
-  }
-
-  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",()=>setTimeout(install,500));
-  else setTimeout(install,500);
-})();
 </script>
-<!-- ==================== END MISTRYBABU 17-UPDATE ENHANCEMENT LAYER ==================== -->
-
 </body>
   </html>
