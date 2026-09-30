@@ -28,6 +28,11 @@
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
+    /* Update 1: Hidden Admin Login - username/password are not shown on the page. */
+    #admin-operator-name, #admin-pin-input, #admin-pin-view .relative, #admin-pin-view .admin-login-visible-fields {
+      display: none !important;
+    }
+
     /* ===== MistryBabu Update 11 + 12 ===== */
     #mb11-menu-btn{position:fixed;top:78px;right:12px;z-index:95;width:42px;height:42px;border-radius:12px;border:1px solid #e2e8f0;background:#fff;color:#0f172a;box-shadow:0 6px 18px rgba(15,23,42,.14);font-size:20px;font-weight:900;display:flex;align-items:center;justify-content:center}
     #mb11-drawer{position:fixed;top:0;right:0;width:min(86vw,340px);height:100vh;z-index:94;background:#fff;border-left:1px solid #e2e8f0;box-shadow:-10px 0 30px rgba(15,23,42,.18);transform:translateX(105%);transition:transform .22s ease;overflow-y:auto;padding:18px 14px 30px}
@@ -824,7 +829,7 @@
           <i class="fa-solid fa-shield-halved text-amber-400 text-base"></i>
           <div>
             <h3 class="text-xs font-black">मिस्त्रीबाबू सुपर कंट्रोल रूम</h3>
-            <p class="text-[9px] text-slate-400" id="admin-op-indicator">अधिकृत ऑपरेटर टीम (dilbas, lehari, monu)</p>
+            <p class="text-[9px] text-slate-400" id="admin-op-indicator">सुरक्षित अधिकृत ऑपरेटर प्रवेश</p>
           </div>
         </div>
         <button onclick="closeAdminModal()" class="text-slate-400 hover:text-white text-lg">
@@ -840,17 +845,13 @@
         <h4 class="text-sm font-black text-slate-900">सुरक्षित एडमिन ऑपरेटर प्रवेश</h4>
         <p class="text-[10px] text-slate-500">केवल 3 अधिकृत व्यक्ति ही प्रवेश कर सकते हैं</p>
         
-        <div class="space-y-2 max-w-[220px] mx-auto">
-          <input type="text" id="admin-operator-name" placeholder="अधिकृत नाम (dilbas / lehari / monu)" class="w-full text-center text-xs font-bold border-2 border-slate-300 rounded-xl py-2 px-3 focus:border-amber-500 focus:outline-none">
-          <div class="relative">
-            <input type="password" id="admin-pin-input" placeholder="पासवर्ड (Run1)" class="w-full text-center text-sm font-bold border-2 border-slate-300 rounded-xl py-2 px-8 focus:border-amber-500 focus:outline-none">
-            <button type="button" onclick="togglePassVisibility()" class="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600">
-              <i id="eye-icon" class="fa-solid fa-eye text-xs"></i>
-            </button>
-          </div>
+        <div class="space-y-2 max-w-[220px] mx-auto" aria-hidden="true">
+          <!-- Credentials intentionally hidden. Authorized operators enter them only in the secure prompt. -->
+          <input type="text" id="admin-operator-name" autocomplete="off" tabindex="-1">
+          <input type="password" id="admin-pin-input" autocomplete="off" tabindex="-1">
         </div>
-        <button onclick="verifyAdminPin()" class="w-full bg-slate-900 hover:bg-slate-800 text-amber-400 font-bold py-2.5 rounded-xl text-xs transition shadow-xs">
-          सुरक्षित प्रवेश करें
+        <button onclick="verifyHiddenAdminLogin()" class="w-full bg-slate-900 hover:bg-slate-800 text-amber-400 font-bold py-2.5 rounded-xl text-xs transition shadow-xs">
+          🔐 सुरक्षित प्रवेश करें
         </button>
       </div>
       <div id="admin-main-view" class="p-3.5 space-y-3 overflow-y-auto flex-1 hidden text-xs">
@@ -2227,6 +2228,32 @@
         input.type = "password";
         icon.className = "fa-solid fa-eye text-xs";
       }
+    }
+
+    // Update 1: credentials are requested only through a secure prompt, never displayed in the page UI.
+    function verifyHiddenAdminLogin() {
+      const opName = (prompt("अधिकृत ऑपरेटर नाम दर्ज करें") || "")
+        .replace(/[,\.\s]/g, "")
+        .toLowerCase();
+      if (!ALLOWED_ADMIN_USERS.includes(opName)) {
+        alert("⛔ अनाधिकृत ऑपरेटर।");
+        return;
+      }
+
+      const entered = (prompt("सुरक्षित पासवर्ड दर्ज करें") || "").trim();
+      if (entered.toLowerCase() !== "run1") {
+        alert("गलत पासवर्ड! प्रवेश अस्वीकार किया गया।");
+        return;
+      }
+
+      currentOperator = opName;
+      localStorage.setItem("mb_active_operator", opName);
+      document.getElementById("lbl-active-operator").innerText = opName;
+      document.getElementById("admin-pin-view").classList.add("hidden");
+      document.getElementById("admin-main-view").classList.remove("hidden");
+      loadAdminDeals();
+      loadAdminContractors();
+      loadAdminShopAdsList();
     }
 
     function verifyAdminPin() {
@@ -3957,55 +3984,5 @@
        15: GPS आधारित nearest-worker sorting + specialization filter.
     */
 </script>
-<!-- ===== UPDATE 1: Hidden Admin Login ===== -->
-<style id="mb1-hidden-admin-style">
-  /* Public page पर admin username/password fields दिखाई नहीं देंगे. */
-  #admin-pin-view .mb1-auth-fields,
-  #admin-pin-view .mb1-auth-submit { display:none !important; }
-  #mb1-hidden-admin-note { display:block; }
-</style>
-<script id="mb1-hidden-admin-script">
-(function(){
-  const allowed = ['dilbas','lehari','monu'];
-  function mb1RestoreAdmin(){
-    const op = (localStorage.getItem('mb_active_operator') || '').replace(/[,\.\s]/g,'').toLowerCase();
-    if(!allowed.includes(op)) return false;
-    const pinView=document.getElementById('admin-pin-view');
-    const mainView=document.getElementById('admin-main-view');
-    const label=document.getElementById('lbl-active-operator');
-    if(pinView && mainView){
-      pinView.classList.add('hidden');
-      mainView.classList.remove('hidden');
-      if(label) label.innerText=op;
-      if(typeof loadAdminDeals==='function') loadAdminDeals();
-      if(typeof loadAdminContractors==='function') loadAdminContractors();
-      if(typeof loadAdminShopAdsList==='function') loadAdminShopAdsList();
-      return true;
-    }
-    return false;
-  }
-  document.addEventListener('DOMContentLoaded', function(){
-    const fields=document.querySelector('#admin-pin-view .space-y-2');
-    if(fields) fields.classList.add('mb1-auth-fields');
-    const btn=document.querySelector('#admin-pin-view button[onclick="verifyAdminPin()"]');
-    if(btn) btn.classList.add('mb1-auth-submit');
-    const view=document.getElementById('admin-pin-view');
-    if(view && !document.getElementById('mb1-hidden-admin-note')){
-      const note=document.createElement('div');
-      note.id='mb1-hidden-admin-note';
-      note.className='text-[10px] text-slate-500 mt-2';
-      note.textContent='गुप्त एडमिन प्रवेश';
-      view.appendChild(note);
-    }
-  });
-  const oldOpen = window.openAdminModal;
-  window.openAdminModal = function(){
-    if(typeof oldOpen==='function') oldOpen();
-    setTimeout(mb1RestoreAdmin, 0);
-  };
-})();
-</script>
-<!-- ===== END UPDATE 1 ===== -->
-
 </body>
   </html>
