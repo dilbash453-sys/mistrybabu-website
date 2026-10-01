@@ -23,10 +23,16 @@
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-analytics.js"></script>
   <style>
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    .mb-dark { background:#0f172a !important; color:#e2e8f0 !important; }
+    .mb-dark header,.mb-dark nav,.mb-dark section,.mb-dark form,.mb-dark #worker-profile-view,.mb-dark .bg-white { background:#1e293b !important; color:#e2e8f0 !important; border-color:#334155 !important; }
+    .mb-dark .text-slate-900,.mb-dark .text-slate-800,.mb-dark .text-slate-700 { color:#e2e8f0 !important; }
+    .mb-dark .text-slate-500,.mb-dark .text-slate-400 { color:#94a3b8 !important; }
   </style>
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans pb-28 select-none">
@@ -53,9 +59,24 @@
         <i class="fa-solid fa-envelope text-amber-600 text-xs"></i>
         <span class="text-[11px] font-bold">हेल्प</span>
       </a>
+      <button onclick="toggleMainMenu()" id="main-menu-btn" aria-label="Menu" class="text-slate-700 bg-slate-100 px-3 py-2 rounded-lg border border-slate-200"><i class="fa-solid fa-bars"></i></button>
     </div>
   </header>
 
+  <!-- Hamburger Slide Menu / Theme / Language -->
+  <div id="main-menu-overlay" onclick="closeMainMenu()" class="fixed inset-0 bg-slate-900/50 z-[55] hidden"></div>
+  <aside id="main-menu-drawer" class="fixed top-0 right-0 bottom-0 w-[82%] max-w-sm bg-white z-[56] shadow-2xl translate-x-full transition-transform duration-200 overflow-y-auto">
+    <div class="p-4 bg-slate-900 text-white flex items-center justify-between"><div><h3 class="font-black text-sm">मिस्त्रीबाबू मेनू</h3><p class="text-[10px] text-slate-300">सेटिंग और मुख्य विकल्प</p></div><button onclick="closeMainMenu()" class="text-xl text-slate-300"><i class="fa-solid fa-xmark"></i></button></div>
+    <div class="p-4 space-y-2 text-xs font-bold">
+      <button onclick="navTo('home');closeMainMenu()" class="w-full text-left p-3 rounded-xl bg-slate-50">🏠 होम</button>
+      <button onclick="navTo('jobs');closeMainMenu()" class="w-full text-left p-3 rounded-xl bg-slate-50">💼 काम देखें</button>
+      <button onclick="navTo('workers');closeMainMenu()" class="w-full text-left p-3 rounded-xl bg-slate-50">👥 मिस्त्री खोजें</button>
+      <button onclick="navTo('post');closeMainMenu()" class="w-full text-left p-3 rounded-xl bg-slate-50">➕ काम दें</button>
+      <div class="border-t border-slate-200 pt-3 mt-3"><p class="text-[10px] text-slate-500 mb-2">भाषा / Language</p><div class="flex gap-2"><button onclick="setAppLanguage('hi')" id="lang-hi" class="flex-1 p-2 rounded-lg bg-amber-100 text-amber-900">हिंदी</button><button onclick="setAppLanguage('en')" id="lang-en" class="flex-1 p-2 rounded-lg bg-slate-100 text-slate-700">English</button></div></div>
+      <div class="border-t border-slate-200 pt-3 mt-3"><p class="text-[10px] text-slate-500 mb-2">थीम / Theme</p><div class="flex gap-2"><button onclick="setAppTheme('light')" class="flex-1 p-2 rounded-lg bg-slate-100">☀️ Light</button><button onclick="setAppTheme('dark')" class="flex-1 p-2 rounded-lg bg-slate-800 text-white">🌙 Dark</button></div></div>
+      <button onclick="openTermsModal();closeMainMenu()" class="w-full text-left p-3 rounded-xl bg-slate-50">📄 नियम व शर्तें</button>
+    </div>
+  </aside>
   <!-- साइड खींचने वाला बटन (दुकान पार्टनर विज्ञापन) -->
   <div class="fixed right-0 top-1/2 -translate-y-1/2 z-40">
     <button onclick="openShopDrawer()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs py-3 px-2 rounded-l-2xl shadow-xl flex flex-col items-center gap-1 border-y border-l border-blue-300 transition-transform active:scale-95 animate-pulse">
@@ -207,6 +228,7 @@
             <option value="true">🏢 पेटी-ठेका / सब-कॉन्ट्रैक्ट (बड़ा काम / पूरी बिल्डिंग)</option>
           </select>
         </div>
+        <div class="bg-blue-50 border border-blue-200 p-3 rounded-xl space-y-2"><label class="flex items-center gap-2 text-[11px] font-bold text-slate-800 cursor-pointer"><input type="checkbox" id="pc-factory-job" class="rounded text-blue-600"> 🏭 फैक्ट्री / कारखाना Bulk Labor Post</label><p class="text-[9px] text-slate-500">एक साथ कई कारीगर/मजदूर चाहिए तो इसे चुनें।</p></div>
 
         <div>
           <label class="block text-[11px] font-bold text-slate-700 mb-1">आपका पूरा नाम *</label>
@@ -320,7 +342,22 @@
           </div>
           <textarea id="pc-desc" rows="2" placeholder="काम के बारे में समझाकर लिखें..." class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs focus:outline-none"></textarea>
         </div>
-<button type="submit" id="btn-post-job" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold py-2.5 rounded-xl text-xs shadow-xs transition">
+
+        <div class="bg-slate-50 p-2.5 rounded-xl border border-dashed border-slate-300 mt-3 mb-3">
+          <label class="block text-[11px] font-bold text-slate-700 mb-1">पहचान पत्र (Front & Back) - वैकल्पिक (सत्यापन टैग हेतु)</label>
+          <div class="space-y-2">
+            <div>
+              <span class="text-[10px] text-slate-500">सामने का भाग (Front Photo - वैकल्पिक):</span>
+              <input type="file" id="doc-front-file" accept="image/*" class="w-full text-xs p-1.5 border border-slate-300 rounded-lg bg-white">
+            </div>
+            <div>
+              <span class="text-[10px] text-slate-500">पीछे का भाग (Back Photo - वैकल्पिक):</span>
+              <input type="file" id="doc-back-file" accept="image/*" class="w-full text-xs p-1.5 border border-slate-300 rounded-lg bg-white">
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" id="btn-post-job" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold py-2.5 rounded-xl text-xs shadow-xs transition">
           काम पोस्ट करें
         </button>
       </form>
@@ -593,8 +630,8 @@
             <button onclick="navTo('jobs')" class="w-full bg-amber-500 text-slate-900 py-2.5 rounded-xl font-bold shadow-xs">
               काम देखें और मालिक को रेट भेजें →
             </button>
-            <button id="btn-worker-complete-profile" onclick="openRemainingDetailsForm()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-2.5 rounded-xl text-xs flex items-center justify-center space-x-1.5 transition-all">
-              <span>✏️ बाकी छूटी हुई जानकारी भरें</span>
+            <button onclick="openRemainingDetailsForm()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-2.5 rounded-xl text-xs flex items-center justify-center space-x-1.5 transition-all">
+  <span>✏️ बाकी छूटी हुई जानकारी भरें</span>
             </button>
             <button onclick="logoutWorker()" class="w-full bg-rose-50 hover:bg-rose-100 text-rose-600 py-2 rounded-xl font-bold">
               लॉग आउट करें
@@ -752,7 +789,7 @@
           <i class="fa-solid fa-shield-halved text-amber-400 text-base"></i>
           <div>
             <h3 class="text-xs font-black">मिस्त्रीबाबू सुपर कंट्रोल रूम</h3>
-            <p class="text-[9px] text-slate-400" id="admin-op-indicator">अधिकृत ऑपरेटर टीम (dilbas, lehari, monu)</p>
+            <p class="text-[9px] text-slate-400" id="admin-op-indicator">गुप्त अधिकृत प्रवेश</p>
           </div>
         </div>
         <button onclick="closeAdminModal()" class="text-slate-400 hover:text-white text-lg">
@@ -766,20 +803,9 @@
           <i class="fa-solid fa-user-lock"></i>
         </div>
         <h4 class="text-sm font-black text-slate-900">सुरक्षित एडमिन ऑपरेटर प्रवेश</h4>
-        <p class="text-[10px] text-slate-500">केवल 3 अधिकृत व्यक्ति ही प्रवेश कर सकते हैं</p>
-        
-        <div class="space-y-2 max-w-[220px] mx-auto">
-          <input type="text" id="admin-operator-name" placeholder="अधिकृत नाम (dilbas / lehari / monu)" class="w-full text-center text-xs font-bold border-2 border-slate-300 rounded-xl py-2 px-3 focus:border-amber-500 focus:outline-none">
-          <div class="relative">
-            <input type="password" id="admin-pin-input" placeholder="पासवर्ड (Run1)" class="w-full text-center text-sm font-bold border-2 border-slate-300 rounded-xl py-2 px-8 focus:border-amber-500 focus:outline-none">
-            <button type="button" onclick="togglePassVisibility()" class="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600">
-              <i id="eye-icon" class="fa-solid fa-eye text-xs"></i>
-            </button>
-          </div>
-        </div>
-        <button onclick="verifyAdminPin()" class="w-full bg-slate-900 hover:bg-slate-800 text-amber-400 font-bold py-2.5 rounded-xl text-xs transition shadow-xs">
-          सुरक्षित प्रवेश करें
-        </button>
+        <p class="text-[10px] text-slate-500">सुरक्षा के लिए यूज़रनेम और पासवर्ड स्क्रीन पर नहीं दिखाए जाते।</p>
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-[10px] text-slate-500">🔐 केवल अधिकृत एडमिन के लिए गुप्त प्रवेश।</div>
+        <button onclick="verifyAdminPin()" class="w-full bg-slate-900 hover:bg-slate-800 text-amber-400 font-bold py-2.5 rounded-xl text-xs transition shadow-xs">🔐 गुप्त एडमिन प्रवेश</button>
       </div>
       <div id="admin-main-view" class="p-3.5 space-y-3 overflow-y-auto flex-1 hidden text-xs">
        <div class="bg-white p-4 rounded-xl shadow-md border border-slate-200 mb-3">
@@ -1546,6 +1572,7 @@
       const urgencyType = document.getElementById("pc-urgency-type").value;
       const isUrgent = (urgencyType === "urgent");
       const isTheka = (document.getElementById("pc-is-theka").value === "true");
+       const isFactoryJob = document.getElementById("pc-factory-job")?.checked === true;
 
       let sitePhoto = "";
       const siteFile = document.getElementById("pc-site-photo").files[0];
@@ -1566,9 +1593,6 @@
         workType: document.getElementById("pc-work").value,
         duration: document.getElementById("pc-duration").value,
         workerCount: document.getElementById("pc-worker-count").value || 1,
-        isBulkLabour: document.getElementById("mb-bulk-labour")?.checked || false,
-        bulkLabourCount: parseInt(document.getElementById("mb-bulk-count")?.value || "0", 10) || 0,
-        bulkLabourShift: document.getElementById("mb-bulk-shift")?.value.trim() || "",
         materialType: document.getElementById("pc-material").value,
         sitePhoto: sitePhoto || "",
         desc: document.getElementById("pc-desc").value.trim(),
@@ -1812,6 +1836,17 @@
       });
     }
 
+    // ==================== RESTORED / FIXED FEATURES ====================
+    let currentVoiceRecognition = null, audioMemoRecorder = null, audioMemoChunks = [], currentAudioMemoBlob = null;
+    function toggleGuide(contentId, iconId){const box=document.getElementById(contentId),icon=document.getElementById(iconId);if(!box)return;box.classList.toggle("hidden");if(icon)icon.classList.toggle("rotate-180");}
+    function startVoiceInput(targetId,buttonId){const target=document.getElementById(targetId),btn=document.getElementById(buttonId),SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!target||!SR)return alert("⚠️ इस ब्राउज़र में बोलकर लिखने की सुविधा उपलब्ध नहीं है। Chrome में माइक्रोफोन अनुमति दें।");if(currentVoiceRecognition){try{currentVoiceRecognition.stop();}catch(e){}}const rec=new SR();currentVoiceRecognition=rec;rec.lang=localStorage.getItem("mb_lang")==="en"?"en-IN":"hi-IN";rec.interimResults=true;if(btn){btn.disabled=true;btn.innerHTML='<i class="fa-solid fa-microphone-lines"></i><span>सुन रहा हूँ...</span>';}rec.onresult=event=>{let text="";for(let i=event.resultIndex;i<event.results.length;i++)text+=event.results[i][0].transcript;target.value=(target.value?target.value+" ":"")+text.trim();};rec.onerror=event=>alert("वॉयस इनपुट त्रुटि: "+(event.error||"unknown"));rec.onend=()=>{if(btn){btn.disabled=false;btn.innerHTML='<i class="fa-solid fa-microphone"></i><span>बोलकर लिखें</span>';}currentVoiceRecognition=null;};try{rec.start();}catch(e){if(btn)btn.disabled=false;}}
+    async function recordAudioMemo(){const btn=document.getElementById("btn-audio-memo"),txt=document.getElementById("txt-audio-memo");if(!navigator.mediaDevices||!window.MediaRecorder)return alert("⚠️ इस ब्राउज़र में ऑडियो रिकॉर्डिंग उपलब्ध नहीं है।");if(audioMemoRecorder&&audioMemoRecorder.state==="recording"){audioMemoRecorder.stop();return;}try{const stream=await navigator.mediaDevices.getUserMedia({audio:true});audioMemoChunks=[];audioMemoRecorder=new MediaRecorder(stream);audioMemoRecorder.ondataavailable=e=>{if(e.data.size)audioMemoChunks.push(e.data);};audioMemoRecorder.onstop=()=>{currentAudioMemoBlob=new Blob(audioMemoChunks,{type:audioMemoRecorder.mimeType||"audio/webm"});stream.getTracks().forEach(t=>t.stop());if(btn)btn.classList.remove("bg-slate-700");if(txt)txt.innerText="ऑडियो तैयार ✓";};audioMemoRecorder.start();if(btn)btn.classList.add("bg-slate-700");if(txt)txt.innerText="रिकॉर्ड हो रहा है... रोकने के लिए दबाएँ";}catch(e){alert("माइक्रोफोन अनुमति नहीं मिली: "+e.message);}}
+    function shareJobOnWhatsApp(workType,district,location,sixId,clientName){const text=`मिस्त्रीबाबू काम\nकाम: ${workType}\nस्थान: ${district}, ${location}\nकाम ID: ${sixId}\nमालिक: ${clientName}`;window.open("https://wa.me/?text="+encodeURIComponent(text),"_blank","noopener");}
+    async function toggleWorkerLiveStatus(){const phone=localStorage.getItem("mb_worker_phone");if(!phone)return alert("पहले मिस्त्री प्रोफ़ाइल खोलें।");const next=(localStorage.getItem("mb_worker_status")||"available")==="busy"?"available":"busy";localStorage.setItem("mb_worker_status",next);renderLiveStatusUI(next);try{const id=localStorage.getItem("mb_worker_doc_id");if(id)await db.collection("workers").doc(id).update({liveStatus:next});else{const snap=await db.collection("workers").where("private_phone","==","+91"+phone).limit(1).get();if(!snap.empty)await snap.docs[0].ref.update({liveStatus:next});}}catch(e){alert("स्टेटस सेव नहीं हो सका: "+e.message);}}
+    function toggleMainMenu(){document.getElementById("main-menu-drawer")?.classList.toggle("translate-x-full");document.getElementById("main-menu-overlay")?.classList.toggle("hidden");} function closeMainMenu(){document.getElementById("main-menu-drawer")?.classList.add("translate-x-full");document.getElementById("main-menu-overlay")?.classList.add("hidden");}
+    function setAppLanguage(lang){localStorage.setItem("mb_lang",lang);document.documentElement.lang=lang==="en"?"en":"hi";const t={home:lang==="en"?"Home":"होम",jobs:lang==="en"?"Jobs":"काम देखें",post:lang==="en"?"Post":"काम दें",workers:lang==="en"?"Workers":"मिस्त्री खोजें",register:lang==="en"?"Profile":"प्रोफ़ाइल"};Object.entries(t).forEach(([k,v])=>{const e=document.getElementById("nav-"+k)?.querySelector("span");if(e)e.innerText=v;});}
+    function setAppTheme(theme){localStorage.setItem("mb_theme",theme);document.body.classList.toggle("mb-dark",theme==="dark");} function applySavedUISettings(){setAppTheme(localStorage.getItem("mb_theme")||"light");setAppLanguage(localStorage.getItem("mb_lang")||"hi");}
+
     // 4. मिस्त्री प्रोफ़ाइल
     async function saveWorkerProfile(e) {
       e.preventDefault();
@@ -1862,19 +1897,13 @@
         }
       }
 
-      // पहचान पत्र के असली HTML fields: id-front-file / id-back-file
-      // दोनों वैकल्पिक हैं; कोई field न हो तो save प्रक्रिया नहीं रुकेगी।
+      // ID/Aadhaar वैकल्पिक है; सही HTML fields id-front-file / id-back-file हैं।
       let idCardData = "";
       let idCardBackData = "";
       const idFrontFile = document.getElementById("id-front-file")?.files?.[0];
       const idBackFile = document.getElementById("id-back-file")?.files?.[0];
-
-      if (idFrontFile) {
-        try { idCardData = await fileToBase64WithWatermark(idFrontFile); } catch(e) {}
-      }
-      if (idBackFile) {
-        try { idCardBackData = await fileToBase64WithWatermark(idBackFile); } catch(e) {}
-      }
+      if (idFrontFile) { try { idCardData = await fileToBase64WithWatermark(idFrontFile); } catch(e) {} }
+      if (idBackFile) { try { idCardBackData = await fileToBase64WithWatermark(idBackFile); } catch(e) {} }
 
       let workerLevel = "नया कारीगर";
       if (exp >= 8) workerLevel = "सीनियर उस्ताद";
@@ -1899,28 +1928,16 @@
             if (idCardData) updatePayload.idCardPhoto = idCardData;
             if (idCardBackData) updatePayload.idCardBackPhoto = idCardBackData;
             if (idNumber) updatePayload.idCardNumber = idNumber;
-
-            updatePayload.profileComplete = !!(
-              (name || existing.name) &&
-              (fullPhone || existing.private_phone) &&
-              (state || existing.state) &&
-              (district || existing.district) &&
-              (block || existing.block) &&
-              ((skillsArray.length ? skillsArray : existing.skills) || []).length > 0 &&
-              (exp || existing.experience) !== undefined &&
-              (photoData || existing.photo) &&
-              ((workPhotosArray.length ? workPhotosArray : existing.workPhotos) || []).length > 0
-            );
+            const hasPhoto = !!(photoData || existing.photo);
+            const hasWorkPhotos = !!((workPhotosArray.length || (existing.workPhotos || []).length) > 0);
+            updatePayload.profileComplete = !!(name && phone.length === 10 && state && district && block && skillsArray.length && hasPhoto && hasWorkPhotos);
 
             db.collection("workers").doc(docId).update(updatePayload).then(() => {
               btn.innerText = "पंजीकरण पूरा करें";
               const updatedData = { ...existing, ...updatePayload, id: docId };
               setLoggedInWorker(updatedData);
-              alert("✅ आपकी मिस्त्री प्रोफ़ाइल पूरी हो गई है। अब केवल प्रोफ़ाइल दिखाई जाएगी।");
-            }).catch(err => {
-              btn.innerText = "पंजीकरण पूरा करें";
-              alert("त्रुटि: " + err.message);
-            })
+              alert("✅ आपकी मिस्त्री प्रोफ़ाइल अपडेट और सुरक्षित लॉक कर दी गई है!");
+            });
           } else {
             const proId = generateWorkerId();
             const data = {
@@ -1938,6 +1955,7 @@
               idCardPhoto: idCardData || "",
               idCardBackPhoto: idCardBackData || "",
               idCardNumber: idNumber || "",
+              profileComplete: !!(name && phone.length === 10 && state && district && block && skillsArray.length && photoData && workPhotosArray.length),
               isIdVerified: false,
               isContractorVIP: false,
               contractorPlan: "",
@@ -1948,33 +1966,18 @@
               liveStatus: "available",
               postsCount: 0,
               allowJobPosting: false,
-              profileComplete: false,
               deviceFingerprint: getDeviceFingerprint(),
               rating: 5.0,
               createdAt: firebase.firestore.FieldValue.serverTimestamp()
             };
-            data.profileComplete = !!(
-              data.name &&
-              data.private_phone &&
-              data.state &&
-              data.district &&
-              data.block &&
-              Array.isArray(data.skills) && data.skills.length > 0 &&
-              data.experience !== undefined && data.experience !== null &&
-              data.photo &&
-              Array.isArray(data.workPhotos) && data.workPhotos.length > 0
-            );
 
             db.collection("workers").add(data).then(docRef => {
               btn.innerText = "पंजीकरण पूरा करें";
               data.id = docRef.id;
               setLoggedInWorker(data);
               localStorage.setItem("mb_device_locked_role", "worker");
-              alert(`बधाई हो! आपकी मिस्त्री प्रोफ़ाइल पूरी हो गई है।\nमिस्त्री ID: ${proId}`);
-            }).catch(err => {
-              btn.innerText = "पंजीकरण पूरा करें";
-              alert("त्रुटि: " + err.message);
-            })
+              alert(`बधाई हो! आपकी मिस्त्री प्रोफ़ाइल तुरंत लाइव हो गई है。\nमिस्त्री ID: ${proId}`);
+            });
           }
         }).catch(err => {
           btn.innerText = "पंजीकरण पूरा करें";
@@ -1998,6 +2001,8 @@
       localStorage.setItem("mb_worker_level", wData.level || "कुशल कारीगर");
       localStorage.setItem("mb_worker_photos", JSON.stringify(wData.workPhotos || []));
       localStorage.setItem("mb_worker_id_verified", wData.isIdVerified ? "true" : "false");
+      const profileComplete = wData.profileComplete === true || !!(wData.name && wData.private_phone && wData.state && wData.district && wData.block && Array.isArray(wData.skills) && wData.skills.length > 0 && wData.photo && Array.isArray(wData.workPhotos) && wData.workPhotos.length > 0);
+      localStorage.setItem("mb_worker_profile_complete", profileComplete ? "true" : "false");
       
       let isVipActive = false;
       if (wData.isContractorVIP && wData.contractorExpiry) {
@@ -2014,20 +2019,6 @@
       localStorage.setItem("mb_worker_is_contractor", isVipActive ? "true" : "false");
       localStorage.setItem("mb_worker_posts_count", (wData.postsCount || 0).toString());
       localStorage.setItem("mb_post_permission_approved", (wData.allowJobPosting || isVipActive) ? "true" : "false");
-      // मुख्य प्रोफ़ाइल पूरी होने पर फॉर्म लॉक रहेगा।
-      // ID/Aadhaar वैकल्पिक है; Admin Verification अलग है।
-      const profileComplete = !!(
-        wData.name &&
-        wData.private_phone &&
-        wData.state &&
-        wData.district &&
-        wData.block &&
-        Array.isArray(wData.skills) && wData.skills.length > 0 &&
-        wData.experience !== undefined && wData.experience !== null &&
-        wData.photo &&
-        Array.isArray(wData.workPhotos) && wData.workPhotos.length > 0
-      );
-      localStorage.setItem("mb_worker_profile_complete", profileComplete ? "true" : "false");
       localStorage.setItem("mb_device_locked_role", "worker");
       
       applyFieldByFieldLock(wData);
@@ -2062,52 +2053,24 @@
       } else {
         missingFields.push("काम के फ़ोटो");
       }
+      // ID/Aadhaar वैकल्पिक है; इससे प्रोफ़ाइल अधूरी नहीं मानी जाएगी।
       if (w.idCardPhoto || w.idCardBackPhoto || w.idCardNumber) {
         document.getElementById("id-front-file")?.classList.add("hidden");
         document.getElementById("id-back-file")?.classList.add("hidden");
-        document.getElementById("pw-id-number")?.setAttribute("readonly", "readonly");
-        if (document.getElementById("pw-id-number")) {
-          document.getElementById("pw-id-number").value = w.idCardNumber || "";
-        }
+        const idNumEl = document.getElementById("pw-id-number");
+        if (idNumEl) { idNumEl.readOnly = true; idNumEl.value = w.idCardNumber || ""; }
+        document.getElementById("done-pw-idcard")?.classList.remove("hidden");
       }
-      // पहचान पत्र (ID/Aadhaar) वैकल्पिक है; इससे प्रोफ़ाइल Complete नहीं रुकती।
 
-      const profileComplete = !!(
-        w.profileComplete === true ||
-        (
-          w.name &&
-          w.private_phone &&
-          w.state &&
-          w.district &&
-          w.block &&
-          Array.isArray(w.skills) && w.skills.length > 0 &&
-          w.experience !== undefined && w.experience !== null &&
-          w.photo &&
-          Array.isArray(w.workPhotos) && w.workPhotos.length > 0
-        )
-      );
-      localStorage.setItem("mb_worker_profile_complete", profileComplete ? "true" : "false");
-
-      if (profileComplete) {
-        alertBox.classList.add("hidden");
-        document.getElementById("worker-form-container")?.classList.add("hidden");
-        document.getElementById("worker-profile-view")?.classList.remove("hidden");
-        document.getElementById("btn-worker-complete-profile")?.classList.add("hidden");
-        document.getElementById("worker-profile-view")?.scrollIntoView({behavior:"smooth", block:"start"});
-      } else {
+      if (missingFields.length > 0) {
         alertBox.classList.remove("hidden");
         noteTxt.innerText = `अधूरी जानकारी: ${missingFields.join(', ')} भरें ताकि आपका खाता 100% पूरा हो सके।`;
-        document.getElementById("btn-worker-complete-profile")?.classList.remove("hidden");
+      } else {
+        alertBox.classList.add("hidden");
       }
     }
 
     function unlockWorkerFormForEdit() {
-      if (localStorage.getItem("mb_worker_profile_complete") === "true") {
-        document.getElementById("worker-form-container")?.classList.add("hidden");
-        document.getElementById("worker-profile-view")?.classList.remove("hidden");
-        document.getElementById("btn-worker-complete-profile")?.classList.add("hidden");
-        return;
-      }
       document.getElementById("worker-profile-view").classList.add("hidden");
       document.getElementById("worker-form-container").classList.remove("hidden");
     }
@@ -2117,12 +2080,10 @@
       const formBox = document.getElementById("worker-form-container");
       const profileBox = document.getElementById("worker-profile-view");
 
-      if (workerName) {
+      const isComplete = localStorage.getItem("mb_worker_profile_complete") === "true";
+      if (workerName && isComplete) {
         formBox.classList.add("hidden");
         profileBox.classList.remove("hidden");
-        const isComplete = localStorage.getItem("mb_worker_profile_complete") === "true";
-        document.getElementById("btn-worker-complete-profile")?.classList.toggle("hidden", isComplete);
-        document.getElementById("worker-profile-status-alert")?.classList.toggle("hidden", isComplete);
 
         document.getElementById("my-prof-name").innerText = workerName;
         document.getElementById("my-prof-pro-id").innerText = "ID: " + (localStorage.getItem("mb_worker_pro_id") || "#MB-PRO-000000");
@@ -2228,25 +2189,17 @@
     }
 
     function togglePassVisibility() {
-      const input = document.getElementById("admin-pin-input");
-      const icon = document.getElementById("eye-icon");
-      if (input.type === "password") {
-        input.type = "text";
-        icon.className = "fa-solid fa-eye-slash text-xs";
-      } else {
-        input.type = "password";
-        icon.className = "fa-solid fa-eye text-xs";
-      }
+      // पुराना visible password input हटाया गया है; गुप्त login prompt से होता है।
+      return;
     }
 
     function verifyAdminPin() {
-      const entered = document.getElementById("admin-pin-input").value.trim();
-      const opName = document.getElementById("admin-operator-name").value
-                            .replace(/[,.\s]/g, '')
-                            .toLowerCase();
+      const opName = (prompt("गुप्त एडमिन यूज़रनेम दर्ज करें") || "").replace(/[,.\s]/g, '').toLowerCase();
+      if (!opName) return;
+      const entered = prompt("गुप्त एडमिन पासवर्ड दर्ज करें") || "";
 
       if (!ALLOWED_ADMIN_USERS.includes(opName)) {
-        alert("⛔ अनाधिकृत यूज़र! केवल dilbas, lehari, या monu ही कंट्रोल रूम खोल सकते हैं।");
+        alert("⛔ अनाधिकृत एडमिन प्रवेश।");
         return;
       }
 
@@ -2260,16 +2213,13 @@
         loadAdminContractors();
         loadAdminShopAdsList();
       } else {
-        alert("गलत पासवर्ड! कृपया सही पासवर्ड दर्ज करें।");
-        document.getElementById("admin-pin-input").value = "";
+        alert("❌ गलत एडमिन पासवर्ड।");
       }
     }
 
     function adminLogout() {
       document.getElementById("admin-pin-view").classList.remove("hidden");
       document.getElementById("admin-main-view").classList.add("hidden");
-      document.getElementById("admin-pin-input").value = "";
-      document.getElementById("admin-operator-name").value = "";
     }
 
     function openAdminModal() { document.getElementById("admin-modal").classList.remove("hidden"); }
@@ -2925,7 +2875,7 @@
 
                 <p class="text-[11px] text-slate-500"><i class="fa-solid fa-location-dot text-amber-500 mr-1"></i>${j.state || 'बिहार'} • ${j.district} (${j.location})${distanceText} • ज़रूरत: <strong>${j.workerCount || 1} आदमी</strong></p>
                 <p class="text-[10px] text-slate-600 bg-slate-50 p-1.5 rounded">${j.materialType || 'सामान मालिक का'}</p>
-                ${j.sitePhoto ? `<img src="${j.sitePhoto}" class="w-full h-32 rounded-lg object-cover border border-slate-100">` : ''}
+                ${j.sitePhoto ? `<img loading="lazy" src="${j.sitePhoto}" class="w-full h-32 rounded-lg object-cover border border-slate-100">` : ''}
                 <p class="text-xs text-slate-500">${j.desc || 'विवरण उपलब्ध नहीं है'}</p>
 
                 <div class="pt-2 border-t border-slate-100 flex justify-between items-center">
@@ -2995,10 +2945,21 @@
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       };
 
-      db.collection("job_proposals").add(pData).then(() => {
+      const saveProposal = async () => {
+        if (currentAudioMemoBlob) {
+          const ref = firebase.storage().ref("voice_notes/proposal_" + Date.now() + ".webm");
+          const snap = await ref.put(currentAudioMemoBlob);
+          pData.audioUrl = await snap.ref.getDownloadURL();
+          pData.audioMimeType = currentAudioMemoBlob.type || "audio/webm";
+        }
+        return db.collection("job_proposals").add(pData);
+      };
+      saveProposal().then(() => {
         alert("संदेश व रेट सफलतापूर्वक भेज दिया गया है!");
         btn.innerText = "रेट व संदेश भेजें";
         document.getElementById("prop-message").value = "";
+        currentAudioMemoBlob = null;
+        const audioTxt = document.getElementById("txt-audio-memo"); if (audioTxt) audioTxt.innerText = "ऑडियो रिकॉर्ड करें";
         closeProposalModal();
       }).catch(err => {
         alert("त्रुटि: " + err.message);
@@ -3547,10 +3508,17 @@
 
     function loadFullWorkers(filterSkill = "") {
       const grid = document.getElementById("full-worker-grid");
-      db.collection("workers").orderBy("createdAt", "desc").limit(30).get().then(snap => {
+      db.collection("workers").orderBy("createdAt", "desc").limit(50).get().then(snap => {
         if (snap.empty) return grid.innerHTML = "<p class='text-xs text-slate-400'>कोई कारीगर नहीं मिला।</p>";
         grid.innerHTML = "";
-        snap.forEach(doc => {
+        const docs = snap.docs.slice().sort((a,b) => {
+          if (!currentWorkerCoords) return 0;
+          const wa=a.data(), wb=b.data();
+          const da=calculateDistanceKM(currentWorkerCoords.latitude,currentWorkerCoords.longitude,wa.lat,wa.lng);
+          const dbb=calculateDistanceKM(currentWorkerCoords.latitude,currentWorkerCoords.longitude,wb.lat,wb.lng);
+          return (da === null ? 999999 : parseFloat(da)) - (dbb === null ? 999999 : parseFloat(dbb));
+        });
+        docs.forEach(doc => {
           const w = doc.data();
           if (w.isBlocked) return;
           const skillsList = w.skills || (w.skill ? [w.skill] : ["कारीगर"]);
@@ -3567,7 +3535,7 @@
               <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-2.5">
                   <div class="relative">
-                    <img src="${photoSrc}" onerror="this.src='https://placehold.co/100x100/f59e0b/0f172a.png?text=MB'" class="w-12 h-12 rounded-full object-cover border-2 border-amber-400">
+                    <img loading="lazy" src="${photoSrc}" onerror="this.src='https://placehold.co/100x100/f59e0b/0f172a.png?text=MB'" class="w-12 h-12 rounded-full object-cover border-2 border-amber-400">
                     <span class="absolute bottom-0 right-0 w-3 h-3 rounded-full ${isBusy ? 'bg-rose-500' : 'bg-emerald-500'} border-2 border-white"></span>
                   </div>
                   <div>
@@ -3591,7 +3559,7 @@
               ${workPhotos.length > 0 ? `
                 <div class="pt-1 flex items-center space-x-1.5 overflow-x-auto">
                   <span class="text-[9px] text-slate-400 font-bold">काम की फ़ोटो:</span>
-                  ${workPhotos.map(img => `<img src="${img}" class="w-10 h-10 rounded-md object-cover border border-slate-100">`).join('')}
+                  ${workPhotos.map(img => `<img loading="lazy" src="${img}" class="w-10 h-10 rounded-md object-cover border border-slate-100">`).join('')}
                 </div>
               ` : ''}
             </div>`;
@@ -3736,9 +3704,14 @@
 
     // पेज लोड इनिशियलाइज़ेशन
     window.addEventListener('DOMContentLoaded', () => {
-      try { history.replaceState({ page: 'home' }, "", "#home"); } catch(e){}
+      try { applySavedUISettings(); } catch(e){}
       try { getDeviceFingerprint(); } catch(e){}
       try { renderCategories(); } catch(e){}
+      try {
+        const allowedPages = ['home','jobs','workers','post','register'];
+        const hashPage = (location.hash || '#home').replace('#','');
+        navTo(allowedPages.includes(hashPage) ? hashPage : 'home', false);
+      } catch(e) {}
       
       try {
         handleStateChange('home-state-filter', 'home-district-filter');
@@ -3787,13 +3760,6 @@
     });
     // [पॉइंट 2 और 9] छूटी हुई जानकारी भरने के लिए सही फॉर्म खोलने का लॉजिक
   function openRemainingDetailsForm() {
-    if (localStorage.getItem("mb_worker_profile_complete") === "true") {
-      document.getElementById("worker-form-container")?.classList.add("hidden");
-      document.getElementById("worker-profile-view")?.classList.remove("hidden");
-      document.getElementById("btn-worker-complete-profile")?.classList.add("hidden");
-      return;
-    }
-
     // यूज़र का रोल पहचानें (डिफ़ॉल्ट मिस्त्री/वर्कर)
     const userRole = localStorage.getItem('current_user_role') || 'worker';
     
@@ -3817,345 +3783,5 @@
     }
     }
   </script>
-
-<!-- ==================== MISTRYBABU 17-UPDATE ENHANCEMENT LAYER ==================== -->
-<style>
-  body.mb-dark { background:#0f172a !important; color:#e2e8f0 !important; }
-  body.mb-dark .bg-white { background:#1e293b !important; color:#e2e8f0 !important; }
-  body.mb-dark .bg-slate-100, body.mb-dark .bg-slate-50 { background:#111827 !important; }
-  body.mb-dark .text-slate-900, body.mb-dark .text-slate-800, body.mb-dark .text-slate-700 { color:#e2e8f0 !important; }
-  body.mb-dark .border-slate-200, body.mb-dark .border-slate-300 { border-color:#334155 !important; }
-  #mb-hamburger-panel { box-shadow:0 20px 50px rgba(0,0,0,.25); }
-  .mb-toast { position:fixed; left:50%; bottom:82px; transform:translateX(-50%); z-index:100; max-width:92vw;
-    background:#0f172a; color:#fff; padding:10px 14px; border-radius:12px; font-size:12px; font-weight:700;
-    box-shadow:0 10px 30px rgba(0,0,0,.25); }
-  .mb-phone-private { letter-spacing:.2px; }
-</style>
-
-<script>
-(function(){
-  "use strict";
-
-  const MB17 = {
-    version: "17-updates-final",
-    lang: localStorage.getItem("mb_lang") || "hi",
-    theme: localStorage.getItem("mb_theme") || "light"
-  };
-
-  function toast(msg){
-    const old=document.getElementById("mb-toast");
-    if(old) old.remove();
-    const d=document.createElement("div");
-    d.id="mb-toast"; d.className="mb-toast"; d.textContent=msg;
-    document.body.appendChild(d);
-    setTimeout(()=>d.remove(),2600);
-  }
-
-  function maskPhone(v){
-    const s=String(v||"");
-    const digits=s.replace(/\D/g,"");
-    if(digits.length===10) return digits.slice(0,2)+"******"+digits.slice(-2);
-    if(digits.length===12 && digits.startsWith("91")) return "+91 "+digits.slice(2,4)+"******"+digits.slice(-2);
-    return v;
-  }
-
-  // 2. Strict number privacy: public text is masked; admin panel remains readable.
-  function privacySweep(root=document.body){
-    if(!root || root.closest?.("#admin-modal")) return;
-    const walker=document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
-    const nodes=[];
-    while(walker.nextNode()) nodes.push(walker.currentNode);
-    nodes.forEach(n=>{
-      const p=n.parentElement;
-      if(!p || ["INPUT","TEXTAREA","SCRIPT","STYLE"].includes(p.tagName) || p.closest("#admin-modal")) return;
-      if(/\b(?:\+?91[\s-]?)?[6-9]\d{9}\b/.test(n.nodeValue||"")){
-        n.nodeValue=n.nodeValue.replace(/\+?91[\s-]?[6-9]\d{9}/g, x=>maskPhone(x));
-      }
-    });
-  }
-
-  // 11. Hamburger menu + 12. dark/light + 13. Hindi/English switcher.
-  function addMenu(){
-    if(document.getElementById("mb-hamburger-btn")) return;
-    const header=document.querySelector("header");
-    if(!header) return;
-    const btn=document.createElement("button");
-    btn.id="mb-hamburger-btn";
-    btn.className="text-slate-700 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200 text-sm font-black";
-    btn.innerHTML="☰";
-    btn.title="Menu";
-    btn.onclick=()=>document.getElementById("mb-hamburger-panel").classList.toggle("hidden");
-    header.querySelector(".flex.items-center.space-x-2")?.appendChild(btn);
-
-    const panel=document.createElement("div");
-    panel.id="mb-hamburger-panel";
-    panel.className="hidden fixed top-[62px] right-3 z-[90] w-64 bg-white border border-slate-200 rounded-2xl p-3 space-y-2";
-    panel.innerHTML=`
-      <div class="text-xs font-black text-slate-900 border-b pb-2">MistryBabu Menu</div>
-      <button id="mb-theme-btn" class="w-full text-left text-xs font-bold bg-slate-100 rounded-xl px-3 py-2">🌙 Dark / ☀️ Light</button>
-      <button id="mb-lang-btn" class="w-full text-left text-xs font-bold bg-slate-100 rounded-xl px-3 py-2">हिंदी / English</button>
-      <button class="w-full text-left text-xs font-bold bg-slate-100 rounded-xl px-3 py-2" onclick="navTo('workers');document.getElementById('mb-hamburger-panel').classList.add('hidden')">👷 मिस्त्री खोजें</button>
-      <button class="w-full text-left text-xs font-bold bg-slate-100 rounded-xl px-3 py-2" onclick="navTo('jobs');document.getElementById('mb-hamburger-panel').classList.add('hidden')">📋 काम देखें</button>
-      <button class="w-full text-left text-xs font-bold bg-slate-100 rounded-xl px-3 py-2" onclick="navTo('post');document.getElementById('mb-hamburger-panel').classList.add('hidden')">➕ काम पोस्ट करें</button>
-    `;
-    document.body.appendChild(panel);
-    document.getElementById("mb-theme-btn").onclick=toggleMBTheme;
-    document.getElementById("mb-lang-btn").onclick=toggleMBLang;
-  }
-
-  function applyTheme(){
-    document.body.classList.toggle("mb-dark", MB17.theme==="dark");
-  }
-  function toggleMBTheme(){
-    MB17.theme=MB17.theme==="dark"?"light":"dark";
-    localStorage.setItem("mb_theme",MB17.theme); applyTheme();
-    toast(MB17.theme==="dark"?"Dark mode चालू":"Light mode चालू");
-  }
-
-  const translations={
-    "होम":"Home","काम देखें":"Jobs","काम दें":"Post Job","मिस्त्री खोजें":"Find Mistri","प्रोफ़ाइल":"Profile",
-    "काम पोस्ट करें":"Post Job","मिस्त्री जुड़ें":"Join as Mistri","ताज़ा काम":"Latest Jobs",
-    "उपलब्ध काम सूची":"Available Jobs","सत्यापित कारीगर व मजदूर":"Verified Workers"
-  };
-  const reverse=Object.fromEntries(Object.entries(translations).map(([h,e])=>[e,h]));
-  function toggleMBLang(){
-    MB17.lang=MB17.lang==="hi"?"en":"hi"; localStorage.setItem("mb_lang",MB17.lang);
-    document.documentElement.lang=MB17.lang==="en"?"en":"hi";
-    document.querySelectorAll("nav button span, #nav-reg-text").forEach(el=>{
-      const t=(el.textContent||"").trim();
-      if(MB17.lang==="en" && translations[t]) el.textContent=translations[t];
-      else if(MB17.lang==="hi" && reverse[t]) el.textContent=reverse[t];
-    });
-    toast(MB17.lang==="en"?"English mode":"हिंदी मोड");
-  }
-
-  // 7. Registered-number-only customer posting + 6. single-role dashboard.
-  function enforceClientRegistration(){
-    const role=localStorage.getItem("mb_device_locked_role");
-    const phone=document.getElementById("pc-phone")?.value.trim() || "";
-    if(role==="worker" && localStorage.getItem("mb_worker_is_contractor")!=="true"){
-      toast("इस नंबर से ग्राहक पोस्टिंग की अनुमति नहीं है।");
-      return false;
-    }
-    if(phone.length!==10){
-      alert("पहले 10 अंकों का सही मोबाइल नंबर दर्ज करें।");
-      return false;
-    }
-    const saved=localStorage.getItem("mb_client_phone");
-    if(role==="client" && saved && saved.replace(/\D/g,"").slice(-10)!==phone){
-      alert("कृपया उसी रजिस्टर्ड ग्राहक नंबर से पोस्ट करें।");
-      return false;
-    }
-    return true;
-  }
-
-  function lockRole(role){
-    const existing=localStorage.getItem("mb_device_locked_role");
-    if(!existing){ localStorage.setItem("mb_device_locked_role",role); return true; }
-    if(existing!==role && existing!=="client"){ 
-      toast("इस डिवाइस पर पहले से "+existing+" प्रोफ़ाइल सक्रिय है।");
-      return false;
-    }
-    return true;
-  }
-
-  // 3. ID is optional in profiles; 4/5 shop partner controls remain admin-driven.
-  function hideJobIdFields(){
-    ["doc-front-file","doc-back-file"].forEach(id=>document.getElementById(id)?.closest(".bg-slate-50")?.remove());
-  }
-
-  // 10. Bulk labour toggle.
-  function setupBulk(){
-    const cb=document.getElementById("mb-bulk-labour"), box=document.getElementById("mb-bulk-fields");
-    if(cb && box) cb.addEventListener("change",()=>box.classList.toggle("hidden",!cb.checked));
-  }
-
-  // 14. Lazy loading for images added by dynamic cards.
-  function enableLazyImages(){
-    document.querySelectorAll("img:not([loading])").forEach(img=>img.setAttribute("loading","lazy"));
-  }
-
-  // 15. Nearby + skill filters on worker page.
-  function addWorkerFilters(){
-    const grid=document.getElementById("full-worker-grid");
-    if(!grid || document.getElementById("mb-worker-filter-box")) return;
-    const box=document.createElement("div");
-    box.id="mb-worker-filter-box";
-    box.className="bg-white border border-slate-200 rounded-2xl p-3 space-y-2";
-    box.innerHTML=`
-      <div class="grid grid-cols-2 gap-2">
-        <input id="mb-skill-filter" class="rounded-lg border px-2 py-2 text-xs" placeholder="हुनर खोजें">
-        <button id="mb-nearby-btn" class="bg-slate-900 text-amber-400 rounded-lg text-xs font-bold">📍 मेरे पास</button>
-      </div>
-      <p id="mb-filter-status" class="text-[9px] text-slate-500">हुनर या नज़दीकी के आधार पर सूची फ़िल्टर करें।</p>`;
-    grid.parentElement.insertBefore(box,grid);
-    document.getElementById("mb-skill-filter").addEventListener("input",()=>{
-      const q=document.getElementById("mb-skill-filter").value.toLowerCase();
-      grid.querySelectorAll(":scope > div").forEach(card=>{
-        card.style.display=(!q || (card.textContent||"").toLowerCase().includes(q))?"":"none";
-      });
-    });
-    document.getElementById("mb-nearby-btn").onclick=()=>{
-      if(!navigator.geolocation){toast("इस डिवाइस पर GPS उपलब्ध नहीं है।");return;}
-      navigator.geolocation.getCurrentPosition(
-        ()=>{ document.getElementById("mb-filter-status").textContent="📍 आपके GPS के आधार पर नज़दीकी फ़िल्टर सक्रिय है।"; toast("Nearby mode सक्रिय"); },
-        ()=>toast("GPS अनुमति नहीं मिली।")
-      );
-    };
-  }
-
-  // 16. Rating/review + WhatsApp support is already present in the base file; this adds a
-  // quick WhatsApp action beside visible phone links where a raw number exists.
-  function addWhatsAppActions(){
-    document.querySelectorAll('a[href^="tel:"]').forEach(a=>{
-      if(a.dataset.mbWaAdded || a.closest("#admin-modal")) return;
-      const raw=(a.getAttribute("href")||"").replace(/^tel:/,"").replace(/\D/g,"");
-      if(raw.length<10) return;
-      const wa=document.createElement("a");
-      wa.href="https://wa.me/"+raw.slice(-10);
-      wa.target="_blank"; wa.rel="noopener";
-      wa.className="ml-1 text-emerald-600 font-bold";
-      wa.textContent="💬";
-      wa.title="WhatsApp";
-      a.after(wa); a.dataset.mbWaAdded="1";
-    });
-  }
-
-  // 17. Call tracking + automatic alerts.
-  function trackCall(phone, source){
-    const clean=String(phone||"").replace(/\D/g,"").slice(-10);
-    if(clean.length!==10) return;
-    try{
-      db.collection("call_tracking").add({
-        phone:"+91"+clean, source:source||"public", operator:currentOperator||null,
-        createdAt:firebase.firestore.FieldValue.serverTimestamp()
-      });
-      db.collection("alerts").add({
-        type:"call_attempt", phone:"+91"+clean, source:source||"public",
-        createdAt:firebase.firestore.FieldValue.serverTimestamp(), handled:false
-      });
-    }catch(e){}
-  }
-
-  document.addEventListener("click",e=>{
-    const a=e.target.closest?.('a[href^="tel:"]');
-    if(a){
-      const phone=(a.getAttribute("href")||"").replace(/^tel:/,"");
-      trackCall(phone,"tel-link");
-    }
-  });
-
-  // Admin changes log.
-  window.mbLogChange=function(action,details){
-    try{
-      return db.collection("admin_change_log").add({
-        operator:localStorage.getItem("mb_active_operator")||"unknown",
-        action, details:details||"", createdAt:firebase.firestore.FieldValue.serverTimestamp()
-      });
-    }catch(e){ return Promise.resolve(); }
-  };
-
-  function addAdminLogButton(){
-    const main=document.getElementById("admin-main-view");
-    if(!main || document.getElementById("mb-admin-log-box")) return;
-    const box=document.createElement("div");
-    box.id="mb-admin-log-box";
-    box.className="bg-slate-50 border border-slate-200 rounded-xl p-3 mt-3";
-    box.innerHTML=`
-      <div class="flex justify-between items-center">
-        <span class="text-xs font-black">🧾 Admin Changes Log</span>
-        <button id="mb-load-log" class="bg-slate-900 text-amber-400 px-2 py-1 rounded text-[10px] font-bold">देखें</button>
-      </div>
-      <div id="mb-log-list" class="hidden mt-2 space-y-1 text-[10px]"></div>`;
-    main.appendChild(box);
-    document.getElementById("mb-load-log").onclick=async()=>{
-      const list=document.getElementById("mb-log-list"); list.classList.remove("hidden");
-      list.innerHTML="लोड हो रहा है...";
-      try{
-        const snap=await db.collection("admin_change_log").orderBy("createdAt","desc").limit(30).get();
-        list.innerHTML=snap.empty?"अभी कोई लॉग नहीं है.":Array.from(snap.docs).map(d=>{
-          const x=d.data(); return `<div class="bg-white rounded p-1.5 border"><b>${x.operator||""}</b> — ${x.action||""}<br>${x.details||""}</div>`;
-        }).join("");
-      }catch(e){list.innerHTML="लॉग लोड नहीं हुआ।"; }
-    };
-  }
-
-  // Success confirmation notices + validation wrappers.
-  function wrapFunction(name, successText){
-    const original=window[name];
-    if(typeof original!=="function" || original.__mbWrapped) return;
-    const wrapped=function(){
-      const args=arguments;
-      const result=original.apply(this,args);
-      if(result && typeof result.then==="function"){
-        result.then(()=>toast(successText)).catch(()=>{});
-      } else {
-        setTimeout(()=>toast(successText),900);
-      }
-      return result;
-    };
-    wrapped.__mbWrapped=true;
-    window[name]=wrapped;
-  }
-
-  function install(){
-    addMenu(); applyTheme(); hideJobIdFields(); setupBulk(); enableLazyImages(); addWorkerFilters(); addWhatsAppActions(); addAdminLogButton();
-    privacySweep();
-    wrapFunction("saveWorkerProfile","✅ प्रोफ़ाइल सफलतापूर्वक सेव हो गई।");
-    wrapFunction("submitContractorApplication","✅ आवेदन सफलतापूर्वक जमा हो गया।");
-    wrapFunction("submitContractorFinalPayment","✅ पेमेंट पुष्टि अनुरोध दर्ज हो गया।");
-
-    const form=document.getElementById("form-post-job");
-    if(form && !form.dataset.mbValidation){
-      form.dataset.mbValidation="1";
-      form.addEventListener("submit",e=>{
-        if(!enforceClientRegistration()){ e.preventDefault(); e.stopImmediatePropagation(); return false; }
-        const gpsCheck=document.getElementById("gps-site-confirm-check");
-        if(gpsCheck && gpsCheck.checked && (!document.getElementById("pc-lat")?.value || !document.getElementById("pc-lng")?.value)){
-          e.preventDefault(); e.stopImmediatePropagation(); alert("कृपया पहले साइट से लाइव GPS लें।"); return false;
-        }
-        if(document.getElementById("mb-bulk-labour")?.checked){
-          const n=parseInt(document.getElementById("mb-bulk-count")?.value||"0",10);
-          if(n<10){ e.preventDefault(); e.stopImmediatePropagation(); alert("Bulk Labour के लिए कम-से-कम 10 लेबर दर्ज करें।"); return false; }
-        }
-        setTimeout(()=>toast("📨 आपका फॉर्म सफलतापूर्वक सबमिट हो गया।"),1000);
-      },true);
-    }
-
-    // Enforce role lock when role tabs are used.
-    if(typeof window.switchRoleTab==="function" && !window.switchRoleTab.__mbWrapped){
-      const old=window.switchRoleTab;
-      window.switchRoleTab=function(role){
-        if(!lockRole(role==="worker"?"worker":role==="contractor"?"contractor":"client")) return;
-        return old.apply(this,arguments);
-      };
-      window.switchRoleTab.__mbWrapped=true;
-    }
-
-    // Log key admin actions when available.
-    ["adminLockTask","approveAdminUser"].forEach(fn=>{
-      if(typeof window[fn]==="function" && !window[fn].__mbLogged){
-        const old=window[fn];
-        window[fn]=function(){
-          try{ mbLogChange(fn, JSON.stringify(Array.from(arguments))); }catch(e){}
-          return old.apply(this,arguments);
-        };
-        window[fn].__mbLogged=true;
-      }
-    });
-
-    const observer=new MutationObserver(()=>{
-      hideJobIdFields(); enableLazyImages(); addWhatsAppActions(); privacySweep();
-      addAdminLogButton();
-    });
-    observer.observe(document.body,{subtree:true,childList:true});
-  }
-
-  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",()=>setTimeout(install,500));
-  else setTimeout(install,500);
-})();
-</script>
-<!-- ==================== END MISTRYBABU 17-UPDATE ENHANCEMENT LAYER ==================== -->
-
 </body>
   </html>
