@@ -231,12 +231,12 @@
         <div class="bg-blue-50 border border-blue-200 p-3 rounded-xl space-y-2"><label class="flex items-center gap-2 text-[11px] font-bold text-slate-800 cursor-pointer"><input type="checkbox" id="pc-factory-job" class="rounded text-blue-600"> 🏭 फैक्ट्री / कारखाना Bulk Labor Post</label><p class="text-[9px] text-slate-500">एक साथ कई कारीगर/मजदूर चाहिए तो इसे चुनें।</p></div>
 
         <div>
-          <label class="block text-[11px] font-bold text-slate-700 mb-1">आपका पूरा नाम *</label>
-          <input type="text" id="pc-name" required placeholder="जैसे: रमेश कुमार" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs focus:outline-none">
+          <label class="block text-[11px] font-bold text-slate-700 mb-1">आपका नाम (Profile से) *</label>
+          <input type="text" id="pc-name" required readonly placeholder="Customer Profile से अपने-आप आएगा" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs focus:outline-none bg-slate-100">
         </div>
 
         <div>
-          <label class="block text-[11px] font-bold text-slate-700 mb-1">मोबाइल नंबर (पूरी तरह गोपनीय रहेगा) *</label>
+          <label class="block text-[11px] font-bold text-slate-700 mb-1">मोबाइल नंबर (Profile से, पूरी तरह गोपनीय) *</label>
           <div class="flex">
             <span class="inline-flex items-center px-2.5 rounded-l-lg border border-r-0 border-slate-300 bg-slate-100 text-slate-600 text-xs font-bold">+91</span>
             <input type="tel" id="pc-phone" required maxlength="10" placeholder="10 अंकों का मोबाइल नंबर" class="flex-1 block w-full rounded-r-lg border border-slate-300 px-3 py-2 text-xs focus:outline-none">
@@ -343,21 +343,7 @@
           <textarea id="pc-desc" rows="2" placeholder="काम के बारे में समझाकर लिखें..." class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs focus:outline-none"></textarea>
         </div>
 
-        <div class="bg-slate-50 p-2.5 rounded-xl border border-dashed border-slate-300 mt-3 mb-3">
-          <label class="block text-[11px] font-bold text-slate-700 mb-1">पहचान पत्र (Front & Back) - वैकल्पिक (सत्यापन टैग हेतु)</label>
-          <div class="space-y-2">
-            <div>
-              <span class="text-[10px] text-slate-500">सामने का भाग (Front Photo - वैकल्पिक):</span>
-              <input type="file" id="doc-front-file" accept="image/*" class="w-full text-xs p-1.5 border border-slate-300 rounded-lg bg-white">
-            </div>
-            <div>
-              <span class="text-[10px] text-slate-500">पीछे का भाग (Back Photo - वैकल्पिक):</span>
-              <input type="file" id="doc-back-file" accept="image/*" class="w-full text-xs p-1.5 border border-slate-300 rounded-lg bg-white">
-            </div>
-          </div>
-        </div>
-
-        <button type="submit" id="btn-post-job" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold py-2.5 rounded-xl text-xs shadow-xs transition">
+<button type="submit" id="btn-post-job" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold py-2.5 rounded-xl text-xs shadow-xs transition">
           काम पोस्ट करें
         </button>
       </form>
@@ -379,6 +365,102 @@
 
     <!-- 1. CUSTOMER DASHBOARD -->
     <div id="client-dashboard-box" class="space-y-4 block">
+
+      <!-- CUSTOMER PROFILE / SIGN UP + LOGIN -->
+      <div id="mb-customer-profile-box" class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-3">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-xs font-black text-slate-900">ग्राहक Sign Up / Login 👤</h3>
+            <p class="text-[10px] text-slate-500">एक मोबाइल नंबर = एक ही Customer Profile</p>
+          </div>
+          <span id="mb-customer-profile-status" class="text-[9px] bg-slate-100 text-slate-600 font-bold px-2 py-0.5 rounded-full">लॉगिन नहीं</span>
+        </div>
+
+        <div id="mb-customer-login-row" class="bg-amber-50 border border-amber-200 p-3 rounded-xl space-y-2">
+          <label class="block text-[10px] font-bold text-slate-700">पहले से Customer हैं? मोबाइल नंबर से Login करें</label>
+          <div class="flex gap-2">
+            <input type="tel" id="mb-customer-login-phone" maxlength="10" inputmode="numeric" placeholder="10 अंकों का मोबाइल नंबर" class="flex-1 rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs bg-white">
+            <button type="button" onclick="MB_customerLogin()" class="bg-slate-900 text-amber-400 text-xs font-bold px-3 py-1.5 rounded-lg">Login</button>
+          </div>
+        </div>
+
+        <form id="mb-customer-signup-form" onsubmit="MB_customerSignup(event)" class="space-y-2.5">
+          <div>
+            <label class="block text-[10px] font-bold text-slate-700 mb-1">नाम *</label>
+            <input id="mb-customer-name" required class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs" placeholder="पूरा नाम">
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold text-slate-700 mb-1">मोबाइल नंबर *</label>
+            <input id="mb-customer-phone" required maxlength="10" inputmode="numeric" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs" placeholder="10 अंकों का मोबाइल नंबर">
+          </div>
+          <div class="bg-slate-50 p-2.5 rounded-xl border border-dashed border-slate-300">
+            <label class="block text-[10px] font-bold text-slate-700 mb-1">सेल्फी / प्रोफ़ाइल फ़ोटो *</label>
+            <input type="file" id="mb-customer-selfie" required accept="image/*" class="text-[10px] text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:bg-amber-100 file:text-amber-800">
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-[10px] font-bold text-slate-700 mb-1">गाँव *</label>
+              <input id="mb-customer-village" required class="w-full rounded-lg border border-slate-300 px-2.5 py-2 text-xs" placeholder="गाँव / मोहल्ला">
+            </div>
+            <div>
+              <label class="block text-[10px] font-bold text-slate-700 mb-1">शहर *</label>
+              <input id="mb-customer-city" required class="w-full rounded-lg border border-slate-300 px-2.5 py-2 text-xs" placeholder="शहर">
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-[10px] font-bold text-slate-700 mb-1">राज्य *</label>
+              <select id="mb-customer-state" required onchange="handleStateChange('mb-customer-state','mb-customer-district','mb-customer-block')" class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs">
+                <option value="बिहार">बिहार (Bihar)</option>
+                <option value="उत्तर प्रदेश">उत्तर प्रदेश (Uttar Pradesh)</option>
+                <option value="दिल्ली">दिल्ली (Delhi NCR)</option>
+                <option value="हरियाणा">हरियाणा (Haryana)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-[10px] font-bold text-slate-700 mb-1">ज़िला *</label>
+              <select id="mb-customer-district" required class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs">
+                <option value="">-- ज़िला चुनें --</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold text-slate-700 mb-1">पूरा पता *</label>
+            <textarea id="mb-customer-address" required rows="2" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs" placeholder="घर / गली / मोहल्ला / पता"></textarea>
+          </div>
+          <div class="bg-emerald-50 border border-emerald-200 p-3 rounded-xl space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-bold text-slate-700">📍 GPS / Location (वैकल्पिक)</span>
+              <button type="button" onclick="MB_captureCustomerGPS()" class="bg-emerald-600 text-white text-[10px] font-bold px-2.5 py-1.5 rounded-lg">GPS लें</button>
+            </div>
+            <p id="mb-customer-gps-status" class="text-[9px] text-slate-500">GPS अभी सेव नहीं है।</p>
+            <input type="hidden" id="mb-customer-lat">
+            <input type="hidden" id="mb-customer-lng">
+          </div>
+          <div class="bg-slate-50 p-2.5 rounded-xl border border-dashed border-slate-300">
+            <label class="block text-[10px] font-bold text-slate-700 mb-1">Aadhaar Front / Back — वैकल्पिक</label>
+            <div class="grid grid-cols-2 gap-2">
+              <input type="file" id="mb-customer-aadhaar-front" accept="image/*" class="text-[9px] text-slate-500">
+              <input type="file" id="mb-customer-aadhaar-back" accept="image/*" class="text-[9px] text-slate-500">
+            </div>
+            <p class="text-[9px] text-slate-500 mt-1">Aadhaar नहीं देने पर भी Customer Profile और पोस्टिंग जारी रहेगी।</p>
+          </div>
+          <button type="submit" id="mb-customer-save-btn" class="w-full bg-slate-900 text-amber-400 font-bold py-2.5 rounded-xl text-xs">Customer Profile बनाएं / अपडेट करें</button>
+        </form>
+
+        <div id="mb-customer-profile-card" class="hidden bg-blue-50 border border-blue-200 rounded-xl p-3">
+          <div class="flex gap-3 items-center">
+            <img id="mb-customer-profile-photo" src="logo.png" class="w-14 h-14 rounded-full object-cover border-2 border-amber-400">
+            <div class="min-w-0">
+              <div id="mb-customer-profile-name" class="font-black text-sm text-slate-900"></div>
+              <div id="mb-customer-profile-location" class="text-[10px] text-slate-600 mt-0.5"></div>
+              <div id="mb-customer-profile-phone" class="text-[9px] text-slate-500 mt-0.5"></div>
+            </div>
+          </div>
+          <p class="text-[10px] text-emerald-700 font-bold mt-2">✓ Profile complete — अब काम पोस्ट करते समय नाम, मोबाइल और फोटो दोबारा नहीं भरना होगा।</p>
+        </div>
+      </div>
+
       <div class="bg-blue-50/70 p-3.5 rounded-2xl border border-blue-200 space-y-2 shadow-xs">
         <div class="flex items-center justify-between">
           <div class="flex items-center space-x-2">
@@ -1550,12 +1632,19 @@
 
     async function saveClientJob(e) {
       e.preventDefault();
-      
-      const isVerified = localStorage.getItem("mb_client_is_kyc") === "true";
-      const phone = document.getElementById("pc-phone").value.trim();
-      if (phone.length !== 10) return alert("10 अंकों का मोबाइल नंबर डालें!");
 
-      const fullPhone = "+91" + phone;
+      const profile = window.MB_getCustomerProfile ? window.MB_getCustomerProfile() : null;
+      if (!profile || !profile.phone || !profile.name || !profile.selfie ||
+          !profile.village || !profile.state || !profile.city || !profile.district || !profile.address) {
+        alert("पहले Customer Sign Up / Login करके अपनी Profile पूरी करें।");
+        navTo('register');
+        switchRoleTab('client');
+        setTimeout(() => document.getElementById("mb-customer-profile-box")?.scrollIntoView({behavior:"smooth"}), 100);
+        return;
+      }
+
+      const isVerified = localStorage.getItem("mb_client_is_kyc") === "true";
+      const fullPhone = profile.phone;
       const deviceLockedRole = localStorage.getItem("mb_device_locked_role");
       const isContractor = localStorage.getItem("mb_worker_is_contractor") === "true";
       const postsCount = parseInt(localStorage.getItem("mb_worker_posts_count") || "0");
@@ -1567,12 +1656,16 @@
       const btn = document.getElementById("btn-post-job");
       btn.innerText = "काम पोस्ट हो रहा है...";
 
-      const clientName = document.getElementById("pc-name").value.trim();
+      const nameEl = document.getElementById("pc-name");
+      const phoneEl = document.getElementById("pc-phone");
+      if (nameEl) { nameEl.value = profile.name; nameEl.readOnly = true; }
+      if (phoneEl) { phoneEl.value = fullPhone.replace(/^\+91/, ""); phoneEl.readOnly = true; }
+
       const sixDigitId = generateJobId();
       const urgencyType = document.getElementById("pc-urgency-type").value;
       const isUrgent = (urgencyType === "urgent");
       const isTheka = (document.getElementById("pc-is-theka").value === "true");
-       const isFactoryJob = document.getElementById("pc-factory-job")?.checked === true;
+      const isFactoryJob = document.getElementById("pc-factory-job")?.checked === true;
 
       let sitePhoto = "";
       const siteFile = document.getElementById("pc-site-photo").files[0];
@@ -1582,10 +1675,18 @@
 
       const data = {
         jobSixId: sixDigitId,
-        clientName: clientName,
+        clientName: profile.name,
+        clientPhoto: profile.selfie,
         phone: fullPhone,
-        state: document.getElementById("pc-state").value,
-        district: document.getElementById("pc-district").value,
+        state: profile.state,
+        district: profile.district,
+        city: profile.city,
+        village: profile.village,
+        address: profile.address,
+        profileGpsLat: profile.gps?.lat || null,
+        profileGpsLng: profile.gps?.lng || null,
+        stateFromPost: document.getElementById("pc-state").value,
+        districtFromPost: document.getElementById("pc-district").value,
         block: document.getElementById("pc-block").value,
         location: document.getElementById("pc-location").value.trim(),
         lat: parseFloat(document.getElementById("pc-lat").value) || null,
@@ -1598,6 +1699,7 @@
         desc: document.getElementById("pc-desc").value.trim(),
         isUrgent: isUrgent,
         isTheka: isTheka,
+        isFactoryJob: isFactoryJob,
         isVerifiedClient: isVerified,
         isClosed: false,
         deviceFingerprint: getDeviceFingerprint(),
@@ -1606,18 +1708,14 @@
 
       db.collection("job_posts").add(data).then(() => {
         localStorage.setItem("mb_client_phone", fullPhone);
-        localStorage.setItem("mb_client_name", clientName);
-        if (deviceLockedRole === "worker") {
-          localStorage.setItem("mb_worker_posts_count", (postsCount + 1).toString());
-        } else {
-          localStorage.setItem("mb_device_locked_role", "client");
-        }
+        localStorage.setItem("mb_client_name", profile.name);
+        localStorage.setItem("mb_device_locked_role", "client");
 
         if (analytics) {
           analytics.logEvent('job_posted', { category: data.workType, district: data.district, urgent: isUrgent });
         }
 
-        alert(`बधाई हो! ${isTheka ? 'पेटी-ठेका' : 'काम'} तुरंत लाइव पोस्ट हो गया है。\nकाम ID: ${sixDigitId}`);
+        alert(`बधाई हो! ${isTheka ? 'पेटी-ठेका' : 'काम'} तुरंत लाइव पोस्ट हो गया है।\nकाम ID: ${sixDigitId}`);
         btn.innerText = "काम पोस्ट करें";
         navTo('jobs');
       }).catch(err => {
@@ -3105,6 +3203,15 @@
     }
 
     function navTo(target, pushHistory = true) {
+      if (target === "post" && window.MB_getCustomerProfile && !window.MB_getCustomerProfile()) {
+        alert("पहले Customer Sign Up / Login करें।");
+        target = "register";
+        setTimeout(() => {
+          try { switchRoleTab("client"); } catch(e) {}
+          document.getElementById("mb-customer-profile-box")?.scrollIntoView({behavior:"smooth"});
+        }, 50);
+      }
+
       const deviceRole = localStorage.getItem("mb_device_locked_role");
       const isContractor = localStorage.getItem("mb_worker_is_contractor") === "true";
       const workerPostsCount = parseInt(localStorage.getItem("mb_worker_posts_count") || "0");
@@ -3937,194 +4044,132 @@
     }
   </script>
 
-<script id="mb-customer-flow-fixed">
-(function () {
-  /* CUSTOMER FLOW — integrated guardrails for the existing forms.
-     This does not replace the existing signup/post UI; it connects to it.
-  */
-  window.MB_CUSTOMER_FLOW = {
-    onePhoneOneProfile: true,
-    profileRequiredForPost: true,
-    aadhaarOptional: true,
-    aadhaarPostHidden: true,
-    reuse: ["name", "phone", "selfie"]
-  };
-
-  function norm(v) { return String(v || "").replace(/\D/g, ""); }
-
-  function getProfile() {
-    var keys = ["mb_customer_profile", "customerProfile", "mb_customer"];
-    for (var i=0; i<keys.length; i++) {
-      try {
-        var x = localStorage.getItem(keys[i]);
-        if (x) {
-          var p = JSON.parse(x);
-          if (p && typeof p === "object") return p;
-        }
-      } catch(e) {}
-    }
-    return null;
-  }
-
-  function hideAadhaar(form) {
-    form.querySelectorAll(
-      '[name*="aadhaar" i],[id*="aadhaar" i],[name*="aadhar" i],[id*="aadhar" i]'
-    ).forEach(function(el) {
-      var w = el.closest(".form-group,.field,.input-group,.form-field,label");
-      if (w) w.hidden = true;
-      el.hidden = true;
-      el.disabled = true;
-    });
-  }
-
-  function fillPost(form, p) {
-    if (!p) return;
-    var name = p.name || p.fullName || "";
-    var phone = p.phone || p.mobile || "";
-    var selfie = p.selfie || p.photo || p.profilePhoto || "";
-
-    var n = form.querySelector(
-      '[name="name"],[name="customerName"],[name="fullName"],#post-name,#customer-name'
-    );
-    var ph = form.querySelector(
-      '[name="phone"],[name="mobile"],[name="customerPhone"],#post-phone,#customer-phone'
-    );
-
-    if (n && name) {
-      n.value = name;
-      n.readOnly = true;
-      n.dataset.profileValue = "true";
-    }
-    if (ph && phone) {
-      ph.value = phone;
-      ph.readOnly = true;
-      ph.dataset.profileValue = "true";
-    }
-
-    /* No Aadhaar Front/Back in the Post form. */
-    hideAadhaar(form);
-
-    /* Keep selfie available to existing post code without creating
-       another upload requirement. */
-    if (selfie) form.dataset.customerSelfie = selfie;
-  }
-
-  function protectPostForms() {
-    var p = getProfile();
-    document.querySelectorAll("form").forEach(function(form) {
-      var marker = ((form.id || "") + " " + (form.className || "")).toLowerCase();
-      if (marker.indexOf("post") !== -1 || marker.indexOf("job") !== -1) {
-        hideAadhaar(form);
-        if (p) fillPost(form, p);
-      }
-    });
-  }
-
-  /* Exposed helpers let the existing site's signup/login handlers call
-     the same rules instead of creating a second signup system. */
-  window.MB_customerProfileForPost = function () {
-    var p = getProfile();
-    return p ? {
-      name: p.name || p.fullName || "",
-      phone: p.phone || p.mobile || "",
-      selfie: p.selfie || p.photo || p.profilePhoto || ""
-    } : null;
-  };
-
-  window.MB_customerCanPost = function () {
-    return !!getProfile();
-  };
-
-  window.MB_customerPhoneAlreadyRegistered = function (phone) {
-    var p = getProfile();
-    return !!(p && p.phone && norm(p.phone) === norm(phone));
-  };
-
-  document.addEventListener("DOMContentLoaded", protectPostForms);
-  window.addEventListener("load", protectPostForms);
-})();
-</script>
-
-
-<script id="mb-customer-flow-bridge">
+<script id="mb-customer-integrated-v3">
 (function () {
   "use strict";
+  function norm(v){return String(v||"").replace(/\D/g,"").slice(-10);}
+  function read(){try{var x=localStorage.getItem("mb_customer_profile");return x?JSON.parse(x):null;}catch(e){return null;}}
+  function complete(p){return !!(p&&p.phone&&p.name&&p.selfie&&p.village&&p.state&&p.city&&p.district&&p.address);}
+  function saveLocal(p){
+    try{
+      localStorage.setItem("mb_customer_profile",JSON.stringify(p));
+      localStorage.setItem("mb_client_phone",p.phone||"");
+      localStorage.setItem("mb_client_name",p.name||"");
+      localStorage.setItem("mb_client_avatar",p.selfie||"");
+      localStorage.setItem("current_user_role","client");
+      localStorage.setItem("mb_device_locked_role","client");
+    }catch(e){}
+  }
+  window.MB_getCustomerProfile=function(){var p=read();return complete(p)?p:null;};
 
-  function isCustomerArea(el) {
-    if (!el) return false;
-    var s = ((el.id || "") + " " + (el.className || "") + " " +
-             (el.textContent || "")).toLowerCase();
-    return s.indexOf("customer") !== -1 || s.indexOf("ग्राहक") !== -1;
+  function show(p){
+    if(!p)return;
+    document.getElementById("mb-customer-profile-card")?.classList.remove("hidden");
+    document.getElementById("mb-customer-signup-form")?.classList.add("hidden");
+    var s=document.getElementById("mb-customer-profile-status");
+    if(s){s.innerText="✓ Customer Login";s.className="text-[9px] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded-full";}
+    var n=document.getElementById("mb-customer-profile-name");if(n)n.innerText=p.name||"";
+    var l=document.getElementById("mb-customer-profile-location");if(l)l.innerText="📍 "+(p.village||"")+" • "+(p.city||"")+" • "+(p.district||"")+" • "+(p.state||"");
+    var ph=document.getElementById("mb-customer-profile-phone");if(ph)ph.innerText="मोबाइल: "+(p.phone||"");
+    var im=document.getElementById("mb-customer-profile-photo");if(im&&p.selfie)im.src=p.selfie;
   }
 
-  function profile() {
-    try {
-      var raw = localStorage.getItem("mb_customer_profile");
-      return raw ? JSON.parse(raw) : null;
-    } catch (e) { return null; }
+  async function fileData(file){
+    if(!file)return "";
+    try{if(typeof fileToBase64==="function")return await fileToBase64(file);}catch(e){}
+    return await new Promise(function(resolve){var r=new FileReader();r.onload=function(){resolve(r.result||"");};r.onerror=function(){resolve("");};r.readAsDataURL(file);});
   }
 
-  /* Existing Post buttons: require the existing login/signup UI before
-     allowing the existing post action to proceed. */
-  document.addEventListener("click", function (e) {
-    var btn = e.target.closest("button,a,[role='button']");
-    if (!btn) return;
+  window.MB_customerLogin=async function(){
+    var p10=norm(document.getElementById("mb-customer-login-phone")?.value||"");
+    if(p10.length!==10)return alert("10 अंकों का मोबाइल नंबर डालें।");
+    try{
+      var snap=await db.collection("customer_profiles").doc("+91"+p10).get();
+      if(!snap.exists)return alert("इस नंबर से Customer Profile नहीं मिला। नीचे Sign Up करें।");
+      var p=snap.data()||{};
+      if(!complete(p))return alert("Customer Profile अधूरी है।");
+      saveLocal(p);show(p);alert("✅ Customer Login सफल। अब आप काम पोस्ट कर सकते हैं।");
+    }catch(e){alert("Login में समस्या: "+e.message);}
+  };
 
-    var text = (btn.textContent || "").trim().toLowerCase();
-    var postWord = text.indexOf("post") !== -1 ||
-                   text.indexOf("पोस्ट") !== -1 ||
-                   text.indexOf("काम पोस्ट") !== -1;
+  window.MB_captureCustomerGPS=function(){
+    var s=document.getElementById("mb-customer-gps-status");
+    if(!navigator.geolocation)return alert("इस डिवाइस में GPS उपलब्ध नहीं है।");
+    if(s)s.innerText="GPS लोकेशन ली जा रही है...";
+    navigator.geolocation.getCurrentPosition(function(pos){
+      var la=document.getElementById("mb-customer-lat"),lo=document.getElementById("mb-customer-lng");
+      if(la)la.value=pos.coords.latitude;if(lo)lo.value=pos.coords.longitude;
+      if(s)s.innerText="✓ GPS सुरक्षित: "+pos.coords.latitude.toFixed(5)+", "+pos.coords.longitude.toFixed(5);
+    },function(){if(s)s.innerText="GPS नहीं मिला। बिना GPS भी आगे बढ़ सकते हैं।";},{enableHighAccuracy:true,timeout:15000});
+  };
 
-    if (!postWord) return;
+  window.MB_customerSignup=async function(e){
+    if(e)e.preventDefault();
+    var name=(document.getElementById("mb-customer-name")?.value||"").trim();
+    var p10=norm(document.getElementById("mb-customer-phone")?.value||"");
+    var village=(document.getElementById("mb-customer-village")?.value||"").trim();
+    var city=(document.getElementById("mb-customer-city")?.value||"").trim();
+    var state=document.getElementById("mb-customer-state")?.value||"";
+    var district=document.getElementById("mb-customer-district")?.value||"";
+    var address=(document.getElementById("mb-customer-address")?.value||"").trim();
+    var selfieFile=document.getElementById("mb-customer-selfie")?.files?.[0];
+    if(!name||p10.length!==10||!selfieFile||!village||!state||!city||!district||!address)
+      return alert("Customer Profile की सभी जरूरी जानकारी भरें। Aadhaar वैकल्पिक है।");
 
-    var p = profile();
-    if (!p) {
-      e.preventDefault();
-      e.stopPropagation();
+    var btn=document.getElementById("mb-customer-save-btn");if(btn)btn.innerText="Profile सुरक्षित हो रही है...";
+    var full="+91"+p10;
+    try{
+      var c=await db.collection("customer_profiles").doc(full).get();
+      if(c.exists){if(btn)btn.innerText="Customer Profile बनाएं / अपडेट करें";return alert("इस मोबाइल नंबर से Customer Profile पहले से बनी है। कृपया Login करें।");}
+      var w=await db.collection("workers").where("private_phone","==",full).limit(1).get();
+      if(!w.empty){if(btn)btn.innerText="Customer Profile बनाएं / अपडेट करें";return alert("यह नंबर पहले से Mistri Profile में है। दूसरे प्रोफ़ाइल में उपयोग नहीं हो सकता।");}
+      var con=await db.collection("contractor_applications").where("phone","==",p10).limit(1).get();
+      if(!con.empty){if(btn)btn.innerText="Customer Profile बनाएं / अपडेट करें";return alert("यह नंबर पहले से Contractor Profile में है। दूसरे प्रोफ़ाइल में उपयोग नहीं हो सकता।");}
 
-      /* Use an existing login/signup trigger if the page has one. */
-      var trigger = document.querySelector(
-        '#loginBtn,#loginButton,#signupBtn,#signupButton,' +
-        '[data-action="login"],[data-action="signup"],' +
-        '[data-target*="login" i],[data-target*="signup" i]'
-      );
-      if (trigger && trigger !== btn) trigger.click();
-      else alert("पहले Sign Up / Login करें।");
+      var selfie=await fileData(selfieFile);
+      var front=await fileData(document.getElementById("mb-customer-aadhaar-front")?.files?.[0]);
+      var back=await fileData(document.getElementById("mb-customer-aadhaar-back")?.files?.[0]);
+      if(!selfie){if(btn)btn.innerText="Customer Profile बनाएं / अपडेट करें";return alert("सेल्फी सुरक्षित नहीं हो सकी। फिर कोशिश करें।");}
+
+      var p={phone:full,name:name,selfie:selfie,village:village,state:state,city:city,district:district,address:address,
+        gps:{lat:parseFloat(document.getElementById("mb-customer-lat")?.value)||null,lng:parseFloat(document.getElementById("mb-customer-lng")?.value)||null},
+        aadhaarFront:front||"",aadhaarBack:back||"",aadhaarProvided:!!(front||back),aadhaarVerified:false,
+        createdAt:firebase.firestore.FieldValue.serverTimestamp(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
+      await db.collection("customer_profiles").doc(full).set(p);
+      p.createdAt=new Date().toISOString();p.updatedAt=new Date().toISOString();saveLocal(p);show(p);
+      alert("✅ Customer Profile बन गई। अब काम पोस्ट कर सकते हैं।");
+    }catch(err){if(btn)btn.innerText="Customer Profile बनाएं / अपडेट करें";alert("Profile सेव नहीं हुई: "+err.message);}
+  };
+
+  function fillPost(){
+    var p=window.MB_getCustomerProfile();if(!p)return;
+    var n=document.getElementById("pc-name"),ph=document.getElementById("pc-phone");
+    if(n){n.value=p.name;n.readOnly=true;}
+    if(ph){ph.value=norm(p.phone);ph.readOnly=true;}
+  }
+
+  function hidePostAadhaar(){
+    var f=document.getElementById("form-post-job");if(!f)return;
+    f.querySelectorAll('[id*="aadhaar" i],[id*="aadhar" i],[name*="aadhaar" i],[name*="aadhar" i]').forEach(function(el){var w=el.closest(".form-group,.field,.input-group,.form-field,label,.bg-slate-50");if(w)w.hidden=true;el.hidden=true;el.disabled=true;});
+  }
+
+  function guard(e){
+    var b=e.target.closest("button,a,[role='button']");if(!b)return;
+    var oc=b.getAttribute("onclick")||"",tx=(b.textContent||"").toLowerCase();
+    if(oc.indexOf("navTo('post")===-1&&oc.indexOf('navTo("post')===-1&&tx.indexOf("काम पोस्ट")===-1)return;
+    if(!window.MB_getCustomerProfile()){
+      e.preventDefault();e.stopImmediatePropagation();alert("पहले Customer Sign Up / Login करें।");
+      navTo("register");setTimeout(function(){try{switchRoleTab("client");}catch(x){}document.getElementById("mb-customer-profile-box")?.scrollIntoView({behavior:"smooth"});},80);
     }
-  }, true);
-
-  /* Existing customer post forms: remove Aadhaar fields only from Post UI.
-     Aadhaar remains untouched in the profile/signup UI. */
-  function cleanPostForms() {
-    document.querySelectorAll("form").forEach(function (form) {
-      var s = ((form.id || "") + " " + (form.className || "")).toLowerCase();
-      if (s.indexOf("post") === -1 && s.indexOf("job") === -1) return;
-
-      form.querySelectorAll(
-        '[name*="aadhaar" i],[id*="aadhaar" i],' +
-        '[name*="aadhar" i],[id*="aadhar" i]'
-      ).forEach(function (el) {
-        var w = el.closest(".form-group,.field,.input-group,.form-field,label");
-        if (w) w.hidden = true;
-        el.hidden = true;
-        el.disabled = true;
-      });
-
-      var p = profile();
-      if (p) {
-        var n = form.querySelector('[name="name"],[name="customerName"],#post-name,#customer-name');
-        var ph = form.querySelector('[name="phone"],[name="mobile"],#post-phone,#customer-phone');
-        if (n && p.name) { n.value = p.name; n.readOnly = true; }
-        if (ph && (p.phone || p.mobile)) {
-          ph.value = p.phone || p.mobile;
-          ph.readOnly = true;
-        }
-      }
-    });
   }
+  document.addEventListener("click",guard,true);
 
-  document.addEventListener("DOMContentLoaded", cleanPostForms);
-  window.addEventListener("load", cleanPostForms);
+  document.addEventListener("DOMContentLoaded",function(){
+    var p=read();if(complete(p)){saveLocal(p);show(p);fillPost();}
+    try{handleStateChange("mb-customer-state","mb-customer-district","mb-customer-block");}catch(e){}
+    hidePostAadhaar();
+  });
+  window.addEventListener("load",function(){var p=read();if(complete(p)){show(p);fillPost();}hidePostAadhaar();});
 })();
 </script>
 
