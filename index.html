@@ -1863,6 +1863,17 @@
     // 4. मिस्त्री प्रोफ़ाइल
     async function saveWorkerProfile(e) {
       e.preventDefault();
+      const lockedRole = localStorage.getItem("mb_device_locked_role");
+      const currentRole = localStorage.getItem("current_user_role");
+      if ((lockedRole && lockedRole !== "worker") || (currentRole && currentRole !== "worker")) {
+        alert("🔒 आप पहले से दूसरे प्रोफ़ाइल में लॉगिन हैं। मिस्त्री फॉर्म भरने की अनुमति नहीं है।");
+        return;
+      }
+      if (localStorage.getItem("mb_worker_profile_complete") === "true") {
+        alert("✅ आपकी मिस्त्री प्रोफ़ाइल पहले से 100% पूरी है। अब कोई प्रोफ़ाइल फॉर्म भरने की अनुमति नहीं है।");
+        updateRegisterScreenView();
+        return;
+      }
       const name = document.getElementById("pw-name").value.trim();
       const phone = document.getElementById("pw-phone").value.trim();
       const state = document.getElementById("pw-state").value;
@@ -1872,8 +1883,11 @@
       const idNumber = document.getElementById("pw-id-number").value.trim().toUpperCase();
 
       const checkedBoxes = document.querySelectorAll("input[name='worker_skill']:checked");
-      if (checkedBoxes.length === 0) return alert("कृपया कम से कम एक काम (हुनर) चुनें!");
       const skillsArray = Array.from(checkedBoxes).map(cb => cb.value);
+      const savedSkills = (() => {
+        try { return JSON.parse(localStorage.getItem("mb_worker_skills") || "[]") || []; } catch(e) { return []; }
+      })();
+      if (skillsArray.length === 0 && savedSkills.length === 0) return alert("कृपया कम से कम एक काम (हुनर) चुनें!");
 
       if (phone.length !== 10) return alert("10 अंकों का मोबाइल नंबर डालें!");
       const fullPhone = "+91" + phone;
@@ -1932,8 +1946,8 @@
               state: state || existing.state,
               district: district || existing.district,
               block: block || existing.block,
-              skills: skillsArray.length ? skillsArray : existing.skills,
-              experience: exp || existing.experience
+              skills: skillsArray.length ? skillsArray : (existing.skills || []),
+              experience: exp || existing.experience || 0
             };
 
             if (photoData) updatePayload.photo = photoData;
@@ -1943,7 +1957,15 @@
             if (idNumber) updatePayload.idCardNumber = idNumber;
             const hasPhoto = !!(photoData || existing.photo);
             const hasWorkPhotos = !!((workPhotosArray.length || (existing.workPhotos || []).length) > 0);
-            updatePayload.profileComplete = !!(name && phone.length === 10 && state && district && block && skillsArray.length && hasPhoto && hasWorkPhotos);
+            updatePayload.profileComplete = !!(
+              updatePayload.name &&
+              phone.length === 10 &&
+              updatePayload.state &&
+              updatePayload.district &&
+              updatePayload.block &&
+              Array.isArray(updatePayload.skills) && updatePayload.skills.length > 0 &&
+              hasPhoto && hasWorkPhotos
+            );
 
             db.collection("workers").doc(docId).update(updatePayload).then(() => {
               btn.innerText = "पंजीकरण पूरा करें";
@@ -2015,7 +2037,18 @@
       localStorage.setItem("mb_worker_level", wData.level || "कुशल कारीगर");
       localStorage.setItem("mb_worker_photos", JSON.stringify(wData.workPhotos || []));
       localStorage.setItem("mb_worker_id_verified", wData.isIdVerified ? "true" : "false");
-      const profileComplete = wData.profileComplete === true || !!(wData.name && wData.private_phone && wData.state && wData.district && wData.block && Array.isArray(wData.skills) && wData.skills.length > 0 && wData.photo && Array.isArray(wData.workPhotos) && wData.workPhotos.length > 0);
+      // प्रोफ़ाइल को केवल Firebase के वास्तविक required fields से COMPLETE मानें।
+      // पुराने/stale profileComplete=true पर भरोसा नहीं करें। ID/Aadhaar verification वैकल्पिक है।
+      const profileComplete = !!(
+        wData.name &&
+        wData.private_phone &&
+        wData.state &&
+        wData.district &&
+        wData.block &&
+        Array.isArray(wData.skills) && wData.skills.length > 0 &&
+        wData.photo &&
+        Array.isArray(wData.workPhotos) && wData.workPhotos.length > 0
+      );
       localStorage.setItem("mb_worker_profile_complete", profileComplete ? "true" : "false");
       
       let isVipActive = false;
@@ -2046,6 +2079,14 @@
       const noteTxt = document.getElementById("worker-incomplete-note");
       let missingFields = [];
 
+      // Existing profile values को form में वापस दिखाएँ, ताकि remaining-details form
+      // दोबारा वही जानकारी माँगकर registration को block न करे।
+      const stateEl = document.getElementById("pw-state");
+      const districtEl = document.getElementById("pw-district");
+      const blockEl = document.getElementById("pw-block");
+      const expEl = document.getElementById("pw-exp");
+      const skillValues = Array.isArray(w.skills) ? w.skills : [];
+
       if (w.name) {
         document.getElementById("pw-name").value = w.name;
         document.getElementById("pw-name").readOnly = true;
@@ -2056,6 +2097,27 @@
         document.getElementById("pw-phone").readOnly = true;
         document.getElementById("box-pw-phone").classList.add("opacity-75");
       }
+
+      if (stateEl && w.state) {
+        stateEl.value = w.state;
+        try { handleStateChange("pw-state", "pw-district", "pw-block"); } catch(e) {}
+      }
+      if (districtEl && w.district) districtEl.value = w.district;
+      if (blockEl && w.block) blockEl.value = w.block;
+      if (expEl && w.experience !== undefined && w.experience !== null) expEl.value = w.experience;
+
+      // Skills को existing profile से re-check करें।
+      document.querySelectorAll("input[name='worker_skill']").forEach(cb => {
+        cb.checked = skillValues.includes(cb.value);
+      });
+
+      if (!w.state) missingFields.push("राज्य");
+      if (!w.district) missingFields.push("ज़िला");
+      if (!w.block) missingFields.push("प्रखंड/ब्लॉक");
+      if (!w.skills || !w.skills.length) missingFields.push("काम/हुनर");
+      if (!w.name) missingFields.push("नाम");
+      if (!w.private_phone) missingFields.push("मोबाइल नंबर");
+
       if (w.photo) {
         document.getElementById("pw-photo-file").classList.add("hidden");
         document.getElementById("done-pw-photo").classList.remove("hidden");
@@ -2100,10 +2162,21 @@
       const formBox = document.getElementById("worker-form-container");
       const profileBox = document.getElementById("worker-profile-view");
 
+      const isLoggedInWorker = localStorage.getItem("current_user_role") === "worker" || !!localStorage.getItem("mb_worker_phone");
       const isComplete = localStorage.getItem("mb_worker_profile_complete") === "true";
       const remainingBtn = document.getElementById("btn-remaining-details");
       const statusAlert = document.getElementById("worker-profile-status-alert");
-      if (workerName && isComplete) {
+
+      // Logged-in incomplete worker: profile card दिखे और केवल "बाकी जानकारी" button खुले।
+      if (isLoggedInWorker && workerName && !isComplete) {
+        formBox.classList.add("hidden");
+        profileBox.classList.remove("hidden");
+        remainingBtn?.classList.remove("hidden");
+        statusAlert?.classList.remove("hidden");
+        const noteTxt = document.getElementById("worker-incomplete-note");
+        if (noteTxt && !noteTxt.innerText) noteTxt.innerText = "अधूरी जानकारी बाकी है। नीचे बटन से केवल बाकी जानकारी पूरी करें।";
+      } else if (workerName && isComplete) {
+        // COMPLETE worker: कोई profile form/remaining form नहीं। केवल profile view।
         formBox.classList.add("hidden");
         profileBox.classList.remove("hidden");
         remainingBtn?.classList.add("hidden");
@@ -2158,9 +2231,37 @@
           });
         }
       } else {
+        // बिल्कुल नया/लॉगआउट user ही खाली registration form देखे।
         formBox.classList.remove("hidden");
         profileBox.classList.add("hidden");
         remainingBtn?.classList.add("hidden");
+        statusAlert?.classList.add("hidden");
+      }
+    }
+
+    async function restoreWorkerSessionFromFirebase() {
+      const savedPhone = localStorage.getItem("mb_worker_phone");
+      if (!savedPhone || typeof db === "undefined") return;
+      try {
+        const fullPhone = "+91" + savedPhone.replace(/^\+91/, "");
+        const snap = await db.collection("workers").where("private_phone", "==", fullPhone).limit(1).get();
+        if (!snap.empty) {
+          const data = snap.docs[0].data();
+          data.id = snap.docs[0].id;
+          setLoggedInWorker(data);
+        } else {
+          // Firebase में record नहीं मिला तो stale worker session हटाएँ।
+          localStorage.removeItem("mb_worker_phone");
+          localStorage.removeItem("mb_worker_doc_id");
+          localStorage.removeItem("mb_worker_profile_complete");
+          localStorage.removeItem("current_user_role");
+          localStorage.removeItem("mb_device_locked_role");
+          updateRegisterScreenView();
+        }
+      } catch (e) {
+        console.warn("Worker session restore failed:", e);
+        // Network/rules error पर local session को delete नहीं करेंगे।
+        updateRegisterScreenView();
       }
     }
 
@@ -3606,11 +3707,13 @@
 
     function switchRoleTab(role) {
       const lockedRole = localStorage.getItem("mb_device_locked_role");
-      const isLoggedIn = !!(localStorage.getItem("mb_worker_phone") || localStorage.getItem("current_user_role"));
+      const currentRole = localStorage.getItem("current_user_role");
+      const isLoggedIn = !!(localStorage.getItem("mb_worker_phone") || currentRole);
       if (isLoggedIn && lockedRole && role !== lockedRole) {
         alert("🔒 आप पहले से " + (lockedRole === "worker" ? "मिस्त्री" : lockedRole === "client" ? "ग्राहक" : "कॉन्ट्रैक्टर") + " के रूप में लॉगिन हैं। दूसरे प्रोफ़ाइल फॉर्म में जाने की अनुमति नहीं है।");
         role = lockedRole;
       }
+      if (currentRole === "worker" && lockedRole === "worker") role = "worker";
       const clientBox = document.getElementById("client-dashboard-box");
       const workerBox = document.getElementById("worker-dashboard-box");
       const contractorBox = document.getElementById("contractor-dashboard-box");
@@ -3746,6 +3849,9 @@
         const hashPage = (location.hash || '#home').replace('#','');
         navTo(allowedPages.includes(hashPage) ? hashPage : 'home', false);
       } catch(e) {}
+
+      // Refresh के बाद Firebase से worker profile दोबारा पढ़कर COMPLETE/INCOMPLETE status ठीक करें।
+      try { restoreWorkerSessionFromFirebase(); } catch(e) {}
       
       try {
         handleStateChange('home-state-filter', 'home-district-filter');
@@ -3794,15 +3900,19 @@
     });
     // [पॉइंट 2 और 9] छूटी हुई जानकारी भरने के लिए सही फॉर्म खोलने का लॉजिक
   function openRemainingDetailsForm() {
-    if (localStorage.getItem("mb_worker_profile_complete") === "true") {
-      alert("✅ आपकी प्रोफ़ाइल 100% पूरी है। अब बाकी अधूरी जानकारी वाला फॉर्म उपलब्ध नहीं है।");
-      updateRegisterScreenView();
-      return;
-    }
     const userRole = localStorage.getItem('current_user_role') || 'worker';
     const lockedRole = localStorage.getItem('mb_device_locked_role');
     if (lockedRole && userRole !== lockedRole) {
       alert("🔒 इस डिवाइस पर दूसरा प्रोफ़ाइल फॉर्म भरने की अनुमति नहीं है।");
+      return;
+    }
+    if (userRole !== 'worker') {
+      alert("🔒 यह बटन केवल मिस्त्री प्रोफ़ाइल की बाकी जानकारी पूरी करने के लिए है।");
+      return;
+    }
+    if (localStorage.getItem("mb_worker_profile_complete") === "true") {
+      alert("✅ आपकी प्रोफ़ाइल 100% पूरी है। अब बाकी अधूरी जानकारी वाला फॉर्म उपलब्ध नहीं है।");
+      updateRegisterScreenView();
       return;
     }
     
