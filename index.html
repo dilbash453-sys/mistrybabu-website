@@ -4045,5 +4045,88 @@
 })();
 </script>
 
+
+<script id="mb-customer-flow-bridge">
+(function () {
+  "use strict";
+
+  function isCustomerArea(el) {
+    if (!el) return false;
+    var s = ((el.id || "") + " " + (el.className || "") + " " +
+             (el.textContent || "")).toLowerCase();
+    return s.indexOf("customer") !== -1 || s.indexOf("ग्राहक") !== -1;
+  }
+
+  function profile() {
+    try {
+      var raw = localStorage.getItem("mb_customer_profile");
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) { return null; }
+  }
+
+  /* Existing Post buttons: require the existing login/signup UI before
+     allowing the existing post action to proceed. */
+  document.addEventListener("click", function (e) {
+    var btn = e.target.closest("button,a,[role='button']");
+    if (!btn) return;
+
+    var text = (btn.textContent || "").trim().toLowerCase();
+    var postWord = text.indexOf("post") !== -1 ||
+                   text.indexOf("पोस्ट") !== -1 ||
+                   text.indexOf("काम पोस्ट") !== -1;
+
+    if (!postWord) return;
+
+    var p = profile();
+    if (!p) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      /* Use an existing login/signup trigger if the page has one. */
+      var trigger = document.querySelector(
+        '#loginBtn,#loginButton,#signupBtn,#signupButton,' +
+        '[data-action="login"],[data-action="signup"],' +
+        '[data-target*="login" i],[data-target*="signup" i]'
+      );
+      if (trigger && trigger !== btn) trigger.click();
+      else alert("पहले Sign Up / Login करें।");
+    }
+  }, true);
+
+  /* Existing customer post forms: remove Aadhaar fields only from Post UI.
+     Aadhaar remains untouched in the profile/signup UI. */
+  function cleanPostForms() {
+    document.querySelectorAll("form").forEach(function (form) {
+      var s = ((form.id || "") + " " + (form.className || "")).toLowerCase();
+      if (s.indexOf("post") === -1 && s.indexOf("job") === -1) return;
+
+      form.querySelectorAll(
+        '[name*="aadhaar" i],[id*="aadhaar" i],' +
+        '[name*="aadhar" i],[id*="aadhar" i]'
+      ).forEach(function (el) {
+        var w = el.closest(".form-group,.field,.input-group,.form-field,label");
+        if (w) w.hidden = true;
+        el.hidden = true;
+        el.disabled = true;
+      });
+
+      var p = profile();
+      if (p) {
+        var n = form.querySelector('[name="name"],[name="customerName"],#post-name,#customer-name');
+        var ph = form.querySelector('[name="phone"],[name="mobile"],#post-phone,#customer-phone');
+        if (n && p.name) { n.value = p.name; n.readOnly = true; }
+        if (ph && (p.phone || p.mobile)) {
+          ph.value = p.phone || p.mobile;
+          ph.readOnly = true;
+        }
+      }
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", cleanPostForms);
+  window.addEventListener("load", cleanPostForms);
+})();
+</script>
+
 </body>
   </html>
