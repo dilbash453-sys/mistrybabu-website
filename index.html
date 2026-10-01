@@ -3937,119 +3937,111 @@
     }
   </script>
 
-<script id="mb-customer-signup-complete">
+<script id="mb-customer-flow-fixed">
 (function () {
-  /* Customer signup/profile flow:
-     one phone = one customer profile;
-     signup fields are saved once;
-     Aadhaar is optional and profile-only;
-     post forms reuse name/phone/selfie.
+  /* CUSTOMER FLOW — integrated guardrails for the existing forms.
+     This does not replace the existing signup/post UI; it connects to it.
   */
-  window.MB_CUSTOMER_SIGNUP = {
+  window.MB_CUSTOMER_FLOW = {
     onePhoneOneProfile: true,
+    profileRequiredForPost: true,
     aadhaarOptional: true,
-    aadhaarProfileOnly: true,
-    postReuses: ["name", "phone", "selfie"]
+    aadhaarPostHidden: true,
+    reuse: ["name", "phone", "selfie"]
   };
 
-  function readProfile() {
+  function norm(v) { return String(v || "").replace(/\D/g, ""); }
+
+  function getProfile() {
     var keys = ["mb_customer_profile", "customerProfile", "mb_customer"];
-    for (var i = 0; i < keys.length; i++) {
+    for (var i=0; i<keys.length; i++) {
       try {
-        var v = localStorage.getItem(keys[i]);
-        if (v) {
-          var p = JSON.parse(v);
+        var x = localStorage.getItem(keys[i]);
+        if (x) {
+          var p = JSON.parse(x);
           if (p && typeof p === "object") return p;
         }
-      } catch (e) {}
+      } catch(e) {}
     }
     return null;
   }
 
-  function saveProfile(p) {
-    try { localStorage.setItem("mb_customer_profile", JSON.stringify(p)); } catch (e) {}
-  }
-
-  function customerProfileComplete(p) {
-    return !!(p && p.phone && p.name && p.selfie &&
-      p.village && p.state && p.city && p.district && p.address);
-  }
-
-  window.MB_customerSignupSubmit = function (data) {
-    data = data || {};
-    var old = readProfile();
-
-    if (old && old.phone && data.phone &&
-        String(old.phone).replace(/\D/g, "") === String(data.phone).replace(/\D/g, "")) {
-      return {ok:false, code:"PHONE_ALREADY_REGISTERED",
-              message:"इस मोबाइल नंबर से Customer Profile पहले से बना हुआ है।"};
-    }
-
-    var p = {
-      phone: data.phone || "",
-      name: data.name || "",
-      selfie: data.selfie || data.photo || "",
-      village: data.village || "",
-      state: data.state || "",
-      city: data.city || "",
-      district: data.district || "",
-      address: data.address || "",
-      gps: data.gps || data.location || null,
-      aadhaarFront: data.aadhaarFront || "",
-      aadhaarBack: data.aadhaarBack || "",
-      createdAt: new Date().toISOString()
-    };
-
-    if (!customerProfileComplete(p)) {
-      return {ok:false, code:"PROFILE_INCOMPLETE",
-              message:"कृपया Customer Profile की जरूरी जानकारी पूरी करें।"};
-    }
-
-    saveProfile(p);
-    return {ok:true, profile:p};
-  };
-
-  window.MB_getCustomerPostProfile = function () {
-    var p = readProfile();
-    if (!p) return null;
-    return {name:p.name || "", phone:p.phone || "", selfie:p.selfie || ""};
-  };
-
-  window.MB_prepareCustomerPost = function (form) {
-    if (!form) return false;
-    var p = window.MB_getCustomerPostProfile();
-    if (!p) return false;
-
-    var n = form.querySelector('[name="name"],[name="customerName"],#post-name,#customer-name');
-    var ph = form.querySelector('[name="phone"],[name="mobile"],[name="customerPhone"],#post-phone,#customer-phone');
-
-    if (n) { n.value = p.name; n.readOnly = true; n.dataset.profileValue = "true"; }
-    if (ph) { ph.value = p.phone; ph.readOnly = true; ph.dataset.profileValue = "true"; }
-
+  function hideAadhaar(form) {
     form.querySelectorAll(
       '[name*="aadhaar" i],[id*="aadhaar" i],[name*="aadhar" i],[id*="aadhar" i]'
     ).forEach(function(el) {
-      var wrap = el.closest(".form-group,.field,.input-group,label");
-      if (wrap) wrap.hidden = true;
+      var w = el.closest(".form-group,.field,.input-group,.form-field,label");
+      if (w) w.hidden = true;
       el.hidden = true;
       el.disabled = true;
     });
-    return true;
-  };
+  }
 
-  window.MB_customerMustLoginForPost = function () {
-    var p = readProfile();
-    return !!(p && customerProfileComplete(p));
-  };
+  function fillPost(form, p) {
+    if (!p) return;
+    var name = p.name || p.fullName || "";
+    var phone = p.phone || p.mobile || "";
+    var selfie = p.selfie || p.photo || p.profilePhoto || "";
 
-  document.addEventListener("DOMContentLoaded", function () {
+    var n = form.querySelector(
+      '[name="name"],[name="customerName"],[name="fullName"],#post-name,#customer-name'
+    );
+    var ph = form.querySelector(
+      '[name="phone"],[name="mobile"],[name="customerPhone"],#post-phone,#customer-phone'
+    );
+
+    if (n && name) {
+      n.value = name;
+      n.readOnly = true;
+      n.dataset.profileValue = "true";
+    }
+    if (ph && phone) {
+      ph.value = phone;
+      ph.readOnly = true;
+      ph.dataset.profileValue = "true";
+    }
+
+    /* No Aadhaar Front/Back in the Post form. */
+    hideAadhaar(form);
+
+    /* Keep selfie available to existing post code without creating
+       another upload requirement. */
+    if (selfie) form.dataset.customerSelfie = selfie;
+  }
+
+  function protectPostForms() {
+    var p = getProfile();
     document.querySelectorAll("form").forEach(function(form) {
-      var s = ((form.id || "") + " " + (form.className || "")).toLowerCase();
-      if (s.indexOf("post") !== -1 || s.indexOf("job") !== -1) {
-        window.MB_prepareCustomerPost(form);
+      var marker = ((form.id || "") + " " + (form.className || "")).toLowerCase();
+      if (marker.indexOf("post") !== -1 || marker.indexOf("job") !== -1) {
+        hideAadhaar(form);
+        if (p) fillPost(form, p);
       }
     });
-  });
+  }
+
+  /* Exposed helpers let the existing site's signup/login handlers call
+     the same rules instead of creating a second signup system. */
+  window.MB_customerProfileForPost = function () {
+    var p = getProfile();
+    return p ? {
+      name: p.name || p.fullName || "",
+      phone: p.phone || p.mobile || "",
+      selfie: p.selfie || p.photo || p.profilePhoto || ""
+    } : null;
+  };
+
+  window.MB_customerCanPost = function () {
+    return !!getProfile();
+  };
+
+  window.MB_customerPhoneAlreadyRegistered = function (phone) {
+    var p = getProfile();
+    return !!(p && p.phone && norm(p.phone) === norm(phone));
+  };
+
+  document.addEventListener("DOMContentLoaded", protectPostForms);
+  window.addEventListener("load", protectPostForms);
 })();
 </script>
 
