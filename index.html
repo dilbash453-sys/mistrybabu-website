@@ -1862,10 +1862,18 @@
         }
       }
 
+      // पहचान पत्र के असली HTML fields: id-front-file / id-back-file
+      // दोनों वैकल्पिक हैं; कोई field न हो तो save प्रक्रिया नहीं रुकेगी।
       let idCardData = "";
-      const idCardFile = document.getElementById("pw-id-card").files[0];
-      if (idCardFile) {
-        try { idCardData = await fileToBase64WithWatermark(idCardFile); } catch(e) {}
+      let idCardBackData = "";
+      const idFrontFile = document.getElementById("id-front-file")?.files?.[0];
+      const idBackFile = document.getElementById("id-back-file")?.files?.[0];
+
+      if (idFrontFile) {
+        try { idCardData = await fileToBase64WithWatermark(idFrontFile); } catch(e) {}
+      }
+      if (idBackFile) {
+        try { idCardBackData = await fileToBase64WithWatermark(idBackFile); } catch(e) {}
       }
 
       let workerLevel = "नया कारीगर";
@@ -1889,6 +1897,7 @@
             if (photoData) updatePayload.photo = photoData;
             if (workPhotosArray.length) updatePayload.workPhotos = workPhotosArray;
             if (idCardData) updatePayload.idCardPhoto = idCardData;
+            if (idCardBackData) updatePayload.idCardBackPhoto = idCardBackData;
             if (idNumber) updatePayload.idCardNumber = idNumber;
 
             updatePayload.profileComplete = !!(
@@ -1927,6 +1936,7 @@
               photo: photoData || "",
               workPhotos: workPhotosArray,
               idCardPhoto: idCardData || "",
+              idCardBackPhoto: idCardBackData || "",
               idCardNumber: idNumber || "",
               isIdVerified: false,
               isContractorVIP: false,
@@ -2052,16 +2062,30 @@
       } else {
         missingFields.push("काम के फ़ोटो");
       }
-      if (w.idCardPhoto || w.idCardNumber) {
-        document.getElementById("pw-id-card").classList.add("hidden");
-        document.getElementById("pw-id-number").readOnly = true;
-        document.getElementById("pw-id-number").value = w.idCardNumber || "";
-        document.getElementById("done-pw-idcard").classList.remove("hidden");
-      } else {
-        // पहचान पत्र (ID/Aadhaar) वैकल्पिक है।
+      if (w.idCardPhoto || w.idCardBackPhoto || w.idCardNumber) {
+        document.getElementById("id-front-file")?.classList.add("hidden");
+        document.getElementById("id-back-file")?.classList.add("hidden");
+        document.getElementById("pw-id-number")?.setAttribute("readonly", "readonly");
+        if (document.getElementById("pw-id-number")) {
+          document.getElementById("pw-id-number").value = w.idCardNumber || "";
+        }
       }
+      // पहचान पत्र (ID/Aadhaar) वैकल्पिक है; इससे प्रोफ़ाइल Complete नहीं रुकती।
 
-      const profileComplete = missingFields.length === 0;
+      const profileComplete = !!(
+        w.profileComplete === true ||
+        (
+          w.name &&
+          w.private_phone &&
+          w.state &&
+          w.district &&
+          w.block &&
+          Array.isArray(w.skills) && w.skills.length > 0 &&
+          w.experience !== undefined && w.experience !== null &&
+          w.photo &&
+          Array.isArray(w.workPhotos) && w.workPhotos.length > 0
+        )
+      );
       localStorage.setItem("mb_worker_profile_complete", profileComplete ? "true" : "false");
 
       if (profileComplete) {
@@ -2069,6 +2093,7 @@
         document.getElementById("worker-form-container")?.classList.add("hidden");
         document.getElementById("worker-profile-view")?.classList.remove("hidden");
         document.getElementById("btn-worker-complete-profile")?.classList.add("hidden");
+        document.getElementById("worker-profile-view")?.scrollIntoView({behavior:"smooth", block:"start"});
       } else {
         alertBox.classList.remove("hidden");
         noteTxt.innerText = `अधूरी जानकारी: ${missingFields.join(', ')} भरें ताकि आपका खाता 100% पूरा हो सके।`;
