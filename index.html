@@ -1522,7 +1522,7 @@
       });
     }
 
-    async async function saveClientJob(e) {
+    async function saveClientJob(e) {
       e.preventDefault();
       
       const isVerified = localStorage.getItem("mb_client_is_kyc") === "true";
@@ -2014,9 +2014,12 @@
         document.getElementById("pw-id-number").value = w.idCardNumber || "";
         document.getElementById("done-pw-idcard").classList.remove("hidden");
       }
-      // आधार/ID verification अलग है; ID न देने पर प्रोफ़ाइल अधूरी नहीं मानी जाएगी।
+
+      // आधार/ID optional है। प्रोफ़ाइल completion का फैसला केवल जरूरी प्रोफ़ाइल fields से होगा।
       const remainingBtn = document.getElementById("worker-remaining-details-btn");
       const profileComplete = missingFields.length === 0;
+      localStorage.setItem("mb_worker_profile_complete", profileComplete ? "true" : "false");
+
       if (profileComplete) {
         alertBox.classList.add("hidden");
         if (remainingBtn) remainingBtn.classList.add("hidden");
@@ -2028,6 +2031,8 @@
     }
 
     function unlockWorkerFormForEdit() {
+      // पूरी प्रोफ़ाइल के बाद कोई edit/remaining-details form नहीं खोलना है।
+      if (localStorage.getItem("mb_worker_profile_complete") === "true") return;
       document.getElementById("worker-profile-view").classList.add("hidden");
       document.getElementById("worker-form-container").classList.remove("hidden");
     }
@@ -3704,9 +3709,8 @@
     });
     // [पॉइंट 2 और 9] छूटी हुई जानकारी भरने के लिए सही फॉर्म खोलने का लॉजिक
   function openRemainingDetailsForm() {
-    // प्रोफ़ाइल पूरी होने के बाद कोई अतिरिक्त फॉर्म नहीं खुलेगा।
-    const completeBtn = document.getElementById('worker-remaining-details-btn');
-    if (completeBtn && completeBtn.classList.contains('hidden')) return;
+    // पूरी प्रोफ़ाइल होने पर सिर्फ प्रोफ़ाइल/डैशबोर्ड दिखे; कोई फॉर्म न खुले।
+    if (localStorage.getItem("mb_worker_profile_complete") === "true") return;
     // यूज़र का रोल पहचानें (डिफ़ॉल्ट मिस्त्री/वर्कर)
     const userRole = localStorage.getItem('current_user_role') || 'worker';
     
