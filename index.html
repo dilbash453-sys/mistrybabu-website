@@ -438,12 +438,12 @@
             <input type="hidden" id="mb-customer-lng">
           </div>
           <div class="bg-slate-50 p-2.5 rounded-xl border border-dashed border-slate-300">
-            <label class="block text-[10px] font-bold text-slate-700 mb-1">Aadhaar Front / Back — वैकल्पिक</label>
+            <label class="block text-[10px] font-bold text-slate-700 mb-1">Aadhaar Front / Back — वैकल्पिक (Verification Tag के लिए)</label>
             <div class="grid grid-cols-2 gap-2">
               <input type="file" id="mb-customer-aadhaar-front" accept="image/*" class="text-[9px] text-slate-500">
               <input type="file" id="mb-customer-aadhaar-back" accept="image/*" class="text-[9px] text-slate-500">
             </div>
-            <p class="text-[9px] text-slate-500 mt-1">Aadhaar नहीं देने पर भी Customer Profile और पोस्टिंग जारी रहेगी।</p>
+            <p class="text-[9px] text-slate-500 mt-1">Aadhaar देना वैकल्पिक है। देने पर Admin verification के बाद Profile/Post पर ✓ Verified Customer Tag लगाया जा सकता है। Aadhaar नहीं देने पर भी Profile और पोस्टिंग जारी रहेगी।</p>
           </div>
           <button type="submit" id="mb-customer-save-btn" class="w-full bg-slate-900 text-amber-400 font-bold py-2.5 rounded-xl text-xs">Customer Profile बनाएं / अपडेट करें</button>
         </form>
@@ -455,45 +455,13 @@
               <div id="mb-customer-profile-name" class="font-black text-sm text-slate-900"></div>
               <div id="mb-customer-profile-location" class="text-[10px] text-slate-600 mt-0.5"></div>
               <div id="mb-customer-profile-phone" class="text-[9px] text-slate-500 mt-0.5"></div>
+              <div id="mb-customer-aadhaar-badge" class="hidden text-[9px] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded-full mt-1 w-fit">✓ Verified Customer</div>
             </div>
           </div>
           <p class="text-[10px] text-emerald-700 font-bold mt-2">✓ Profile complete — अब काम पोस्ट करते समय नाम, मोबाइल और फोटो दोबारा नहीं भरना होगा।</p>
         </div>
       </div>
 
-      <div class="bg-blue-50/70 p-3.5 rounded-2xl border border-blue-200 space-y-2 shadow-xs">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center space-x-2">
-            <i class="fa-solid fa-id-card text-blue-600 text-base"></i>
-            <div>
-              <h4 class="text-xs font-black text-slate-900">मालिक पहचान सत्यापन (वैकल्पिक)</h4>
-              <p class="text-[10px] text-slate-500">पहचान पत्र जोड़ने पर आपकी पोस्ट पर <strong>🛡️ सत्यापित मालिक</strong> बैज लगेगा।</p>
-            </div>
-          </div>
-          <span id="client-kyc-badge-status" class="text-[9px] bg-slate-200 text-slate-700 font-bold px-2 py-0.5 rounded-full">सामान्य खाता</span>
-        </div>
-
-        <div class="grid grid-cols-2 gap-2 pt-1">
-          <div class="bg-white p-2 rounded-xl border border-slate-200 text-center">
-            <label class="block text-[10px] font-bold text-slate-700 mb-1">मालिक फ़ोटो</label>
-            <input type="file" id="client-kyc-photo" accept="image/*" class="text-[9px] text-slate-500 file:mr-1 file:py-0.5 file:px-1.5 file:rounded file:border-0 file:bg-blue-100 file:text-blue-800">
-            <div id="done-client-photo" class="hidden text-emerald-600 font-bold text-[9px] mt-1">✓ फ़ोटो सुरक्षित</div>
-          </div>
-          <div class="bg-white p-2 rounded-xl border border-slate-200 text-center">
-            <label class="block text-[10px] font-bold text-slate-700 mb-1">पहचान पत्र (आईडी)</label>
-            <input type="file" id="client-kyc-id" accept="image/*" class="text-[9px] text-slate-500 file:mr-1 file:py-0.5 file:px-1.5 file:rounded file:border-0 file:bg-blue-100 file:text-blue-800">
-            <div id="done-client-id" class="hidden text-emerald-600 font-bold text-[9px] mt-1">✓ आईडी सुरक्षित</div>
-          </div>
-        </div>
-
-        <div>
-          <input type="text" id="client-kyc-id-number" placeholder="पहचान पत्र संख्या दर्ज करें (वैकल्पिक)" class="w-full text-center rounded-lg border border-blue-300 p-1.5 text-xs uppercase focus:outline-none bg-white">
-        </div>
-
-        <button type="button" onclick="saveClientKYC()" id="btn-save-client-kyc" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded-xl text-xs shadow-xs">
-          🛡️ पहचान पत्र जोड़ें व ऊंचा दर्जा पाएं
-        </button>
-      </div>
 
       <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
         <h3 class="text-xs font-black text-slate-900 uppercase">मालिक प्रोफ़ाइल / मेरा काम</h3>
@@ -4072,6 +4040,8 @@
     var l=document.getElementById("mb-customer-profile-location");if(l)l.innerText="📍 "+(p.village||"")+" • "+(p.city||"")+" • "+(p.district||"")+" • "+(p.state||"");
     var ph=document.getElementById("mb-customer-profile-phone");if(ph)ph.innerText="मोबाइल: "+(p.phone||"");
     var im=document.getElementById("mb-customer-profile-photo");if(im&&p.selfie)im.src=p.selfie;
+    var badge=document.getElementById("mb-customer-aadhaar-badge");
+    if(badge) badge.classList.toggle("hidden", p.aadhaarVerified !== true);
   }
 
   async function fileData(file){
