@@ -630,7 +630,7 @@
             <button onclick="navTo('jobs')" class="w-full bg-amber-500 text-slate-900 py-2.5 rounded-xl font-bold shadow-xs">
               काम देखें और मालिक को रेट भेजें →
             </button>
-            <button onclick="openRemainingDetailsForm()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-2.5 rounded-xl text-xs flex items-center justify-center space-x-1.5 transition-all">
+            <button id="btn-remaining-details" onclick="openRemainingDetailsForm()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-2.5 rounded-xl text-xs flex items-center justify-center space-x-1.5 transition-all">
   <span>✏️ बाकी छूटी हुई जानकारी भरें</span>
             </button>
             <button onclick="logoutWorker()" class="w-full bg-rose-50 hover:bg-rose-100 text-rose-600 py-2 rounded-xl font-bold">
@@ -1842,6 +1842,19 @@
     function startVoiceInput(targetId,buttonId){const target=document.getElementById(targetId),btn=document.getElementById(buttonId),SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!target||!SR)return alert("⚠️ इस ब्राउज़र में बोलकर लिखने की सुविधा उपलब्ध नहीं है। Chrome में माइक्रोफोन अनुमति दें।");if(currentVoiceRecognition){try{currentVoiceRecognition.stop();}catch(e){}}const rec=new SR();currentVoiceRecognition=rec;rec.lang=localStorage.getItem("mb_lang")==="en"?"en-IN":"hi-IN";rec.interimResults=true;if(btn){btn.disabled=true;btn.innerHTML='<i class="fa-solid fa-microphone-lines"></i><span>सुन रहा हूँ...</span>';}rec.onresult=event=>{let text="";for(let i=event.resultIndex;i<event.results.length;i++)text+=event.results[i][0].transcript;target.value=(target.value?target.value+" ":"")+text.trim();};rec.onerror=event=>alert("वॉयस इनपुट त्रुटि: "+(event.error||"unknown"));rec.onend=()=>{if(btn){btn.disabled=false;btn.innerHTML='<i class="fa-solid fa-microphone"></i><span>बोलकर लिखें</span>';}currentVoiceRecognition=null;};try{rec.start();}catch(e){if(btn)btn.disabled=false;}}
     async function recordAudioMemo(){const btn=document.getElementById("btn-audio-memo"),txt=document.getElementById("txt-audio-memo");if(!navigator.mediaDevices||!window.MediaRecorder)return alert("⚠️ इस ब्राउज़र में ऑडियो रिकॉर्डिंग उपलब्ध नहीं है।");if(audioMemoRecorder&&audioMemoRecorder.state==="recording"){audioMemoRecorder.stop();return;}try{const stream=await navigator.mediaDevices.getUserMedia({audio:true});audioMemoChunks=[];audioMemoRecorder=new MediaRecorder(stream);audioMemoRecorder.ondataavailable=e=>{if(e.data.size)audioMemoChunks.push(e.data);};audioMemoRecorder.onstop=()=>{currentAudioMemoBlob=new Blob(audioMemoChunks,{type:audioMemoRecorder.mimeType||"audio/webm"});stream.getTracks().forEach(t=>t.stop());if(btn)btn.classList.remove("bg-slate-700");if(txt)txt.innerText="ऑडियो तैयार ✓";};audioMemoRecorder.start();if(btn)btn.classList.add("bg-slate-700");if(txt)txt.innerText="रिकॉर्ड हो रहा है... रोकने के लिए दबाएँ";}catch(e){alert("माइक्रोफोन अनुमति नहीं मिली: "+e.message);}}
     function shareJobOnWhatsApp(workType,district,location,sixId,clientName){const text=`मिस्त्रीबाबू काम\nकाम: ${workType}\nस्थान: ${district}, ${location}\nकाम ID: ${sixId}\nमालिक: ${clientName}`;window.open("https://wa.me/?text="+encodeURIComponent(text),"_blank","noopener");}
+    function renderLiveStatusUI(status){
+      const btn=document.getElementById("btn-live-status");
+      const txt=document.getElementById("txt-live-status");
+      const isBusy=(status==="busy");
+      if(txt) txt.innerText=isBusy ? "काम पर हैं 🔴" : "काम के लिए उपलब्ध 🟢";
+      if(btn){
+        btn.classList.toggle("bg-rose-500",isBusy);
+        btn.classList.toggle("bg-emerald-500",!isBusy);
+        btn.classList.toggle("text-white",isBusy);
+        btn.classList.toggle("text-slate-900",!isBusy);
+        btn.setAttribute("aria-pressed",isBusy?"true":"false");
+      }
+    }
     async function toggleWorkerLiveStatus(){const phone=localStorage.getItem("mb_worker_phone");if(!phone)return alert("पहले मिस्त्री प्रोफ़ाइल खोलें।");const next=(localStorage.getItem("mb_worker_status")||"available")==="busy"?"available":"busy";localStorage.setItem("mb_worker_status",next);renderLiveStatusUI(next);try{const id=localStorage.getItem("mb_worker_doc_id");if(id)await db.collection("workers").doc(id).update({liveStatus:next});else{const snap=await db.collection("workers").where("private_phone","==","+91"+phone).limit(1).get();if(!snap.empty)await snap.docs[0].ref.update({liveStatus:next});}}catch(e){alert("स्टेटस सेव नहीं हो सका: "+e.message);}}
     function toggleMainMenu(){document.getElementById("main-menu-drawer")?.classList.toggle("translate-x-full");document.getElementById("main-menu-overlay")?.classList.toggle("hidden");} function closeMainMenu(){document.getElementById("main-menu-drawer")?.classList.add("translate-x-full");document.getElementById("main-menu-overlay")?.classList.add("hidden");}
     function setAppLanguage(lang){localStorage.setItem("mb_lang",lang);document.documentElement.lang=lang==="en"?"en":"hi";const t={home:lang==="en"?"Home":"होम",jobs:lang==="en"?"Jobs":"काम देखें",post:lang==="en"?"Post":"काम दें",workers:lang==="en"?"Workers":"मिस्त्री खोजें",register:lang==="en"?"Profile":"प्रोफ़ाइल"};Object.entries(t).forEach(([k,v])=>{const e=document.getElementById("nav-"+k)?.querySelector("span");if(e)e.innerText=v;});}
@@ -1998,6 +2011,7 @@
       localStorage.setItem("mb_worker_phone", wData.private_phone.replace("+91", ""));
       localStorage.setItem("mb_worker_photo", wData.photo || "");
       localStorage.setItem("mb_worker_status", wData.liveStatus || "available");
+      localStorage.setItem("current_user_role", "worker");
       localStorage.setItem("mb_worker_level", wData.level || "कुशल कारीगर");
       localStorage.setItem("mb_worker_photos", JSON.stringify(wData.workPhotos || []));
       localStorage.setItem("mb_worker_id_verified", wData.isIdVerified ? "true" : "false");
@@ -2022,6 +2036,7 @@
       localStorage.setItem("mb_device_locked_role", "worker");
       
       applyFieldByFieldLock(wData);
+      renderLiveStatusUI(wData.liveStatus || "available");
       updateRegisterScreenView();
       listenWorkerInbox("+91" + localStorage.getItem("mb_worker_phone"));
     }
@@ -2071,6 +2086,11 @@
     }
 
     function unlockWorkerFormForEdit() {
+      if (localStorage.getItem("mb_worker_profile_complete") === "true") {
+        alert("✅ आपकी मिस्त्री प्रोफ़ाइल पूरी है। प्रोफ़ाइल फॉर्म दोबारा भरने की अनुमति नहीं है।");
+        updateRegisterScreenView();
+        return;
+      }
       document.getElementById("worker-profile-view").classList.add("hidden");
       document.getElementById("worker-form-container").classList.remove("hidden");
     }
@@ -2081,9 +2101,13 @@
       const profileBox = document.getElementById("worker-profile-view");
 
       const isComplete = localStorage.getItem("mb_worker_profile_complete") === "true";
+      const remainingBtn = document.getElementById("btn-remaining-details");
+      const statusAlert = document.getElementById("worker-profile-status-alert");
       if (workerName && isComplete) {
         formBox.classList.add("hidden");
         profileBox.classList.remove("hidden");
+        remainingBtn?.classList.add("hidden");
+        statusAlert?.classList.add("hidden");
 
         document.getElementById("my-prof-name").innerText = workerName;
         document.getElementById("my-prof-pro-id").innerText = "ID: " + (localStorage.getItem("mb_worker_pro_id") || "#MB-PRO-000000");
@@ -2136,6 +2160,7 @@
       } else {
         formBox.classList.remove("hidden");
         profileBox.classList.add("hidden");
+        remainingBtn?.classList.add("hidden");
       }
     }
 
@@ -3014,8 +3039,11 @@
       if (target === 'jobs') loadFullJobs();
       if (target === 'workers') loadFullWorkers();
       if (target === 'register') {
+        const lockedRole = localStorage.getItem("mb_device_locked_role");
         const savedWorker = localStorage.getItem("mb_worker_phone");
-        if (savedWorker) switchRoleTab('worker');
+        if (lockedRole === "worker" || savedWorker) switchRoleTab('worker');
+        else if (lockedRole === "client") switchRoleTab('client');
+        else if (lockedRole === "contractor") switchRoleTab('contractor');
         else switchRoleTab('client');
       }
     }
@@ -3577,6 +3605,12 @@
     }
 
     function switchRoleTab(role) {
+      const lockedRole = localStorage.getItem("mb_device_locked_role");
+      const isLoggedIn = !!(localStorage.getItem("mb_worker_phone") || localStorage.getItem("current_user_role"));
+      if (isLoggedIn && lockedRole && role !== lockedRole) {
+        alert("🔒 आप पहले से " + (lockedRole === "worker" ? "मिस्त्री" : lockedRole === "client" ? "ग्राहक" : "कॉन्ट्रैक्टर") + " के रूप में लॉगिन हैं। दूसरे प्रोफ़ाइल फॉर्म में जाने की अनुमति नहीं है।");
+        role = lockedRole;
+      }
       const clientBox = document.getElementById("client-dashboard-box");
       const workerBox = document.getElementById("worker-dashboard-box");
       const contractorBox = document.getElementById("contractor-dashboard-box");
@@ -3760,8 +3794,17 @@
     });
     // [पॉइंट 2 और 9] छूटी हुई जानकारी भरने के लिए सही फॉर्म खोलने का लॉजिक
   function openRemainingDetailsForm() {
-    // यूज़र का रोल पहचानें (डिफ़ॉल्ट मिस्त्री/वर्कर)
+    if (localStorage.getItem("mb_worker_profile_complete") === "true") {
+      alert("✅ आपकी प्रोफ़ाइल 100% पूरी है। अब बाकी अधूरी जानकारी वाला फॉर्म उपलब्ध नहीं है।");
+      updateRegisterScreenView();
+      return;
+    }
     const userRole = localStorage.getItem('current_user_role') || 'worker';
+    const lockedRole = localStorage.getItem('mb_device_locked_role');
+    if (lockedRole && userRole !== lockedRole) {
+      alert("🔒 इस डिवाइस पर दूसरा प्रोफ़ाइल फॉर्म भरने की अनुमति नहीं है।");
+      return;
+    }
     
     // पहले प्रोफाइल व्यू को छुपाएँ
     document.getElementById('worker-profile-view')?.classList.add('hidden');
