@@ -593,8 +593,8 @@
             <button onclick="navTo('jobs')" class="w-full bg-amber-500 text-slate-900 py-2.5 rounded-xl font-bold shadow-xs">
               काम देखें और मालिक को रेट भेजें →
             </button>
-            <button id="worker-remaining-details-btn" onclick="openRemainingDetailsForm()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-2.5 rounded-xl text-xs flex items-center justify-center space-x-1.5 transition-all">
-  <span>✏️ बाकी छूटी हुई जानकारी भरें</span>
+            <button id="btn-worker-complete-profile" onclick="openRemainingDetailsForm()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-2.5 rounded-xl text-xs flex items-center justify-center space-x-1.5 transition-all">
+              <span>✏️ बाकी छूटी हुई जानकारी भरें</span>
             </button>
             <button onclick="logoutWorker()" class="w-full bg-rose-50 hover:bg-rose-100 text-rose-600 py-2 rounded-xl font-bold">
               लॉग आउट करें
@@ -1891,12 +1891,27 @@
             if (idCardData) updatePayload.idCardPhoto = idCardData;
             if (idNumber) updatePayload.idCardNumber = idNumber;
 
+            updatePayload.profileComplete = !!(
+              (name || existing.name) &&
+              (fullPhone || existing.private_phone) &&
+              (state || existing.state) &&
+              (district || existing.district) &&
+              (block || existing.block) &&
+              ((skillsArray.length ? skillsArray : existing.skills) || []).length > 0 &&
+              (exp || existing.experience) !== undefined &&
+              (photoData || existing.photo) &&
+              ((workPhotosArray.length ? workPhotosArray : existing.workPhotos) || []).length > 0
+            );
+
             db.collection("workers").doc(docId).update(updatePayload).then(() => {
               btn.innerText = "पंजीकरण पूरा करें";
               const updatedData = { ...existing, ...updatePayload, id: docId };
               setLoggedInWorker(updatedData);
-              alert("✅ आपकी मिस्त्री प्रोफ़ाइल अपडेट और सुरक्षित लॉक कर दी गई है!");
-            });
+              alert("✅ आपकी मिस्त्री प्रोफ़ाइल पूरी हो गई है। अब केवल प्रोफ़ाइल दिखाई जाएगी।");
+            }).catch(err => {
+              btn.innerText = "पंजीकरण पूरा करें";
+              alert("त्रुटि: " + err.message);
+            })
           } else {
             const proId = generateWorkerId();
             const data = {
@@ -1923,18 +1938,33 @@
               liveStatus: "available",
               postsCount: 0,
               allowJobPosting: false,
+              profileComplete: false,
               deviceFingerprint: getDeviceFingerprint(),
               rating: 5.0,
               createdAt: firebase.firestore.FieldValue.serverTimestamp()
             };
+            data.profileComplete = !!(
+              data.name &&
+              data.private_phone &&
+              data.state &&
+              data.district &&
+              data.block &&
+              Array.isArray(data.skills) && data.skills.length > 0 &&
+              data.experience !== undefined && data.experience !== null &&
+              data.photo &&
+              Array.isArray(data.workPhotos) && data.workPhotos.length > 0
+            );
 
             db.collection("workers").add(data).then(docRef => {
               btn.innerText = "पंजीकरण पूरा करें";
               data.id = docRef.id;
               setLoggedInWorker(data);
               localStorage.setItem("mb_device_locked_role", "worker");
-              alert(`बधाई हो! आपकी मिस्त्री प्रोफ़ाइल तुरंत लाइव हो गई है。\nमिस्त्री ID: ${proId}`);
-            });
+              alert(`बधाई हो! आपकी मिस्त्री प्रोफ़ाइल पूरी हो गई है।\nमिस्त्री ID: ${proId}`);
+            }).catch(err => {
+              btn.innerText = "पंजीकरण पूरा करें";
+              alert("त्रुटि: " + err.message);
+            })
           }
         }).catch(err => {
           btn.innerText = "पंजीकरण पूरा करें";
@@ -1974,6 +2004,20 @@
       localStorage.setItem("mb_worker_is_contractor", isVipActive ? "true" : "false");
       localStorage.setItem("mb_worker_posts_count", (wData.postsCount || 0).toString());
       localStorage.setItem("mb_post_permission_approved", (wData.allowJobPosting || isVipActive) ? "true" : "false");
+      // मुख्य प्रोफ़ाइल पूरी होने पर फॉर्म लॉक रहेगा।
+      // ID/Aadhaar वैकल्पिक है; Admin Verification अलग है।
+      const profileComplete = !!(
+        wData.name &&
+        wData.private_phone &&
+        wData.state &&
+        wData.district &&
+        wData.block &&
+        Array.isArray(wData.skills) && wData.skills.length > 0 &&
+        wData.experience !== undefined && wData.experience !== null &&
+        wData.photo &&
+        Array.isArray(wData.workPhotos) && wData.workPhotos.length > 0
+      );
+      localStorage.setItem("mb_worker_profile_complete", profileComplete ? "true" : "false");
       localStorage.setItem("mb_device_locked_role", "worker");
       
       applyFieldByFieldLock(wData);
@@ -2013,26 +2057,32 @@
         document.getElementById("pw-id-number").readOnly = true;
         document.getElementById("pw-id-number").value = w.idCardNumber || "";
         document.getElementById("done-pw-idcard").classList.remove("hidden");
+      } else {
+        // पहचान पत्र (ID/Aadhaar) वैकल्पिक है।
       }
 
-      // आधार/ID optional है। प्रोफ़ाइल completion का फैसला केवल जरूरी प्रोफ़ाइल fields से होगा।
-      const remainingBtn = document.getElementById("worker-remaining-details-btn");
       const profileComplete = missingFields.length === 0;
       localStorage.setItem("mb_worker_profile_complete", profileComplete ? "true" : "false");
 
       if (profileComplete) {
         alertBox.classList.add("hidden");
-        if (remainingBtn) remainingBtn.classList.add("hidden");
+        document.getElementById("worker-form-container")?.classList.add("hidden");
+        document.getElementById("worker-profile-view")?.classList.remove("hidden");
+        document.getElementById("btn-worker-complete-profile")?.classList.add("hidden");
       } else {
         alertBox.classList.remove("hidden");
         noteTxt.innerText = `अधूरी जानकारी: ${missingFields.join(', ')} भरें ताकि आपका खाता 100% पूरा हो सके।`;
-        if (remainingBtn) remainingBtn.classList.remove("hidden");
+        document.getElementById("btn-worker-complete-profile")?.classList.remove("hidden");
       }
     }
 
     function unlockWorkerFormForEdit() {
-      // पूरी प्रोफ़ाइल के बाद कोई edit/remaining-details form नहीं खोलना है।
-      if (localStorage.getItem("mb_worker_profile_complete") === "true") return;
+      if (localStorage.getItem("mb_worker_profile_complete") === "true") {
+        document.getElementById("worker-form-container")?.classList.add("hidden");
+        document.getElementById("worker-profile-view")?.classList.remove("hidden");
+        document.getElementById("btn-worker-complete-profile")?.classList.add("hidden");
+        return;
+      }
       document.getElementById("worker-profile-view").classList.add("hidden");
       document.getElementById("worker-form-container").classList.remove("hidden");
     }
@@ -2045,6 +2095,9 @@
       if (workerName) {
         formBox.classList.add("hidden");
         profileBox.classList.remove("hidden");
+        const isComplete = localStorage.getItem("mb_worker_profile_complete") === "true";
+        document.getElementById("btn-worker-complete-profile")?.classList.toggle("hidden", isComplete);
+        document.getElementById("worker-profile-status-alert")?.classList.toggle("hidden", isComplete);
 
         document.getElementById("my-prof-name").innerText = workerName;
         document.getElementById("my-prof-pro-id").innerText = "ID: " + (localStorage.getItem("mb_worker_pro_id") || "#MB-PRO-000000");
@@ -3709,8 +3762,13 @@
     });
     // [पॉइंट 2 और 9] छूटी हुई जानकारी भरने के लिए सही फॉर्म खोलने का लॉजिक
   function openRemainingDetailsForm() {
-    // पूरी प्रोफ़ाइल होने पर सिर्फ प्रोफ़ाइल/डैशबोर्ड दिखे; कोई फॉर्म न खुले।
-    if (localStorage.getItem("mb_worker_profile_complete") === "true") return;
+    if (localStorage.getItem("mb_worker_profile_complete") === "true") {
+      document.getElementById("worker-form-container")?.classList.add("hidden");
+      document.getElementById("worker-profile-view")?.classList.remove("hidden");
+      document.getElementById("btn-worker-complete-profile")?.classList.add("hidden");
+      return;
+    }
+
     // यूज़र का रोल पहचानें (डिफ़ॉल्ट मिस्त्री/वर्कर)
     const userRole = localStorage.getItem('current_user_role') || 'worker';
     
