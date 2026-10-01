@@ -3936,5 +3936,122 @@
     }
     }
   </script>
+
+<script id="mb-customer-signup-complete">
+(function () {
+  /* Customer signup/profile flow:
+     one phone = one customer profile;
+     signup fields are saved once;
+     Aadhaar is optional and profile-only;
+     post forms reuse name/phone/selfie.
+  */
+  window.MB_CUSTOMER_SIGNUP = {
+    onePhoneOneProfile: true,
+    aadhaarOptional: true,
+    aadhaarProfileOnly: true,
+    postReuses: ["name", "phone", "selfie"]
+  };
+
+  function readProfile() {
+    var keys = ["mb_customer_profile", "customerProfile", "mb_customer"];
+    for (var i = 0; i < keys.length; i++) {
+      try {
+        var v = localStorage.getItem(keys[i]);
+        if (v) {
+          var p = JSON.parse(v);
+          if (p && typeof p === "object") return p;
+        }
+      } catch (e) {}
+    }
+    return null;
+  }
+
+  function saveProfile(p) {
+    try { localStorage.setItem("mb_customer_profile", JSON.stringify(p)); } catch (e) {}
+  }
+
+  function customerProfileComplete(p) {
+    return !!(p && p.phone && p.name && p.selfie &&
+      p.village && p.state && p.city && p.district && p.address);
+  }
+
+  window.MB_customerSignupSubmit = function (data) {
+    data = data || {};
+    var old = readProfile();
+
+    if (old && old.phone && data.phone &&
+        String(old.phone).replace(/\D/g, "") === String(data.phone).replace(/\D/g, "")) {
+      return {ok:false, code:"PHONE_ALREADY_REGISTERED",
+              message:"इस मोबाइल नंबर से Customer Profile पहले से बना हुआ है।"};
+    }
+
+    var p = {
+      phone: data.phone || "",
+      name: data.name || "",
+      selfie: data.selfie || data.photo || "",
+      village: data.village || "",
+      state: data.state || "",
+      city: data.city || "",
+      district: data.district || "",
+      address: data.address || "",
+      gps: data.gps || data.location || null,
+      aadhaarFront: data.aadhaarFront || "",
+      aadhaarBack: data.aadhaarBack || "",
+      createdAt: new Date().toISOString()
+    };
+
+    if (!customerProfileComplete(p)) {
+      return {ok:false, code:"PROFILE_INCOMPLETE",
+              message:"कृपया Customer Profile की जरूरी जानकारी पूरी करें।"};
+    }
+
+    saveProfile(p);
+    return {ok:true, profile:p};
+  };
+
+  window.MB_getCustomerPostProfile = function () {
+    var p = readProfile();
+    if (!p) return null;
+    return {name:p.name || "", phone:p.phone || "", selfie:p.selfie || ""};
+  };
+
+  window.MB_prepareCustomerPost = function (form) {
+    if (!form) return false;
+    var p = window.MB_getCustomerPostProfile();
+    if (!p) return false;
+
+    var n = form.querySelector('[name="name"],[name="customerName"],#post-name,#customer-name');
+    var ph = form.querySelector('[name="phone"],[name="mobile"],[name="customerPhone"],#post-phone,#customer-phone');
+
+    if (n) { n.value = p.name; n.readOnly = true; n.dataset.profileValue = "true"; }
+    if (ph) { ph.value = p.phone; ph.readOnly = true; ph.dataset.profileValue = "true"; }
+
+    form.querySelectorAll(
+      '[name*="aadhaar" i],[id*="aadhaar" i],[name*="aadhar" i],[id*="aadhar" i]'
+    ).forEach(function(el) {
+      var wrap = el.closest(".form-group,.field,.input-group,label");
+      if (wrap) wrap.hidden = true;
+      el.hidden = true;
+      el.disabled = true;
+    });
+    return true;
+  };
+
+  window.MB_customerMustLoginForPost = function () {
+    var p = readProfile();
+    return !!(p && customerProfileComplete(p));
+  };
+
+  document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll("form").forEach(function(form) {
+      var s = ((form.id || "") + " " + (form.className || "")).toLowerCase();
+      if (s.indexOf("post") !== -1 || s.indexOf("job") !== -1) {
+        window.MB_prepareCustomerPost(form);
+      }
+    });
+  });
+})();
+</script>
+
 </body>
   </html>
