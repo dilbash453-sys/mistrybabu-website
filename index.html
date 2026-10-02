@@ -421,10 +421,10 @@
           </div>
           <div class="bg-emerald-50 border border-emerald-200 p-3 rounded-xl space-y-2">
             <div class="flex items-center justify-between">
-              <span class="text-[10px] font-bold text-slate-700">📍 GPS / Location (Customer Form — पहले लेने की पूरी कोशिश होगी)</span>
+              <span class="text-[10px] font-bold text-slate-700">📍 GPS / Location (ज़रूरी कोशिश)</span>
               <button type="button" onclick="MB_captureCustomerGPS()" class="bg-emerald-600 text-white text-[10px] font-bold px-2.5 py-1.5 rounded-lg">GPS लें</button>
             </div>
-            <p id="mb-customer-gps-status" class="text-[9px] text-slate-500">GPS की पूरी कोशिश होगी। GPS न मिले तो भी Customer Profile आगे बढ़ सकती है।</p>
+            <p id="mb-customer-gps-status" class="text-[9px] text-slate-500">GPS अभी सेव नहीं है।</p>
             <input type="hidden" id="mb-customer-lat">
             <input type="hidden" id="mb-customer-lng">
           </div>
@@ -483,7 +483,7 @@
         <div id="worker-guide-content" class="hidden mt-2 pt-2 border-t border-amber-200 text-[11px] text-amber-900 space-y-1.5">
           <p>• <strong>काम कैसे पाएं:</strong> 'काम देखें' मेनू में जाएँ, काम चुनें और वॉयस नोट 🎙️ या बोलकर रेट भेजें।</p>
           <p>• <strong>लाइव स्टेटस:</strong> खाली होने पर 🟢 'उपलब्ध' रखें। कहीं काम चल रहा हो तो 🔴 'व्यस्त' सेट करें।</p>
-          <p>• <strong>Aadhaar व फ़ोटो:</strong> काम की 3 तस्वीरें और Aadhaar Front/Back जोड़कर 🛡️ 'सत्यापित पहचान' बैज पाएं।</p>
+          <p>• <strong>पहचान व फ़ोटो:</strong> काम की 3 तस्वीरें और पहचान पत्र जोड़कर 🛡️ 'सत्यापित पहचान' बैज पाएं।</p>
         </div>
       </div>
 
@@ -522,7 +522,7 @@
           <!-- [पॉइंट 1] वैकल्पिक पहचान पत्र (Front & Back) - मिस्त्री फॉर्म के लिए -->
   <div class="bg-blue-50/70 p-3 rounded-xl border border-blue-200 space-y-2 my-2">
     <label class="block text-[11px] font-bold text-blue-900 mb-1">
-      🛡️ Aadhaar (Front & Back) - वैकल्पिक (सत्यापन टैग हेतु)
+      🛡️ पहचान पत्र (Front & Back) - वैकल्पिक (सत्यापन टैग हेतु)
     </label>
     <div class="grid grid-cols-2 gap-2">
       <div>
@@ -844,42 +844,26 @@
         <div class="bg-white rounded-2xl w-full max-w-lg max-h-[92vh] overflow-hidden shadow-2xl">
           <div class="bg-slate-900 text-white p-3 flex items-center justify-between">
             <div>
-              <div id="mb-admin-aadhaar-title" class="text-xs font-black">Verification फोटो</div>
+              <div id="mb-admin-aadhaar-title" class="text-xs font-black">Aadhaar फोटो</div>
               <div class="text-[9px] text-slate-400">केवल अधिकृत Admin verification के लिए</div>
             </div>
             <button type="button" onclick="closeCustomerAadhaarViewer()" class="text-white text-lg px-2">✕</button>
           </div>
           <div class="p-3 bg-slate-100 max-h-[78vh] overflow-auto flex items-center justify-center">
-            <img id="mb-admin-aadhaar-image" src="" alt="Admin verification photo" class="max-w-full max-h-[72vh] object-contain rounded-lg border border-slate-300 bg-white">
-          </div>
-        </div>
-      </div>
-
-      <!-- केवल Admin Panel: Mistri Aadhaar Front/Back Photo Viewer -->
-      <div id="mb-admin-worker-id-viewer" class="fixed inset-0 bg-slate-900/95 z-[80] hidden items-center justify-center p-3" onclick="if(event.target===this) closeAdminWorkerIdViewer()">
-        <div class="bg-white rounded-2xl w-full max-w-lg max-h-[92vh] overflow-hidden shadow-2xl">
-          <div class="bg-slate-900 text-white p-3 flex items-center justify-between">
-            <div>
-              <div id="mb-admin-worker-id-title" class="text-xs font-black">Mistri Aadhaar Verification Photo</div>
-              <div class="text-[9px] text-slate-400">केवल अधिकृत Admin verification के लिए</div>
-            </div>
-            <button type="button" onclick="closeAdminWorkerIdViewer()" class="text-white text-lg px-2">✕</button>
-          </div>
-          <div class="p-3 bg-slate-100 max-h-[78vh] overflow-auto flex items-center justify-center">
-            <img id="mb-admin-worker-id-image" src="" alt="Mistri Aadhaar verification photo" class="max-w-full max-h-[72vh] object-contain rounded-lg border border-slate-300 bg-white">
+            <img id="mb-admin-aadhaar-image" src="" alt="Aadhaar verification photo" class="max-w-full max-h-[72vh] object-contain rounded-lg border border-slate-300 bg-white">
           </div>
         </div>
       </div>
 
       <div id="admin-main-view" class="p-3.5 space-y-3 overflow-y-auto flex-1 hidden text-xs">
        <div class="bg-white p-4 rounded-xl shadow-md border border-emerald-200 mb-3">
-    <h3 class="text-sm font-bold text-slate-800 mb-2">👤 Customer Aadhaar Verification</h3>
-    <p class="text-[10px] text-slate-500 mb-2">Customer द्वारा दिए गए Aadhaar Front/Back फोटो यहीं खोलकर देखें और सही होने पर Verified Customer Tag दें। फोटो Public नहीं होगी।</p>
-    <button onclick="loadCustomerAadhaarVerifications()" class="w-full bg-emerald-700 text-white text-xs font-bold py-2 rounded-lg mb-3">🔄 Customer Verification List लोड करें</button>
-    <div id="admin-customer-aadhaar-list" class="space-y-2">
-      <p class="text-xs text-slate-500">लिस्ट देखने के लिए ऊपर दिए गए बटन पर क्लिक करें।</p>
-    </div>
-  </div>
+     <h3 class="text-sm font-bold text-slate-800 mb-2">🛡️ Aadhaar Verification — सभी Pending</h3>
+     <p class="text-[10px] text-slate-500 mb-2">Customer, Mistri, VIP ठेकेदार और Small ठेकेदार — जिनके रिकॉर्ड में Aadhaar Front/Back दिया गया है, सभी की Pending Verification एक ही जगह दिखेगी। फोटो केवल Admin देख सकता है।</p>
+     <button onclick="loadUnifiedAadhaarVerifications()" class="w-full bg-emerald-700 text-white text-xs font-bold py-2 rounded-lg mb-3">🔄 Pending Verification लोड करें</button>
+     <div id="admin-unified-aadhaar-list" class="space-y-2">
+       <p class="text-xs text-slate-500">Pending Verification देखने के लिए ऊपर दिए गए बटन पर क्लिक करें।</p>
+     </div>
+   </div>
   <div class="flex items-center justify-between bg-slate-100 p-2 rounded-xl">
           <span class="text-[10px] text-slate-600">लॉगिन ऑपरेटर: <strong id="lbl-active-operator" class="text-slate-900">dilbas</strong></span>
           <button onclick="adminLogout()" class="text-[9px] text-rose-600 font-bold">लॉगआउट</button>
@@ -1055,7 +1039,20 @@
           </div>
         </div>
 
-        <div id="adm-job-specific-fields" class="space-y-3 hidden">
+        <div id="adm-worker-aadhaar-fields" class="bg-blue-50/70 border border-blue-200 rounded-xl p-3 space-y-2">
+           <div class="flex items-center justify-between">
+             <span class="font-bold text-blue-900">🪪 Aadhaar Card — मिस्त्री सत्यापन</span>
+             <span id="adm-worker-aadhaar-status" class="text-[9px] bg-amber-100 text-amber-800 font-bold px-2 py-1 rounded-full">Pending</span>
+           </div>
+           <p class="text-[9px] text-slate-500">Front और Back फोटो Admin यहीं खोलकर देख सकता है और Verified Tag दे/हटा सकता है।</p>
+           <div class="grid grid-cols-2 gap-2">
+             <button type="button" id="adm-worker-aadhaar-front-btn" onclick="openAdminAadhaarPhoto('edit_worker_front','Aadhaar Front')" class="bg-blue-600 text-white px-2 py-2 rounded-lg text-[10px] font-bold">👁️ Aadhaar Front देखें</button>
+             <button type="button" id="adm-worker-aadhaar-back-btn" onclick="openAdminAadhaarPhoto('edit_worker_back','Aadhaar Back')" class="bg-blue-700 text-white px-2 py-2 rounded-lg text-[10px] font-bold">👁️ Aadhaar Back देखें</button>
+           </div>
+           <button type="button" id="adm-worker-aadhaar-verify-btn" class="w-full bg-emerald-600 text-white py-2 rounded-lg text-[10px] font-black">✅ Aadhaar सही है — Verified Tag दें</button>
+         </div>
+
+         <div id="adm-job-specific-fields" class="space-y-3 hidden">
           <div>
             <label class="block font-bold text-slate-700 mb-0.5">काम का विवरण</label>
             <textarea id="adm-edit-desc" rows="2" class="w-full rounded-lg border border-slate-300 p-2 text-xs"></textarea>
@@ -2636,6 +2633,8 @@
         snap.forEach(doc => {
           const w = doc.data();
           const docId = doc.id;
+          mbAdminAadhaarPhotos["worker_"+docId+"_front"] = w.idCardPhoto || "";
+          mbAdminAadhaarPhotos["worker_"+docId+"_back"] = w.idCardBackPhoto || "";
           box.innerHTML += `
             <div class="bg-white p-2.5 rounded-xl border border-slate-200 shadow-2xs space-y-1.5">
               <div class="flex justify-between items-start">
@@ -2646,21 +2645,20 @@
                 </div>
                 <div class="flex flex-col items-end gap-1">
                   <span class="text-[9px] font-bold px-1.5 py-0.5 rounded ${w.isBlocked ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'}">${w.isBlocked ? 'ब्लॉक' : 'सक्रिय'}</span>
-                  ${w.isIdVerified ? '<span class="text-[8px] bg-blue-100 text-blue-800 font-bold px-1 rounded">🛡️ Aadhaar OK</span>' : ''}
+                  ${w.isIdVerified ? '<span class="text-[8px] bg-blue-100 text-blue-800 font-bold px-1 rounded">🛡️ ID OK</span>' : ''}
                   ${w.isContractorVIP ? '<span class="text-[8px] bg-amber-400 text-slate-900 font-black px-1 rounded">👑 VIP</span>' : ''}
                 </div>
               </div>
-
-              ${(w.idCardPhoto || w.idCardBackPhoto) ? `
-                <div class="pt-1 border-t border-slate-100 space-y-1.5">
-                  <div class="text-[10px] font-bold text-slate-700">🪪 Aadhaar Front / Back — Admin Verification</div>
-                  <div class="flex flex-wrap items-center gap-2">
-                    ${w.idCardPhoto ? `<button type="button" onclick="adminOpenWorkerIdPhoto('${docId}','front')" class="text-[10px] bg-blue-600 text-white px-2 py-1 rounded font-bold">👁️ Front फोटो देखें</button>` : ''}
-                    ${w.idCardBackPhoto ? `<button type="button" onclick="adminOpenWorkerIdPhoto('${docId}','back')" class="text-[10px] bg-blue-700 text-white px-2 py-1 rounded font-bold">👁️ Back फोटो देखें</button>` : ''}
-                    <button type="button" onclick="adminToggleVerifyId('${docId}', ${!w.isIdVerified})" class="text-[9px] bg-blue-600 text-white px-2 py-1 rounded font-bold">${w.isIdVerified ? '❌ सत्यापन टैग हटाएं' : '🛡️ सत्यापन टैग दें'}</button>
-                  </div>
-                </div>
-              ` : ''}
+               ${(w.idCardPhoto || w.idCardBackPhoto) ? `
+                 <div class="pt-1 space-y-1.5">
+                   <div class="text-[10px] font-bold text-slate-700">🪪 Aadhaar Card</div>
+                   <div class="grid grid-cols-2 gap-2">
+                     <button type="button" onclick="adminStoreWorkerAadhaar('${docId}');openAdminAadhaarPhoto('worker_${docId}_front','Aadhaar Front')" class="text-[10px] bg-blue-600 text-white px-2 py-1.5 rounded-lg font-bold">👁️ Front देखें</button>
+                     <button type="button" onclick="adminStoreWorkerAadhaar('${docId}');openAdminAadhaarPhoto('worker_${docId}_back','Aadhaar Back')" class="text-[10px] bg-blue-700 text-white px-2 py-1.5 rounded-lg font-bold">👁️ Back देखें</button>
+                   </div>
+                   <button onclick="adminToggleVerifyId('${docId}', ${!w.isIdVerified})" class="w-full text-[9px] bg-blue-600 text-white px-2 py-1.5 rounded-lg font-bold">${w.isIdVerified ? '❌ Verified Tag हटाएं' : '🛡️ Verified Tag दें'}</button>
+                 </div>
+               ` : ''}
 
               <div class="pt-1 flex gap-1.5 border-t border-slate-100">
                 <button onclick="adminDirectEditWorker('${docId}')" class="flex-1 bg-slate-900 text-amber-400 py-1 rounded text-[10px] font-bold">✏️ पूरा प्रोफ़ाइल सुधारें</button>
@@ -2673,43 +2671,12 @@
       });
     }
 
-    async function adminOpenWorkerIdPhoto(docId, side) {
-      try {
-        const snap = await db.collection("workers").doc(docId).get();
-        if (!snap.exists) return alert("मिस्त्री का रिकॉर्ड नहीं मिला।");
-        const w = snap.data() || {};
-        const src = side === "back" ? (w.idCardBackPhoto || "") : (w.idCardPhoto || "");
-        if (!src) return alert(side === "back" ? "Aadhaar Back फोटो उपलब्ध नहीं है।" : "Aadhaar Front फोटो उपलब्ध नहीं है।");
-        const viewer=document.getElementById("mb-admin-worker-id-viewer");
-        const img=document.getElementById("mb-admin-worker-id-image");
-        const title=document.getElementById("mb-admin-worker-id-title");
-        if(!viewer || !img) return alert("Admin फोटो viewer उपलब्ध नहीं है।");
-        if(title) title.innerText=(side === "back" ? "Aadhaar Back" : "Aadhaar Front") + " — " + (w.name || "Mistri");
-        img.onerror=function(){
-          this.onerror=null;
-          alert("फोटो लोड नहीं हो सकी। मिस्त्री के रिकॉर्ड में Aadhaar फोटो दोबारा जाँचें।");
-        };
-        img.src=src;
-        viewer.classList.remove("hidden");
-        viewer.classList.add("flex");
-      } catch (err) {
-        alert("फोटो नहीं खुली: " + err.message);
-      }
-    }
-
-    function closeAdminWorkerIdViewer(){
-      const viewer=document.getElementById("mb-admin-worker-id-viewer");
-      const img=document.getElementById("mb-admin-worker-id-image");
-      if(img){img.onerror=null;img.src="";}
-      if(viewer){viewer.classList.add("hidden");viewer.classList.remove("flex");}
-    }
-
     function adminToggleVerifyId(docId, status) {
       db.collection("workers").doc(docId).update({
         isIdVerified: status,
         handledBy: currentOperator
       }).then(() => {
-        alert(status ? "✅ मिस्त्री का Aadhaar सत्यापन करके Verified Tag दे दिया गया!" : "Aadhaar सत्यापन टैग हटा दिया गया।");
+        alert(status ? "✅ मिस्त्री का Aadhaar Verified Tag दे दिया गया!" : "Aadhaar Verified Tag हटा दिया गया।");
         loadAdminWorkersList();
       });
     }
@@ -2741,6 +2708,23 @@
       document.getElementById("adm-edit-exp").value = w.experience || 0;
       document.getElementById("adm-edit-preview-img").src = w.photo || "logo.png";
       document.getElementById("adm-edit-new-photo").value = "";
+
+       mbAdminAadhaarPhotos["edit_worker_front"] = w.idCardPhoto || "";
+       mbAdminAadhaarPhotos["edit_worker_back"] = w.idCardBackPhoto || "";
+       const workerAadhaarStatus = document.getElementById("adm-worker-aadhaar-status");
+       const workerAadhaarFrontBtn = document.getElementById("adm-worker-aadhaar-front-btn");
+       const workerAadhaarBackBtn = document.getElementById("adm-worker-aadhaar-back-btn");
+       const workerAadhaarVerifyBtn = document.getElementById("adm-worker-aadhaar-verify-btn");
+       if(workerAadhaarStatus){
+         workerAadhaarStatus.innerText = w.isIdVerified ? "✓ Verified" : "⏳ Pending";
+         workerAadhaarStatus.className = w.isIdVerified ? "text-[9px] bg-emerald-100 text-emerald-700 font-bold px-2 py-1 rounded-full" : "text-[9px] bg-amber-100 text-amber-800 font-bold px-2 py-1 rounded-full";
+       }
+       if(workerAadhaarFrontBtn) workerAadhaarFrontBtn.disabled = !w.idCardPhoto;
+       if(workerAadhaarBackBtn) workerAadhaarBackBtn.disabled = !w.idCardBackPhoto;
+       if(workerAadhaarVerifyBtn){
+         workerAadhaarVerifyBtn.innerText = w.isIdVerified ? "❌ Aadhaar Verified Tag हटाएं" : "✅ Aadhaar सही है — Verified Tag दें";
+         workerAadhaarVerifyBtn.onclick = function(){ adminToggleVerifyId(docId, !w.isIdVerified); };
+       }
 
       const skillsContainer = document.getElementById("adm-edit-skills-container");
       skillsContainer.innerHTML = "";
@@ -3927,21 +3911,18 @@
       }
     }
 
-    // ================= CUSTOMER AADHAAR ADMIN VERIFICATION =================
-    // Aadhaar फोटो customer_profiles में Data URL के रूप में भी हो सकती है।
-    // इसलिए direct target="_blank" लिंक के बजाय Admin के अंदर सुरक्षित image viewer में खोलते हैं।
+    // ================= UNIFIED AADHAAR ADMIN VERIFICATION =================
     const mbAdminAadhaarPhotos = {};
     let mbAdminAadhaarPhotoSeq = 0;
 
-    window.openCustomerAadhaarPhoto = function(token, title){
+    window.openAdminAadhaarPhoto = function(token, title){
       const src = mbAdminAadhaarPhotos[token];
       const img = document.getElementById("mb-admin-aadhaar-image");
       const titleEl = document.getElementById("mb-admin-aadhaar-title");
       const viewer = document.getElementById("mb-admin-aadhaar-viewer");
-      if(!src || !img || !viewer) return alert("फोटो उपलब्ध नहीं है।");
-      if(titleEl) titleEl.innerText=title||"Aadhaar फोटो";
-      img.onerror=function(){ alert("फोटो लोड नहीं हो सकी। रिकॉर्ड में फोटो दोबारा जाँचें।"); this.onerror=null; };
-      img.src=src;
+      if(!src || !img || !viewer) return alert("Aadhaar फोटो उपलब्ध नहीं है।");
+      if(titleEl) titleEl.innerText = title || "Aadhaar फोटो";
+      img.src = src;
       viewer.classList.remove("hidden");
       viewer.classList.add("flex");
     };
@@ -3953,111 +3934,89 @@
       if(viewer){viewer.classList.add("hidden");viewer.classList.remove("flex");}
     };
 
-    window.loadCustomerAadhaarVerifications = async function(){
-      const container=document.getElementById("admin-customer-aadhaar-list");
-      if(!container)return;
-      container.innerHTML="<p class='text-xs text-slate-500'>Customer Aadhaar list लोड हो रही है...</p>";
+    window.adminStoreWorkerAadhaar = async function(docId){
       try{
-        const snapshot=await db.collection("customer_profiles").where("aadhaarProvided","==",true).get();
+        const snap=await db.collection("workers").doc(docId).get();
+        if(!snap.exists)return;
+        const w=snap.data()||{};
+        mbAdminAadhaarPhotos["worker_"+docId+"_front"]=w.idCardPhoto||"";
+        mbAdminAadhaarPhotos["worker_"+docId+"_back"]=w.idCardBackPhoto||"";
+      }catch(e){ console.warn("Worker Aadhaar load:",e); }
+    };
+
+    window.loadUnifiedAadhaarVerifications = async function(){
+      const container=document.getElementById("admin-unified-aadhaar-list");
+      if(!container)return;
+      container.innerHTML="<p class='text-xs text-slate-500'>सभी Pending Aadhaar Verification लोड हो रहे हैं...</p>";
+      try{
+        const [customers,workers,contractors]=await Promise.all([
+          db.collection("customer_profiles").get(),
+          db.collection("workers").get(),
+          db.collection("contractor_applications").get()
+        ]);
+        const list=[];
+        customers.forEach(doc=>{
+          const d=doc.data()||{}, f=d.aadhaarFront||"", b=d.aadhaarBack||"";
+          if((f||b) && d.aadhaarVerified!==true){
+            const ft="uaf_"+(++mbAdminAadhaarPhotoSeq), bt="uab_"+(++mbAdminAadhaarPhotoSeq);
+            mbAdminAadhaarPhotos[ft]=f; mbAdminAadhaarPhotos[bt]=b;
+            list.push({source:"customer",docId:doc.id,name:d.name||"Customer",role:"Customer",front:f,back:b,frontToken:ft,backToken:bt});
+          }
+        });
+        workers.forEach(doc=>{
+          const d=doc.data()||{}, f=d.idCardPhoto||"", b=d.idCardBackPhoto||"";
+          if((f||b) && d.isIdVerified!==true){
+            const ft="uaf_"+(++mbAdminAadhaarPhotoSeq), bt="uab_"+(++mbAdminAadhaarPhotoSeq);
+            mbAdminAadhaarPhotos[ft]=f; mbAdminAadhaarPhotos[bt]=b;
+            list.push({source:"worker",docId:doc.id,name:d.name||"Mistri",role:"Mistri",front:f,back:b,frontToken:ft,backToken:bt});
+          }
+        });
+        contractors.forEach(doc=>{
+          const d=doc.data()||{}, f=d.aadhaarFront||d.aadhaarFrontPhoto||"", b=d.aadhaarBack||d.aadhaarBackPhoto||"";
+          if((f||b) && d.aadhaarVerified!==true){
+            const role=d.contractorTier==="vip"?"VIP ठेकेदार":"Small ठेकेदार";
+            const ft="uaf_"+(++mbAdminAadhaarPhotoSeq), bt="uab_"+(++mbAdminAadhaarPhotoSeq);
+            mbAdminAadhaarPhotos[ft]=f; mbAdminAadhaarPhotos[bt]=b;
+            list.push({source:"contractor",docId:doc.id,name:d.name||role,role,front:f,back:b,frontToken:ft,backToken:bt});
+          }
+        });
         container.innerHTML="";
-        let pending=0;
-        snapshot.forEach(doc=>{
-          const data=doc.data()||{};
-          if(data.aadhaarVerified===true) return;
-          pending++;
-          const docId=doc.id;
-          const front=data.aadhaarFront||"";
-          const back=data.aadhaarBack||"";
-          const frontToken="caf_"+(++mbAdminAadhaarPhotoSeq);
-          const backToken="cab_"+(++mbAdminAadhaarPhotoSeq);
-          mbAdminAadhaarPhotos[frontToken]=front;
-          mbAdminAadhaarPhotos[backToken]=back;
+        if(!list.length){container.innerHTML="<p class='text-xs text-slate-500'>कोई Pending Aadhaar Verification नहीं है।</p>";return;}
+        list.forEach(item=>{
+          const safeName=String(item.name||item.role).replace(/'/g,"\\'");
+          const safeId=String(item.docId||"").replace(/'/g,"\\'");
           const card=document.createElement("div");
           card.className="bg-white p-3 border border-slate-200 rounded-lg shadow-sm space-y-2";
           card.innerHTML=`
             <div class="flex justify-between items-start gap-2">
-              <div>
-                <p class="text-xs font-black text-slate-800">${data.name||"Customer"}</p>
-                <p class="text-[10px] text-slate-500">${docId||data.phone||""}</p>
-              </div>
+              <div><p class="text-xs font-black text-slate-800">${item.name||item.role}</p><p class="text-[9px] text-amber-700 font-bold">${item.role}</p><p class="text-[10px] text-slate-500">${item.docId||""}</p></div>
               <span class="text-[9px] bg-amber-100 text-amber-800 font-bold px-2 py-1 rounded-full">⏳ Pending</span>
             </div>
             <div class="grid grid-cols-2 gap-2">
-              <button type="button" ${front?"":"disabled"} onclick="openCustomerAadhaarPhoto('${frontToken}','Aadhaar Front — ${String(data.name||'Customer').replace(/'/g,"\'")}')" class="${front?'bg-blue-600':'bg-slate-300'} text-white px-2 py-2 rounded-lg text-[10px] font-bold">👁️ Front फोटो देखें</button>
-              <button type="button" ${back?"":"disabled"} onclick="openCustomerAadhaarPhoto('${backToken}','Aadhaar Back — ${String(data.name||'Customer').replace(/'/g,"\'")}')" class="${back?'bg-blue-700':'bg-slate-300'} text-white px-2 py-2 rounded-lg text-[10px] font-bold">👁️ Back फोटो देखें</button>
+              <button type="button" ${item.front?"":"disabled"} onclick="openAdminAadhaarPhoto('${item.frontToken}','Aadhaar Front — ${safeName}')" class="${item.front?'bg-blue-600':'bg-slate-300'} text-white px-2 py-2 rounded-lg text-[10px] font-bold">👁️ Front देखें</button>
+              <button type="button" ${item.back?"":"disabled"} onclick="openAdminAadhaarPhoto('${item.backToken}','Aadhaar Back — ${safeName}')" class="${item.back?'bg-blue-700':'bg-slate-300'} text-white px-2 py-2 rounded-lg text-[10px] font-bold">👁️ Back देखें</button>
             </div>
-            <button type="button" onclick="verifyCustomerAadhaar('${docId}')" class="w-full bg-emerald-600 text-white text-xs font-black py-2 rounded-lg">✅ Aadhaar सही है — Verified Customer Tag दें</button>
+            <button type="button" onclick="verifyUnifiedAadhaar('${item.source}','${safeId}')" class="w-full bg-emerald-600 text-white text-xs font-black py-2 rounded-lg">✅ Aadhaar सही है — Verified Tag दें</button>
           `;
           container.appendChild(card);
         });
-        if(!pending) container.innerHTML="<p class='text-xs text-slate-500'>कोई Pending Customer Aadhaar Verification नहीं है।</p>";
-      }catch(err){
-        container.innerHTML=`<p class='text-xs text-rose-600'>Customer Aadhaar list नहीं खुली: ${err.message}</p>`;
-      }
+      }catch(err){container.innerHTML=`<p class='text-xs text-rose-600'>Pending Aadhaar Verification नहीं खुली: ${String(err.message||err)}</p>`;}
     };
 
-    window.verifyCustomerAadhaar = async function(docId){
+    window.verifyUnifiedAadhaar = async function(source, docId){
       if(!docId)return;
-      if(!confirm("क्या Aadhaar Front/Back देखकर यह Customer सही पाया गया है? Verified Customer Tag देना है?"))return;
+      if(!confirm("क्या Aadhaar Front/Back देखकर यह प्रोफ़ाइल सही पाई गई है? Verified Tag देना है?"))return;
       try{
-        await db.collection("customer_profiles").doc(docId).update({
-          aadhaarVerified:true,
-          verifiedAt:firebase.firestore.FieldValue.serverTimestamp()
-        });
-        alert("✅ Customer Verified हो गया। Profile/Post पर ✓ Verified Customer Tag दिखेगा।");
-        loadCustomerAadhaarVerifications();
-      }catch(err){
-        alert("Verification नहीं हुआ: "+err.message);
-      }
+        let ref, updateData;
+        if(source==="customer"){ref=db.collection("customer_profiles").doc(docId);updateData={aadhaarVerified:true,verifiedAt:firebase.firestore.FieldValue.serverTimestamp()};}
+        else if(source==="worker"){ref=db.collection("workers").doc(docId);updateData={isIdVerified:true,verifiedAt:firebase.firestore.FieldValue.serverTimestamp(),handledBy:currentOperator};}
+        else{ref=db.collection("contractor_applications").doc(docId);updateData={aadhaarVerified:true,verifiedAt:firebase.firestore.FieldValue.serverTimestamp(),handledBy:currentOperator};}
+        await ref.update(updateData);
+        alert("✅ Verified Tag दे दिया गया।");
+        loadUnifiedAadhaarVerifications();
+        if(source==="worker") loadAdminWorkersList();
+      }catch(err){alert("Verification नहीं हुआ: "+err.message);}
     };
-
-    function loadAdminVerifications() {
-      const container = document.getElementById("admin-pending-list");
-      if (!container) return;
-      
-      container.innerHTML = "<p class='text-xs text-slate-500'>लोड हो रहा है...</p>";
-
-      db.collection("contractor_applications").where("status", "==", "Pending").get().then((snapshot) => {
-        container.innerHTML = "<h3 class='text-sm font-bold text-slate-800 mb-2'>पेंडिंग वेरिफिकेशन लिस्ट</h3>";
-        
-        if (snapshot.empty) {
-          container.innerHTML += "<p class='text-xs text-slate-500'>कोई नया वेरिफिकेशन नहीं है।</p>";
-          return;
-        }
-
-        snapshot.forEach((doc) => {
-          const data = doc.data();
-          const docId = doc.id;
-
-          const card = document.createElement("div");
-          card.className = "bg-white p-3 border rounded-lg shadow-sm space-y-2 mb-2";
-          card.innerHTML = `
-            <p class='text-xs font-bold text-slate-700'>आईडी: ${docId.substring(0, 8)}...</p>
-            <div class='flex gap-2'>
-              <a href="${data.frontPhotoUrl || '#'}" target="_blank" class='bg-blue-500 text-white px-2 py-1 rounded text-xs'>👁️ Front फोटो देखें</a>
-              <a href="${data.backPhotoUrl || '#'}" target="_blank" class='bg-blue-600 text-white px-2 py-1 rounded text-xs'>👁️ Back फोटो देखें</a>
-            </div>
-            <button onclick="approveAdminUser('${docId}')" class='w-full bg-green-600 text-white text-xs font-bold py-1.5 rounded mt-1'>
-              ✅ OK / सत्यापित करें
-            </button>
-          `;
-          container.appendChild(card);
-        });
-      });
-    }
-
-    function approveAdminUser(docId) {
-      db.collection("contractor_applications").doc(docId).update({
-        status: "Verified",
-        isEligible: true,
-        verifiedAt: firebase.firestore.FieldValue.serverTimestamp()
-      }).then(() => {
-        alert("✅ सफलतापूर्वक सत्यापित (Verify) कर दिया गया है!");
-        loadAdminVerifications();
-      }).catch((error) => {
-        alert("त्रुटि: " + error.message);
-      });
-    }
 
     // पेज लोड इनिशियलाइज़ेशन
     window.addEventListener('DOMContentLoaded', () => {
@@ -4291,38 +4250,28 @@
 
   window.MB_captureCustomerGPS=function(){
     var s=document.getElementById("mb-customer-gps-status");
-    var la=document.getElementById("mb-customer-lat"),lo=document.getElementById("mb-customer-lng");
     if(!navigator.geolocation){
-      if(s)s.innerText="GPS उपलब्ध नहीं है। कोई चिंता नहीं—GPS के बिना भी Customer Profile आगे बढ़ सकती है।";
-      return;
+      if(s)s.innerText="GPS उपलब्ध नहीं है। बिना GPS आगे बढ़ सकते हैं।";
+      return Promise.resolve(false);
     }
-    if(s)s.innerText="📍 GPS लेने की कोशिश 1/3... Location ON रखें और अनुमति दें।";
+    if(s)s.innerText="GPS लोकेशन ली जा रही है...";
+    return new Promise(function(resolve){
+      navigator.geolocation.getCurrentPosition(function(pos){
+        var la=document.getElementById("mb-customer-lat"),lo=document.getElementById("mb-customer-lng");
+        if(la)la.value=pos.coords.latitude;if(lo)lo.value=pos.coords.longitude;
+        if(s)s.innerText="✓ GPS सुरक्षित: "+pos.coords.latitude.toFixed(5)+", "+pos.coords.longitude.toFixed(5);
+        resolve(true);
+      },function(){
+        if(s)s.innerText="GPS नहीं मिला। बिना GPS भी आगे बढ़ सकते हैं。";
+        resolve(false);
+      },{enableHighAccuracy:true,timeout:8000,maximumAge:0});
+    });
+  };
 
-    var done=false,attempt=0;
-    function success(pos){
-      if(done)return;
-      done=true;
-      if(la)la.value=pos.coords.latitude;
-      if(lo)lo.value=pos.coords.longitude;
-      var acc=pos.coords.accuracy ? Math.round(pos.coords.accuracy) : "";
-      if(s)s.innerText="✓ GPS सुरक्षित: "+pos.coords.latitude.toFixed(5)+", "+pos.coords.longitude.toFixed(5)+(acc?" (लगभग "+acc+"m accuracy)":"");
-    }
-    function tryAgain(){
-      if(done)return;
-      attempt++;
-      if(attempt===1){
-        if(s)s.innerText="📍 GPS की दूसरी कोशिश... सामान्य Location से लोकेशन ली जा रही है।";
-        navigator.geolocation.getCurrentPosition(success,tryAgain,{enableHighAccuracy:false,timeout:12000,maximumAge:300000});
-      }else if(attempt===2){
-        if(s)s.innerText="📍 GPS की आखिरी कोशिश... उपलब्ध Location जाँची जा रही है।";
-        navigator.geolocation.getCurrentPosition(success,function(){
-          if(s)s.innerText="GPS नहीं मिला। कोई चिंता नहीं—GPS के बिना भी Customer Profile आगे बढ़ सकती है।";
-        },{enableHighAccuracy:false,timeout:8000,maximumAge:600000});
-      }else{
-        if(s)s.innerText="GPS नहीं मिला। कोई चिंता नहीं—GPS के बिना भी Customer Profile आगे बढ़ सकती है।";
-      }
-    }
-    navigator.geolocation.getCurrentPosition(success,tryAgain,{enableHighAccuracy:true,timeout:15000,maximumAge:0});
+  window.MB_tryCustomerGPS=async function(){
+    var la=document.getElementById("mb-customer-lat"),lo=document.getElementById("mb-customer-lng");
+    if(la?.value && lo?.value)return true;
+    try{return await window.MB_captureCustomerGPS();}catch(e){return false;}
   };
 
   window.MB_customerSignup=async function(e){
@@ -4341,6 +4290,7 @@
       return alert("Customer Profile की सभी जरूरी जानकारी भरें। Aadhaar वैकल्पिक है।");
 
     var btn=document.getElementById("mb-customer-save-btn");if(btn)btn.innerText="Profile सुरक्षित हो रही है...";
+     try{ await window.MB_tryCustomerGPS(); }catch(gpsErr){ console.warn("Customer GPS:",gpsErr); }
     var full="+91"+p10;
     try{
       var c=await db.collection("customer_profiles").doc(full).get();
