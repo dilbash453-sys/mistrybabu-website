@@ -4417,5 +4417,287 @@
 })();
 </script>
 
+
+<!-- ==================== MISTRYBABU 25-FEATURE PROFESSIONAL MARKETPLACE ==================== -->
+<style id="mb25-style">
+.mb25-wrap{max-width:760px;margin:0 auto;padding:12px}
+.mb25-card{background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:14px;box-shadow:0 4px 18px rgba(15,23,42,.05)}
+.mb25-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.mb25-cat{padding:11px;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;text-align:left;font-size:11px;font-weight:800}
+.mb25-cat small{display:block;color:#64748b;font-weight:600;margin-top:3px}
+.mb25-btn{border:0;border-radius:10px;padding:9px 12px;font-weight:800;font-size:11px;cursor:pointer}
+.mb25-primary{background:#f59e0b;color:#111827}.mb25-dark{background:#0f172a;color:#fbbf24}
+.mb25-green{background:#059669;color:white}.mb25-red{background:#fee2e2;color:#991b1b}
+.mb25-muted{color:#64748b;font-size:10px}.mb25-status{display:inline-block;padding:3px 7px;border-radius:999px;background:#f1f5f9;font-size:9px;font-weight:800}
+.mb25-form{display:grid;gap:9px}.mb25-form label{font-size:10px;font-weight:800;color:#334155}.mb25-form input,.mb25-form select,.mb25-form textarea{width:100%;border:1px solid #cbd5e1;border-radius:9px;padding:9px;font-size:11px;outline:none;background:#fff}.mb25-form textarea{min-height:70px}
+.mb25-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}.mb25-title{font-size:14px;font-weight:900;color:#0f172a}.mb25-sub{font-size:10px;color:#64748b;margin-top:3px}
+.mb25-step{display:flex;gap:8px;padding:8px 0;border-bottom:1px dashed #e2e8f0;font-size:10px}.mb25-step b{min-width:22px;height:22px;border-radius:50%;background:#fef3c7;display:grid;place-items:center;color:#92400e}
+.mb25-hidden{display:none!important}
+@media(max-width:520px){.mb25-grid{grid-template-columns:1fr}}
+</style>
+
+<section id="page-mb25" class="hidden mb25-wrap space-y-3">
+  <div class="mb25-card">
+    <div class="flex justify-between items-start gap-2">
+      <div><div class="mb25-title">🏗️ MistriBabu Professional Marketplace</div>
+      <div class="mb25-sub">काम • मिस्त्री • ठेकेदार • सामान • मशीन • Quote • Deal</div></div>
+      <span class="mb25-status">25 Features</span>
+    </div>
+    <div class="mb25-grid mt-3" id="mb25-category-grid"></div>
+  </div>
+
+  <div class="mb25-card">
+    <div class="mb25-title">📝 नया Lead / काम की जरूरत</div>
+    <div class="mb25-sub">Customer काम पोस्ट करेगा; संबंधित Mistri/Contractor को category और area के अनुसार lead मिलेगा।</div>
+    <form id="mb25-lead-form" class="mb25-form mt-3" onsubmit="MB25_createLead(event)">
+      <label>काम की श्रेणी
+        <select id="mb25-lead-category" required></select>
+      </label>
+      <label>काम का प्रकार<input id="mb25-lead-work" required placeholder="जैसे 2000 sq ft प्लास्टर"></label>
+      <label>Area / मात्रा<input id="mb25-lead-area" placeholder="जैसे 2000 sq ft, 3 कमरे"></label>
+      <label>राज्य
+        <select id="mb25-lead-state"><option>बिहार</option><option>उत्तर प्रदेश</option><option>दिल्ली</option><option>हरियाणा</option></select>
+      </label>
+      <label>जिला / शहर<input id="mb25-lead-location" required placeholder="जिला / शहर / गाँव"></label>
+      <label>Material कौन देगा?
+        <select id="mb25-lead-material"><option>ग्राहक</option><option>मिस्त्री/ठेकेदार</option><option>Quotation में तय होगा</option></select>
+      </label>
+      <label>काम कब चाहिए?
+        <select id="mb25-lead-urgency"><option>सामान्य</option><option>तुरंत</option><option>इस सप्ताह</option></select>
+      </label>
+      <label>पूरा विवरण<textarea id="mb25-lead-desc" placeholder="काम की पूरी जानकारी"></textarea></label>
+      <button class="mb25-btn mb25-primary" type="submit">काम / Lead पोस्ट करें</button>
+    </form>
+    <div class="mb25-muted mt-2">नियम: Customer की private phone/Aadhaar जानकारी public lead में नहीं दिखाई जाएगी।</div>
+  </div>
+
+  <div class="mb25-card">
+    <div class="flex justify-between items-center"><div><div class="mb25-title">💬 Quotes / Quotations</div><div class="mb25-sub">रेट + अनुमानित समय + संदेश</div></div><button class="mb25-btn mb25-dark" onclick="MB25_loadQuotes()">Refresh</button></div>
+    <div id="mb25-quotes-list" class="space-y-2 mt-3"><p class="mb25-muted">पहले कोई lead चुनें।</p></div>
+  </div>
+
+  <div class="mb25-card">
+    <div class="mb25-title">🤝 Deal Center</div>
+    <div class="mb25-sub">New → Quotation → Selected → Confirmed → Work Started → Completed → Review</div>
+    <div id="mb25-deals-list" class="space-y-2 mt-3"><p class="mb25-muted">आपके deals यहाँ दिखेंगे।</p></div>
+  </div>
+
+  <div class="mb25-card">
+    <div class="mb25-title">📊 Estimate Calculator</div>
+    <form class="mb25-form mt-3" onsubmit="MB25_estimate(event)">
+      <label>काम का प्रकार<input id="mb25-est-work" required placeholder="प्लास्टर / टाइल / पेंट"></label>
+      <label>Area / Quantity<input id="mb25-est-qty" type="number" min="0" step="0.01" required placeholder="2000"></label>
+      <label>Unit Rate (₹)<input id="mb25-est-rate" type="number" min="0" step="0.01" required placeholder="50"></label>
+      <label>मजदूरी (₹)<input id="mb25-est-labour" type="number" min="0" step="0.01" value="0"></label>
+      <label>Material (₹)<input id="mb25-est-material" type="number" min="0" step="0.01" value="0"></label>
+      <button class="mb25-btn mb25-primary" type="submit">Estimate निकालें</button>
+    </form>
+    <div id="mb25-est-result" class="hidden mt-3 p-3 bg-emerald-50 rounded-xl text-sm font-black"></div>
+    <p class="mb25-muted mt-2">Estimate केवल indicative है; actual site measurement और final quotation अलग हो सकते हैं।</p>
+  </div>
+
+  <div class="mb25-card">
+    <div class="mb25-title">🧱 Material Marketplace</div>
+    <div class="mb25-sub">दुकानदार सामान + कीमत + delivery area डालेंगे; Customer quotation/enquiry भेजेगा।</div>
+    <form class="mb25-form mt-3" onsubmit="MB25_saveMaterial(event)">
+      <label>सामान<select id="mb25-material-name"><option>सीमेंट</option><option>सरिया</option><option>ईंट</option><option>बालू</option><option>गिट्टी</option><option>पाइप</option><option>वायर</option><option>पेंट</option><option>टाइल</option><option>सैनिटरी सामान</option></select></label>
+      <label>दुकान / Seller<input id="mb25-material-shop" required></label>
+      <label>कीमत / Unit<input id="mb25-material-price" required placeholder="₹ / बोरी, क्विंटल, पीस आदि"></label>
+      <label>Delivery Area<input id="mb25-material-area" required></label>
+      <button class="mb25-btn mb25-primary" type="submit">सामान Listing जोड़ें</button>
+    </form>
+    <div id="mb25-material-list" class="space-y-2 mt-3"></div>
+  </div>
+
+  <div class="mb25-card">
+    <div class="mb25-title">🚜 Machine / Tool Rental</div>
+    <div class="mb25-sub">Owner → Machine → Availability → Rate → Enquiry → Booking → Completed</div>
+    <form class="mb25-form mt-3" onsubmit="MB25_saveRental(event)">
+      <label>मशीन<select id="mb25-rental-machine"><option>ट्रैक्टर</option><option>JCB</option><option>ट्रॉली</option><option>मिक्सर मशीन</option><option>कटर मशीन</option><option>ड्रिल मशीन</option><option>शटरिंग</option><option>सीढ़ी/स्कैफोल्डिंग</option></select></label>
+      <label>Owner<input id="mb25-rental-owner" required></label>
+      <label>Rate<input id="mb25-rental-rate" required placeholder="₹ प्रति घंटा/दिन"></label>
+      <label>Location<input id="mb25-rental-location" required></label>
+      <button class="mb25-btn mb25-primary" type="submit">Rental Listing जोड़ें</button>
+    </form>
+    <div id="mb25-rental-list" class="space-y-2 mt-3"></div>
+  </div>
+
+  <div class="mb25-card">
+    <div class="mb25-title">⭐ Verification + Portfolio + Membership</div>
+    <div class="mb25-grid mt-3">
+      <div class="p-3 bg-slate-50 rounded-xl"><b class="text-xs">🛡️ Badges</b><p class="mb25-muted mt-1">Mobile Verified • ID Verified • Profile Verified • Business Verified</p></div>
+      <div class="p-3 bg-slate-50 rounded-xl"><b class="text-xs">📸 Portfolio</b><p class="mb25-muted mt-1">पुराने काम की फोटो, काम का प्रकार और विवरण।</p></div>
+      <div class="p-3 bg-slate-50 rounded-xl"><b class="text-xs">💳 Membership</b><p class="mb25-muted mt-1">Free • Pro • Business • Contractor; benefits Admin नियंत्रित करेगा।</p></div>
+      <div class="p-3 bg-slate-50 rounded-xl"><b class="text-xs">💰 Paid Leads</b><p class="mb25-muted mt-1">Free users को सीमित leads; paid plan में अधिक eligibility।</p></div>
+    </div>
+  </div>
+
+  <div class="mb25-card">
+    <div class="mb25-title">📢 Advertisement + Shopkeeper Business</div>
+    <p class="mb25-sub">Local shop advertisement, offers, material enquiries और subscription। Public ad में private phone/Aadhaar नहीं दिखेगा।</p>
+    <div class="mb25-actions">
+      <button class="mb25-btn mb25-primary" onclick="MB25_demoNotice('Shopkeeper Dashboard')">🏪 Shopkeeper Dashboard</button>
+      <button class="mb25-btn mb25-dark" onclick="MB25_demoNotice('Local Advertisement')">📢 Advertisement</button>
+      <button class="mb25-btn mb25-dark" onclick="MB25_demoNotice('Material Delivery')">🚚 Material Delivery</button>
+    </div>
+  </div>
+
+  <div class="mb25-card">
+    <div class="mb25-title">📑 Digital Agreement</div>
+    <div class="mb25-sub">Deal Confirm होने पर काम, कीमत, start date, expected end date और material responsibility दर्ज होगी। दोनों पक्ष acceptance देंगे।</div>
+    <div id="mb25-agreement-box" class="mt-3 p-3 bg-slate-50 rounded-xl text-[10px]">कोई नया agreement नहीं।</div>
+  </div>
+
+  <div class="mb25-card">
+    <div class="mb25-title">⭐ Rating & Review / 🛡️ Complaint</div>
+    <div class="mb25-actions">
+      <button class="mb25-btn mb25-green" onclick="MB25_review()">काम पूरा होने के बाद Review दें</button>
+      <button class="mb25-btn mb25-red" onclick="MB25_complaint()">Complaint / Dispute खोलें</button>
+    </div>
+    <div class="mb25-muted mt-2">Review केवल Completed Deal के बाद; abusive/fake content Admin moderation के अधीन। Complaint: Pending → Reviewing → Resolved.</div>
+  </div>
+
+  <div class="mb25-card">
+    <div class="mb25-title">🔔 Notifications + Nearby Jobs + Area Marketplace</div>
+    <div class="mb25-step"><b>1</b><span>State → District → City → Village/Area के आधार पर local matching।</span></div>
+    <div class="mb25-step"><b>2</b><span>Matching Mistri/Contractor को नया lead notification।</span></div>
+    <div class="mb25-step"><b>3</b><span>Customer को quote मिलने पर notification।</span></div>
+    <div class="mb25-step"><b>4</b><span>Deal/status बदलने पर दोनों पक्षों को status notification।</span></div>
+  </div>
+
+  <div class="mb25-card">
+    <div class="mb25-title">🚨 Fake Account Protection</div>
+    <div class="mb25-step"><b>1</b><span>एक mobile number = एक account/profile rule।</span></div>
+    <div class="mb25-step"><b>2</b><span>OTP/phone verification और duplicate profile checks।</span></div>
+    <div class="mb25-step"><b>3</b><span>Suspicious activity पर Admin review / block।</span></div>
+    <div class="mb25-step"><b>4</b><span>Verified badge केवल relevant verification पूरा होने पर।</span></div>
+  </div>
+
+  <div class="mb25-card">
+    <div class="mb25-title">📊 MistriBabu Business Dashboard</div>
+    <div id="mb25-business-stats" class="mb25-grid mt-3"></div>
+    <p class="mb25-muted mt-2">Income sources: Paid Leads • Membership • Featured Profile • Featured Job • Shop Ads/Subscription • Material Commission • Rental Commission • Contractor Leads • Future Delivery/Service Fees.</p>
+  </div>
+</section>
+
+<script id="mb25-script">
+(function(){
+"use strict";
+const MB25={
+  categories:[
+    ["राजमिस्त्री","घर/बिल्डिंग निर्माण"],["हेल्पर/लेबर","दिहाड़ी/टीम"],["बढ़ई","लकड़ी का काम"],
+    ["प्लंबर","पाइप/फिटिंग"],["इलेक्ट्रिशियन","Electrical काम"],["पेंटर","पेंट/पॉलिश"],
+    ["टाइल/मार्बल मिस्त्री","Floor/Wall"],["POP/False Ceiling","Ceiling काम"],["वेल्डर/गेट-ग्रिल","Fabrication"],
+    ["रूफिंग/वॉटरप्रूफिंग","छत/लीकेज"],["AC/कूलर सर्विस","Cooling service"],["फर्नीचर रिपेयर","Furniture"],
+    ["ट्रैक्टर","Rental"],["JCB","Rental"],["ट्रॉली","Rental"],["मिक्सर मशीन","Rental"],
+    ["कटर मशीन","Rental"],["ड्रिल मशीन","Rental"],["शटरिंग","Rental"],["सीढ़ी/स्कैफोल्डिंग","Rental"],
+    ["Construction Material","सीमेंट/सरिया/ईंट/बालू आदि"],["Small Contractor","लोकल ठेका"],
+    ["VIP Contractor","Business/large work"],["Building Contractor","पूरा भवन काम"],
+    ["Labour Contractor","Labour team"],["Material Delivery","सामान delivery"],
+    ["Estimate Service","काम का अनुमान"],["Architecture/Design","Design/Plan"],["Cleaning/Home Service","Home service"]
+  ],
+  statuses:["New","Quotation","Selected","Confirmed","Work Started","Completed","Review"],
+  uid:function(){return "MB25-"+Date.now()+"-"+Math.random().toString(36).slice(2,8);},
+  esc:function(v){return String(v??"").replace(/[&<>"']/g,function(c){return({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c];});},
+  dbok:function(){return typeof db!=="undefined"&&db&&typeof db.collection==="function";},
+  async save(col,data){data.createdAt=data.createdAt||new Date().toISOString();if(this.dbok()){try{const r=await db.collection(col).add(data);return r.id;}catch(e){console.warn("MB25 Firestore",e);}}const key="mb25_"+col;const a=JSON.parse(localStorage.getItem(key)||"[]");data.id=data.id||this.uid();a.unshift(data);localStorage.setItem(key,JSON.stringify(a));return data.id;},
+  async list(col){if(this.dbok()){try{const s=await db.collection(col).orderBy("createdAt","desc").limit(100).get();return s.docs.map(d=>Object.assign({id:d.id},d.data()));}catch(e){}}return JSON.parse(localStorage.getItem("mb25_"+col)||"[]");},
+  async update(col,id,data){if(this.dbok()){try{await db.collection(col).doc(id).set(Object.assign({},data,{updatedAt:new Date().toISOString()}),{merge:true});return true;}catch(e){}}const a=JSON.parse(localStorage.getItem("mb25_"+col)||"[]");const i=a.findIndex(x=>x.id===id);if(i>=0){a[i]=Object.assign({},a[i],data, {updatedAt:new Date().toISOString()});localStorage.setItem("mb25_"+col,JSON.stringify(a));return true;}return false;},
+  profile:function(){try{return typeof window.MB_getCustomerProfile==="function"?window.MB_getCustomerProfile():JSON.parse(localStorage.getItem("mb_customer_profile")||"null");}catch(e){return null;}},
+  currentUser:function(){const p=this.profile();return p?{role:"customer",phone:p.phone,name:p.name,location:[p.state,p.district,p.city].filter(Boolean).join(" • ")}:{role:"guest"}}
+};
+
+function fillCats(){
+ const grid=document.getElementById("mb25-category-grid"),sel=document.getElementById("mb25-lead-category");if(!grid||!sel)return;
+ grid.innerHTML=MB25.categories.map((c,i)=>`<button class="mb25-cat" onclick="MB25_chooseCategory(${i})">${i+1}. ${MB25.esc(c[0])}<small>${MB25.esc(c[1])}</small></button>`).join("");
+ sel.innerHTML=MB25.categories.map(c=>`<option value="${MB25.esc(c[0])}">${MB25.esc(c[0])}</option>`).join("");
+}
+window.MB25_chooseCategory=function(i){const s=document.getElementById("mb25-lead-category");if(s)s.value=MB25.categories[i]?.[0]||"";document.getElementById("mb25-lead-form")?.scrollIntoView({behavior:"smooth",block:"center"});};
+
+window.MB25_createLead=async function(e){
+ e.preventDefault();const u=MB25.currentUser();
+ if(u.role!=="customer"){localStorage.setItem("mb25_pending_action","lead");alert("पहले Customer Sign Up/Login करें। भरा हुआ Post Draft में रखा जाएगा।");try{navTo("register");switchRoleTab("client");}catch(x){}return;}
+ const data={customerPhone:u.phone,customerName:u.name,category:document.getElementById("mb25-lead-category").value,work:document.getElementById("mb25-lead-work").value.trim(),area:document.getElementById("mb25-lead-area").value.trim(),state:document.getElementById("mb25-lead-state").value,location:document.getElementById("mb25-lead-location").value.trim(),material:document.getElementById("mb25-lead-material").value,urgency:document.getElementById("mb25-lead-urgency").value,description:document.getElementById("mb25-lead-desc").value.trim(),status:"New",publicPhone:false,aadhaarPublic:false};
+ const id=await MB25.save("mb_marketplace_leads",data);alert("✅ Lead पोस्ट हो गया। Matching Mistri/Contractor को lead भेजी जा सकती है। ID: "+id);document.getElementById("mb25-lead-form").reset();MB25_loadQuotes();
+};
+
+window.MB25_sendQuote=async function(leadId){
+ const u=MB25.currentUser();if(u.role==="guest"){alert("Quote भेजने के लिए Mistri/Contractor login/profile जरूरी है।");return;}
+ const rate=prompt("अपना रेट (₹) लिखें:");if(rate===null||!rate.trim())return;const days=prompt("काम पूरा करने का अनुमानित समय:");if(days===null)return;const msg=prompt("ग्राहक के लिए संदेश:")||"";
+ await MB25.save("mb_quotes",{leadId,workerName:u.name||"Verified Mistri/Contractor",workerPhone:u.phone||"",rate:Number(rate)||0,estimatedTime:days,message:msg,status:"Quotation",privatePhone:true});
+ alert("✅ Quotation भेज दिया गया। Customer को quote दिखाई देगा।");MB25_loadQuotes();
+};
+
+window.MB25_loadQuotes=async function(){
+ const box=document.getElementById("mb25-quotes-list");if(!box)return;const qs=await MB25.list("mb_quotes");
+ box.innerHTML=qs.length?qs.slice(0,30).map(q=>`<div class="p-3 border rounded-xl bg-slate-50"><b>₹${MB25.esc(q.rate)}</b> • ${MB25.esc(q.estimatedTime)}<div class="text-[10px] mt-1">${MB25.esc(q.message||"")}</div><span class="mb25-status">${MB25.esc(q.status||"Quotation")}</span><div class="mb25-actions"><button class="mb25-btn mb25-green" onclick="MB25_selectQuote('${q.id}')">Customer: Select Quote</button></div></div>`).join(""):"<p class='mb25-muted'>अभी कोई quotation नहीं है।</p>";
+};
+window.MB25_selectQuote=async function(qid){
+ const qs=await MB25.list("mb_quotes");const q=qs.find(x=>x.id===qid);if(!q)return;
+ const deals=await MB25.list("mb_deals");if(deals.some(d=>d.quoteId===qid&&d.status!=="Cancelled")){alert("यह quotation पहले select हो चुका है।");return;}
+ await MB25.update("mb_quotes",qid,{status:"Selected"});
+ const did=await MB25.save("mb_deals",{quoteId:qid,leadId:q.leadId,customerPhone:q.customerPhone||null,workerPhone:q.workerPhone||q.workerPhone||null,status:"Confirmed",timeline:[{status:"Confirmed",at:new Date().toISOString()}]});
+ const leads=await MB25.list("mb_marketplace_leads");const l=leads.find(x=>x.id===q.leadId);if(l)await MB25.update("mb_marketplace_leads",l.id,{status:"Selected"});
+ document.getElementById("mb25-agreement-box").innerHTML="<b>Deal Confirmed</b><br>काम: "+MB25.esc(l?.work||"")+
+ "<br>Rate: ₹"+MB25.esc(q.rate)+"<br>समय: "+MB25.esc(q.estimatedTime)+"<br><br>दोनों पक्ष acceptance के बाद Work Started किया जा सकता है।";
+ alert("✅ Deal Confirm हो गया। Admin record बनाया गया। Deal ID: "+did);MB25_loadDeals();
+};
+window.MB25_changeDealStatus=async function(id,status){
+ await MB25.update("mb_deals",id,{status,timelineAdd:{status,at:new Date().toISOString()}});
+ alert("Deal status: "+status);MB25_loadDeals();
+};
+window.MB25_loadDeals=async function(){
+ const box=document.getElementById("mb25-deals-list");if(!box)return;const ds=await MB25.list("mb_deals");
+ box.innerHTML=ds.length?ds.slice(0,30).map(d=>`<div class="p-3 border rounded-xl bg-slate-50"><b>Deal #${MB25.esc(d.id)}</b><br><span class="mb25-status">${MB25.esc(d.status)}</span><div class="mb25-actions">${MB25.statuses.map(s=>`<button class="mb25-btn ${s==="Completed"?"mb25-green":"mb25-dark"}" onclick="MB25_changeDealStatus('${d.id}','${s}')">${s}</button>`).join("")}</div></div>`).join(""):"<p class='mb25-muted'>अभी कोई deal नहीं है।</p>";
+};
+
+window.MB25_estimate=async function(e){
+ e.preventDefault();const qty=Number(document.getElementById("mb25-est-qty").value)||0,rate=Number(document.getElementById("mb25-est-rate").value)||0,lab=Number(document.getElementById("mb25-est-labour").value)||0,mat=Number(document.getElementById("mb25-est-material").value)||0,total=qty*rate+lab+mat;
+ document.getElementById("mb25-est-result").classList.remove("hidden");document.getElementById("mb25-est-result").innerHTML="अनुमानित कुल: ₹"+total.toLocaleString("en-IN")+"<br><span class='text-[10px] font-normal'>Base work "+(qty*rate).toLocaleString("en-IN")+" + Labour "+lab.toLocaleString("en-IN")+" + Material "+mat.toLocaleString("en-IN")+"</span>";
+ await MB25.save("mb_estimates",{work:document.getElementById("mb25-est-work").value,quantity:qty,rate,labour:lab,material:mat,total});
+};
+
+window.MB25_saveMaterial=async function(e){e.preventDefault();const d={name:document.getElementById("mb25-material-name").value,shop:document.getElementById("mb25-material-shop").value,price:document.getElementById("mb25-material-price").value,area:document.getElementById("mb25-material-area").value,status:"Active"};await MB25.save("mb_material_listings",d);e.target.reset();MB25_loadMaterial();alert("✅ Material listing सेव हो गई।");};
+window.MB25_loadMaterial=async function(){const b=document.getElementById("mb25-material-list");if(!b)return;const a=await MB25.list("mb_material_listings");b.innerHTML=a.slice(0,20).map(x=>`<div class="p-3 border rounded-xl"><b>${MB25.esc(x.name)}</b> • ${MB25.esc(x.shop)}<br><span class="mb25-muted">${MB25.esc(x.price)} • ${MB25.esc(x.area)}</span><button class="mb25-btn mb25-dark float-right" onclick="MB25_demoNotice('Material enquiry')">Quotation मांगें</button></div>`).join("")||"<p class='mb25-muted'>कोई listing नहीं।</p>";};
+
+window.MB25_saveRental=async function(e){e.preventDefault();const d={machine:document.getElementById("mb25-rental-machine").value,owner:document.getElementById("mb25-rental-owner").value,rate:document.getElementById("mb25-rental-rate").value,location:document.getElementById("mb25-rental-location").value,status:"Available"};await MB25.save("mb_rental_listings",d);e.target.reset();MB25_loadRental();alert("✅ Rental listing सेव हो गई।");};
+window.MB25_loadRental=async function(){const b=document.getElementById("mb25-rental-list");if(!b)return;const a=await MB25.list("mb_rental_listings");b.innerHTML=a.slice(0,20).map(x=>`<div class="p-3 border rounded-xl"><b>🚜 ${MB25.esc(x.machine)}</b> • ${MB25.esc(x.rate)}<br><span class="mb25-muted">${MB25.esc(x.owner)} • ${MB25.esc(x.location)} • ${MB25.esc(x.status)}</span><button class="mb25-btn mb25-dark float-right" onclick="MB25_demoNotice('Rental booking')">Booking enquiry</button></div>`).join("")||"<p class='mb25-muted'>कोई rental listing नहीं।</p>";};
+
+window.MB25_review=function(){const r=prompt("1 से 5 तक Rating दें:");if(!r||Number(r)<1||Number(r)>5)return alert("Review केवल Completed Deal के बाद 1-5 rating में दें।");const msg=prompt("Review लिखें:")||"";MB25.save("mb_reviews",{rating:Number(r),review:msg,status:"Pending Moderation"}).then(()=>alert("✅ Review Admin moderation में भेज दिया गया।"));};
+window.MB25_complaint=function(){const msg=prompt("समस्या/Complaint लिखें:");if(!msg)return;MB25.save("mb_complaints",{message:msg,status:"Pending",createdBy:MB25.currentUser()}).then(()=>alert("✅ Complaint Pending में दर्ज हुई। Admin Review करेगा।"));};
+window.MB25_demoNotice=function(name){alert("📌 "+name+" का workflow Master में जोड़ा गया है। वास्तविक payment/OTP/delivery provider जोड़ने पर यह live transaction बनेगा।");};
+
+async function stats(){
+ const cols=["mb_marketplace_leads","mb_quotes","mb_deals","mb_material_listings","mb_rental_listings","mb_complaints"];
+ const vals=await Promise.all(cols.map(x=>MB25.list(x)));const b=document.getElementById("mb25-business-stats");if(!b)return;
+ b.innerHTML=vals.map((v,i)=>`<div class="p-3 bg-slate-50 rounded-xl"><b class="text-lg">${v.length}</b><small class="block text-[9px] font-bold text-slate-500">${["Leads","Quotes","Deals","Material","Rental","Complaints"][i]}</small></div>`).join("");
+}
+window.MB25_open=function(){document.querySelectorAll("section[id^='page-']").forEach(s=>s.classList.add("hidden"));document.getElementById("page-mb25")?.classList.remove("hidden");fillCats();MB25_loadQuotes();MB25_loadDeals();MB25_loadMaterial();MB25_loadRental();stats();window.scrollTo(0,0);};
+window.MB25_init=function(){fillCats();};
+document.addEventListener("DOMContentLoaded",function(){MB25_init();});
+})();
+</script>
+
+<script>
+/* MistriBabu 25-feature navigation bridge */
+(function(){
+  const oldNav=window.navTo;
+  window.MB25_navigate=function(){
+    if(typeof window.MB25_open==="function") window.MB25_open();
+  };
+  document.addEventListener("DOMContentLoaded",function(){
+    const menu=document.querySelector("#main-menu-drawer .p-4.space-y-2");
+    if(menu&&!document.getElementById("mb25-menu-btn")){
+      const b=document.createElement("button");b.id="mb25-menu-btn";b.className="w-full text-left p-3 rounded-xl bg-amber-50";b.textContent="🏗️ Professional Marketplace — 25 Features";b.onclick=window.MB25_navigate;menu.appendChild(b);
+    }
+    const home=document.querySelector("#page-home");
+    if(home&&!document.getElementById("mb25-home-btn")){
+      const b=document.createElement("button");b.id="mb25-home-btn";b.className="w-full mt-2 mb-2 bg-slate-900 text-amber-400 font-bold text-xs py-2.5 rounded-xl";b.textContent="🏗️ Marketplace: 25 Features • Quote • Deal • सामान • मशीन";b.onclick=window.MB25_navigate;
+      const first=home.firstElementChild;if(first) first.after(b);
+    }
+  });
+})();
+</script>
+
 </body>
   </html>
