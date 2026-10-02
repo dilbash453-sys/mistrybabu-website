@@ -208,7 +208,7 @@
     <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
       <div class="text-center mb-4 border-b border-slate-100 pb-3">
         <h2 class="text-base font-black text-slate-900">नया काम पोस्ट करें</h2>
-        <p class="text-[11px] text-slate-500">सामान्य काम 7 दिन और तत्काल काम 24 घंटे तक लाइव रहता है</p>
+        <p class="text-[11px] text-slate-500">पहले Form भरें। नया Customer बिना Sign Up/Login के Post नहीं कर सकता। Form Draft में सुरक्षित रहेगा।</p>
       </div>
 
       <div id="worker-post-limit-box" class="hidden bg-amber-50 border border-amber-300 p-4 rounded-xl text-center space-y-2 mb-4">
@@ -230,18 +230,9 @@
         </div>
         <div class="bg-blue-50 border border-blue-200 p-3 rounded-xl space-y-2"><label class="flex items-center gap-2 text-[11px] font-bold text-slate-800 cursor-pointer"><input type="checkbox" id="pc-factory-job" class="rounded text-blue-600"> 🏭 फैक्ट्री / कारखाना Bulk Labor Post</label><p class="text-[9px] text-slate-500">एक साथ कई कारीगर/मजदूर चाहिए तो इसे चुनें।</p></div>
 
-        <div>
-          <label class="block text-[11px] font-bold text-slate-700 mb-1">आपका नाम (Profile से) *</label>
-          <input type="text" id="pc-name" required readonly placeholder="Customer Profile से अपने-आप आएगा" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs focus:outline-none bg-slate-100">
-        </div>
-
-        <div>
-          <label class="block text-[11px] font-bold text-slate-700 mb-1">मोबाइल नंबर (Profile से, पूरी तरह गोपनीय) *</label>
-          <div class="flex">
-            <span class="inline-flex items-center px-2.5 rounded-l-lg border border-r-0 border-slate-300 bg-slate-100 text-slate-600 text-xs font-bold">+91</span>
-            <input type="tel" id="pc-phone" required maxlength="10" placeholder="10 अंकों का मोबाइल नंबर" class="flex-1 block w-full rounded-r-lg border border-slate-300 px-3 py-2 text-xs focus:outline-none">
-          </div>
-        </div>
+        <!-- नाम / मोबाइल Customer Profile से लिए जाएंगे; Post Form में दोबारा नहीं भरने होंगे -->
+        <input type="hidden" id="pc-name">
+        <input type="hidden" id="pc-phone">
 
         <div>
           <label class="block text-[11px] font-bold text-slate-700 mb-1">राज्य चुनें *</label>
@@ -1604,7 +1595,16 @@
       const profile = window.MB_getCustomerProfile ? window.MB_getCustomerProfile() : null;
       if (!profile || !profile.phone || !profile.name || !profile.selfie ||
           !profile.village || !profile.state || !profile.city || !profile.district || !profile.address) {
-        alert("पहले Customer Sign Up / Login करके अपनी Profile पूरी करें।");
+        // नया यूजर: पोस्ट लाइव नहीं होगी। पहले भरे हुए Form को Draft में सुरक्षित करें,
+        // फिर Sign Up/Login कराएं। Profile पूरी होने के बाद वही Draft वापस मिलेगा।
+        try {
+          if (window.MB_savePendingPostDraft) {
+            await window.MB_savePendingPostDraft();
+          }
+        } catch (draftErr) {
+          console.warn("Post draft save:", draftErr);
+        }
+        alert("आपका काम का Form सुरक्षित हो गया है। अब पहले Customer Sign Up / Login करें। Profile पूरी होने के बाद Draft वापस आएगा; तब आप Post कर सकेंगे।");
         navTo('register');
         switchRoleTab('client');
         setTimeout(() => document.getElementById("mb-customer-profile-box")?.scrollIntoView({behavior:"smooth"}), 100);
@@ -1639,6 +1639,14 @@
       const siteFile = document.getElementById("pc-site-photo").files[0];
       if (siteFile) {
         try { sitePhoto = await fileToBase64(siteFile); } catch(err) {}
+      }
+      // अगर नया यूजर Sign Up से पहले Form भरकर आया था, तो Draft में सुरक्षित
+      // साइट फोटो को भी final Post में इस्तेमाल करें।
+      if (!sitePhoto) {
+        try {
+          const pendingDraft = JSON.parse(localStorage.getItem("mb_pending_post_draft") || "null");
+          if (pendingDraft && pendingDraft.sitePhoto) sitePhoto = pendingDraft.sitePhoto;
+        } catch(err) {}
       }
 
       const data = {
@@ -1683,6 +1691,8 @@
           analytics.logEvent('job_posted', { category: data.workType, district: data.district, urgent: isUrgent });
         }
 
+        localStorage.removeItem("mb_pending_post_draft");
+        localStorage.removeItem("mb_pending_post_draft_restored");
         alert(`बधाई हो! ${isTheka ? 'पेटी-ठेका' : 'काम'} तुरंत लाइव पोस्ट हो गया है।\nकाम ID: ${sixDigitId}`);
         btn.innerText = "काम पोस्ट करें";
         navTo('jobs');
@@ -3171,15 +3181,6 @@
     }
 
     function navTo(target, pushHistory = true) {
-      if (target === "post" && window.MB_getCustomerProfile && !window.MB_getCustomerProfile()) {
-        alert("पहले Customer Sign Up / Login करें।");
-        target = "register";
-        setTimeout(() => {
-          try { switchRoleTab("client"); } catch(e) {}
-          document.getElementById("mb-customer-profile-box")?.scrollIntoView({behavior:"smooth"});
-        }, 50);
-      }
-
       const deviceRole = localStorage.getItem("mb_device_locked_role");
       const isContractor = localStorage.getItem("mb_worker_is_contractor") === "true";
       const workerPostsCount = parseInt(localStorage.getItem("mb_worker_posts_count") || "0");
@@ -4030,6 +4031,80 @@
   }
   window.MB_getCustomerProfile=function(){var p=read();return complete(p)?p:null;};
 
+  function draftFieldIds(){
+    return ["pc-is-theka","pc-factory-job","pc-state","pc-district","pc-block","pc-location",
+      "gps-site-confirm-check","pc-lat","pc-lng","pc-work","pc-duration","pc-worker-count",
+      "pc-material","pc-urgency-type","pc-desc","pc-voice-note"];
+  }
+
+  window.MB_savePendingPostDraft = async function(){
+    var draft = {};
+    draftFieldIds().forEach(function(id){
+      var el=document.getElementById(id);
+      if(!el)return;
+      draft[id] = (el.type === "checkbox") ? !!el.checked : (el.value || "");
+    });
+
+    // Site photo is optional; if selected, preserve it in the draft as a compressed data URL.
+    var photo = document.getElementById("pc-site-photo")?.files?.[0];
+    if(photo){
+      try { draft.sitePhoto = await fileData(photo); } catch(e) { draft.sitePhoto = ""; }
+    } else {
+      draft.sitePhoto = "";
+    }
+
+    draft.savedAt = Date.now();
+    localStorage.setItem("mb_pending_post_draft", JSON.stringify(draft));
+    return draft;
+  };
+
+  window.MB_restorePendingPostDraft = function(){
+    var raw = localStorage.getItem("mb_pending_post_draft");
+    if(!raw)return false;
+    var draft;
+    try { draft = JSON.parse(raw); } catch(e) { return false; }
+
+    draftFieldIds().forEach(function(id){
+      var el=document.getElementById(id);
+      if(!el || draft[id] === undefined)return;
+      if(el.type === "checkbox") {
+        el.checked = !!draft[id];
+        if(id === "gps-site-confirm-check") {
+          try { toggleSiteGpsButton(el.checked); } catch(e) {}
+        }
+      } else {
+        el.value = draft[id];
+      }
+    });
+
+    try {
+      if(document.getElementById("pc-state")?.value) {
+        handleStateChange("pc-state","pc-district","pc-block");
+        setTimeout(function(){
+          var d=document.getElementById("pc-district");
+          if(d && draft["pc-district"]) {
+            d.value=draft["pc-district"];
+            try { updateBlocks("pc-district","pc-block","pc-state"); } catch(e) {}
+            setTimeout(function(){
+              var b=document.getElementById("pc-block");
+              if(b && draft["pc-block"]) b.value=draft["pc-block"];
+            },50);
+          }
+        },50);
+      }
+    } catch(e) {}
+
+    // File inputs cannot be programmatically restored by the browser.
+    // The selected site photo was preserved in the draft; use it at final Post time.
+    localStorage.setItem("mb_pending_post_draft_restored","true");
+    return true;
+  };
+
+  function clearPendingPostDraft(){
+    localStorage.removeItem("mb_pending_post_draft");
+    localStorage.removeItem("mb_pending_post_draft_restored");
+  }
+
   function show(p){
     if(!p)return;
     document.getElementById("mb-customer-profile-card")?.classList.remove("hidden");
@@ -4058,7 +4133,14 @@
       if(!snap.exists)return alert("इस नंबर से Customer Profile नहीं मिला। नीचे Sign Up करें।");
       var p=snap.data()||{};
       if(!complete(p))return alert("Customer Profile अधूरी है।");
-      saveLocal(p);show(p);alert("✅ Customer Login सफल। अब आप काम पोस्ट कर सकते हैं।");
+      saveLocal(p);show(p);
+      if(localStorage.getItem("mb_pending_post_draft")){
+        alert("✅ Customer Login सफल। आपका पहले भरा हुआ Post Form वापस लाया जा रहा है।");
+        navTo("post");
+        setTimeout(function(){ MB_restorePendingPostDraft(); }, 150);
+      } else {
+        alert("✅ Customer Login सफल। अब आप काम पोस्ट कर सकते हैं।");
+      }
     }catch(e){alert("Login में समस्या: "+e.message);}
   };
 
@@ -4107,7 +4189,13 @@
         createdAt:firebase.firestore.FieldValue.serverTimestamp(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
       await db.collection("customer_profiles").doc(full).set(p);
       p.createdAt=new Date().toISOString();p.updatedAt=new Date().toISOString();saveLocal(p);show(p);
-      alert("✅ Customer Profile बन गई। अब काम पोस्ट कर सकते हैं।");
+      if(localStorage.getItem("mb_pending_post_draft")){
+        alert("✅ Customer Profile बन गई। आपका पहले भरा हुआ Post Form वापस लाया जा रहा है।");
+        navTo("post");
+        setTimeout(function(){ MB_restorePendingPostDraft(); }, 150);
+      } else {
+        alert("✅ Customer Profile बन गई। अब काम पोस्ट कर सकते हैं।");
+      }
     }catch(err){if(btn)btn.innerText="Customer Profile बनाएं / अपडेट करें";alert("Profile सेव नहीं हुई: "+err.message);}
   };
 
@@ -4123,21 +4211,16 @@
     f.querySelectorAll('[id*="aadhaar" i],[id*="aadhar" i],[name*="aadhaar" i],[name*="aadhar" i]').forEach(function(el){var w=el.closest(".form-group,.field,.input-group,.form-field,label,.bg-slate-50");if(w)w.hidden=true;el.hidden=true;el.disabled=true;});
   }
 
-  function guard(e){
-    var b=e.target.closest("button,a,[role='button']");if(!b)return;
-    var oc=b.getAttribute("onclick")||"",tx=(b.textContent||"").toLowerCase();
-    if(oc.indexOf("navTo('post")===-1&&oc.indexOf('navTo("post')===-1&&tx.indexOf("काम पोस्ट")===-1)return;
-    if(!window.MB_getCustomerProfile()){
-      e.preventDefault();e.stopImmediatePropagation();alert("पहले Customer Sign Up / Login करें।");
-      navTo("register");setTimeout(function(){try{switchRoleTab("client");}catch(x){}document.getElementById("mb-customer-profile-box")?.scrollIntoView({behavior:"smooth"});},80);
-    }
-  }
-  document.addEventListener("click",guard,true);
+  // नया यूजर Post Form खोल सकता है। Login/Sign Up की जरूरत केवल वास्तविक Post पर होगी।
+  // इससे नया यूजर पहले पूरा काम का Form भर सकता है; Submit करने पर Draft सुरक्षित होगा।
 
   document.addEventListener("DOMContentLoaded",function(){
     var p=read();if(complete(p)){saveLocal(p);show(p);fillPost();}
     try{handleStateChange("mb-customer-state","mb-customer-district","mb-customer-block");}catch(e){}
     hidePostAadhaar();
+    if(complete(p) && localStorage.getItem("mb_pending_post_draft")){
+      setTimeout(function(){ if(location.hash === "#post") MB_restorePendingPostDraft(); }, 250);
+    }
   });
   window.addEventListener("load",function(){var p=read();if(complete(p)){show(p);fillPost();}hidePostAadhaar();});
 })();
