@@ -421,10 +421,10 @@
           </div>
           <div class="bg-emerald-50 border border-emerald-200 p-3 rounded-xl space-y-2">
             <div class="flex items-center justify-between">
-              <span class="text-[10px] font-bold text-slate-700">📍 GPS / Location (वैकल्पिक)</span>
+              <span class="text-[10px] font-bold text-slate-700">📍 GPS / Location (Customer Form — पहले लेने की पूरी कोशिश होगी)</span>
               <button type="button" onclick="MB_captureCustomerGPS()" class="bg-emerald-600 text-white text-[10px] font-bold px-2.5 py-1.5 rounded-lg">GPS लें</button>
             </div>
-            <p id="mb-customer-gps-status" class="text-[9px] text-slate-500">GPS अभी सेव नहीं है।</p>
+            <p id="mb-customer-gps-status" class="text-[9px] text-slate-500">GPS की पूरी कोशिश होगी। GPS न मिले तो भी Customer Profile आगे बढ़ सकती है।</p>
             <input type="hidden" id="mb-customer-lat">
             <input type="hidden" id="mb-customer-lng">
           </div>
@@ -483,7 +483,7 @@
         <div id="worker-guide-content" class="hidden mt-2 pt-2 border-t border-amber-200 text-[11px] text-amber-900 space-y-1.5">
           <p>• <strong>काम कैसे पाएं:</strong> 'काम देखें' मेनू में जाएँ, काम चुनें और वॉयस नोट 🎙️ या बोलकर रेट भेजें।</p>
           <p>• <strong>लाइव स्टेटस:</strong> खाली होने पर 🟢 'उपलब्ध' रखें। कहीं काम चल रहा हो तो 🔴 'व्यस्त' सेट करें।</p>
-          <p>• <strong>पहचान व फ़ोटो:</strong> काम की 3 तस्वीरें और पहचान पत्र जोड़कर 🛡️ 'सत्यापित पहचान' बैज पाएं।</p>
+          <p>• <strong>Aadhaar व फ़ोटो:</strong> काम की 3 तस्वीरें और Aadhaar Front/Back जोड़कर 🛡️ 'सत्यापित पहचान' बैज पाएं।</p>
         </div>
       </div>
 
@@ -522,7 +522,7 @@
           <!-- [पॉइंट 1] वैकल्पिक पहचान पत्र (Front & Back) - मिस्त्री फॉर्म के लिए -->
   <div class="bg-blue-50/70 p-3 rounded-xl border border-blue-200 space-y-2 my-2">
     <label class="block text-[11px] font-bold text-blue-900 mb-1">
-      🛡️ पहचान पत्र (Front & Back) - वैकल्पिक (सत्यापन टैग हेतु)
+      🛡️ Aadhaar (Front & Back) - वैकल्पिक (सत्यापन टैग हेतु)
     </label>
     <div class="grid grid-cols-2 gap-2">
       <div>
@@ -844,28 +844,35 @@
         <div class="bg-white rounded-2xl w-full max-w-lg max-h-[92vh] overflow-hidden shadow-2xl">
           <div class="bg-slate-900 text-white p-3 flex items-center justify-between">
             <div>
-              <div id="mb-admin-aadhaar-title" class="text-xs font-black">Aadhaar फोटो</div>
+              <div id="mb-admin-aadhaar-title" class="text-xs font-black">Verification फोटो</div>
               <div class="text-[9px] text-slate-400">केवल अधिकृत Admin verification के लिए</div>
             </div>
             <button type="button" onclick="closeCustomerAadhaarViewer()" class="text-white text-lg px-2">✕</button>
           </div>
           <div class="p-3 bg-slate-100 max-h-[78vh] overflow-auto flex items-center justify-center">
-            <img id="mb-admin-aadhaar-image" src="" alt="Aadhaar verification photo" class="max-w-full max-h-[72vh] object-contain rounded-lg border border-slate-300 bg-white">
+            <img id="mb-admin-aadhaar-image" src="" alt="Admin verification photo" class="max-w-full max-h-[72vh] object-contain rounded-lg border border-slate-300 bg-white">
+          </div>
+        </div>
+      </div>
+
+      <!-- केवल Admin Panel: Mistri Aadhaar Front/Back Photo Viewer -->
+      <div id="mb-admin-worker-id-viewer" class="fixed inset-0 bg-slate-900/95 z-[80] hidden items-center justify-center p-3" onclick="if(event.target===this) closeAdminWorkerIdViewer()">
+        <div class="bg-white rounded-2xl w-full max-w-lg max-h-[92vh] overflow-hidden shadow-2xl">
+          <div class="bg-slate-900 text-white p-3 flex items-center justify-between">
+            <div>
+              <div id="mb-admin-worker-id-title" class="text-xs font-black">Mistri Aadhaar Verification Photo</div>
+              <div class="text-[9px] text-slate-400">केवल अधिकृत Admin verification के लिए</div>
+            </div>
+            <button type="button" onclick="closeAdminWorkerIdViewer()" class="text-white text-lg px-2">✕</button>
+          </div>
+          <div class="p-3 bg-slate-100 max-h-[78vh] overflow-auto flex items-center justify-center">
+            <img id="mb-admin-worker-id-image" src="" alt="Mistri Aadhaar verification photo" class="max-w-full max-h-[72vh] object-contain rounded-lg border border-slate-300 bg-white">
           </div>
         </div>
       </div>
 
       <div id="admin-main-view" class="p-3.5 space-y-3 overflow-y-auto flex-1 hidden text-xs">
-       <div class="bg-white p-4 rounded-xl shadow-md border border-slate-200 mb-3">
-    <h3 class="text-sm font-bold text-slate-800 mb-2">🛠️ एडमिन पैनल - पहचान सत्यापन</h3>
-    <button onclick="loadAdminVerifications()" class="w-full bg-slate-800 text-white text-xs font-bold py-2 rounded-lg mb-3">
-      🔄 पेंडिंग वेरिफिकेशन लिस्ट लोड करें
-    </button>
-    <div id="admin-pending-list" class="space-y-2">
-      <p class="text-xs text-slate-500">लिस्ट देखने के लिए ऊपर दिए गए बटन पर क्लिक करें।</p>
-    </div>
-  </div>
-  <div class="bg-white p-4 rounded-xl shadow-md border border-emerald-200 mb-3">
+       <div class="bg-white p-4 rounded-xl shadow-md border border-emerald-200 mb-3">
     <h3 class="text-sm font-bold text-slate-800 mb-2">👤 Customer Aadhaar Verification</h3>
     <p class="text-[10px] text-slate-500 mb-2">Customer द्वारा दिए गए Aadhaar Front/Back फोटो यहीं खोलकर देखें और सही होने पर Verified Customer Tag दें। फोटो Public नहीं होगी।</p>
     <button onclick="loadCustomerAadhaarVerifications()" class="w-full bg-emerald-700 text-white text-xs font-bold py-2 rounded-lg mb-3">🔄 Customer Verification List लोड करें</button>
@@ -2639,15 +2646,19 @@
                 </div>
                 <div class="flex flex-col items-end gap-1">
                   <span class="text-[9px] font-bold px-1.5 py-0.5 rounded ${w.isBlocked ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'}">${w.isBlocked ? 'ब्लॉक' : 'सक्रिय'}</span>
-                  ${w.isIdVerified ? '<span class="text-[8px] bg-blue-100 text-blue-800 font-bold px-1 rounded">🛡️ ID OK</span>' : ''}
+                  ${w.isIdVerified ? '<span class="text-[8px] bg-blue-100 text-blue-800 font-bold px-1 rounded">🛡️ Aadhaar OK</span>' : ''}
                   ${w.isContractorVIP ? '<span class="text-[8px] bg-amber-400 text-slate-900 font-black px-1 rounded">👑 VIP</span>' : ''}
                 </div>
               </div>
 
-              ${w.idCardPhoto ? `
-                <div class="pt-1 flex items-center gap-2">
-                  <a href="${w.idCardPhoto}" target="_blank" class="text-[10px] text-blue-600 font-bold">📄 पहचान पत्र फ़ोटो देखें</a>
-                  <button onclick="adminToggleVerifyId('${docId}', ${!w.isIdVerified})" class="text-[9px] bg-blue-600 text-white px-2 py-0.5 rounded font-bold">${w.isIdVerified ? 'सत्यापन हटाएं' : '🛡️ सत्यापन टैग दें'}</button>
+              ${(w.idCardPhoto || w.idCardBackPhoto) ? `
+                <div class="pt-1 border-t border-slate-100 space-y-1.5">
+                  <div class="text-[10px] font-bold text-slate-700">🪪 Aadhaar Front / Back — Admin Verification</div>
+                  <div class="flex flex-wrap items-center gap-2">
+                    ${w.idCardPhoto ? `<button type="button" onclick="adminOpenWorkerIdPhoto('${docId}','front')" class="text-[10px] bg-blue-600 text-white px-2 py-1 rounded font-bold">👁️ Front फोटो देखें</button>` : ''}
+                    ${w.idCardBackPhoto ? `<button type="button" onclick="adminOpenWorkerIdPhoto('${docId}','back')" class="text-[10px] bg-blue-700 text-white px-2 py-1 rounded font-bold">👁️ Back फोटो देखें</button>` : ''}
+                    <button type="button" onclick="adminToggleVerifyId('${docId}', ${!w.isIdVerified})" class="text-[9px] bg-blue-600 text-white px-2 py-1 rounded font-bold">${w.isIdVerified ? '❌ सत्यापन टैग हटाएं' : '🛡️ सत्यापन टैग दें'}</button>
+                  </div>
                 </div>
               ` : ''}
 
@@ -2662,12 +2673,43 @@
       });
     }
 
+    async function adminOpenWorkerIdPhoto(docId, side) {
+      try {
+        const snap = await db.collection("workers").doc(docId).get();
+        if (!snap.exists) return alert("मिस्त्री का रिकॉर्ड नहीं मिला।");
+        const w = snap.data() || {};
+        const src = side === "back" ? (w.idCardBackPhoto || "") : (w.idCardPhoto || "");
+        if (!src) return alert(side === "back" ? "Aadhaar Back फोटो उपलब्ध नहीं है।" : "Aadhaar Front फोटो उपलब्ध नहीं है।");
+        const viewer=document.getElementById("mb-admin-worker-id-viewer");
+        const img=document.getElementById("mb-admin-worker-id-image");
+        const title=document.getElementById("mb-admin-worker-id-title");
+        if(!viewer || !img) return alert("Admin फोटो viewer उपलब्ध नहीं है।");
+        if(title) title.innerText=(side === "back" ? "Aadhaar Back" : "Aadhaar Front") + " — " + (w.name || "Mistri");
+        img.onerror=function(){
+          this.onerror=null;
+          alert("फोटो लोड नहीं हो सकी। मिस्त्री के रिकॉर्ड में Aadhaar फोटो दोबारा जाँचें।");
+        };
+        img.src=src;
+        viewer.classList.remove("hidden");
+        viewer.classList.add("flex");
+      } catch (err) {
+        alert("फोटो नहीं खुली: " + err.message);
+      }
+    }
+
+    function closeAdminWorkerIdViewer(){
+      const viewer=document.getElementById("mb-admin-worker-id-viewer");
+      const img=document.getElementById("mb-admin-worker-id-image");
+      if(img){img.onerror=null;img.src="";}
+      if(viewer){viewer.classList.add("hidden");viewer.classList.remove("flex");}
+    }
+
     function adminToggleVerifyId(docId, status) {
       db.collection("workers").doc(docId).update({
         isIdVerified: status,
         handledBy: currentOperator
       }).then(() => {
-        alert(status ? "✅ मिस्त्री को '🛡️ सत्यापित पहचान' टैग दे दिया गया!" : "सत्यापन टैग हटा दिया गया।");
+        alert(status ? "✅ मिस्त्री का Aadhaar सत्यापन करके Verified Tag दे दिया गया!" : "Aadhaar सत्यापन टैग हटा दिया गया।");
         loadAdminWorkersList();
       });
     }
@@ -3898,6 +3940,7 @@
       const viewer = document.getElementById("mb-admin-aadhaar-viewer");
       if(!src || !img || !viewer) return alert("फोटो उपलब्ध नहीं है।");
       if(titleEl) titleEl.innerText=title||"Aadhaar फोटो";
+      img.onerror=function(){ alert("फोटो लोड नहीं हो सकी। रिकॉर्ड में फोटो दोबारा जाँचें।"); this.onerror=null; };
       img.src=src;
       viewer.classList.remove("hidden");
       viewer.classList.add("flex");
@@ -4248,13 +4291,38 @@
 
   window.MB_captureCustomerGPS=function(){
     var s=document.getElementById("mb-customer-gps-status");
-    if(!navigator.geolocation)return alert("इस डिवाइस में GPS उपलब्ध नहीं है।");
-    if(s)s.innerText="GPS लोकेशन ली जा रही है...";
-    navigator.geolocation.getCurrentPosition(function(pos){
-      var la=document.getElementById("mb-customer-lat"),lo=document.getElementById("mb-customer-lng");
-      if(la)la.value=pos.coords.latitude;if(lo)lo.value=pos.coords.longitude;
-      if(s)s.innerText="✓ GPS सुरक्षित: "+pos.coords.latitude.toFixed(5)+", "+pos.coords.longitude.toFixed(5);
-    },function(){if(s)s.innerText="GPS नहीं मिला। बिना GPS भी आगे बढ़ सकते हैं।";},{enableHighAccuracy:true,timeout:15000});
+    var la=document.getElementById("mb-customer-lat"),lo=document.getElementById("mb-customer-lng");
+    if(!navigator.geolocation){
+      if(s)s.innerText="GPS उपलब्ध नहीं है। कोई चिंता नहीं—GPS के बिना भी Customer Profile आगे बढ़ सकती है।";
+      return;
+    }
+    if(s)s.innerText="📍 GPS लेने की कोशिश 1/3... Location ON रखें और अनुमति दें।";
+
+    var done=false,attempt=0;
+    function success(pos){
+      if(done)return;
+      done=true;
+      if(la)la.value=pos.coords.latitude;
+      if(lo)lo.value=pos.coords.longitude;
+      var acc=pos.coords.accuracy ? Math.round(pos.coords.accuracy) : "";
+      if(s)s.innerText="✓ GPS सुरक्षित: "+pos.coords.latitude.toFixed(5)+", "+pos.coords.longitude.toFixed(5)+(acc?" (लगभग "+acc+"m accuracy)":"");
+    }
+    function tryAgain(){
+      if(done)return;
+      attempt++;
+      if(attempt===1){
+        if(s)s.innerText="📍 GPS की दूसरी कोशिश... सामान्य Location से लोकेशन ली जा रही है।";
+        navigator.geolocation.getCurrentPosition(success,tryAgain,{enableHighAccuracy:false,timeout:12000,maximumAge:300000});
+      }else if(attempt===2){
+        if(s)s.innerText="📍 GPS की आखिरी कोशिश... उपलब्ध Location जाँची जा रही है।";
+        navigator.geolocation.getCurrentPosition(success,function(){
+          if(s)s.innerText="GPS नहीं मिला। कोई चिंता नहीं—GPS के बिना भी Customer Profile आगे बढ़ सकती है।";
+        },{enableHighAccuracy:false,timeout:8000,maximumAge:600000});
+      }else{
+        if(s)s.innerText="GPS नहीं मिला। कोई चिंता नहीं—GPS के बिना भी Customer Profile आगे बढ़ सकती है।";
+      }
+    }
+    navigator.geolocation.getCurrentPosition(success,tryAgain,{enableHighAccuracy:true,timeout:15000,maximumAge:0});
   };
 
   window.MB_customerSignup=async function(e){
