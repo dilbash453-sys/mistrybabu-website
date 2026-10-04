@@ -5413,13 +5413,17 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
   function phoneIn(v){return "+91"+norm(v);}
   async function findAccount(p10){
     var full=phoneIn(p10);
-    var out=[];
-    var c=await db.collection("customer_profiles").doc(full).get(); if(c.exists)out.push({role:"client",data:c.data(),id:c.id});
-    var w=await db.collection("workers").where("private_phone","==",full).limit(1).get(); if(!w.empty)out.push({role:"worker",data:w.docs[0].data(),id:w.docs[0].id});
-    var con=await db.collection("contractor_applications").where("phone","==",full).limit(1).get(); if(!con.empty)out.push({role:"contractor",data:con.docs[0].data(),id:con.docs[0].id});
-    var r=await db.collection("rental_providers").where("phone","==",full).limit(1).get(); if(!r.empty)out.push({role:"rental",data:r.docs[0].data(),id:r.docs[0].id});
-    var m=await db.collection("material_providers").where("phone","==",full).limit(1).get(); if(!m.empty)out.push({role:"material",data:m.docs[0].data(),id:m.docs[0].id});
-    return out;
+    var jobs=[
+      db.collection("customer_profiles").doc(full).get().then(function(c){return c.exists?{role:"client",data:c.data(),id:c.id}:null;}),
+      db.collection("workers").where("private_phone","==",full).limit(1).get().then(function(w){return w.empty?null:{role:"worker",data:w.docs[0].data(),id:w.docs[0].id};}),
+      db.collection("contractor_applications").where("phone","==",full).limit(1).get().then(function(c){return c.empty?null:{role:"contractor",data:c.docs[0].data(),id:c.docs[0].id};}),
+      db.collection("rental_providers").where("phone","==",full).limit(1).get().then(function(r){return r.empty?null:{role:"rental",data:r.docs[0].data(),id:r.docs[0].id};}),
+      db.collection("material_providers").where("phone","==",full).limit(1).get().then(function(m){return m.empty?null:{role:"material",data:m.docs[0].data(),id:m.docs[0].id};})
+    ];
+    var settled=await Promise.allSettled(jobs);
+    var errors=settled.filter(function(x){return x.status==="rejected";});
+    if(errors.length===jobs.length) throw errors[0].reason;
+    return settled.filter(function(x){return x.status==="fulfilled"&&x.value;}).map(function(x){return x.value;});
   }
   function openAccount(a,p10){
     resetOldSession();
@@ -5440,7 +5444,18 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
       localStorage.setItem("mb_material_phone",full); localStorage.setItem("mb_material_profile_id",a.id); navTo("register"); switchRoleTab("material"); if(typeof MB_loadMaterialProvider==="function")MB_loadMaterialProvider();
     }
     var names={client:"Customer",worker:"Mistri",contractor:"Contractor",rental:"Rental",material:"Shop / Material"};
-    status("✓ "+(names[a.role]||"Account")+" Account मिल गया। आपकी Profile सीधे खोल दी गई है।","ok");
+    var loginBox=document.getElementById("mb-universal-login-box");
+    if(loginBox)loginBox.classList.add("hidden");
+    var categoryTab=document.getElementById("profile-category-tab");
+    if(categoryTab)categoryTab.classList.add("hidden");
+    document.getElementById("profile-category-menu")?.classList.add("hidden");
+    var choice=document.getElementById("mb-universal-register-choice");
+    if(choice)choice.classList.add("hidden");
+    status("✓ "+(names[a.role]||"Account")+" Account खुल गया। आपकी Profile सामने है।","ok");
+    setTimeout(function(){
+      if(a.role==="worker") renderLiveStatusUI(localStorage.getItem("mb_worker_status")||d.liveStatus||"available");
+      document.getElementById(a.role==="worker"?"worker-profile-view":a.role==="client"?"customer-professional-dashboard":a.role==="contractor"?"contractor-dashboard-box":a.role==="rental"?"rental-provider-box":"material-provider-box")?.scrollIntoView({behavior:"smooth",block:"start"});
+    },80);
   }
   window.MB_universalMobileLogin=async function(){
     var p10=norm(document.getElementById("mb-universal-login-phone")?.value||"");
