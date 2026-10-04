@@ -592,44 +592,92 @@
         </form>
       </div>
 
-      <!-- Mistri Profile View -->
+      <!-- Mistri Professional Dashboard / Profile View -->
       <div id="worker-profile-view" class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden hidden">
-        <div class="bg-slate-900 text-white p-5 text-center relative">
+        <!-- Profile Header -->
+        <div class="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 text-white p-5 text-center relative">
+          <div class="absolute top-3 left-3">
+            <span class="bg-emerald-500/15 text-emerald-300 border border-emerald-400/30 text-[9px] font-black px-2 py-1 rounded-full">🟢 LIVE MISTRI PROFILE</span>
+          </div>
           <div class="absolute top-3 right-3">
             <button onclick="toggleWorkerLiveStatus()" id="btn-live-status" class="bg-emerald-500 text-slate-900 text-[10px] font-black px-2.5 py-1 rounded-full shadow flex items-center space-x-1">
               <span id="txt-live-status">काम के लिए उपलब्ध 🟢</span>
             </button>
           </div>
 
-          <div class="relative w-20 h-20 mx-auto mt-2">
-            <img id="my-prof-img" src="logo.png" onerror="this.src='https://placehold.co/100x100/f59e0b/0f172a.png?text=MB'" alt="Profile Photo" class="w-20 h-20 rounded-full mx-auto shadow-md border-2 border-amber-400 object-cover bg-white">
+          <div class="relative w-24 h-24 mx-auto mt-6">
+            <img id="my-prof-img" src="logo.png" onerror="this.src='https://placehold.co/100x100/f59e0b/0f172a.png?text=MB'" alt="Profile Photo" class="w-24 h-24 rounded-full mx-auto shadow-lg border-4 border-amber-400 object-cover bg-white">
+            <span class="absolute bottom-0 right-0 bg-emerald-500 text-white w-6 h-6 rounded-full flex items-center justify-center border-2 border-slate-900 text-[10px]">✓</span>
           </div>
 
-          <h3 class="text-base font-black mt-2" id="my-prof-name">कारीगर का नाम</h3>
-          <p class="text-[10px] text-amber-300 font-bold" id="my-prof-pro-id">ID: #MB-PRO-000000</p>
-          <div class="flex items-center justify-center space-x-1.5 mt-1">
+          <h3 class="text-lg font-black mt-2" id="my-prof-name">कारीगर का नाम</h3>
+          <p class="text-[10px] text-amber-300 font-bold mt-0.5" id="my-prof-pro-id">ID: #MB-PRO-000000</p>
+
+          <div class="flex flex-wrap items-center justify-center gap-1.5 mt-2">
             <span id="badge-worker-level" class="bg-amber-400/20 text-amber-300 text-[9px] font-bold px-2 py-0.5 rounded-full border border-amber-400/30">कुशल कारीगर</span>
-            <span id="badge-verified-id" class="hidden bg-blue-500/20 text-blue-300 text-[9px] font-bold px-2 py-0.5 rounded-full border border-blue-400/30">🛡️ सत्यापित पहचान</span>
+            <span id="badge-verified-id" class="hidden bg-blue-500/20 text-blue-300 text-[9px] font-bold px-2 py-0.5 rounded-full border border-blue-400/30">🛡️ सत्यापित मिस्त्री</span>
             <span id="badge-contractor-vip" class="hidden bg-amber-400 text-slate-900 text-[9px] font-black px-2 py-0.5 rounded-full">👑 VIP ठेकेदार</span>
+          </div>
+
+          <div class="mt-3 flex items-center justify-center gap-2 text-[10px] text-slate-300">
+            <span>📍</span><span id="my-prof-location">बिहार •</span>
           </div>
         </div>
 
         <div class="p-4 space-y-3 text-xs">
-          <div class="bg-amber-50 border border-amber-300 rounded-xl p-3 flex justify-between items-center">
-            <div>
-              <span class="font-bold text-slate-900 block">⚡ 7-दिन टॉप लिस्टिंग</span>
-              <p class="text-[10px] text-slate-500">7 दिन बाद सामान्य लिस्ट में अपने-आप वापसी (खाता बंद नहीं होगा)</p>
-            </div>
-            <button onclick="promptMistriBoost49()" class="bg-amber-500 text-slate-900 font-bold px-3 py-1.5 rounded-lg text-[10px] shadow-xs">
-              ₹49 रिचार्ज
+          <!-- Quick Stats -->
+          <div class="grid grid-cols-4 gap-1.5">
+            <button onclick="navTo('jobs')" class="bg-amber-50 border border-amber-200 rounded-xl p-2 text-center">
+              <span class="block text-sm">🧱</span><strong class="block text-[10px] text-slate-900 mt-0.5">काम</strong><span class="text-[8px] text-slate-500">नए काम</span>
+            </button>
+            <button onclick="navTo('jobs')" class="bg-blue-50 border border-blue-200 rounded-xl p-2 text-center">
+              <span class="block text-sm">💰</span><strong class="block text-[10px] text-slate-900 mt-0.5">रेट</strong><span class="text-[8px] text-slate-500">भेजें</span>
+            </button>
+            <button onclick="document.getElementById('worker-inbox-section')?.scrollIntoView({behavior:'smooth'})" class="bg-emerald-50 border border-emerald-200 rounded-xl p-2 text-center">
+              <span class="block text-sm">🤝</span><strong class="block text-[10px] text-slate-900 mt-0.5">डील</strong><span class="text-[8px] text-slate-500">संदेश</span>
+            </button>
+            <button onclick="document.getElementById('worker-inbox-section')?.scrollIntoView({behavior:'smooth'})" class="bg-violet-50 border border-violet-200 rounded-xl p-2 text-center">
+              <span class="block text-sm">⭐</span><strong class="block text-[10px] text-slate-900 mt-0.5">रेटिंग</strong><span class="text-[8px] text-slate-500">Reviews</span>
             </button>
           </div>
 
-          <div id="worker-vip-status-bar" class="hidden bg-amber-100 border border-amber-300 rounded-xl p-2.5 text-center text-[11px] text-slate-800">
-            <span class="font-bold block">👑 ठेकेदार VIP सदस्यता सक्रिय</span>
-            <span id="worker-vip-days-left" class="text-amber-900 font-bold">वैधता: 30 दिन शेष</span>
+          <!-- Professional Info -->
+          <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3">
+            <div class="flex items-center justify-between mb-2">
+              <div>
+                <h4 class="text-[11px] font-black text-slate-900">👷 मेरा प्रोफाइल</h4>
+                <p class="text-[9px] text-slate-500">ग्राहक को आपकी यही जानकारी दिखाई जाएगी</p>
+              </div>
+              <span class="text-[9px] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded-full">Live</span>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div class="bg-white rounded-lg p-2 border border-slate-100">
+                <span class="text-[8px] text-slate-400 block">नाम</span>
+                <strong id="mb-mistri-name-summary" class="text-[10px] text-slate-800">—</strong>
+              </div>
+              <div class="bg-white rounded-lg p-2 border border-slate-100">
+                <span class="text-[8px] text-slate-400 block">स्थान</span>
+                <strong id="mb-mistri-location-summary" class="text-[10px] text-slate-800">—</strong>
+              </div>
+              <div class="bg-white rounded-lg p-2 border border-slate-100 col-span-2">
+                <span class="text-[8px] text-slate-400 block mb-1">आपके हुनर</span>
+                <div id="my-prof-skills-tags" class="flex flex-wrap gap-1"></div>
+              </div>
+            </div>
           </div>
 
+          <!-- Existing guide -->
+          <div class="bg-amber-50 border border-amber-200 rounded-xl p-3">
+            <div class="flex items-center justify-between">
+              <span class="font-black text-slate-900 text-[11px]">📸 मेरा काम / Portfolio</span>
+              <span class="text-[9px] text-slate-500">पिछले काम की फोटो</span>
+            </div>
+            <div id="my-portfolio-grid" class="flex gap-2 overflow-x-auto py-2">
+              <p class="text-[10px] text-slate-400 italic">कोई तस्वीर नहीं जोड़ी गई।</p>
+            </div>
+          </div>
+
+          <!-- Inbox -->
           <div id="worker-inbox-section" class="bg-amber-50 border border-amber-200 rounded-xl p-3">
             <div class="flex items-center justify-between mb-1.5">
               <span class="font-black text-slate-900 flex items-center text-[11px]">
@@ -642,34 +690,35 @@
             </div>
           </div>
 
-          <div id="my-portfolio-section" class="border-b border-slate-100 pb-3">
-            <span class="text-slate-500 font-bold block mb-1.5">मेरे पिछले काम की तस्वीरें:</span>
-            <div id="my-portfolio-grid" class="flex gap-2 overflow-x-auto py-1">
-              <p class="text-[10px] text-slate-400 italic">कोई तस्वीर नहीं जोड़ी गई।</p>
+          <!-- VIP status stays available if this worker is also a contractor -->
+          <div id="worker-vip-status-bar" class="hidden bg-amber-100 border border-amber-300 rounded-xl p-2.5 text-center text-[11px] text-slate-800">
+            <span class="font-bold block">👑 ठेकेदार VIP सदस्यता सक्रिय</span>
+            <span id="worker-vip-days-left" class="text-amber-900 font-bold">वैधता: 30 दिन शेष</span>
+          </div>
+
+          <!-- Aadhaar / Verification note -->
+          <div class="bg-blue-50 border border-blue-200 rounded-xl p-3">
+            <div class="flex items-center justify-between">
+              <span class="font-black text-blue-950 text-[11px]">🛡️ पहचान सत्यापन</span>
+              <span id="mb-mistri-verification-text" class="text-[9px] text-slate-500">Aadhaar verification pending</span>
             </div>
+            <p class="text-[9px] text-slate-600 mt-1">Aadhaar देने और Admin verification के बाद ही Verified Mistri टैग दिखेगा। Aadhaar सार्वजनिक प्रोफाइल में नहीं दिखेगा।</p>
           </div>
 
-          <div class="border-b border-slate-100 pb-2">
-            <span class="text-slate-400 block mb-1">पंजीकृत हुनर (काम):</span>
-            <div id="my-prof-skills-tags" class="flex flex-wrap gap-1"></div>
+          <!-- Main actions -->
+          <div class="grid grid-cols-2 gap-2">
+            <button onclick="navTo('jobs')" class="bg-amber-500 text-slate-900 py-2.5 rounded-xl font-bold shadow-xs">🔎 नए काम देखें</button>
+            <button onclick="navTo('jobs')" class="bg-slate-900 text-amber-400 py-2.5 rounded-xl font-bold shadow-xs">💰 Rate भेजें</button>
+            <button onclick="document.getElementById('worker-inbox-section')?.scrollIntoView({behavior:'smooth'})" class="bg-white border border-slate-200 text-slate-800 py-2.5 rounded-xl font-bold">🤝 मेरे Deals</button>
+            <button onclick="document.getElementById('worker-inbox-section')?.scrollIntoView({behavior:'smooth'})" class="bg-white border border-slate-200 text-slate-800 py-2.5 rounded-xl font-bold">⭐ Rating & Reviews</button>
           </div>
 
-          <div class="flex justify-between border-b border-slate-100 pb-2">
-            <span class="text-slate-400">स्थान (State & District):</span>
-            <span class="font-bold text-slate-800" id="my-prof-location">बिहार</span>
-          </div>
-
-          <div class="pt-2 flex flex-col gap-2">
-            <button onclick="navTo('jobs')" class="w-full bg-amber-500 text-slate-900 py-2.5 rounded-xl font-bold shadow-xs">
-              काम देखें और मालिक को रेट भेजें →
-            </button>
-            <button id="btn-remaining-details" onclick="openRemainingDetailsForm()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-2.5 rounded-xl text-xs flex items-center justify-center space-x-1.5 transition-all">
-  <span>✏️ बाकी छूटी हुई जानकारी भरें</span>
-            </button>
-            <button onclick="logoutWorker()" class="w-full bg-rose-50 hover:bg-rose-100 text-rose-600 py-2 rounded-xl font-bold">
-              लॉग आउट करें
-            </button>
-          </div>
+          <button id="btn-remaining-details" onclick="openRemainingDetailsForm()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-2.5 rounded-xl text-xs flex items-center justify-center space-x-1.5 transition-all">
+            <span>✏️ प्रोफाइल की बाकी जानकारी भरें / अपडेट करें</span>
+          </button>
+          <button onclick="logoutWorker()" class="w-full bg-rose-50 hover:bg-rose-100 text-rose-600 py-2 rounded-xl font-bold">
+            लॉग आउट करें
+          </button>
         </div>
       </div>
     </div>
@@ -2370,8 +2419,12 @@
         statusAlert?.classList.add("hidden");
 
         document.getElementById("my-prof-name").innerText = workerName;
+        document.getElementById("mb-mistri-name-summary")?.replaceChildren(document.createTextNode(workerName || "—"));
+
         document.getElementById("my-prof-pro-id").innerText = "ID: " + (localStorage.getItem("mb_worker_pro_id") || "#MB-PRO-000000");
         document.getElementById("my-prof-location").innerText = (localStorage.getItem("mb_worker_state") || "बिहार") + " • " + (localStorage.getItem("mb_worker_district") || "");
+        document.getElementById("mb-mistri-location-summary")?.replaceChildren(document.createTextNode(document.getElementById("my-prof-location").innerText || "—"));
+
         document.getElementById("badge-worker-level").innerText = localStorage.getItem("mb_worker_level") || "कुशल कारीगर";
 
         const skillsContainer = document.getElementById("my-prof-skills-tags");
@@ -2392,6 +2445,9 @@
         const idBadge = document.getElementById("badge-verified-id");
         if (isVerified) idBadge.classList.remove("hidden");
         else idBadge.classList.add("hidden");
+        const verTxt = document.getElementById("mb-mistri-verification-text");
+        if (verTxt) verTxt.innerText = isVerified ? "✓ Aadhaar Verified" : "Aadhaar verification pending";
+
 
         const isContractor = localStorage.getItem("mb_worker_is_contractor") === "true";
         const conBadge = document.getElementById("badge-contractor-vip");
