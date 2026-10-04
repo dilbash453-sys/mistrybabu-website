@@ -5264,9 +5264,12 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
   const oldLoadR=window.MB_loadRentalProvider;
   window.MB_loadRentalProvider=async function(){
     await oldLoadR();
-    document.getElementById("rental-provider-form")?.classList.add("hidden");
-    const phone=localStorage.getItem("mb_rental_phone");if(!phone)return;
-    const q=await db.collection("rental_providers").where("phone","==",phone).limit(1).get();if(q.empty)return;
+    const phone=localStorage.getItem("mb_rental_phone");
+    const form=document.getElementById("rental-provider-form");
+    if(!phone){if(form)form.classList.remove("hidden");return;}
+    const q=await db.collection("rental_providers").where("phone","==",phone).limit(1).get();
+    if(q.empty){if(form)form.classList.remove("hidden");return;}
+    if(form)form.classList.add("hidden");
     const d=q.docs[0].data()||{};
     const card=document.getElementById("rental-provider-card");if(card)card.classList.remove("hidden");
     const mgr=document.getElementById("rental-vehicle-manager");
@@ -5276,9 +5279,12 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
   const oldLoadM=window.MB_loadMaterialProvider;
   window.MB_loadMaterialProvider=async function(){
     await oldLoadM();
-    document.getElementById("material-provider-form")?.classList.add("hidden");
-    const phone=localStorage.getItem("mb_material_phone");if(!phone)return;
-    const q=await db.collection("material_providers").where("phone","==",phone).limit(1).get();if(q.empty)return;
+    const phone=localStorage.getItem("mb_material_phone");
+    const form=document.getElementById("material-provider-form");
+    if(!phone){if(form)form.classList.remove("hidden");return;}
+    const q=await db.collection("material_providers").where("phone","==",phone).limit(1).get();
+    if(q.empty){if(form)form.classList.remove("hidden");return;}
+    if(form)form.classList.add("hidden");
     const d=q.docs[0].data()||{};
     const ad=document.getElementById("material-promotion-box");if(ad)ad.classList.toggle("hidden",d.adminApprovalStatus!=="approved");
   };
