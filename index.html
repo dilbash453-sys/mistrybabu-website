@@ -454,6 +454,30 @@
       </div>
 
 
+      <!-- CUSTOMER PROFESSIONAL DASHBOARD -->
+      <div id="customer-professional-dashboard" class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden hidden">
+        <div class="bg-gradient-to-br from-blue-950 via-slate-900 to-slate-800 text-white p-5 text-center relative">
+          <span class="absolute top-3 left-3 bg-emerald-500/15 text-emerald-300 border border-emerald-400/30 text-[9px] font-black px-2 py-1 rounded-full">🟢 LIVE CUSTOMER PROFILE</span>
+          <div class="relative w-24 h-24 mx-auto mt-5"><img id="mb-cust-dash-photo" src="logo.png" class="w-24 h-24 rounded-full object-cover border-4 border-amber-400 bg-white shadow-lg"></div>
+          <h3 id="mb-cust-dash-name" class="text-lg font-black mt-2">ग्राहक</h3>
+          <p id="mb-cust-dash-id" class="text-[10px] text-amber-300 font-bold">Customer ID</p>
+          <div class="flex flex-wrap justify-center gap-1.5 mt-2"><span id="mb-cust-dash-verified" class="hidden bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-[9px] font-bold px-2 py-0.5 rounded-full">🛡️ Verified Customer</span><span class="bg-blue-400/20 text-blue-200 border border-blue-300/30 text-[9px] font-bold px-2 py-0.5 rounded-full">👤 Customer</span></div>
+          <p id="mb-cust-dash-location" class="text-[10px] text-slate-300 mt-3">📍 स्थान</p>
+        </div>
+        <div class="p-4 space-y-3">
+          <div class="grid grid-cols-4 gap-1.5">
+            <button onclick="MB_customerDashScroll('client-posts-list')" class="bg-amber-50 border border-amber-200 rounded-xl p-2 text-center"><span class="block text-sm">📋</span><strong class="block text-[9px]">मेरी पोस्ट</strong></button>
+            <button onclick="MB_customerDashScroll('client-inbox-section')" class="bg-blue-50 border border-blue-200 rounded-xl p-2 text-center"><span class="block text-sm">📨</span><strong class="block text-[9px]">जवाब</strong></button>
+            <button onclick="MB_customerDashScroll('client-inbox-section')" class="bg-emerald-50 border border-emerald-200 rounded-xl p-2 text-center"><span class="block text-sm">🤝</span><strong class="block text-[9px]">Deals</strong></button>
+            <button onclick="MB_customerDashScroll('client-inbox-section')" class="bg-violet-50 border border-violet-200 rounded-xl p-2 text-center"><span class="block text-sm">🔔</span><strong class="block text-[9px]">सूचना</strong></button>
+          </div>
+          <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3"><div class="flex justify-between items-center mb-2"><div><h4 class="text-[11px] font-black">👤 मेरी जानकारी</h4><p class="text-[9px] text-slate-500">आपकी Customer Profile</p></div><span class="text-[9px] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded-full">Live</span></div><div class="grid grid-cols-2 gap-2 text-[10px]"><div class="bg-white rounded-lg p-2 border border-slate-100"><span class="text-[8px] text-slate-400 block">नाम</span><strong id="mb-cust-dash-name2">—</strong></div><div class="bg-white rounded-lg p-2 border border-slate-100"><span class="text-[8px] text-slate-400 block">मोबाइल</span><strong id="mb-cust-dash-phone">—</strong></div><div class="bg-white rounded-lg p-2 border border-slate-100 col-span-2"><span class="text-[8px] text-slate-400 block">पता</span><strong id="mb-cust-dash-address">—</strong></div></div></div>
+          <button onclick="navTo('post')" class="w-full bg-amber-500 text-slate-900 py-2.5 rounded-xl font-black text-xs">➕ नया काम पोस्ट करें</button>
+          <button onclick="MB_customerEditProfile()" class="w-full bg-slate-900 text-amber-400 py-2.5 rounded-xl font-bold text-xs">✏️ प्रोफाइल बदलें / अपडेट करें</button>
+          <p class="text-[9px] text-slate-500 text-center">🔐 Aadhaar केवल verification के लिए है; सार्वजनिक प्रोफाइल में नहीं दिखेगा।</p>
+        </div>
+      </div>
+
       <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
         <h3 class="text-xs font-black text-slate-900 uppercase">मालिक प्रोफ़ाइल / मेरा काम</h3>
         <p class="text-[11px] text-slate-500 mt-0.5">ऊपर Login किए गए उसी मोबाइल नंबर से आपकी पोस्ट और मिस्त्रियों के संदेश दिखेंगे।</p>
@@ -4724,5 +4748,11 @@
   const oldCheck=window.checkContractorStatus;
   document.addEventListener('DOMContentLoaded',()=>setTimeout(()=>window.checkContractorStatus(),700));
 })();
-</script>\n</body>
+</script>\n
+<script>
+function MB_customerDashScroll(id){const el=document.getElementById(id);if(el){el.classList.remove('hidden');el.scrollIntoView({behavior:'smooth',block:'start'});}}
+function MB_customerEditProfile(){document.getElementById('mb-customer-profile-box')?.scrollIntoView({behavior:'smooth'});document.getElementById('mb-customer-signup-form')?.classList.remove('hidden');}
+function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementById('customer-professional-dashboard');if(!d)return;d.classList.remove('hidden');const set=(id,v)=>{const e=document.getElementById(id);if(e)e.innerText=v||'—';};set('mb-cust-dash-name',p.name);set('mb-cust-dash-name2',p.name);set('mb-cust-dash-id','Customer ID: '+(p.customerId||p.id||'MB-CUST-'+String(p.phone||'').slice(-4)));set('mb-cust-dash-location','📍 '+[p.village,p.city,p.district,p.state].filter(Boolean).join(' • '));set('mb-cust-dash-phone',p.phone);set('mb-cust-dash-address',p.address);const im=document.getElementById('mb-cust-dash-photo');if(im&&p.selfie)im.src=p.selfie;document.getElementById('mb-cust-dash-verified')?.classList.toggle('hidden',p.aadhaarVerified!==true);}
+</script>
+</body>
   </html>
