@@ -538,7 +538,18 @@
         <input id="rental-provider-rate" required class="w-full rounded-lg border px-3 py-2 text-xs" placeholder="Rental Rate: ₹/घंटा या ₹/दिन *">
         <input id="rental-provider-area" required class="w-full rounded-lg border px-3 py-2 text-xs" placeholder="Area / District *">
         <input id="rental-provider-delivery" class="w-full rounded-lg border px-3 py-2 text-xs" placeholder="Delivery/Transport: उपलब्ध है या नहीं">
-        <textarea id="rental-provider-desc" rows="2" class="w-full rounded-lg border px-3 py-2 text-xs" placeholder="मशीन की जानकारी"></textarea>
+        <textarea id="rental-provider-desc" rows="2" class="w-full rounded-lg border px-3 py-2 text-xs" placeholder="मशीन की पूरी जानकारी: मॉडल, क्षमता, उपलब्ध समय आदि"></textarea>
+        <div class="bg-blue-50 border border-blue-200 rounded-xl p-3 space-y-2">
+          <p class="text-[10px] font-black text-blue-900">🔐 पहचान व जरूरी दस्तावेज</p>
+          <p class="text-[9px] text-blue-800">Aadhaar Front + Back दोनों अनिवार्य हैं। बाकी दस्तावेज उपलब्ध हों तो प्रमाण के लिए दें।</p>
+          <label class="text-[10px] font-bold">Aadhaar Front *<input id="rental-provider-aadhaar-front" type="file" accept="image/*,.pdf" required class="block w-full text-[10px] mt-1"></label>
+          <label class="text-[10px] font-bold">Aadhaar Back *<input id="rental-provider-aadhaar-back" type="file" accept="image/*,.pdf" required class="block w-full text-[10px] mt-1"></label>
+          <label class="text-[10px] font-bold">मशीन/वाहन RC / Registration Proof<input id="rental-provider-rc" type="file" accept="image/*,.pdf" class="block w-full text-[10px] mt-1"></label>
+          <label class="text-[10px] font-bold">Insurance / Fitness / Permit (जहाँ लागू हो)<input id="rental-provider-legal" type="file" accept="image/*,.pdf" class="block w-full text-[10px] mt-1"></label>
+          <label class="text-[10px] font-bold">PAN / Ownership / Purchase Proof<input id="rental-provider-ownership" type="file" accept="image/*,.pdf" class="block w-full text-[10px] mt-1"></label>
+          <label class="text-[10px] font-bold">Bank / Business Address Proof<input id="rental-provider-bankproof" type="file" accept="image/*,.pdf" class="block w-full text-[10px] mt-1"></label>
+          <label class="flex gap-2 items-start text-[9px]"><input id="rental-provider-declaration" type="checkbox" required class="mt-0.5">मैं सही जानकारी और अपने/अधिकृत वाहन-मशीन के दस्तावेज दे रहा/रही हूँ।</label>
+        </div>
         <input id="rental-provider-photo" type="file" accept="image/*" class="text-xs">
         <button class="w-full bg-blue-700 text-white font-black py-2.5 rounded-xl text-xs">🚜 Rental Profile बनाएं / अपडेट करें</button>
       </form>
@@ -555,7 +566,19 @@
         <input id="material-provider-rate" required class="w-full rounded-lg border px-3 py-2 text-xs" placeholder="Rate / Price *">
         <input id="material-provider-area" required class="w-full rounded-lg border px-3 py-2 text-xs" placeholder="Area / District *">
         <input id="material-provider-delivery" class="w-full rounded-lg border px-3 py-2 text-xs" placeholder="Home Delivery: उपलब्ध है या नहीं">
-        <textarea id="material-provider-desc" rows="2" class="w-full rounded-lg border px-3 py-2 text-xs" placeholder="दुकान/Material की जानकारी"></textarea>
+        <textarea id="material-provider-desc" rows="2" class="w-full rounded-lg border px-3 py-2 text-xs" placeholder="दुकान, stock, brand और delivery की पूरी जानकारी"></textarea>
+        <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 space-y-2">
+          <p class="text-[10px] font-black text-emerald-900">🔐 पहचान व व्यवसाय प्रमाण</p>
+          <p class="text-[9px] text-emerald-800">Aadhaar Front + Back दोनों अनिवार्य हैं। बाकी उपलब्ध business proofs प्रमाण/विश्वास के लिए लिए जाएंगे।</p>
+          <label class="text-[10px] font-bold">Aadhaar Front *<input id="material-provider-aadhaar-front" type="file" accept="image/*,.pdf" required class="block w-full text-[10px] mt-1"></label>
+          <label class="text-[10px] font-bold">Aadhaar Back *<input id="material-provider-aadhaar-back" type="file" accept="image/*,.pdf" required class="block w-full text-[10px] mt-1"></label>
+          <label class="text-[10px] font-bold">GST Certificate (यदि लागू हो)<input id="material-provider-gst" type="file" accept="image/*,.pdf" class="block w-full text-[10px] mt-1"></label>
+          <label class="text-[10px] font-bold">Shop / Trade License / Business Proof<input id="material-provider-license" type="file" accept="image/*,.pdf" class="block w-full text-[10px] mt-1"></label>
+          <label class="text-[10px] font-bold">PAN / Udyam / Business Registration Proof<input id="material-provider-businessproof" type="file" accept="image/*,.pdf" class="block w-full text-[10px] mt-1"></label>
+          <label class="text-[10px] font-bold">Shop / Godown Address Proof<input id="material-provider-addressproof" type="file" accept="image/*,.pdf" class="block w-full text-[10px] mt-1"></label>
+          <label class="text-[10px] font-bold">Bank / Payment Business Proof<input id="material-provider-bankproof" type="file" accept="image/*,.pdf" class="block w-full text-[10px] mt-1"></label>
+          <label class="flex gap-2 items-start text-[9px]"><input id="material-provider-declaration" type="checkbox" required class="mt-0.5">मैं सही जानकारी और अपने/अधिकृत व्यवसाय के दस्तावेज दे रहा/रही हूँ।</label>
+        </div>
         <input id="material-provider-photo" type="file" accept="image/*" class="text-xs">
         <button class="w-full bg-emerald-700 text-white font-black py-2.5 rounded-xl text-xs">🧱 Material Seller Profile बनाएं / अपडेट करें</button>
       </form>
@@ -4236,10 +4259,12 @@
       if(!container)return;
       container.innerHTML="<p class='text-xs text-slate-500'>सभी Pending Aadhaar Verification लोड हो रहे हैं...</p>";
       try{
-        const [customers,workers,contractors]=await Promise.all([
+        const [customers,workers,contractors,rentals,materials]=await Promise.all([
           db.collection("customer_profiles").get(),
           db.collection("workers").get(),
-          db.collection("contractor_applications").get()
+          db.collection("contractor_applications").get(),
+          db.collection("rental_providers").get(),
+          db.collection("material_providers").get()
         ]);
         const list=[];
         customers.forEach(doc=>{
@@ -4265,6 +4290,22 @@
             const ft="uaf_"+(++mbAdminAadhaarPhotoSeq), bt="uab_"+(++mbAdminAadhaarPhotoSeq);
             mbAdminAadhaarPhotos[ft]=f; mbAdminAadhaarPhotos[bt]=b;
             list.push({source:"contractor",docId:doc.id,name:d.name||role,role,front:f,back:b,frontToken:ft,backToken:bt});
+          }
+        });
+        rentals.forEach(doc=>{
+          const d=doc.data()||{}, f=d.aadhaarFront||"", b=d.aadhaarBack||"";
+          if((f||b) && d.aadhaarVerified!==true){
+            const ft="uaf_"+(++mbAdminAadhaarPhotoSeq), bt="uab_"+(++mbAdminAadhaarPhotoSeq);
+            mbAdminAadhaarPhotos[ft]=f; mbAdminAadhaarPhotos[bt]=b;
+            list.push({source:"rental",docId:doc.id,name:d.name||"Rental Provider",role:"🚜 Rental Provider",front:f,back:b,frontToken:ft,backToken:bt});
+          }
+        });
+        materials.forEach(doc=>{
+          const d=doc.data()||{}, f=d.aadhaarFront||"", b=d.aadhaarBack||"";
+          if((f||b) && d.aadhaarVerified!==true){
+            const ft="uaf_"+(++mbAdminAadhaarPhotoSeq), bt="uab_"+(++mbAdminAadhaarPhotoSeq);
+            mbAdminAadhaarPhotos[ft]=f; mbAdminAadhaarPhotos[bt]=b;
+            list.push({source:"material",docId:doc.id,name:d.name||"Material Seller",role:"🧱 Material Seller",front:f,back:b,frontToken:ft,backToken:bt});
           }
         });
         container.innerHTML="";
@@ -4297,7 +4338,9 @@
         let ref, updateData;
         if(source==="customer"){ref=db.collection("customer_profiles").doc(docId);updateData={aadhaarVerified:true,verifiedAt:firebase.firestore.FieldValue.serverTimestamp()};}
         else if(source==="worker"){ref=db.collection("workers").doc(docId);updateData={isIdVerified:true,verifiedAt:firebase.firestore.FieldValue.serverTimestamp(),handledBy:currentOperator};}
-        else{ref=db.collection("contractor_applications").doc(docId);updateData={aadhaarVerified:true,verifiedAt:firebase.firestore.FieldValue.serverTimestamp(),handledBy:currentOperator};}
+        else if(source==="contractor"){ref=db.collection("contractor_applications").doc(docId);updateData={aadhaarVerified:true,verifiedAt:firebase.firestore.FieldValue.serverTimestamp(),handledBy:currentOperator};}
+        else if(source==="rental"){ref=db.collection("rental_providers").doc(docId);updateData={aadhaarVerified:true,adminApprovalStatus:"approved",verifiedAt:firebase.firestore.FieldValue.serverTimestamp(),handledBy:currentOperator};}
+        else if(source==="material"){ref=db.collection("material_providers").doc(docId);updateData={aadhaarVerified:true,adminApprovalStatus:"approved",verifiedAt:firebase.firestore.FieldValue.serverTimestamp(),handledBy:currentOperator};}
         await ref.update(updateData);
         alert("✅ Verified Tag दे दिया गया।");
         loadUnifiedAadhaarVerifications();
@@ -4811,30 +4854,76 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
 </script>
 <script>
 (function(){
-  async function mbProviderSave(collection, prefix, fields, photoId, cardId){
-    const data={}; fields.forEach(([k,id])=>data[k]=(document.getElementById(id)?.value||'').trim());
-    if(!data.name||!data.phone) return alert('नाम और मोबाइल नंबर जरूरी है।');
-    if(!/^\d{10}$/.test(data.phone)) return alert('10 अंकों का मोबाइल नंबर डालें।');
-    const f=document.getElementById(photoId)?.files?.[0]; if(f){try{data.photo=await fileToBase64(f);}catch(e){}}
-    data.phone='+91'+data.phone.replace(/^\+91/,''); data.status='active'; data.verified=false; data.updatedAt=firebase.firestore.FieldValue.serverTimestamp();
+  "use strict";
+  async function fileVal(id){
+    const f=document.getElementById(id)?.files?.[0];
+    if(!f)return "";
+    try{return await fileToBase64(f);}catch(e){return "";}
+  }
+  function esc(v){return String(v||"").replace(/[&<>"']/g,function(c){return ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]);});}
+  async function mbProviderSave(collection,prefix,fields,docs,photoId,cardId,declarationId){
+    const data={};
+    fields.forEach(([k,id])=>data[k]=(document.getElementById(id)?.value||'').trim());
+    if(!data.name||!data.phone)return alert('नाम और मोबाइल नंबर जरूरी है।');
+    data.phone=data.phone.replace(/\D/g,'').slice(-10);
+    if(!/^\d{10}$/.test(data.phone))return alert('10 अंकों का मोबाइल नंबर डालें।');
+    const declaration=document.getElementById(declarationId);
+    if(!declaration?.checked)return alert('घोषणा/सही जानकारी वाला checkbox स्वीकार करना जरूरी है।');
+    for(const [k,id,requiredLabel] of docs){
+      const f=document.getElementById(id)?.files?.[0];
+      if(requiredLabel && !f)return alert(requiredLabel+' देना अनिवार्य है।');
+      data[k]=await fileVal(id);
+    }
+    const photo=await fileVal(photoId); if(photo)data.photo=photo;
+    data.phone='+91'+data.phone;
+    data.status='active';
+    data.profileComplete=true;
+    data.aadhaarProvided=!!(data.aadhaarFront&&data.aadhaarBack);
+    data.aadhaarVerified=false;
+    data.adminApprovalStatus='pending_verification';
+    data.updatedAt=firebase.firestore.FieldValue.serverTimestamp();
     const existing=await db.collection(collection).where('phone','==',data.phone).limit(1).get();
     let ref=existing.empty?db.collection(collection).doc():existing.docs[0].ref;
     if(existing.empty)data.createdAt=firebase.firestore.FieldValue.serverTimestamp();
     await ref.set(data,{merge:true});
-    localStorage.setItem('mb_device_locked_role',prefix); localStorage.setItem('mb_'+prefix+'_phone',data.phone);
-    MB_renderProviderCard(collection,prefix,data,cardId); alert('✅ आपका '+(prefix==='rental'?'Rental':'Material Seller')+' Profile सेव हो गया।');
+    localStorage.setItem('mb_device_locked_role',prefix);
+    localStorage.setItem('mb_'+prefix+'_phone',data.phone);
+    localStorage.setItem('mb_'+prefix+'_profile_id',ref.id);
+    MB_renderProviderCard(collection,prefix,data,cardId);
+    alert('✅ आपका '+(prefix==='rental'?'Rental Provider':'Material Seller')+' Profile सेव हो गया। Aadhaar/दस्तावेज Admin Verification के लिए भेजे गए हैं।');
   }
-  window.MB_saveRentalProvider=e=>{e.preventDefault();mbProviderSave('rental_providers','rental',[['name','rental-provider-name'],['phone','rental-provider-phone'],['item','rental-provider-item'],['rate','rental-provider-rate'],['area','rental-provider-area'],['delivery','rental-provider-delivery'],['description','rental-provider-desc']],'rental-provider-photo','rental-provider-card');};
-  window.MB_saveMaterialProvider=e=>{e.preventDefault();mbProviderSave('material_providers','material',[['name','material-provider-name'],['phone','material-provider-phone'],['items','material-provider-items'],['rate','material-provider-rate'],['area','material-provider-area'],['delivery','material-provider-delivery'],['description','material-provider-desc']],'material-provider-photo','material-provider-card');};
-  window.MB_renderProviderCard=function(collection,prefix,d,cardId){const c=document.getElementById(cardId);if(!c)return;c.classList.remove('hidden');c.innerHTML=`<div class="flex gap-3 items-center">${d.photo?`<img src="${d.photo}" class="w-16 h-16 rounded-xl object-cover border-2 border-amber-400">`:''}<div><b class="text-sm">${d.name||''}</b><div class="text-[10px] text-slate-500">${prefix==='rental'?'🚜 Rental Provider':'🧱 Material Seller'}</div><div class="text-[10px]">📍 ${d.area||''}</div></div></div><div class="mt-2 grid grid-cols-2 gap-2"><div class="bg-white p-2 rounded-lg">${prefix==='rental'?'मशीन/गाड़ी':'Material'}<br><b>${d.item||d.items||''}</b></div><div class="bg-white p-2 rounded-lg">रेट<br><b>${d.rate||''}</b></div></div><div class="mt-2 text-emerald-700 font-bold">🛡️ MistriBabu Verified: Admin verification pending</div>`;};
-  async function load(collection,prefix,ids,card){const phone=localStorage.getItem('mb_'+prefix+'_phone');if(!phone)return;const q=await db.collection(collection).where('phone','==',phone).limit(1).get();if(q.empty)return;const d=q.docs[0].data();ids.forEach(([id,k])=>{const e=document.getElementById(id);if(e)e.value=(d[k]||'').replace(/^\+91/,'');});MB_renderProviderCard(collection,prefix,d,card);}
+  window.MB_saveRentalProvider=e=>{e.preventDefault();mbProviderSave('rental_providers','rental',
+    [['name','rental-provider-name'],['phone','rental-provider-phone'],['item','rental-provider-item'],['rate','rental-provider-rate'],['area','rental-provider-area'],['delivery','rental-provider-delivery'],['description','rental-provider-desc']],
+    [['aadhaarFront','rental-provider-aadhaar-front','Aadhaar Front'],['aadhaarBack','rental-provider-aadhaar-back','Aadhaar Back'],['rcProof','rental-provider-rc',''],['legalProof','rental-provider-legal',''],['ownershipProof','rental-provider-ownership',''],['bankProof','rental-provider-bankproof','']],
+    'rental-provider-photo','rental-provider-card','rental-provider-declaration');};
+  window.MB_saveMaterialProvider=e=>{e.preventDefault();mbProviderSave('material_providers','material',
+    [['name','material-provider-name'],['phone','material-provider-phone'],['items','material-provider-items'],['rate','material-provider-rate'],['area','material-provider-area'],['delivery','material-provider-delivery'],['description','material-provider-desc']],
+    [['aadhaarFront','material-provider-aadhaar-front','Aadhaar Front'],['aadhaarBack','material-provider-aadhaar-back','Aadhaar Back'],['gstProof','material-provider-gst',''],['licenseProof','material-provider-license',''],['businessProof','material-provider-businessproof',''],['addressProof','material-provider-addressproof',''],['bankProof','material-provider-bankproof','']],
+    'material-provider-photo','material-provider-card','material-provider-declaration');};
+
+  window.MB_renderProviderCard=function(collection,prefix,d,cardId){
+    const c=document.getElementById(cardId);if(!c)return;c.classList.remove('hidden');
+    const verified=d.aadhaarVerified===true;
+    const approval=d.adminApprovalStatus==='approved';
+    const proofCount=Object.keys(d).filter(k=>/Proof$/.test(k)&&d[k]).length;
+    c.innerHTML=`<div class="flex gap-3 items-center">${d.photo?`<img src="${d.photo}" class="w-16 h-16 rounded-xl object-cover border-2 border-slate-300">`:''}<div><b class="text-sm">${esc(d.name)}</b><div class="text-[10px] text-slate-500">${prefix==='rental'?'🚜 Machine / Vehicle Rental Provider':'🧱 Construction Material Seller'}</div><div class="text-[10px]">📍 ${esc(d.area)}</div><div class="text-[10px]">📄 ${proofCount} business/ownership proof saved</div></div></div>
+    <div class="mt-2 grid grid-cols-2 gap-2"><div class="bg-white p-2 rounded-lg">${prefix==='rental'?'मशीन/गाड़ी':'Material'}<br><b>${esc(d.item||d.items)}</b></div><div class="bg-white p-2 rounded-lg">रेट<br><b>${esc(d.rate)}</b></div></div>
+    <div class="mt-2 ${verified?'text-emerald-700':'text-amber-700'} font-bold">${verified?'🛡️ MistriBabu Verified':'⏳ Aadhaar/Admin Verification Pending'}</div>
+    <div class="mt-2 text-[10px] text-slate-600">${approval?'✅ Profile Approved — अब marketplace में provider के रूप में दिख सकता है।':'🔎 Profile बनाया जा चुका है; Admin दस्तावेज देखकर approval करेगा।'}</div>`;
+  };
+  async function load(collection,prefix,ids,card){
+    const phone=localStorage.getItem('mb_'+prefix+'_phone');if(!phone)return;
+    const q=await db.collection(collection).where('phone','==',phone).limit(1).get();if(q.empty)return;
+    const d=q.docs[0].data();ids.forEach(([id,k])=>{const e=document.getElementById(id);if(e)e.value=(d[k]||'').replace(/^\+91/,'');});
+    MB_renderProviderCard(collection,prefix,d,card);
+  }
   window.MB_loadRentalProvider=()=>load('rental_providers','rental',[['rental-provider-name','name'],['rental-provider-phone','phone'],['rental-provider-item','item'],['rental-provider-rate','rate'],['rental-provider-area','area'],['rental-provider-delivery','delivery'],['rental-provider-desc','description']],'rental-provider-card');
   window.MB_loadMaterialProvider=()=>load('material_providers','material',[['material-provider-name','name'],['material-provider-phone','phone'],['material-provider-items','items'],['material-provider-rate','rate'],['material-provider-area','area'],['material-provider-delivery','delivery'],['material-provider-desc','description']],'material-provider-card');
   window.MB_switchPostCategory=function(v){
     const r=document.getElementById('mb-rental-post-fields'),m=document.getElementById('mb-material-post-fields'),h=document.getElementById('mb-post-category-help');
     if(r)r.classList.toggle('hidden',v!=='rental');if(m)m.classList.toggle('hidden',v!=='material');
     const msg={mistri:'घर बनाने के लिए मिस्त्री/मजदूर की जरूरत पोस्ट करें।',rental:'JCB, Tractor, Mixer, वाहन आदि Rental की जरूरत पोस्ट करें।',material:'गिट्टी, बालू, सीमेंट, ईंट, सरिया आदि Material की जरूरत पोस्ट करें।',contractor:'पूरा काम उठाने के लिए VIP या Small Contractor की जरूरत पोस्ट करें।'};if(h)h.textContent=msg[v]||'';
-    const work=document.getElementById('pc-work'); if(work){ if(v==='contractor') work.innerHTML='<option value="Contractor चाहिए">👷 Contractor चाहिए</option>'; else if(v==='rental') work.innerHTML='<option value="Machine/Vehicle Rental चाहिए">🚜 Machine / Vehicle Rental चाहिए</option>'; else if(v==='material') work.innerHTML='<option value="Construction Material चाहिए">🧱 Construction Material चाहिए</option>'; else if(typeof window.populateWorkTypes==='function') window.populateWorkTypes(); }
+    const work=document.getElementById('pc-work');if(work){if(v==='contractor')work.innerHTML='<option value="Contractor चाहिए">👷 Contractor चाहिए</option>';else if(v==='rental')work.innerHTML='<option value="Machine/Vehicle Rental चाहिए">🚜 Machine / Vehicle Rental चाहिए</option>';else if(v==='material')work.innerHTML='<option value="Construction Material चाहिए">🧱 Construction Material चाहिए</option>';else if(typeof window.populateWorkTypes==='function')window.populateWorkTypes();}
   };
 })();
 </script>
