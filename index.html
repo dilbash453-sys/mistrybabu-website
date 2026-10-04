@@ -221,8 +221,35 @@
       </div>
 
       <form id="form-post-job" onsubmit="saveClientJob(event)" class="space-y-3">
+        <div class="bg-slate-900 text-white p-3 rounded-xl space-y-2">
+          <label class="block text-[11px] font-black">आपको क्या चाहिए? *</label>
+          <select id="pc-post-category" onchange="MB_switchPostCategory(this.value)" class="w-full rounded-lg border-0 px-2 py-2 text-xs font-black text-slate-900">
+            <option value="mistri">🛠️ मिस्त्री / मजदूर चाहिए</option>
+            <option value="rental">🚜 मशीन / व्हीकल Rental चाहिए</option>
+            <option value="material">🧱 Construction Material चाहिए</option>
+            <option value="contractor">👷 Contractor चाहिए</option>
+          </select>
+          <p id="mb-post-category-help" class="text-[9px] text-slate-300">घर बनाने के लिए सही मिस्त्री चुनें।</p>
+        </div>
+
+        <div id="mb-rental-post-fields" class="hidden bg-blue-50 border border-blue-200 p-3 rounded-xl space-y-2">
+          <div class="grid grid-cols-2 gap-2">
+            <input id="pc-rental-item" class="rounded-lg border border-slate-300 px-2 py-2 text-xs" placeholder="मशीन/गाड़ी जैसे JCB, ट्रैक्टर">
+            <input id="pc-rental-duration" class="rounded-lg border border-slate-300 px-2 py-2 text-xs" placeholder="कितने घंटे/दिन?">
+          </div>
+          <input id="pc-rental-desc" class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs" placeholder="काम/मशीन की जरूरत का विवरण">
+        </div>
+
+        <div id="mb-material-post-fields" class="hidden bg-emerald-50 border border-emerald-200 p-3 rounded-xl space-y-2">
+          <div class="grid grid-cols-2 gap-2">
+            <input id="pc-material-item" class="rounded-lg border border-slate-300 px-2 py-2 text-xs" placeholder="सामान जैसे गिट्टी, बालू, ईंट">
+            <input id="pc-material-qty" class="rounded-lg border border-slate-300 px-2 py-2 text-xs" placeholder="कितनी मात्रा?">
+          </div>
+          <input id="pc-material-desc" class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs" placeholder="Material/Delivery की जरूरत का विवरण">
+        </div>
+
         <div>
-          <label class="block text-[11px] font-bold text-slate-700 mb-1">काम की श्रेणी चुनें *</label>
+          <label class="block text-[11px] font-bold text-slate-700 mb-1">मौजूदा मिस्त्री काम की श्रेणी *</label>
           <select id="pc-is-theka" class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs focus:outline-none bg-slate-50 font-bold">
             <option value="false">🧱 सामान्य दिहाड़ी या छोटा काम</option>
             <option value="true">🏢 पेटी-ठेका / सब-कॉन्ट्रैक्ट (बड़ा काम / पूरी बिल्डिंग)</option>
@@ -351,6 +378,12 @@
       </button>
       <button onclick="switchRoleTab('contractor')" id="tab-btn-contractor" class="flex-1 py-2 text-center rounded-lg text-slate-600">
         ठेकेदार VIP 👑
+      </button>
+      <button onclick="switchRoleTab('rental')" id="tab-btn-rental" class="flex-1 py-2 text-center rounded-lg text-slate-600">
+        🚜 Rental
+      </button>
+      <button onclick="switchRoleTab('material')" id="tab-btn-material" class="flex-1 py-2 text-center rounded-lg text-slate-600">
+        🧱 Material
       </button>
     </div>
 
@@ -495,6 +528,40 @@
 
       <div id="client-posts-list" class="space-y-3"></div>
     </div>
+    <!-- 1B. RENTAL PROVIDER PROFILE -->
+    <div id="rental-provider-box" class="space-y-3 hidden">
+      <div class="bg-blue-950 text-white p-4 rounded-2xl"><h3 class="font-black">🚜 Machine / Vehicle Rental Profile</h3><p class="text-[10px] text-blue-200 mt-1">मशीन या गाड़ी देने वाले मालिक/व्यवसाय के लिए</p></div>
+      <form id="rental-provider-form" onsubmit="MB_saveRentalProvider(event)" class="bg-white p-4 rounded-2xl border border-slate-200 space-y-2">
+        <input id="rental-provider-name" required class="w-full rounded-lg border px-3 py-2 text-xs" placeholder="Owner / Business Name *">
+        <input id="rental-provider-phone" required maxlength="10" inputmode="numeric" class="w-full rounded-lg border px-3 py-2 text-xs" placeholder="मोबाइल नंबर *">
+        <input id="rental-provider-item" required class="w-full rounded-lg border px-3 py-2 text-xs" placeholder="मशीन / व्हीकल: JCB, Tractor, Mixer आदि *">
+        <input id="rental-provider-rate" required class="w-full rounded-lg border px-3 py-2 text-xs" placeholder="Rental Rate: ₹/घंटा या ₹/दिन *">
+        <input id="rental-provider-area" required class="w-full rounded-lg border px-3 py-2 text-xs" placeholder="Area / District *">
+        <input id="rental-provider-delivery" class="w-full rounded-lg border px-3 py-2 text-xs" placeholder="Delivery/Transport: उपलब्ध है या नहीं">
+        <textarea id="rental-provider-desc" rows="2" class="w-full rounded-lg border px-3 py-2 text-xs" placeholder="मशीन की जानकारी"></textarea>
+        <input id="rental-provider-photo" type="file" accept="image/*" class="text-xs">
+        <button class="w-full bg-blue-700 text-white font-black py-2.5 rounded-xl text-xs">🚜 Rental Profile बनाएं / अपडेट करें</button>
+      </form>
+      <div id="rental-provider-card" class="hidden bg-blue-50 border border-blue-200 rounded-2xl p-4 text-xs"></div>
+    </div>
+
+    <!-- 1C. MATERIAL PROVIDER PROFILE -->
+    <div id="material-provider-box" class="space-y-3 hidden">
+      <div class="bg-emerald-950 text-white p-4 rounded-2xl"><h3 class="font-black">🧱 Construction Material Seller Profile</h3><p class="text-[10px] text-emerald-200 mt-1">Material बेचने वाली दुकान/व्यवसाय के लिए</p></div>
+      <form id="material-provider-form" onsubmit="MB_saveMaterialProvider(event)" class="bg-white p-4 rounded-2xl border border-slate-200 space-y-2">
+        <input id="material-provider-name" required class="w-full rounded-lg border px-3 py-2 text-xs" placeholder="Shop / Business Name *">
+        <input id="material-provider-phone" required maxlength="10" inputmode="numeric" class="w-full rounded-lg border px-3 py-2 text-xs" placeholder="मोबाइल नंबर *">
+        <input id="material-provider-items" required class="w-full rounded-lg border px-3 py-2 text-xs" placeholder="Material: सीमेंट, गिट्टी, बालू, ईंट, सरिया आदि *">
+        <input id="material-provider-rate" required class="w-full rounded-lg border px-3 py-2 text-xs" placeholder="Rate / Price *">
+        <input id="material-provider-area" required class="w-full rounded-lg border px-3 py-2 text-xs" placeholder="Area / District *">
+        <input id="material-provider-delivery" class="w-full rounded-lg border px-3 py-2 text-xs" placeholder="Home Delivery: उपलब्ध है या नहीं">
+        <textarea id="material-provider-desc" rows="2" class="w-full rounded-lg border px-3 py-2 text-xs" placeholder="दुकान/Material की जानकारी"></textarea>
+        <input id="material-provider-photo" type="file" accept="image/*" class="text-xs">
+        <button class="w-full bg-emerald-700 text-white font-black py-2.5 rounded-xl text-xs">🧱 Material Seller Profile बनाएं / अपडेट करें</button>
+      </form>
+      <div id="material-provider-card" class="hidden bg-emerald-50 border border-emerald-200 rounded-2xl p-4 text-xs"></div>
+    </div>
+
     <!-- 2. WORKER DASHBOARD -->
     <div id="worker-dashboard-box" class="space-y-4 hidden">
       <div class="bg-amber-50 border border-amber-300 rounded-2xl p-3 shadow-xs">
@@ -1851,6 +1918,14 @@
         location: document.getElementById("pc-location").value.trim(),
         lat: parseFloat(document.getElementById("pc-lat").value) || null,
         lng: parseFloat(document.getElementById("pc-lng").value) || null,
+        postCategory: document.getElementById("pc-post-category")?.value || "mistri",
+        rentalItem: document.getElementById("pc-rental-item")?.value.trim() || "",
+        rentalDuration: document.getElementById("pc-rental-duration")?.value.trim() || "",
+        rentalDesc: document.getElementById("pc-rental-desc")?.value.trim() || "",
+        materialItem: document.getElementById("pc-material-item")?.value.trim() || "",
+        materialQty: document.getElementById("pc-material-qty")?.value.trim() || "",
+        materialDesc: document.getElementById("pc-material-desc")?.value.trim() || "",
+        providerTarget: document.getElementById("pc-post-category")?.value === "contractor" ? "vip_small_contractor" : (document.getElementById("pc-post-category")?.value === "rental" ? "rental_provider" : (document.getElementById("pc-post-category")?.value === "material" ? "material_provider" : "mistri")),
         workType: document.getElementById("pc-work").value,
         duration: document.getElementById("pc-duration").value,
         workerCount: document.getElementById("pc-worker-count").value || 1,
@@ -4001,41 +4076,21 @@
       const lockedRole = localStorage.getItem("mb_device_locked_role");
       const currentRole = localStorage.getItem("current_user_role");
       const isLoggedIn = !!(localStorage.getItem("mb_worker_phone") || currentRole);
+      const roleLabels={worker:"मिस्त्री",client:"ग्राहक",contractor:"कॉन्ट्रैक्टर",rental:"Rental Provider",material:"Material Seller"};
       if (isLoggedIn && lockedRole && role !== lockedRole) {
-        alert("🔒 आप पहले से " + (lockedRole === "worker" ? "मिस्त्री" : lockedRole === "client" ? "ग्राहक" : "कॉन्ट्रैक्टर") + " के रूप में लॉगिन हैं। दूसरे प्रोफ़ाइल फॉर्म में जाने की अनुमति नहीं है।");
+        alert("🔒 आप पहले से " + (roleLabels[lockedRole]||lockedRole) + " के रूप में लॉगिन हैं। दूसरे प्रोफ़ाइल फॉर्म में जाने की अनुमति नहीं है।");
         role = lockedRole;
       }
-      if (currentRole === "worker" && lockedRole === "worker") role = "worker";
-      const clientBox = document.getElementById("client-dashboard-box");
-      const workerBox = document.getElementById("worker-dashboard-box");
-      const contractorBox = document.getElementById("contractor-dashboard-box");
-
-      const btnClient = document.getElementById("tab-btn-client");
-      const btnWorker = document.getElementById("tab-btn-worker");
-      const btnContractor = document.getElementById("tab-btn-contractor");
-
-      if (!clientBox || !workerBox || !contractorBox) return;
-
-      clientBox.style.display = "none";
-      workerBox.style.display = "none";
-      contractorBox.style.display = "none";
-
-      if(btnClient) btnClient.className = "flex-1 py-2 text-center rounded-lg text-slate-600 font-bold text-xs bg-slate-200";
-      if(btnWorker) btnWorker.className = "flex-1 py-2 text-center rounded-lg text-slate-600 font-bold text-xs bg-slate-200";
-      if(btnContractor) btnContractor.className = "flex-1 py-2 text-center rounded-lg text-slate-600 font-bold text-xs bg-slate-200";
-
-      if (role === 'client') {
-        clientBox.style.display = "block";
-        if(btnClient) btnClient.className = "flex-1 py-2 text-center rounded-lg bg-white text-slate-800 shadow-xs font-bold text-xs";
-      } else if (role === 'worker') {
-        workerBox.style.display = "block";
-        if(btnWorker) btnWorker.className = "flex-1 py-2 text-center rounded-lg bg-white text-slate-800 shadow-xs font-bold text-xs";
-        if(typeof updateRegisterScreenView === 'function') { updateRegisterScreenView(); }
-      } else if (role === 'contractor') {
-        contractorBox.style.display = "block";
-        if(btnContractor) btnContractor.className = "flex-1 py-2 text-center rounded-lg bg-white text-slate-800 shadow-xs font-bold text-xs";
-        if(typeof checkContractorStatus === 'function') { checkContractorStatus(); }
-      }
+      const ids={client:"client-dashboard-box",worker:"worker-dashboard-box",contractor:"contractor-dashboard-box",rental:"rental-provider-box",material:"material-provider-box"};
+      const btns={client:"tab-btn-client",worker:"tab-btn-worker",contractor:"tab-btn-contractor",rental:"tab-btn-rental",material:"tab-btn-material"};
+      Object.values(ids).forEach(id=>{const e=document.getElementById(id);if(e)e.style.display="none";});
+      Object.values(btns).forEach(id=>{const e=document.getElementById(id);if(e)e.className="flex-1 py-2 text-center rounded-lg text-slate-600 font-bold text-[10px] bg-slate-200";});
+      const box=document.getElementById(ids[role]||ids.client); const btn=document.getElementById(btns[role]||btns.client);
+      if(box)box.style.display="block"; if(btn)btn.className="flex-1 py-2 text-center rounded-lg bg-white text-slate-800 shadow-xs font-bold text-[10px]";
+      if(role==='worker' && typeof updateRegisterScreenView==='function') updateRegisterScreenView();
+      if(role==='contractor' && typeof checkContractorStatus==='function') checkContractorStatus();
+      if(role==='rental') MB_loadRentalProvider();
+      if(role==='material') MB_loadMaterialProvider();
     }
 
     function getDeviceFingerprint() {
@@ -4753,6 +4808,35 @@
 function MB_customerDashScroll(id){const el=document.getElementById(id);if(el){el.classList.remove('hidden');el.scrollIntoView({behavior:'smooth',block:'start'});}}
 function MB_customerEditProfile(){document.getElementById('mb-customer-profile-box')?.scrollIntoView({behavior:'smooth'});document.getElementById('mb-customer-signup-form')?.classList.remove('hidden');}
 function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementById('customer-professional-dashboard');if(!d)return;d.classList.remove('hidden');const set=(id,v)=>{const e=document.getElementById(id);if(e)e.innerText=v||'—';};set('mb-cust-dash-name',p.name);set('mb-cust-dash-name2',p.name);set('mb-cust-dash-id','Customer ID: '+(p.customerId||p.id||'MB-CUST-'+String(p.phone||'').slice(-4)));set('mb-cust-dash-location','📍 '+[p.village,p.city,p.district,p.state].filter(Boolean).join(' • '));set('mb-cust-dash-phone',p.phone);set('mb-cust-dash-address',p.address);const im=document.getElementById('mb-cust-dash-photo');if(im&&p.selfie)im.src=p.selfie;document.getElementById('mb-cust-dash-verified')?.classList.toggle('hidden',p.aadhaarVerified!==true);}
+</script>
+<script>
+(function(){
+  async function mbProviderSave(collection, prefix, fields, photoId, cardId){
+    const data={}; fields.forEach(([k,id])=>data[k]=(document.getElementById(id)?.value||'').trim());
+    if(!data.name||!data.phone) return alert('नाम और मोबाइल नंबर जरूरी है।');
+    if(!/^\d{10}$/.test(data.phone)) return alert('10 अंकों का मोबाइल नंबर डालें।');
+    const f=document.getElementById(photoId)?.files?.[0]; if(f){try{data.photo=await fileToBase64(f);}catch(e){}}
+    data.phone='+91'+data.phone.replace(/^\+91/,''); data.status='active'; data.verified=false; data.updatedAt=firebase.firestore.FieldValue.serverTimestamp();
+    const existing=await db.collection(collection).where('phone','==',data.phone).limit(1).get();
+    let ref=existing.empty?db.collection(collection).doc():existing.docs[0].ref;
+    if(existing.empty)data.createdAt=firebase.firestore.FieldValue.serverTimestamp();
+    await ref.set(data,{merge:true});
+    localStorage.setItem('mb_device_locked_role',prefix); localStorage.setItem('mb_'+prefix+'_phone',data.phone);
+    MB_renderProviderCard(collection,prefix,data,cardId); alert('✅ आपका '+(prefix==='rental'?'Rental':'Material Seller')+' Profile सेव हो गया।');
+  }
+  window.MB_saveRentalProvider=e=>{e.preventDefault();mbProviderSave('rental_providers','rental',[['name','rental-provider-name'],['phone','rental-provider-phone'],['item','rental-provider-item'],['rate','rental-provider-rate'],['area','rental-provider-area'],['delivery','rental-provider-delivery'],['description','rental-provider-desc']],'rental-provider-photo','rental-provider-card');};
+  window.MB_saveMaterialProvider=e=>{e.preventDefault();mbProviderSave('material_providers','material',[['name','material-provider-name'],['phone','material-provider-phone'],['items','material-provider-items'],['rate','material-provider-rate'],['area','material-provider-area'],['delivery','material-provider-delivery'],['description','material-provider-desc']],'material-provider-photo','material-provider-card');};
+  window.MB_renderProviderCard=function(collection,prefix,d,cardId){const c=document.getElementById(cardId);if(!c)return;c.classList.remove('hidden');c.innerHTML=`<div class="flex gap-3 items-center">${d.photo?`<img src="${d.photo}" class="w-16 h-16 rounded-xl object-cover border-2 border-amber-400">`:''}<div><b class="text-sm">${d.name||''}</b><div class="text-[10px] text-slate-500">${prefix==='rental'?'🚜 Rental Provider':'🧱 Material Seller'}</div><div class="text-[10px]">📍 ${d.area||''}</div></div></div><div class="mt-2 grid grid-cols-2 gap-2"><div class="bg-white p-2 rounded-lg">${prefix==='rental'?'मशीन/गाड़ी':'Material'}<br><b>${d.item||d.items||''}</b></div><div class="bg-white p-2 rounded-lg">रेट<br><b>${d.rate||''}</b></div></div><div class="mt-2 text-emerald-700 font-bold">🛡️ MistriBabu Verified: Admin verification pending</div>`;};
+  async function load(collection,prefix,ids,card){const phone=localStorage.getItem('mb_'+prefix+'_phone');if(!phone)return;const q=await db.collection(collection).where('phone','==',phone).limit(1).get();if(q.empty)return;const d=q.docs[0].data();ids.forEach(([id,k])=>{const e=document.getElementById(id);if(e)e.value=(d[k]||'').replace(/^\+91/,'');});MB_renderProviderCard(collection,prefix,d,card);}
+  window.MB_loadRentalProvider=()=>load('rental_providers','rental',[['rental-provider-name','name'],['rental-provider-phone','phone'],['rental-provider-item','item'],['rental-provider-rate','rate'],['rental-provider-area','area'],['rental-provider-delivery','delivery'],['rental-provider-desc','description']],'rental-provider-card');
+  window.MB_loadMaterialProvider=()=>load('material_providers','material',[['material-provider-name','name'],['material-provider-phone','phone'],['material-provider-items','items'],['material-provider-rate','rate'],['material-provider-area','area'],['material-provider-delivery','delivery'],['material-provider-desc','description']],'material-provider-card');
+  window.MB_switchPostCategory=function(v){
+    const r=document.getElementById('mb-rental-post-fields'),m=document.getElementById('mb-material-post-fields'),h=document.getElementById('mb-post-category-help');
+    if(r)r.classList.toggle('hidden',v!=='rental');if(m)m.classList.toggle('hidden',v!=='material');
+    const msg={mistri:'घर बनाने के लिए मिस्त्री/मजदूर की जरूरत पोस्ट करें।',rental:'JCB, Tractor, Mixer, वाहन आदि Rental की जरूरत पोस्ट करें।',material:'गिट्टी, बालू, सीमेंट, ईंट, सरिया आदि Material की जरूरत पोस्ट करें।',contractor:'पूरा काम उठाने के लिए VIP या Small Contractor की जरूरत पोस्ट करें।'};if(h)h.textContent=msg[v]||'';
+    const work=document.getElementById('pc-work'); if(work){ if(v==='contractor') work.innerHTML='<option value="Contractor चाहिए">👷 Contractor चाहिए</option>'; else if(v==='rental') work.innerHTML='<option value="Machine/Vehicle Rental चाहिए">🚜 Machine / Vehicle Rental चाहिए</option>'; else if(v==='material') work.innerHTML='<option value="Construction Material चाहिए">🧱 Construction Material चाहिए</option>'; else if(typeof window.populateWorkTypes==='function') window.populateWorkTypes(); }
+  };
+})();
 </script>
 </body>
   </html>
