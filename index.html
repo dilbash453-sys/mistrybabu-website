@@ -298,7 +298,6 @@
             <option value="true">🏢 पेटी-ठेका / सब-कॉन्ट्रैक्ट (बड़ा काम / पूरी बिल्डिंग)</option>
           </select>
         </div>
-        <div class="bg-blue-50 border border-blue-200 p-3 rounded-xl space-y-2"><label class="flex items-center gap-2 text-[11px] font-bold text-slate-800 cursor-pointer"><input type="checkbox" id="pc-factory-job" class="rounded text-blue-600"> 🏭 फैक्ट्री / कारखाना Bulk Labor Post</label><p class="text-[9px] text-slate-500">एक साथ कई कारीगर/मजदूर चाहिए तो इसे चुनें।</p></div>
         <div>
           <label class="block text-[11px] font-bold text-slate-700 mb-1">काम का प्रकार चुनें *</label>
           <select id="pc-work" class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs focus:outline-none"></select>
@@ -316,7 +315,6 @@
           <select id="pc-state" onchange="handleStateChange('pc-state', 'pc-district', 'pc-block')" required class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs"><option value="बिहार">बिहार (Bihar)</option><option value="उत्तर प्रदेश">उत्तर प्रदेश (Uttar Pradesh)</option><option value="दिल्ली">दिल्ली (Delhi NCR)</option><option value="हरियाणा">हरियाणा (Haryana)</option></select>
         </div>
         <div class="grid grid-cols-2 gap-2"><div><label class="block text-[11px] font-bold text-slate-700 mb-1">ज़िला *</label><select id="pc-district" onchange="updateBlocks('pc-district', 'pc-block', 'pc-state')" required class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs"><option value="">-- ज़िला चुनें --</option></select></div><div><label class="block text-[11px] font-bold text-slate-700 mb-1">प्रखंड / ब्लॉक / तहसील *</label><select id="pc-block" required class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs"><option value="">-- ब्लॉक चुनें --</option></select></div></div>
-        <div><label class="block text-[11px] font-bold text-slate-700 mb-1">काम का इलाका / गाँव / वार्ड *</label><input type="text" id="pc-location" required placeholder="जैसे: स्टेशन रोड, नया बाजार" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs"></div>
         <div class="bg-amber-50/70 p-3 rounded-xl border border-amber-300 space-y-2"><label class="flex items-start space-x-2 cursor-pointer"><input type="checkbox" id="gps-site-confirm-check" onchange="toggleSiteGpsButton(this.checked)" class="mt-0.5 rounded text-amber-600"><span class="text-[11px] font-bold text-slate-800">सख्त नियम: मैं अभी काम की असली जगह (साइट) पर मौजूद हूँ।</span></label><div class="flex justify-between items-center pt-1 border-t border-amber-200"><button type="button" id="btn-gps-trigger" onclick="captureJobSiteLocation()" disabled class="text-[10px] bg-slate-300 text-slate-600 font-bold px-2.5 py-1.5 rounded-lg"><i class="fa-solid fa-location-crosshairs"></i><span> साइट से लाइव GPS लें</span></button><span id="pc-gps-status" class="text-[10px] text-slate-500">GPS बंद है (चेकबॉक्स टिक करें)</span></div><input type="hidden" id="pc-lat"><input type="hidden" id="pc-lng"></div>
         <div><label class="block text-[11px] font-bold text-slate-700 mb-1">काम कब से शुरू करवाना है? *</label><select id="pc-urgency-type" required class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs"><option value="normal" selected>🟢 सामान्य (1-2 दिन में या आराम से) - [7 दिन वैध]</option><option value="urgent">🔴 तत्काल / आज ही (Emergency) - [सिर्फ़ 24 घंटे वैध]</option></select></div>
         <div class="bg-slate-50 p-2.5 rounded-xl border border-dashed border-slate-300"><label class="block text-[11px] font-bold text-slate-700 mb-0.5">काम की जगह की फ़ोटो (वैकल्पिक)</label><input type="file" id="pc-site-photo" accept="image/*" class="text-xs"></div>
@@ -1981,10 +1979,10 @@
         address: profile.address,
         profileGpsLat: profile.gps?.lat || null,
         profileGpsLng: profile.gps?.lng || null,
-        stateFromPost: document.getElementById("pc-state").value,
-        districtFromPost: document.getElementById("pc-district").value,
-        block: document.getElementById("pc-block").value,
-        location: document.getElementById("pc-location").value.trim(),
+        stateFromPost: document.getElementById("pc-state")?.value || "",
+        districtFromPost: document.getElementById("pc-district")?.value || "",
+        block: document.getElementById("pc-block")?.value || "",
+        location: document.getElementById("pc-location")?.value.trim() || "",
         lat: parseFloat(document.getElementById("pc-lat").value) || null,
         lng: parseFloat(document.getElementById("pc-lng").value) || null,
         postCategory: postCategory,
@@ -4516,7 +4514,7 @@
   window.MB_getCustomerProfile=function(){var p=read();return complete(p)?p:null;};
 
   function draftFieldIds(){
-    return ["pc-is-theka","pc-factory-job","pc-state","pc-district","pc-block","pc-location",
+    return ["pc-is-theka","pc-state","pc-district","pc-block",
       "gps-site-confirm-check","pc-lat","pc-lng","pc-work","pc-duration","pc-worker-count",
       "pc-material","pc-urgency-type","pc-desc","pc-voice-note"];
   }
