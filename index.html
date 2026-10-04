@@ -239,76 +239,58 @@
           <p id="mb-post-category-help" class="text-[9px] text-slate-300">घर बनाने के लिए सही मिस्त्री चुनें।</p>
         </div>
 
-        <!-- 🚜 CUSTOMER RENTAL REQUIREMENT FORM -->
-        <div id="mb-rental-post-fields" class="hidden bg-blue-50 border border-blue-200 p-3 rounded-xl space-y-2">
-          <div class="flex justify-between items-center">
-            <div><h4 class="text-xs font-black text-blue-900">🚜 Rental की जरूरत</h4><p class="text-[9px] text-blue-700">एक पोस्ट में कई मशीन/वाहन जोड़ सकते हैं।</p></div>
-            <button type="button" onclick="MB_addRentalPostItem()" class="bg-blue-700 text-white text-[10px] font-black px-3 py-1.5 rounded-lg">➕ Add Rental Item</button>
+        <!-- CATEGORY-SPECIFIC POST FORMS: केवल चुनी हुई category का form दिखेगा -->
+        <div id="mb-rental-post-fields" class="hidden bg-blue-50 border border-blue-200 p-3 rounded-xl space-y-3">
+          <div class="flex items-center justify-between"><h3 class="text-xs font-black text-blue-900">🚜 Rental गाड़ी / मशीन की जरूरत</h3><span class="text-[9px] bg-blue-100 text-blue-800 px-2 py-1 rounded-full font-bold">केवल Rental</span></div>
+          <div id="mb-rental-items-list" class="space-y-2"></div>
+          <input type="hidden" id="pc-rental-items-json" value="[]">
+          <div class="grid grid-cols-2 gap-2">
+            <input id="pc-rental-item-new" class="rounded-lg border border-slate-300 px-2 py-2 text-xs" placeholder="गाड़ी/मशीन: JCB, Tractor *">
+            <input id="pc-rental-qty-new" type="number" min="1" value="1" class="rounded-lg border border-slate-300 px-2 py-2 text-xs" placeholder="कितनी गाड़ी? *">
           </div>
-          <div id="mb-rental-post-builder" class="bg-white border border-blue-200 rounded-xl p-2 space-y-2">
-            <div class="grid grid-cols-2 gap-2">
-              <input id="pc-rental-item" class="rounded-lg border border-slate-300 px-2 py-2 text-xs" placeholder="JCB, Tractor, Dumper *">
-              <input id="pc-rental-qty" type="number" min="1" value="1" class="rounded-lg border border-slate-300 px-2 py-2 text-xs" placeholder="Quantity *">
-            </div>
-            <div class="grid grid-cols-2 gap-2">
-              <input id="pc-rental-duration" class="rounded-lg border border-slate-300 px-2 py-2 text-xs" placeholder="कितने घंटे/दिन? *">
-              <input id="pc-rental-date" type="date" class="rounded-lg border border-slate-300 px-2 py-2 text-xs">
-            </div>
-            <div class="grid grid-cols-2 gap-2">
-              <input id="pc-rental-capacity" class="rounded-lg border border-slate-300 px-2 py-2 text-xs" placeholder="Capacity / HP">
-              <select id="pc-rental-driver" class="rounded-lg border border-slate-300 px-2 py-2 text-xs"><option value="हाँ">Driver चाहिए</option><option value="नहीं">Driver नहीं चाहिए</option></select>
-            </div>
-            <input id="pc-rental-desc" class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs" placeholder="मशीन/काम की जरूरत का विवरण">
+          <div class="grid grid-cols-2 gap-2">
+            <input id="pc-rental-duration-new" class="rounded-lg border border-slate-300 px-2 py-2 text-xs" placeholder="कितने घंटे/दिन? *">
+            <input id="pc-rental-date-new" type="date" class="rounded-lg border border-slate-300 px-2 py-2 text-xs">
           </div>
-          <div id="mb-rental-post-items" class="space-y-2"></div>
+          <div class="grid grid-cols-2 gap-2">
+            <input id="pc-rental-capacity-new" class="rounded-lg border border-slate-300 px-2 py-2 text-xs" placeholder="Capacity / HP">
+            <select id="pc-rental-driver-new" class="rounded-lg border border-slate-300 px-2 py-2 text-xs"><option value="हाँ">Driver चाहिए</option><option value="नहीं">Driver नहीं चाहिए</option></select>
+          </div>
+          <input id="pc-rental-desc-new" class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs" placeholder="गाड़ी/मशीन के काम की जरूरत का विवरण">
+          <button type="button" onclick="MB_addRentalPostItem()" class="w-full bg-blue-700 text-white font-black py-2 rounded-lg text-xs">➕ गाड़ी / मशीन Add करें</button>
         </div>
 
-        <!-- 🧱 CUSTOMER MATERIAL REQUIREMENT FORM -->
-        <div id="mb-material-post-fields" class="hidden bg-emerald-50 border border-emerald-200 p-3 rounded-xl space-y-2">
-          <div class="flex justify-between items-center">
-            <div><h4 class="text-xs font-black text-emerald-900">🧱 Construction Material की जरूरत</h4><p class="text-[9px] text-emerald-700">एक पोस्ट में जितना चाहें उतना material जोड़ें।</p></div>
-            <button type="button" onclick="MB_addMaterialPostItem()" class="bg-emerald-700 text-white text-[10px] font-black px-3 py-1.5 rounded-lg">➕ Add Item</button>
-          </div>
-          <div class="bg-white border border-emerald-200 rounded-xl p-2 space-y-2">
-            <div class="grid grid-cols-2 gap-2">
-              <input id="pc-material-item" class="rounded-lg border border-slate-300 px-2 py-2 text-xs" placeholder="सीमेंट, सरिया, गिट्टी, बालू *">
-              <input id="pc-material-qty" class="rounded-lg border border-slate-300 px-2 py-2 text-xs" placeholder="मात्रा *">
-            </div>
-            <div class="grid grid-cols-2 gap-2">
-              <input id="pc-material-unit" class="rounded-lg border border-slate-300 px-2 py-2 text-xs" placeholder="Unit: बोरी/पीस/ट्रॉली *">
-              <input id="pc-material-brand" class="rounded-lg border border-slate-300 px-2 py-2 text-xs" placeholder="Brand / Quality">
-            </div>
-            <input id="pc-material-desc" class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs" placeholder="Material / Delivery की जरूरत का विवरण">
-          </div>
-          <div id="mb-material-post-items" class="space-y-2"></div>
+        <div id="mb-contractor-post-fields" class="hidden bg-violet-50 border border-violet-200 p-3 rounded-xl space-y-3">
+          <div class="flex items-center justify-between"><h3 class="text-xs font-black text-violet-900">👷 Contractor की जरूरत</h3><span class="text-[9px] bg-violet-100 text-violet-800 px-2 py-1 rounded-full font-bold">केवल Contractor</span></div>
+          <div id="mb-contractor-items-list" class="space-y-2"></div>
+          <input type="hidden" id="pc-contractor-items-json" value="[]">
+          <select id="pc-contractor-type-new" class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs"><option value="पूरा घर निर्माण">पूरा घर निर्माण</option><option value="RCC काम">RCC काम</option><option value="बाउंड्री वॉल">बाउंड्री वॉल</option><option value="Renovation / मरम्मत">Renovation / मरम्मत</option><option value="अन्य">अन्य</option></select>
+          <div class="grid grid-cols-2 gap-2">
+            <input id="pc-contractor-area-new" class="rounded-lg border border-slate-300 px-2 py-2 text-xs" placeholder="Area / Sq.Ft. *">
+            <input id="pc-contractor-floors-new" class="rounded-lg border border-slate-300 px-2 py-2 text-xs" placeholder="कितनी मंजिल?"></div>
+          <div class="grid grid-cols-2 gap-2">
+            <input id="pc-contractor-budget-new" class="rounded-lg border border-slate-300 px-2 py-2 text-xs" placeholder="अनुमानित Budget">
+            <select id="pc-contractor-material-new" class="rounded-lg border border-slate-300 px-2 py-2 text-xs"><option value="मालिक देगा">Material मालिक देगा</option><option value="Contractor देगा">Material Contractor देगा</option><option value="दोनों बात करके">दोनों बात करके</option></select></div>
+          <input id="pc-contractor-desc-new" class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs" placeholder="काम की पूरी जरूरत / शर्तें">
+          <button type="button" onclick="MB_addContractorPostItem()" class="w-full bg-violet-700 text-white font-black py-2 rounded-lg text-xs">➕ Contractor Work Add करें</button>
         </div>
 
-        <!-- 👷 CUSTOMER CONTRACTOR REQUIREMENT FORM -->
-        <div id="mb-contractor-post-fields" class="hidden bg-violet-50 border border-violet-200 p-3 rounded-xl space-y-2">
-          <div class="flex justify-between items-center">
-            <div><h4 class="text-xs font-black text-violet-900">👷 Contractor की जरूरत</h4><p class="text-[9px] text-violet-700">एक पोस्ट में अलग-अलग काम/requirement जोड़ सकते हैं।</p></div>
-            <button type="button" onclick="MB_addContractorPostItem()" class="bg-violet-700 text-white text-[10px] font-black px-3 py-1.5 rounded-lg">➕ Add Work</button>
-          </div>
-          <div class="bg-white border border-violet-200 rounded-xl p-2 space-y-2">
-            <select id="pc-contractor-type" class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs">
-              <option value="">काम का प्रकार चुनें *</option>
-              <option>पूरा मकान निर्माण</option><option>RCC / छत का काम</option><option>बाउंड्री वॉल</option><option>Renovation / मरम्मत</option><option>दुकान / कमर्शियल बिल्डिंग</option>
-            </select>
-            <div class="grid grid-cols-2 gap-2">
-              <input id="pc-contractor-area" class="rounded-lg border border-slate-300 px-2 py-2 text-xs" placeholder="Area / Sq.ft">
-              <input id="pc-contractor-floors" class="rounded-lg border border-slate-300 px-2 py-2 text-xs" placeholder="Floors">
-            </div>
-            <div class="grid grid-cols-2 gap-2">
-              <input id="pc-contractor-budget" class="rounded-lg border border-slate-300 px-2 py-2 text-xs" placeholder="Budget ₹">
-              <select id="pc-contractor-material" class="rounded-lg border border-slate-300 px-2 py-2 text-xs"><option value="मालिक देगा">Material मालिक देगा</option><option value="Contractor देगा">Contractor देगा</option><option value="बात करके तय होगा">बात करके तय होगा</option></select>
-            </div>
-            <textarea id="pc-contractor-desc" rows="2" class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs" placeholder="काम की पूरी जानकारी"></textarea>
-          </div>
-          <div id="mb-contractor-post-items" class="space-y-2"></div>
-        </div>
-          <input id="pc-material-desc" class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs" placeholder="Material/Delivery की जरूरत का विवरण">
+        <div id="mb-material-post-fields" class="hidden bg-emerald-50 border border-emerald-200 p-3 rounded-xl space-y-3">
+          <div class="flex items-center justify-between"><h3 class="text-xs font-black text-emerald-900">🧱 Shop / Construction Material की जरूरत</h3><span class="text-[9px] bg-emerald-100 text-emerald-800 px-2 py-1 rounded-full font-bold">केवल Shop/Material</span></div>
+          <div id="mb-material-items-list" class="space-y-2"></div>
+          <input type="hidden" id="pc-material-items-json" value="[]">
+          <div class="grid grid-cols-2 gap-2">
+            <input id="pc-material-item-new" class="rounded-lg border border-slate-300 px-2 py-2 text-xs" placeholder="सामान: Cement, सरिया, बालू *">
+            <input id="pc-material-qty-new" class="rounded-lg border border-slate-300 px-2 py-2 text-xs" placeholder="मात्रा *"></div>
+          <div class="grid grid-cols-2 gap-2">
+            <input id="pc-material-unit-new" class="rounded-lg border border-slate-300 px-2 py-2 text-xs" placeholder="Unit: बोरी/पीस/ट्रॉली">
+            <input id="pc-material-brand-new" class="rounded-lg border border-slate-300 px-2 py-2 text-xs" placeholder="Brand / Quality"></div>
+          <select id="pc-material-delivery-new" class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs"><option value="Home Delivery चाहिए">Home Delivery चाहिए</option><option value="खुद Pickup करेंगे">खुद Pickup करेंगे</option></select>
+          <input id="pc-material-desc-new" class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs" placeholder="Material / Delivery की जरूरत का विवरण">
+          <button type="button" onclick="MB_addMaterialPostItem()" class="w-full bg-emerald-700 text-white font-black py-2 rounded-lg text-xs">➕ Material Item Add करें</button>
         </div>
 
+        <div id="mb-mistri-post-fields" class="space-y-3">
         <div>
           <label class="block text-[11px] font-bold text-slate-700 mb-1">मौजूदा मिस्त्री काम की श्रेणी *</label>
           <select id="pc-is-theka" class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs focus:outline-none bg-slate-50 font-bold">
@@ -317,110 +299,28 @@
           </select>
         </div>
         <div class="bg-blue-50 border border-blue-200 p-3 rounded-xl space-y-2"><label class="flex items-center gap-2 text-[11px] font-bold text-slate-800 cursor-pointer"><input type="checkbox" id="pc-factory-job" class="rounded text-blue-600"> 🏭 फैक्ट्री / कारखाना Bulk Labor Post</label><p class="text-[9px] text-slate-500">एक साथ कई कारीगर/मजदूर चाहिए तो इसे चुनें।</p></div>
-
-        <!-- नाम / मोबाइल Customer Profile से लिए जाएंगे; Post Form में दोबारा नहीं भरने होंगे -->
-        <input type="hidden" id="pc-name">
-        <input type="hidden" id="pc-phone">
-
-        <div>
-          <label class="block text-[11px] font-bold text-slate-700 mb-1">राज्य चुनें *</label>
-          <select id="pc-state" onchange="handleStateChange('pc-state', 'pc-district', 'pc-block')" required class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs focus:outline-none">
-            <option value="बिहार">बिहार (Bihar)</option>
-            <option value="उत्तर प्रदेश">उत्तर प्रदेश (Uttar Pradesh)</option>
-            <option value="दिल्ली">दिल्ली (Delhi NCR)</option>
-            <option value="हरियाणा">हरियाणा (Haryana)</option>
-          </select>
-        </div>
-
-        <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="block text-[11px] font-bold text-slate-700 mb-1">ज़िला *</label>
-            <select id="pc-district" onchange="updateBlocks('pc-district', 'pc-block', 'pc-state')" required class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs focus:outline-none">
-              <option value="">-- ज़िला चुनें --</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-[11px] font-bold text-slate-700 mb-1">प्रखंड / ब्लॉक / तहसील *</label>
-            <select id="pc-block" required class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs focus:outline-none">
-              <option value="">-- ब्लॉक चुनें --</option>
-            </select>
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-[11px] font-bold text-slate-700 mb-1">काम का इलाका / गाँव / वार्ड *</label>
-          <input type="text" id="pc-location" required placeholder="जैसे: स्टेशन रोड, नया बाजार" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs focus:outline-none">
-        </div>
-
-        <div class="bg-amber-50/70 p-3 rounded-xl border border-amber-300 space-y-2">
-          <label class="flex items-start space-x-2 cursor-pointer">
-            <input type="checkbox" id="gps-site-confirm-check" onchange="toggleSiteGpsButton(this.checked)" class="mt-0.5 rounded text-amber-600 focus:ring-0">
-            <span class="text-[11px] font-bold text-slate-800">सख्त नियम: मैं अभी काम की असली जगह (साइट) पर मौजूद हूँ।</span>
-          </label>
-          <div class="flex justify-between items-center pt-1 border-t border-amber-200">
-            <button type="button" id="btn-gps-trigger" onclick="captureJobSiteLocation()" disabled class="text-[10px] bg-slate-300 text-slate-600 font-bold px-2.5 py-1.5 rounded-lg flex items-center space-x-1 cursor-not-allowed">
-              <i class="fa-solid fa-location-crosshairs"></i>
-              <span>साइट से लाइव GPS लें</span>
-            </button>
-            <span id="pc-gps-status" class="text-[10px] text-slate-500 font-medium">GPS बंद है (चेकबॉक्स टिक करें)</span>
-          </div>
-          <input type="hidden" id="pc-lat">
-          <input type="hidden" id="pc-lng">
-        </div>
-
         <div>
           <label class="block text-[11px] font-bold text-slate-700 mb-1">काम का प्रकार चुनें *</label>
-          <select id="pc-work" required class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs focus:outline-none"></select>
+          <select id="pc-work" class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs focus:outline-none"></select>
+        </div>
+        <div class="grid grid-cols-2 gap-2"><div><label class="block text-[11px] font-bold text-slate-700 mb-1">काम की अवधि *</label><select id="pc-duration" class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs"><option value="1 दिन की दिहाड़ी">1 दिन की दिहाड़ी</option><option value="1-2 घंटे का छोटा काम">1-2 घंटे का छोटा काम</option><option value="ठेका / लम्पसम काम">ठेका / लम्पसम काम</option><option value="हफ़्ते या महीने का काम">हफ़्ते या महीने का काम</option></select></div><div><label class="block text-[11px] font-bold text-slate-700 mb-1">कितने मिस्त्री/मजदूर चाहिए? *</label><input type="number" id="pc-worker-count" value="1" min="1" max="50" class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs"></div></div>
+        <div><label class="block text-[11px] font-bold text-slate-700 mb-1">सामान का इंतज़ाम कौन करेगा? *</label><select id="pc-material" class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs"><option value="सामान मालिक का (केवल मजदूरी चार्ज)">📦 सामान मालिक का रहेगा (केवल मजदूरी चार्ज)</option><option value="सामान सहित पूरा ठेका">🛠️ सामान सहित पूरा ठेका (मिस्त्री लाएगा)</option></select></div>
         </div>
 
-        <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="block text-[11px] font-bold text-slate-700 mb-1">काम की अवधि *</label>
-            <select id="pc-duration" required class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs focus:outline-none">
-              <option value="1 दिन की दिहाड़ी">1 दिन की दिहाड़ी</option>
-              <option value="1-2 घंटे का छोटा काम">1-2 घंटे का छोटा काम</option>
-              <option value="ठेका / लम्पसम काम">ठेका / लम्पसम काम</option>
-              <option value="हफ़्ते या महीने का काम">हफ़्ते या महीने का काम</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-[11px] font-bold text-slate-700 mb-1">कितने मिस्त्री/मजदूर चाहिए? *</label>
-            <input type="number" id="pc-worker-count" value="1" min="1" max="50" required class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs focus:outline-none">
-          </div>
-        </div>
+        <!-- नाम / मोबाइल Customer Profile से लिए जाएंगे -->
+        <input type="hidden" id="pc-name"><input type="hidden" id="pc-phone">
 
+        <!-- सभी चार categories में यही location रहेगा -->
         <div>
-          <label class="block text-[11px] font-bold text-slate-700 mb-1">सामान का इंतज़ाम कौन करेगा? *</label>
-          <select id="pc-material" required class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs focus:outline-none">
-            <option value="सामान मालिक का (केवल मजदूरी चार्ज)">📦 सामान मालिक का रहेगा (केवल मजदूरी चार्ज)</option>
-            <option value="सामान सहित पूरा ठेका">🛠️ सामान सहित पूरा ठेका (मिस्त्री लाएगा)</option>
-          </select>
+          <label class="block text-[11px] font-bold text-slate-700 mb-1">राज्य चुनें *</label>
+          <select id="pc-state" onchange="handleStateChange('pc-state', 'pc-district', 'pc-block')" required class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs"><option value="बिहार">बिहार (Bihar)</option><option value="उत्तर प्रदेश">उत्तर प्रदेश (Uttar Pradesh)</option><option value="दिल्ली">दिल्ली (Delhi NCR)</option><option value="हरियाणा">हरियाणा (Haryana)</option></select>
         </div>
-
-        <div>
-          <label class="block text-[11px] font-bold text-slate-700 mb-1">काम कब से शुरू करवाना है? *</label>
-          <select id="pc-urgency-type" required class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs focus:outline-none">
-            <option value="normal" selected>🟢 सामान्य (1-2 दिन में या आराम से) - [7 दिन वैध]</option>
-            <option value="urgent">🔴 तत्काल / आज ही (Emergency) - [सिर्फ़ 24 घंटे वैध]</option>
-          </select>
-        </div>
-
-        <div class="bg-slate-50 p-2.5 rounded-xl border border-dashed border-slate-300">
-          <label class="block text-[11px] font-bold text-slate-700 mb-0.5">काम की जगह की फ़ोटो (वैकल्पिक)</label>
-          <p class="text-[9px] text-slate-500 mb-1">फ़ोटो देखकर मिस्त्री तुरंत सटीक रेट बता पाएगा</p>
-          <input type="file" id="pc-site-photo" accept="image/*" class="text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:bg-amber-100 file:text-amber-800">
-        </div>
-
-        <div>
-          <div class="flex justify-between items-center mb-1">
-            <label class="block text-[11px] font-bold text-slate-700">काम का पूरा विवरण</label>
-            <button type="button" onclick="startVoiceInput('pc-desc', 'voice-btn-post')" id="voice-btn-post" class="text-[10px] text-amber-600 bg-amber-50 px-2 py-0.5 rounded border border-amber-200 font-bold flex items-center space-x-1">
-              <i class="fa-solid fa-microphone"></i>
-              <span>बोलकर लिखें</span>
-            </button>
-          </div>
-          <textarea id="pc-desc" rows="2" placeholder="काम के बारे में समझाकर लिखें..." class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs focus:outline-none"></textarea>
-        </div>
+        <div class="grid grid-cols-2 gap-2"><div><label class="block text-[11px] font-bold text-slate-700 mb-1">ज़िला *</label><select id="pc-district" onchange="updateBlocks('pc-district', 'pc-block', 'pc-state')" required class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs"><option value="">-- ज़िला चुनें --</option></select></div><div><label class="block text-[11px] font-bold text-slate-700 mb-1">प्रखंड / ब्लॉक / तहसील *</label><select id="pc-block" required class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs"><option value="">-- ब्लॉक चुनें --</option></select></div></div>
+        <div><label class="block text-[11px] font-bold text-slate-700 mb-1">काम का इलाका / गाँव / वार्ड *</label><input type="text" id="pc-location" required placeholder="जैसे: स्टेशन रोड, नया बाजार" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs"></div>
+        <div class="bg-amber-50/70 p-3 rounded-xl border border-amber-300 space-y-2"><label class="flex items-start space-x-2 cursor-pointer"><input type="checkbox" id="gps-site-confirm-check" onchange="toggleSiteGpsButton(this.checked)" class="mt-0.5 rounded text-amber-600"><span class="text-[11px] font-bold text-slate-800">सख्त नियम: मैं अभी काम की असली जगह (साइट) पर मौजूद हूँ।</span></label><div class="flex justify-between items-center pt-1 border-t border-amber-200"><button type="button" id="btn-gps-trigger" onclick="captureJobSiteLocation()" disabled class="text-[10px] bg-slate-300 text-slate-600 font-bold px-2.5 py-1.5 rounded-lg"><i class="fa-solid fa-location-crosshairs"></i><span> साइट से लाइव GPS लें</span></button><span id="pc-gps-status" class="text-[10px] text-slate-500">GPS बंद है (चेकबॉक्स टिक करें)</span></div><input type="hidden" id="pc-lat"><input type="hidden" id="pc-lng"></div>
+        <div><label class="block text-[11px] font-bold text-slate-700 mb-1">काम कब से शुरू करवाना है? *</label><select id="pc-urgency-type" required class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs"><option value="normal" selected>🟢 सामान्य (1-2 दिन में या आराम से) - [7 दिन वैध]</option><option value="urgent">🔴 तत्काल / आज ही (Emergency) - [सिर्फ़ 24 घंटे वैध]</option></select></div>
+        <div class="bg-slate-50 p-2.5 rounded-xl border border-dashed border-slate-300"><label class="block text-[11px] font-bold text-slate-700 mb-0.5">काम की जगह की फ़ोटो (वैकल्पिक)</label><input type="file" id="pc-site-photo" accept="image/*" class="text-xs"></div>
+        <div><div class="flex justify-between items-center mb-1"><label class="block text-[11px] font-bold text-slate-700">काम का पूरा विवरण</label><button type="button" onclick="startVoiceInput('pc-desc', 'voice-btn-post')" id="voice-btn-post" class="text-[10px] text-amber-600 bg-amber-50 px-2 py-0.5 rounded border border-amber-200 font-bold"><i class="fa-solid fa-microphone"></i> बोलकर लिखें</button></div><textarea id="pc-desc" rows="2" placeholder="काम के बारे में समझाकर लिखें..." class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs"></textarea></div>
 
 <button type="submit" id="btn-post-job" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold py-2.5 rounded-xl text-xs shadow-xs transition">
           काम पोस्ट करें
@@ -2045,8 +1945,15 @@
       const sixDigitId = generateJobId();
       const urgencyType = document.getElementById("pc-urgency-type").value;
       const isUrgent = (urgencyType === "urgent");
-      const isTheka = (document.getElementById("pc-is-theka").value === "true");
-      const isFactoryJob = document.getElementById("pc-factory-job")?.checked === true;
+      const postCategory = document.getElementById("pc-post-category")?.value || "mistri";
+      const isTheka = postCategory === "mistri" && (document.getElementById("pc-is-theka")?.value === "true");
+      const isFactoryJob = postCategory === "mistri" && document.getElementById("pc-factory-job")?.checked === true;
+      const rentalItems = JSON.parse(document.getElementById("pc-rental-items-json")?.value || "[]");
+      const contractorItems = JSON.parse(document.getElementById("pc-contractor-items-json")?.value || "[]");
+      const materialItems = JSON.parse(document.getElementById("pc-material-items-json")?.value || "[]");
+      if (postCategory === "rental" && !rentalItems.length) { btn.innerText = "काम पोस्ट करें"; return alert("पहले कम से कम एक गाड़ी / मशीन Add करें।"); }
+      if (postCategory === "contractor" && !contractorItems.length) { btn.innerText = "काम पोस्ट करें"; return alert("पहले कम से कम एक Contractor Work Add करें।"); }
+      if (postCategory === "material" && !materialItems.length) { btn.innerText = "काम पोस्ट करें"; return alert("पहले कम से कम एक Material Item Add करें।"); }
 
       let sitePhoto = "";
       const siteFile = document.getElementById("pc-site-photo").files[0];
@@ -2080,7 +1987,10 @@
         location: document.getElementById("pc-location").value.trim(),
         lat: parseFloat(document.getElementById("pc-lat").value) || null,
         lng: parseFloat(document.getElementById("pc-lng").value) || null,
-        postCategory: document.getElementById("pc-post-category")?.value || "mistri",
+        postCategory: postCategory,
+        rentalItems: rentalItems,
+        contractorItems: contractorItems,
+        materialItems: materialItems,
         rentalItem: document.getElementById("pc-rental-item")?.value.trim() || "",
         rentalDuration: document.getElementById("pc-rental-duration")?.value.trim() || "",
         rentalDesc: document.getElementById("pc-rental-desc")?.value.trim() || "",
@@ -2088,10 +1998,10 @@
         materialQty: document.getElementById("pc-material-qty")?.value.trim() || "",
         materialDesc: document.getElementById("pc-material-desc")?.value.trim() || "",
         providerTarget: document.getElementById("pc-post-category")?.value === "contractor" ? "vip_small_contractor" : (document.getElementById("pc-post-category")?.value === "rental" ? "rental_provider" : (document.getElementById("pc-post-category")?.value === "material" ? "material_provider" : "mistri")),
-        workType: document.getElementById("pc-work").value,
-        duration: document.getElementById("pc-duration").value,
-        workerCount: document.getElementById("pc-worker-count").value || 1,
-        materialType: document.getElementById("pc-material").value,
+        workType: postCategory === "mistri" ? (document.getElementById("pc-work")?.value || "") : (postCategory === "contractor" ? "Contractor चाहिए" : postCategory === "rental" ? "Machine/Vehicle Rental चाहिए" : "Construction Material चाहिए"),
+        duration: postCategory === "mistri" ? (document.getElementById("pc-duration")?.value || "") : "",
+        workerCount: postCategory === "mistri" ? (document.getElementById("pc-worker-count")?.value || 1) : 1,
+        materialType: postCategory === "mistri" ? (document.getElementById("pc-material")?.value || "") : "",
         sitePhoto: sitePhoto || "",
         desc: document.getElementById("pc-desc").value.trim(),
         isUrgent: isUrgent,
@@ -5060,11 +4970,18 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
   }
   window.MB_loadRentalProvider=()=>load('rental_providers','rental',[['rental-provider-name','name'],['rental-provider-phone','phone'],['rental-provider-item','item'],['rental-provider-rate','rate'],['rental-provider-area','area'],['rental-provider-delivery','delivery'],['rental-provider-desc','description']],'rental-provider-card');
   window.MB_loadMaterialProvider=()=>load('material_providers','material',[['material-provider-name','name'],['material-provider-phone','phone'],['material-provider-items','items'],['material-provider-rate','rate'],['material-provider-area','area'],['material-provider-delivery','delivery'],['material-provider-desc','description']],'material-provider-card');
+  const MB_postItems={rental:[],contractor:[],material:[]};
+  function MB_syncPostItems(type){const id=type==='rental'?'pc-rental-items-json':type==='contractor'?'pc-contractor-items-json':'pc-material-items-json';document.getElementById(id).value=JSON.stringify(MB_postItems[type]);}
+  function MB_renderPostItems(type){const box=document.getElementById(type==='rental'?'mb-rental-items-list':type==='contractor'?'mb-contractor-items-list':'mb-material-items-list');if(!box)return;box.innerHTML=MB_postItems[type].map((x,i)=>`<div class="bg-white border rounded-lg p-2 text-[10px] flex justify-between gap-2"><div class="min-w-0"><b>${i+1}. ${mbEsc(x.title)}</b><div class="text-slate-500">${mbEsc(x.detail)}</div></div><button type="button" onclick="MB_removePostItem('${type}',${i})" class="text-red-600 font-black px-2">✕</button></div>`).join('');MB_syncPostItems(type);}
+  window.MB_removePostItem=function(type,i){MB_postItems[type].splice(i,1);MB_renderPostItems(type);};
+  window.MB_addRentalPostItem=function(){const item=document.getElementById('pc-rental-item-new').value.trim(),qty=document.getElementById('pc-rental-qty-new').value||1,dur=document.getElementById('pc-rental-duration-new').value.trim(),date=document.getElementById('pc-rental-date-new').value,cap=document.getElementById('pc-rental-capacity-new').value.trim(),driver=document.getElementById('pc-rental-driver-new').value,desc=document.getElementById('pc-rental-desc-new').value.trim();if(!item||!dur)return alert('गाड़ी/मशीन और कितने घंटे/दिन की जरूरत है, दोनों भरें।');MB_postItems.rental.push({title:item,detail:`${qty} गाड़ी • ${dur}${date?' • '+date:''}${cap?' • '+cap:''} • Driver: ${driver}${desc?' • '+desc:''}`});MB_renderPostItems('rental');['pc-rental-item-new','pc-rental-duration-new','pc-rental-date-new','pc-rental-capacity-new','pc-rental-desc-new'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});document.getElementById('pc-rental-qty-new').value=1;};
+  window.MB_addContractorPostItem=function(){const type=document.getElementById('pc-contractor-type-new').value,area=document.getElementById('pc-contractor-area-new').value.trim(),floors=document.getElementById('pc-contractor-floors-new').value.trim(),budget=document.getElementById('pc-contractor-budget-new').value.trim(),mat=document.getElementById('pc-contractor-material-new').value,desc=document.getElementById('pc-contractor-desc-new').value.trim();if(!area)return alert('Contractor काम का Area भरें।');MB_postItems.contractor.push({title:type,detail:`Area: ${area}${floors?' • Floors: '+floors:''}${budget?' • Budget: '+budget:''} • ${mat}${desc?' • '+desc:''}`});MB_renderPostItems('contractor');['pc-contractor-area-new','pc-contractor-floors-new','pc-contractor-budget-new','pc-contractor-desc-new'].forEach(id=>document.getElementById(id).value='');};
+  window.MB_addMaterialPostItem=function(){const item=document.getElementById('pc-material-item-new').value.trim(),qty=document.getElementById('pc-material-qty-new').value.trim(),unit=document.getElementById('pc-material-unit-new').value.trim(),brand=document.getElementById('pc-material-brand-new').value.trim(),delivery=document.getElementById('pc-material-delivery-new').value,desc=document.getElementById('pc-material-desc-new').value.trim();if(!item||!qty)return alert('Material का नाम और मात्रा भरें।');MB_postItems.material.push({title:item,detail:`${qty}${unit?' '+unit:''}${brand?' • '+brand:''} • ${delivery}${desc?' • '+desc:''}`});MB_renderPostItems('material');['pc-material-item-new','pc-material-qty-new','pc-material-unit-new','pc-material-brand-new','pc-material-desc-new'].forEach(id=>document.getElementById(id).value='');};
   window.MB_switchPostCategory=function(v){
-    const r=document.getElementById('mb-rental-post-fields'),m=document.getElementById('mb-material-post-fields'),c=document.getElementById('mb-contractor-post-fields'),h=document.getElementById('mb-post-category-help');
-    if(r)r.classList.toggle('hidden',v!=='rental');if(m)m.classList.toggle('hidden',v!=='material');if(c)c.classList.toggle('hidden',v!=='contractor');
-    const msg={mistri:'घर बनाने के लिए मिस्त्री/मजदूर की जरूरत पोस्ट करें।',rental:'JCB, Tractor, Mixer, वाहन आदि Rental की जरूरत पोस्ट करें।',material:'गिट्टी, बालू, सीमेंट, ईंट, सरिया आदि Material की जरूरत पोस्ट करें।',contractor:'पूरा काम उठाने के लिए VIP या Small Contractor की जरूरत पोस्ट करें।'};if(h)h.textContent=msg[v]||'';
-    const work=document.getElementById('pc-work');if(work){if(v==='contractor')work.innerHTML='<option value="Contractor चाहिए">👷 Contractor चाहिए</option>';else if(v==='rental')work.innerHTML='<option value="Machine/Vehicle Rental चाहिए">🚜 Machine / Vehicle Rental चाहिए</option>';else if(v==='material')work.innerHTML='<option value="Construction Material चाहिए">🧱 Construction Material चाहिए</option>';else if(typeof window.populateWorkTypes==='function')window.populateWorkTypes();}
+    const ids={mistri:'mb-mistri-post-fields',rental:'mb-rental-post-fields',material:'mb-material-post-fields',contractor:'mb-contractor-post-fields'};
+    Object.entries(ids).forEach(([k,id])=>document.getElementById(id)?.classList.toggle('hidden',v!==k));
+    const h=document.getElementById('mb-post-category-help');const msg={mistri:'घर बनाने के लिए सही मिस्त्री चुनें।',rental:'सिर्फ गाड़ी / मशीन की जरूरत का पोस्ट भरें।',material:'सिर्फ Construction Material की जरूरत का पोस्ट भरें।',contractor:'सिर्फ Contractor की जरूरत का पोस्ट भरें।'};if(h)h.textContent=msg[v]||'';
+    const work=document.getElementById('pc-work');if(work&&v==='mistri'&&typeof window.populateWorkTypes==='function')window.populateWorkTypes();
   };
 })();
 </script>
@@ -5429,65 +5346,5 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
 })();
 </script>
 
-
-<script id="mb-three-customer-post-builders-v1">
-(function(){
-  "use strict";
-  window.MB_rentalPostItems=window.MB_rentalPostItems||[];
-  window.MB_materialPostItems=window.MB_materialPostItems||[];
-  window.MB_contractorPostItems=window.MB_contractorPostItems||[];
-  function esc(v){return String(v||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
-  function card(title,body,removeFn,color){
-    return '<div class="bg-white border rounded-xl p-2 text-[10px] shadow-sm"><div class="flex justify-between gap-2"><div class="font-bold '+color+'">'+title+'</div><button type="button" onclick="'+removeFn+'" class="text-red-600 font-black">✕ हटाएं</button></div><div class="text-slate-600 mt-1">'+body+'</div></div>';
-  }
-  function renderRental(){
-    const box=document.getElementById('mb-rental-post-items'); if(!box)return;
-    box.innerHTML=MB_rentalPostItems.map((x,i)=>card('🚜 '+esc(x.item)+' × '+esc(x.qty),
-      'अवधि: '+esc(x.duration)+' • तारीख: '+esc(x.date||'तय नहीं')+' • '+esc(x.capacity||'Capacity नहीं दी')+' • Driver: '+esc(x.driver)+(x.desc?' • '+esc(x.desc):''),
-      'MB_removeRentalPostItem('+i+')','text-blue-900')).join('');
-  }
-  function renderMaterial(){
-    const box=document.getElementById('mb-material-post-items'); if(!box)return;
-    box.innerHTML=MB_materialPostItems.map((x,i)=>card('🧱 '+esc(x.item)+' — '+esc(x.qty)+' '+esc(x.unit),
-      (x.brand?'Brand/Quality: '+esc(x.brand)+' • ':'')+(x.desc?esc(x.desc):''),
-      'MB_removeMaterialPostItem('+i+')','text-emerald-900')).join('');
-  }
-  function renderContractor(){
-    const box=document.getElementById('mb-contractor-post-items'); if(!box)return;
-    box.innerHTML=MB_contractorPostItems.map((x,i)=>card('👷 '+esc(x.type),
-      'Area: '+esc(x.area||'—')+' • Floors: '+esc(x.floors||'—')+' • Budget: '+esc(x.budget||'—')+' • Material: '+esc(x.material)+(x.desc?' • '+esc(x.desc):''),
-      'MB_removeContractorPostItem('+i+')','text-violet-900')).join('');
-  }
-  window.MB_addRentalPostItem=function(){
-    const item=document.getElementById('pc-rental-item').value.trim(),qty=document.getElementById('pc-rental-qty').value||'1',duration=document.getElementById('pc-rental-duration').value.trim();
-    if(!item||!duration)return alert('Rental में मशीन/वाहन और अवधि भरें।');
-    MB_rentalPostItems.push({item,qty,duration,date:document.getElementById('pc-rental-date').value,capacity:document.getElementById('pc-rental-capacity').value.trim(),driver:document.getElementById('pc-rental-driver').value,desc:document.getElementById('pc-rental-desc').value.trim()});
-    renderRental();
-    ['pc-rental-item','pc-rental-duration','pc-rental-date','pc-rental-capacity','pc-rental-desc'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
-    document.getElementById('pc-rental-qty').value='1';
-  };
-  window.MB_removeRentalPostItem=function(i){MB_rentalPostItems.splice(i,1);renderRental();};
-  window.MB_addMaterialPostItem=function(){
-    const item=document.getElementById('pc-material-item').value.trim(),qty=document.getElementById('pc-material-qty').value.trim(),unit=document.getElementById('pc-material-unit').value.trim();
-    if(!item||!qty||!unit)return alert('Material में सामान, मात्रा और Unit भरें।');
-    MB_materialPostItems.push({item,qty,unit,brand:document.getElementById('pc-material-brand').value.trim(),desc:document.getElementById('pc-material-desc').value.trim()});
-    renderMaterial();
-    ['pc-material-item','pc-material-qty','pc-material-unit','pc-material-brand','pc-material-desc'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
-  };
-  window.MB_removeMaterialPostItem=function(i){MB_materialPostItems.splice(i,1);renderMaterial();};
-  window.MB_addContractorPostItem=function(){
-    const type=document.getElementById('pc-contractor-type').value;
-    if(!type)return alert('Contractor में काम का प्रकार चुनें।');
-    MB_contractorPostItems.push({type,area:document.getElementById('pc-contractor-area').value.trim(),floors:document.getElementById('pc-contractor-floors').value.trim(),budget:document.getElementById('pc-contractor-budget').value.trim(),material:document.getElementById('pc-contractor-material').value,desc:document.getElementById('pc-contractor-desc').value.trim()});
-    renderContractor();
-    ['pc-contractor-area','pc-contractor-floors','pc-contractor-budget','pc-contractor-desc'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
-    document.getElementById('pc-contractor-type').value='';
-  };
-  window.MB_removeContractorPostItem=function(i){MB_contractorPostItems.splice(i,1);renderContractor();};
-  window.MB_getThreePostItems=function(){
-    return {rentalItems:MB_rentalPostItems,materialItems:MB_materialPostItems,contractorItems:MB_contractorPostItems};
-  };
-})();
-</script>
 </body>
   </html>
