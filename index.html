@@ -713,7 +713,7 @@
       <span class="block text-[11px] font-bold text-slate-800">📋 श्रेणी अनुसार दस्तावेज़ नियम:</span>
       <p class="text-[10px] text-slate-600">
         • <strong>स्मॉल ठेकेदार:</strong> साधारण पहचान पत्र (आईडी प्रूफ) आवश्यक है।<br>
-        • <strong>VIP ठेकेदार:</strong> सरकारी/फर्म लाइसेंस, पैन कार्ड और बैंक विवरण अनिवार्य है।
+        • <strong>VIP ठेकेदार:</strong> GST/Udyam/PWD, Firm PAN, Bank + Aadhaar Front/Back अनिवार्य है।
       </p>
     </div> </div>
 
@@ -738,9 +738,16 @@
             </div>
           </div>
 
-          <div id="con-doc-small-fields" class="bg-amber-50 p-2.5 rounded-xl border border-amber-200 text-center">
-            <label class="block font-bold text-amber-950 mb-1">पहचान पत्र (आईडी प्रूफ फ़ोटो) *</label>
-            <input type="file" id="con-app-small-id" accept="image/*" class="text-[10px] text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:bg-amber-200 file:text-amber-900">
+          <div id="con-doc-small-fields" class="bg-amber-50 p-2.5 rounded-xl border border-amber-200 text-center space-y-2">
+            <span class="block font-bold text-amber-950 mb-1">🪪 आधार कार्ड (अनिवार्य)</span>
+            <div class="text-left">
+              <label class="block text-[10px] font-bold text-amber-950 mb-1">आधार कार्ड Front *</label>
+              <input type="file" id="con-app-small-aadhaar-front" accept="image/*" required class="w-full text-[10px] text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:bg-amber-200 file:text-amber-900">
+            </div>
+            <div class="text-left">
+              <label class="block text-[10px] font-bold text-amber-950 mb-1">आधार कार्ड Back *</label>
+              <input type="file" id="con-app-small-aadhaar-back" accept="image/*" required class="w-full text-[10px] text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:bg-amber-200 file:text-amber-900">
+            </div>
           </div>
 
           <div id="con-doc-vip-fields" class="hidden bg-slate-50 p-3 rounded-xl border border-slate-300 space-y-2 text-left">
@@ -756,6 +763,17 @@
             <div>
               <label class="block text-[10px] font-bold text-slate-700 mb-0.5">3. फ़र्म बैंक खाता (Current Account / कैंसिल चेक) *</label>
               <input type="file" id="con-app-bank-doc" accept="image/*" class="text-[9px] text-slate-500 file:mr-1 file:py-0.5 file:px-1.5 file:rounded file:border-0 file:bg-slate-200">
+            </div>
+            <div class="pt-2 border-t border-slate-200 space-y-2">
+              <span class="block font-bold text-slate-900 text-[10px]">🪪 4. आधार कार्ड (अनिवार्य)</span>
+              <div>
+                <label class="block text-[10px] font-bold text-slate-700 mb-0.5">आधार Front *</label>
+                <input type="file" id="con-app-vip-aadhaar-front" accept="image/*" required class="w-full text-[9px] text-slate-500 file:mr-1 file:py-1 file:px-1.5 file:rounded file:border-0 file:bg-slate-200">
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold text-slate-700 mb-0.5">आधार Back *</label>
+                <input type="file" id="con-app-vip-aadhaar-back" accept="image/*" required class="w-full text-[9px] text-slate-500 file:mr-1 file:py-1 file:px-1.5 file:rounded file:border-0 file:bg-slate-200">
+              </div>
             </div>
           </div>
 
@@ -788,6 +806,15 @@
             पेमेंट पुष्टि करें व सदस्यता सक्रिय करें
           </button>
         </form>
+      </div>
+
+      <div id="con-step-active-box" class="hidden bg-white p-4 rounded-2xl border-2 border-blue-500 shadow-md space-y-3">
+        <div class="bg-blue-50 text-blue-900 p-3 rounded-xl text-center">
+          <div class="text-lg font-black">🎉 आपका Contractor Profile ACTIVE है</div>
+          <p class="text-[10px] mt-1">Admin ने payment confirm करके आपका profile सक्रिय कर दिया है। अब दोबारा form भरने की जरूरत नहीं है।</p>
+        </div>
+        <div id="con-active-profile-details" class="grid grid-cols-2 gap-2 text-[10px]"></div>
+        <div class="text-center"><span class="inline-block bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full font-black text-[10px]">✓ Verified Contractor</span></div>
       </div>
     </div>
   </section>
@@ -4417,5 +4444,130 @@
 })();
 </script>
 
-</body>
+
+<script>/* ==================== CONTRACTOR FLOW FIX: SMALL + VIP ==================== */
+(function(){
+  function b64(id){ const el=document.getElementById(id); const f=el&&el.files&&el.files[0]; return f ? fileToBase64(f) : Promise.resolve(""); }
+  function val(id){ const e=document.getElementById(id); return e ? e.value.trim() : ""; }
+  function set(id, v){ const e=document.getElementById(id); if(e) e.innerText=v; }
+  function show(id, yes){ const e=document.getElementById(id); if(e) e.classList.toggle("hidden", !yes); }
+
+  window.submitContractorApplication = async function(e){
+    e.preventDefault();
+    const tier=val("con-app-tier");
+    const name=val("con-app-name"), phone=val("con-app-phone"), capacity=val("con-app-capacity"), exp=val("con-app-exp");
+    if(!tier||!name||!phone||!capacity||!exp) return alert("कृपया सभी जरूरी जानकारी भरें।");
+    const btn=document.getElementById("btn-con-app-submit");
+    if(btn){btn.disabled=true;btn.innerText="दस्तावेज़ सुरक्षित किए जा रहे हैं...";}
+    try{
+      let docs={};
+      if(tier==='small'){
+        docs.aadhaarFront=await b64("con-app-small-aadhaar-front");
+        docs.aadhaarBack=await b64("con-app-small-aadhaar-back");
+        if(!docs.aadhaarFront||!docs.aadhaarBack) throw new Error("स्मॉल ठेकेदार के लिए Aadhaar Front और Back दोनों जरूरी हैं।");
+      }else{
+        docs.govDoc=await b64("con-app-gov-doc");
+        docs.panDoc=await b64("con-app-pan-doc");
+        docs.bankDoc=await b64("con-app-bank-doc");
+        docs.aadhaarFront=await b64("con-app-vip-aadhaar-front");
+        docs.aadhaarBack=await b64("con-app-vip-aadhaar-back");
+        if(!docs.govDoc||!docs.panDoc||!docs.bankDoc||!docs.aadhaarFront||!docs.aadhaarBack) throw new Error("VIP ठेकेदार के सभी जरूरी दस्तावेज़, Aadhaar Front/Back सहित, अपलोड करें।");
+      }
+      const data={contractorTier:tier,name,phone:"+91"+phone,laborCapacity:capacity,experience:exp,
+        aadhaarFront:docs.aadhaarFront,aadhaarBack:docs.aadhaarBack,
+        govDoc:docs.govDoc||"",panDoc:docs.panDoc||"",bankDoc:docs.bankDoc||"",
+        docProof:docs.aadhaarFront||docs.govDoc||"",status:"Under_Review",isEligible:false,
+        documentVerified:false,paymentStatus:"Pending",profileStatus:"Pending",createdAt:firebase.firestore.FieldValue.serverTimestamp()};
+      const ref=await db.collection("contractor_applications").add(data);
+      localStorage.setItem("mb_contractor_app_id",ref.id);
+      localStorage.setItem("mb_contractor_app_tier",tier);
+      show("con-step-doc-box",true); show("con-step-pay-box",false); show("con-step-active-box",false);
+      alert("✅ आवेदन Admin को भेज दिया गया है। Admin पूरा form और सभी documents देखकर verification करेगा। Verification के बाद इसी application में payment option खुलेगा।");
+      if(btn){btn.innerText="⏳ Admin Verification के लिए जमा है";}
+    }catch(err){
+      alert("❌ "+err.message);
+      if(btn){btn.disabled=false;btn.innerText="दस्तावेज़ सत्यापन हेतु जमा करें";}
+    }
+  };
+
+  window.checkContractorStatus = function(){
+    const appId=localStorage.getItem("mb_contractor_app_id"); if(!appId||!window.db) return;
+    db.collection("contractor_applications").doc(appId).onSnapshot(doc=>{
+      if(!doc.exists) return; const d=doc.data();
+      show("con-step-doc-box", !(d.status && ["Approved_For_Payment","Payment_Submitted","Active_Contractor"].includes(d.status)));
+      show("con-step-pay-box", d.status==="Approved_For_Payment");
+      show("con-step-active-box", d.status==="Active_Contractor");
+      if(d.status==="Approved_For_Payment"){
+        const amt=d.contractorTier==='vip'?'₹14,999 (VIP जॉइनिंग)':'₹3,000 (स्मॉल जॉइनिंग)';
+        set("con-pay-amount-label",`भुगतान राशि: ${amt}`);
+      }
+      if(d.status==="Payment_Submitted") alertOnce("payment_submitted_"+appId,"✅ आपका payment/UTR Admin को मिल गया है। Admin payment confirm करेगा।");
+      if(d.status==="Active_Contractor"){
+        const box=document.getElementById("con-active-profile-details");
+        if(box) box.innerHTML=`<div class="bg-slate-50 p-2 rounded-lg"><b>नाम</b><br>${d.name||''}</div><div class="bg-slate-50 p-2 rounded-lg"><b>मोबाइल</b><br>${d.phone||''}</div><div class="bg-slate-50 p-2 rounded-lg"><b>स्तर</b><br>${d.contractorTier==='vip'?'👑 VIP':'🔨 Small'}</div><div class="bg-slate-50 p-2 rounded-lg"><b>स्थिति</b><br>ACTIVE</div>`;
+      }
+    });
+  };
+
+  window.submitContractorFinalPayment = function(e){
+    e.preventDefault(); const utr=val("con-pay-utr"), appId=localStorage.getItem("mb_contractor_app_id");
+    if(!appId) return alert("Application नहीं मिली।");
+    if(!/^\\d{12}$/.test(utr)) return alert("12 अंकों का वैध UTR नंबर दर्ज करें!");
+    const btn=document.getElementById("btn-con-pay-submit"); if(btn) btn.disabled=true;
+    db.collection("contractor_applications").doc(appId).update({paymentUtr:utr,status:"Payment_Submitted",paymentStatus:"Submitted",paymentSubmittedAt:firebase.firestore.FieldValue.serverTimestamp()})
+      .then(()=>alert("✅ Payment request Admin को भेज दी गई है। Payment confirm होने के बाद यही profile Active होगी।"))
+      .catch(err=>{if(btn)btn.disabled=false;alert("❌ "+err.message);});
+  };
+
+  window.adminApproveContractorEligibility = function(id){
+    db.collection("contractor_applications").doc(id).update({status:"Approved_For_Payment",isEligible:true,documentVerified:true,verifiedAt:firebase.firestore.FieldValue.serverTimestamp(),approvedBy:currentOperator})
+      .then(()=>{alert("✅ पूरा application और documents verify हो गए। अब payment की अनुमति है।");});
+  };
+
+  window.adminActivateContractorPass = async function(id){
+    const ref=db.collection("contractor_applications").doc(id); const snap=await ref.get();
+    if(!snap.exists) return alert("Application नहीं मिली!");
+    const c=snap.data();
+    if(c.status!=="Payment_Submitted") return alert("पहले payment/UTR submit होना जरूरी है।");
+    try{
+      const profile={applicationId:id,contractorTier:c.contractorTier,name:c.name,phone:c.phone,laborCapacity:c.laborCapacity,experience:c.experience,
+        aadhaarFront:c.aadhaarFront||"",aadhaarBack:c.aadhaarBack||"",govDoc:c.govDoc||"",panDoc:c.panDoc||"",bankDoc:c.bankDoc||"",
+        verified:true,profileStatus:"Active",paymentStatus:"Confirmed",paymentUtr:c.paymentUtr||"",createdAt:c.createdAt||firebase.firestore.FieldValue.serverTimestamp(),activatedAt:firebase.firestore.FieldValue.serverTimestamp(),activatedBy:currentOperator};
+      const p=await db.collection("contractor_profiles").add(profile);
+      await ref.update({status:"Active_Contractor",profileStatus:"Active",paymentStatus:"Confirmed",paymentConfirmedAt:firebase.firestore.FieldValue.serverTimestamp(),activatedBy:currentOperator,profileId:p.id});
+      alert("🎉 Payment confirm हो गया और Contractor Profile ACTIVE कर दिया गया है। अब form दोबारा नहीं भरना होगा।");
+      loadAdminContractors();
+    }catch(err){alert("❌ Profile activate नहीं हो पाया: "+err.message);}
+  };
+
+  window.loadAdminContractors = function(){
+    const box=document.getElementById("admin-contractors-container"); if(!box) return;
+    box.innerHTML="<p class='text-slate-400 text-center py-3'>ठेकेदारी आवेदन लोड हो रहे हैं...</p>";
+    db.collection("contractor_applications").orderBy("createdAt","desc").limit(50).onSnapshot(snap=>{
+      if(snap.empty){box.innerHTML="<p class='text-slate-400 text-center py-3'>कोई आवेदन नहीं है।</p>";return;}
+      box.innerHTML=""; snap.forEach(doc=>{const c=doc.data(),id=doc.id; const vip=c.contractorTier==='vip';
+        const docLink=(label,url)=>url?`<a href="${url}" target="_blank" class="block text-[9px] text-blue-700 font-bold underline">👁️ ${label}</a>`:'';
+        box.innerHTML+=`<div class="bg-white p-3 rounded-xl border border-slate-200 shadow-xs space-y-2">
+          <div class="flex justify-between gap-2"><div><b>${c.name||'—'}</b><div class="text-[9px] text-slate-500">${vip?'👑 VIP ठेकेदार':'🔨 स्मॉल ठेकेदार'} • ${c.phone||'—'}</div></div><span class="text-[9px] bg-slate-200 px-2 py-1 rounded font-bold">${c.status||'—'}</span></div>
+          <div class="grid grid-cols-2 gap-1 text-[9px] bg-slate-50 p-2 rounded"><div>लेबर: <b>${c.laborCapacity||'—'}</b></div><div>अनुभव: <b>${c.experience||'—'} वर्ष</b></div></div>
+          <details><summary class="cursor-pointer text-[10px] font-black text-blue-700">📋 पूरा Application + Documents देखें</summary>
+            <div class="mt-2 space-y-1 text-[9px]">
+              <p><b>नाम:</b> ${c.name||'—'}</p><p><b>मोबाइल:</b> ${c.phone||'—'}</p><p><b>स्तर:</b> ${vip?'VIP':'Small'}</p><p><b>लेबर क्षमता:</b> ${c.laborCapacity||'—'}</p><p><b>अनुभव:</b> ${c.experience||'—'} वर्ष</p>
+              <div class="border-t pt-1 mt-1"><b>Documents:</b>${docLink('Aadhaar Front',c.aadhaarFront)}${docLink('Aadhaar Back',c.aadhaarBack)}${vip?docLink('GST/Udyam/PWD',c.govDoc):''}${vip?docLink('Firm PAN',c.panDoc):''}${vip?docLink('Bank/Cancelled Cheque',c.bankDoc):''}</div>
+              ${c.paymentUtr?`<p class="text-emerald-700 font-bold pt-1">💳 UTR: ${c.paymentUtr}</p>`:''}
+            </div>
+          </details>
+          ${c.status==='Under_Review'?`<button onclick="adminApproveContractorEligibility('${id}')" class="w-full bg-emerald-600 text-white py-2 rounded text-[10px] font-black">✓ Documents Verify करें → Payment खोलें</button>`:''}
+          ${c.status==='Payment_Submitted'?`<button onclick="adminActivateContractorPass('${id}')" class="w-full bg-blue-600 text-white py-2 rounded text-[10px] font-black">💳 Payment Confirm करें → Profile ACTIVE करें</button>`:''}
+          ${c.status==='Active_Contractor'?`<div class="text-center bg-emerald-50 text-emerald-800 py-1.5 rounded text-[10px] font-black">✓ ACTIVE / PAYMENT CONFIRMED</div>`:''}
+        </div>`;
+      });
+    });
+  };
+
+  const oldAlert=window.alert; window.alertOnce=function(key,msg){if(sessionStorage.getItem(key))return;sessionStorage.setItem(key,'1');oldAlert(msg);};
+  const oldCheck=window.checkContractorStatus;
+  document.addEventListener('DOMContentLoaded',()=>setTimeout(()=>window.checkContractorStatus(),700));
+})();
+</script>\n</body>
   </html>
