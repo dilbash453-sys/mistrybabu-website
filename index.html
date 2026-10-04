@@ -147,6 +147,13 @@
       <div id="home-categories-grid" class="grid grid-cols-3 gap-2"></div>
     </div>
 
+    <div id="mb-marketplace-section" class="space-y-3">
+      <div class="flex justify-between items-center">
+        <div><h3 class="text-xs font-black text-slate-900 uppercase">🛒 Rental & Material Marketplace</h3><p class="text-[10px] text-slate-500">Admin-approved providers और approved गाड़ियाँ</p></div>
+      </div>
+      <div id="mb-marketplace-list" class="space-y-2"><p class="text-xs text-slate-400">Marketplace लोड हो रहा है...</p></div>
+    </div>
+
     <div>
       <div class="flex justify-between items-center mb-2">
         <h3 class="text-xs font-black text-slate-900 uppercase tracking-wide">ताज़ा काम</h3>
@@ -530,30 +537,72 @@
     </div>
     <!-- 1B. RENTAL PROVIDER PROFILE -->
     <div id="rental-provider-box" class="space-y-3 hidden">
-      <div class="bg-blue-950 text-white p-4 rounded-2xl"><h3 class="font-black">🚜 Machine / Vehicle Rental Profile</h3><p class="text-[10px] text-blue-200 mt-1">मशीन या गाड़ी देने वाले मालिक/व्यवसाय के लिए</p></div>
+      <div class="bg-blue-950 text-white p-4 rounded-2xl">
+        <h3 class="font-black">🚜 Machine / Vehicle Rental Profile</h3>
+        <p class="text-[10px] text-blue-200 mt-1">पहले केवल मालिक की पहचान + स्थान से Provider Profile बनेगी। गाड़ी के कागज़ बाद में हर गाड़ी के साथ लिए जाएंगे।</p>
+      </div>
+
       <form id="rental-provider-form" onsubmit="MB_saveRentalProvider(event)" class="bg-white p-4 rounded-2xl border border-slate-200 space-y-2">
-        <input id="rental-provider-name" required class="w-full rounded-lg border px-3 py-2 text-xs" placeholder="Owner / Business Name *">
+        <input id="rental-provider-name" required class="w-full rounded-lg border px-3 py-2 text-xs" placeholder="पूरा नाम *">
         <input id="rental-provider-phone" required maxlength="10" inputmode="numeric" class="w-full rounded-lg border px-3 py-2 text-xs" placeholder="मोबाइल नंबर *">
-        <input id="rental-provider-item" required class="w-full rounded-lg border px-3 py-2 text-xs" placeholder="मशीन / व्हीकल: JCB, Tractor, Mixer आदि *">
-        <input id="rental-provider-rate" required class="w-full rounded-lg border px-3 py-2 text-xs" placeholder="Rental Rate: ₹/घंटा या ₹/दिन *">
-        <input id="rental-provider-area" required class="w-full rounded-lg border px-3 py-2 text-xs" placeholder="Area / District *">
-        <input id="rental-provider-delivery" class="w-full rounded-lg border px-3 py-2 text-xs" placeholder="Delivery/Transport: उपलब्ध है या नहीं">
-        <textarea id="rental-provider-desc" rows="2" class="w-full rounded-lg border px-3 py-2 text-xs" placeholder="मशीन की पूरी जानकारी: मॉडल, क्षमता, उपलब्ध समय आदि"></textarea>
+
         <div class="bg-blue-50 border border-blue-200 rounded-xl p-3 space-y-2">
-          <p class="text-[10px] font-black text-blue-900">🔐 पहचान व जरूरी दस्तावेज</p>
-          <p class="text-[9px] text-blue-800">Aadhaar Front + Back दोनों अनिवार्य हैं। बाकी दस्तावेज उपलब्ध हों तो प्रमाण के लिए दें।</p>
+          <p class="text-[10px] font-black text-blue-900">📍 Provider Location</p>
+          <button type="button" onclick="MB_captureRentalGPS()" class="w-full bg-blue-700 text-white text-[10px] font-black py-2 rounded-lg">📍 अभी का GPS लें</button>
+          <p id="rental-provider-gps-status" class="text-[9px] text-slate-500">GPS अभी सेव नहीं है।</p>
+          <input type="hidden" id="rental-provider-lat">
+          <input type="hidden" id="rental-provider-lng">
+        </div>
+
+        <div class="bg-blue-50 border border-blue-200 rounded-xl p-3 space-y-2">
+          <p class="text-[10px] font-black text-blue-900">🔐 पहचान — केवल Profile Verification</p>
+          <p class="text-[9px] text-blue-800">इस शुरुआती Form में RC/Insurance/Permit नहीं लिया जाएगा। Aadhaar Front + Back दोनों अनिवार्य हैं। गाड़ी के कागज़ बाद में हर गाड़ी Add करते समय लिए जाएंगे।</p>
           <label class="text-[10px] font-bold">Aadhaar Front *<input id="rental-provider-aadhaar-front" type="file" accept="image/*,.pdf" required class="block w-full text-[10px] mt-1"></label>
           <label class="text-[10px] font-bold">Aadhaar Back *<input id="rental-provider-aadhaar-back" type="file" accept="image/*,.pdf" required class="block w-full text-[10px] mt-1"></label>
-          <label class="text-[10px] font-bold">मशीन/वाहन RC / Registration Proof<input id="rental-provider-rc" type="file" accept="image/*,.pdf" class="block w-full text-[10px] mt-1"></label>
-          <label class="text-[10px] font-bold">Insurance / Fitness / Permit (जहाँ लागू हो)<input id="rental-provider-legal" type="file" accept="image/*,.pdf" class="block w-full text-[10px] mt-1"></label>
-          <label class="text-[10px] font-bold">PAN / Ownership / Purchase Proof<input id="rental-provider-ownership" type="file" accept="image/*,.pdf" class="block w-full text-[10px] mt-1"></label>
-          <label class="text-[10px] font-bold">Bank / Business Address Proof<input id="rental-provider-bankproof" type="file" accept="image/*,.pdf" class="block w-full text-[10px] mt-1"></label>
-          <label class="flex gap-2 items-start text-[9px]"><input id="rental-provider-declaration" type="checkbox" required class="mt-0.5">मैं सही जानकारी और अपने/अधिकृत वाहन-मशीन के दस्तावेज दे रहा/रही हूँ।</label>
+          <label class="flex gap-2 items-start text-[9px]"><input id="rental-provider-declaration" type="checkbox" required class="mt-0.5">मैं सही नाम, मोबाइल, GPS और अपना Aadhaar दे रहा/रही हूँ।</label>
         </div>
-        <input id="rental-provider-photo" type="file" accept="image/*" class="text-xs">
-        <button class="w-full bg-blue-700 text-white font-black py-2.5 rounded-xl text-xs">🚜 Rental Profile बनाएं / अपडेट करें</button>
+        <button class="w-full bg-blue-700 text-white font-black py-2.5 rounded-xl text-xs">🚜 Rental Provider Profile बनाएं</button>
       </form>
+
       <div id="rental-provider-card" class="hidden bg-blue-50 border border-blue-200 rounded-2xl p-4 text-xs"></div>
+
+      <div id="rental-vehicle-manager" class="hidden space-y-3">
+        <div class="bg-white p-4 rounded-2xl border border-blue-200">
+          <div class="flex justify-between items-center">
+            <div><h4 class="text-sm font-black">🚜 मेरी गाड़ियाँ / मशीनें</h4><p class="text-[9px] text-slate-500">हर गाड़ी अलग से Add होगी और हर गाड़ी का पेपर Admin अलग-अलग Verify करेगा।</p></div>
+            <button type="button" onclick="MB_openAddRentalVehicle()" class="bg-blue-700 text-white text-[10px] font-black px-3 py-2 rounded-lg">➕ गाड़ी Add करें</button>
+          </div>
+          <div id="rental-vehicle-list" class="mt-3 space-y-2"></div>
+        </div>
+
+        <form id="rental-vehicle-form" onsubmit="MB_saveRentalVehicle(event)" class="hidden bg-white p-4 rounded-2xl border border-blue-300 space-y-2">
+          <h4 class="text-xs font-black text-blue-900">➕ नई गाड़ी / मशीन Add करें</h4>
+          <input id="rental-vehicle-name" required class="w-full rounded-lg border px-3 py-2 text-xs" placeholder="गाड़ी / मशीन: JCB, Tractor, Dumper, Mixer आदि *">
+          <div class="grid grid-cols-2 gap-2">
+            <input id="rental-vehicle-reg" required class="rounded-lg border px-3 py-2 text-xs" placeholder="Registration No. *">
+            <input id="rental-vehicle-model" class="rounded-lg border px-3 py-2 text-xs" placeholder="Model / Year">
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <input id="rental-vehicle-rate" required class="rounded-lg border px-3 py-2 text-xs" placeholder="₹/घंटा या ₹/दिन *">
+            <input id="rental-vehicle-area" required class="rounded-lg border px-3 py-2 text-xs" placeholder="उपलब्ध Area *">
+          </div>
+          <input id="rental-vehicle-capacity" class="w-full rounded-lg border px-3 py-2 text-xs" placeholder="Capacity / HP / विशेष जानकारी">
+          <textarea id="rental-vehicle-desc" rows="2" class="w-full rounded-lg border px-3 py-2 text-xs" placeholder="गाड़ी/मशीन की पूरी जानकारी"></textarea>
+
+          <div class="bg-blue-50 border border-blue-200 rounded-xl p-3 space-y-2">
+            <p class="text-[10px] font-black text-blue-900">📄 इस गाड़ी के जरूरी कागज़</p>
+            <label class="text-[10px] font-bold">गाड़ी की फोटो *<input id="rental-vehicle-photo" type="file" accept="image/*" required class="block w-full text-[10px] mt-1"></label>
+            <label class="text-[10px] font-bold">RC / Registration Proof *<input id="rental-vehicle-rc" type="file" accept="image/*,.pdf" required class="block w-full text-[10px] mt-1"></label>
+            <label class="text-[10px] font-bold">Insurance / Fitness / Permit (जहाँ लागू हो)<input id="rental-vehicle-legal" type="file" accept="image/*,.pdf" class="block w-full text-[10px] mt-1"></label>
+            <label class="text-[10px] font-bold">Ownership / Purchase Proof<input id="rental-vehicle-ownership" type="file" accept="image/*,.pdf" class="block w-full text-[10px] mt-1"></label>
+            <label class="flex gap-2 items-start text-[9px]"><input id="rental-vehicle-declaration" type="checkbox" required class="mt-0.5">मैं इस गाड़ी/मशीन का मालिक या अधिकृत व्यक्ति हूँ और दिए गए कागज़ सही हैं।</label>
+          </div>
+          <div class="flex gap-2">
+            <button type="button" onclick="MB_closeAddRentalVehicle()" class="flex-1 bg-slate-200 text-slate-700 font-bold py-2 rounded-lg text-xs">रद्द</button>
+            <button class="flex-1 bg-blue-700 text-white font-black py-2 rounded-lg text-xs">📤 गाड़ी Verification के लिए भेजें</button>
+          </div>
+        </form>
+      </div>
     </div>
 
     <!-- 1C. MATERIAL PROVIDER PROFILE -->
@@ -567,6 +616,13 @@
         <input id="material-provider-area" required class="w-full rounded-lg border px-3 py-2 text-xs" placeholder="Area / District *">
         <input id="material-provider-delivery" class="w-full rounded-lg border px-3 py-2 text-xs" placeholder="Home Delivery: उपलब्ध है या नहीं">
         <textarea id="material-provider-desc" rows="2" class="w-full rounded-lg border px-3 py-2 text-xs" placeholder="दुकान, stock, brand और delivery की पूरी जानकारी"></textarea>
+        <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 space-y-2">
+          <p class="text-[10px] font-black text-emerald-900">📍 दुकान की Location</p>
+          <button type="button" onclick="MB_captureMaterialGPS()" class="w-full bg-emerald-700 text-white text-[10px] font-black py-2 rounded-lg">📍 दुकान का GPS लें</button>
+          <p id="material-provider-gps-status" class="text-[9px] text-slate-500">GPS अभी सेव नहीं है।</p>
+          <input type="hidden" id="material-provider-lat">
+          <input type="hidden" id="material-provider-lng">
+        </div>
         <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 space-y-2">
           <p class="text-[10px] font-black text-emerald-900">🔐 पहचान व व्यवसाय प्रमाण</p>
           <p class="text-[9px] text-emerald-800">Aadhaar Front + Back दोनों अनिवार्य हैं। बाकी उपलब्ध business proofs प्रमाण/विश्वास के लिए लिए जाएंगे।</p>
@@ -583,6 +639,17 @@
         <button class="w-full bg-emerald-700 text-white font-black py-2.5 rounded-xl text-xs">🧱 Material Seller Profile बनाएं / अपडेट करें</button>
       </form>
       <div id="material-provider-card" class="hidden bg-emerald-50 border border-emerald-200 rounded-2xl p-4 text-xs"></div>
+      <div id="material-promotion-box" class="hidden bg-white border border-amber-300 rounded-2xl p-4 space-y-2">
+        <div><h4 class="text-sm font-black">📢 अपने दुकान का प्रचार चलाएँ</h4><p class="text-[10px] text-slate-500">सामान्य Approved Live listing के अलावा ₹1,000 देकर Sponsored Promotion request भेजें।</p></div>
+        <div class="bg-slate-50 border rounded-xl p-3 text-[10px]">
+          <p class="font-black">भुगतान: ₹1,000 / 1 महीना</p>
+          <p>UPI ID: <span class="font-bold text-amber-700 select-all">mistrybabu@upi</span></p>
+          <p>खाता नाम: MistryBabu Services</p>
+        </div>
+        <input id="material-ad-utr" maxlength="20" class="w-full rounded-lg border px-3 py-2 text-xs" placeholder="Payment UTR नंबर *">
+        <button type="button" onclick="MB_submitMaterialPromotion()" class="w-full bg-amber-500 text-slate-900 font-black py-2.5 rounded-xl text-xs">₹1,000 Payment के बाद Promotion भेजें</button>
+        <p id="material-ad-status" class="text-[9px] text-slate-500"></p>
+      </div>
     </div>
 
     <!-- 2. WORKER DASHBOARD -->
@@ -1142,11 +1209,13 @@
         <div id="admin-search-result" class="hidden bg-white p-3 rounded-xl border border-amber-300 space-y-2 shadow-xs"></div>
 
         <!-- एडमिन सब-टैब्स -->
-        <div class="grid grid-cols-5 gap-1 bg-slate-200 p-1 rounded-xl font-bold text-[10px] text-center">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-1 bg-slate-200 p-1 rounded-xl font-bold text-[10px] text-center">
           <button onclick="switchAdminSubTab('deals')" id="btn-adm-deals" class="py-1.5 rounded-lg bg-white text-slate-900 shadow-xs">डील्स</button>
           <button onclick="switchAdminSubTab('workers')" id="btn-adm-workers" class="py-1.5 rounded-lg text-slate-600">सभी मिस्त्री</button>
           <button onclick="switchAdminSubTab('callbacks')" id="btn-adm-callbacks" class="py-1.5 rounded-lg text-slate-600">कॉल बैक</button>
           <button onclick="switchAdminSubTab('contractors')" id="btn-adm-contractors" class="py-1.5 rounded-lg text-slate-600">ठेकेदारी VIP</button>
+          <button onclick="switchAdminSubTab('rental-vehicles')" id="btn-adm-rental-vehicles" class="py-1.5 rounded-lg text-slate-600">🚜 गाड़ियाँ</button>
+          <button onclick="switchAdminSubTab('material-ads')" id="btn-adm-material-ads" class="py-1.5 rounded-lg text-slate-600">📢 Material Ads</button>
           <button onclick="switchAdminSubTab('shopads')" id="btn-adm-shopads" class="py-1.5 rounded-lg text-slate-600">दुकान ऐड</button>
         </div>
 
@@ -1182,6 +1251,22 @@
           <div id="admin-contractors-container" class="space-y-2">
             <p class="text-slate-400 text-center py-3">रिक्वेस्ट लोड हो रही हैं...</p>
           </div>
+        </div>
+
+        <div id="sec-adm-rental-vehicles" class="space-y-3 hidden">
+          <div class="flex justify-between items-center">
+            <span class="font-bold text-slate-800">🚜 Rental गाड़ियों की Pending Verification</span>
+            <button onclick="MB_adminLoadRentalVehicles()" class="text-blue-600 font-bold text-[10px]">रिफ्रेश ↻</button>
+          </div>
+          <div id="admin-rental-vehicles-list" class="space-y-2"><p class="text-slate-400 text-center py-3">गाड़ियाँ लोड हो रही हैं...</p></div>
+        </div>
+
+        <div id="sec-adm-material-ads" class="space-y-3 hidden">
+          <div class="flex justify-between items-center">
+            <span class="font-bold text-slate-800">📢 Material Seller Promotion Requests</span>
+            <button onclick="MB_adminLoadMaterialAds()" class="text-emerald-600 font-bold text-[10px]">रिफ्रेश ↻</button>
+          </div>
+          <div id="admin-material-ads-list" class="space-y-2"><p class="text-slate-400 text-center py-3">Requests लोड हो रही हैं...</p></div>
         </div>
 
         <!-- दुकान विज्ञापन प्रबंधन -->
@@ -2718,19 +2803,21 @@
 
     function switchAdminSubTab(tab) {
       currentAdminSubTab = tab;
-      const tabs = ['deals', 'workers', 'callbacks', 'contractors', 'shopads'];
+      const tabs = ['deals', 'workers', 'callbacks', 'contractors', 'rental-vehicles', 'material-ads', 'shopads'];
       tabs.forEach(t => {
-        document.getElementById(`sec-adm-${t}`).classList.add("hidden");
-        document.getElementById(`btn-adm-${t}`).className = "py-1.5 rounded-lg text-slate-600";
+        document.getElementById(`sec-adm-${t}`)?.classList.add("hidden");
+        document.getElementById(`btn-adm-${t}`)?.classList.remove("bg-white","text-slate-900","shadow-xs");
+        document.getElementById(`btn-adm-${t}`)?.classList.add("text-slate-600");
       });
-
-      document.getElementById(`sec-adm-${tab}`).classList.remove("hidden");
-      document.getElementById(`btn-adm-${tab}`).className = "py-1.5 rounded-lg bg-white text-slate-900 shadow-xs";
-
+      document.getElementById(`sec-adm-${tab}`)?.classList.remove("hidden");
+      const active=document.getElementById(`btn-adm-${tab}`);
+      if(active){active.classList.remove("text-slate-600");active.classList.add("bg-white","text-slate-900","shadow-xs");}
       if (tab === 'deals') loadAdminDeals();
       else if (tab === 'workers') loadAdminWorkersList();
       else if (tab === 'callbacks') loadAdminCallbacks();
       else if (tab === 'contractors') loadAdminContractors();
+      else if (tab === 'rental-vehicles') MB_adminLoadRentalVehicles();
+      else if (tab === 'material-ads') MB_adminLoadMaterialAds();
       else if (tab === 'shopads') loadAdminShopAdsList();
     }
 
@@ -4927,5 +5014,276 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
   };
 })();
 </script>
+
+<script id="mb-advanced-rental-material-v1">
+(function(){
+  "use strict";
+  function mbEsc(v){return String(v||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+  async function mbFile(id){const f=document.getElementById(id)?.files?.[0]; if(!f)return ""; try{return await fileToBase64(f);}catch(e){return "";}}
+  async function mbExistingProvider(collection,phone){
+    const p=String(phone||"").replace(/\D/g,"").slice(-10); if(!p)return null;
+    const q=await db.collection(collection).where("phone","==","+91"+p).limit(1).get();
+    return q.empty?null:{id:q.docs[0].id,data:q.docs[0].data()};
+  }
+
+  window.MB_captureRentalGPS=function(){
+    const status=document.getElementById("rental-provider-gps-status");
+    if(!navigator.geolocation)return alert("इस डिवाइस में GPS उपलब्ध नहीं है।");
+    if(status)status.textContent="GPS लिया जा रहा है...";
+    navigator.geolocation.getCurrentPosition(pos=>{
+      document.getElementById("rental-provider-lat").value=pos.coords.latitude;
+      document.getElementById("rental-provider-lng").value=pos.coords.longitude;
+      if(status)status.textContent="✅ GPS सेव: "+pos.coords.latitude.toFixed(5)+", "+pos.coords.longitude.toFixed(5);
+    },err=>{if(status)status.textContent="❌ GPS नहीं मिला। अनुमति दें और फिर कोशिश करें।";});
+  };
+
+  const oldRentalSave=window.MB_saveRentalProvider;
+  window.MB_saveRentalProvider=async function(e){
+    e.preventDefault();
+    const lat=document.getElementById("rental-provider-lat")?.value, lng=document.getElementById("rental-provider-lng")?.value;
+    if(!lat||!lng)return alert("पहले Provider का GPS लेना जरूरी है।");
+    const front=await mbFile("rental-provider-aadhaar-front"), back=await mbFile("rental-provider-aadhaar-back");
+    if(!front||!back)return alert("Aadhaar Front और Back दोनों जरूरी हैं।");
+    const name=(document.getElementById("rental-provider-name")?.value||"").trim();
+    const phone=(document.getElementById("rental-provider-phone")?.value||"").replace(/\D/g,"").slice(-10);
+    if(!name||!/^\d{10}$/.test(phone))return alert("नाम और सही 10 अंकों का मोबाइल नंबर डालें।");
+    if(!document.getElementById("rental-provider-declaration")?.checked)return alert("Declaration स्वीकार करें।");
+    const existing=await mbExistingProvider("rental_providers",phone);
+    const data={
+      name,phone:"+91"+phone,
+      lat:parseFloat(lat),lng:parseFloat(lng),
+      aadhaarFront:front,aadhaarBack:back,aadhaarProvided:true,
+      aadhaarVerified:false,adminApprovalStatus:"pending_verification",
+      profileComplete:true,status:"pending_profile_verification",
+      updatedAt:firebase.firestore.FieldValue.serverTimestamp()
+    };
+    let ref;
+    if(existing){ref=db.collection("rental_providers").doc(existing.id); if(existing.data.aadhaarVerified===true) data.aadhaarVerified=true; }
+    else {ref=db.collection("rental_providers").doc(); data.createdAt=firebase.firestore.FieldValue.serverTimestamp();}
+    await ref.set(data,{merge:true});
+    localStorage.setItem("mb_device_locked_role","rental");
+    localStorage.setItem("mb_rental_phone",data.phone);
+    localStorage.setItem("mb_rental_profile_id",ref.id);
+    document.getElementById("rental-provider-form")?.classList.add("hidden");
+    const card=document.getElementById("rental-provider-card");
+    if(card){card.classList.remove("hidden");card.innerHTML=`<div class="flex items-center justify-between"><div><b class="text-sm">${mbEsc(name)}</b><div class="text-[10px] text-blue-700">🚜 Rental Provider • 📍 GPS सेव</div></div><span class="bg-amber-100 text-amber-800 px-2 py-1 rounded-full text-[9px] font-black">⏳ Admin Verification</span></div><p class="mt-2 text-[10px] text-slate-600">Profile बनने के बाद Admin Aadhaar देखकर Approval देगा। Approval से पहले कोई गाड़ी Live नहीं होगी।</p>`;}
+    document.getElementById("rental-vehicle-manager")?.classList.add("hidden");
+    alert("✅ Rental Provider Profile जमा हो गई। Admin Aadhaar देखकर Approval करेगा। Approval के बाद ही गाड़ी Add/Live होगी।");
+  };
+
+  window.MB_openAddRentalVehicle=function(){
+    document.getElementById("rental-vehicle-form")?.classList.remove("hidden");
+    document.getElementById("rental-vehicle-form")?.scrollIntoView({behavior:"smooth",block:"center"});
+  };
+  window.MB_closeAddRentalVehicle=function(){document.getElementById("rental-vehicle-form")?.classList.add("hidden");};
+
+  window.MB_saveRentalVehicle=async function(e){
+    e.preventDefault();
+    const phone=localStorage.getItem("mb_rental_phone");
+    if(!phone)return alert("पहले Rental Provider Profile/Login करें।");
+    const prov=await mbExistingProvider("rental_providers",phone);
+    if(!prov)return alert("Provider Profile नहीं मिली।");
+    if(prov.data.adminApprovalStatus!=="approved")return alert("⚠️ पहले Admin आपके Rental Provider Profile को Approve करेगा। उसके बाद ही गाड़ी Add होगी।");
+    const name=(document.getElementById("rental-vehicle-name")?.value||"").trim();
+    const reg=(document.getElementById("rental-vehicle-reg")?.value||"").trim().toUpperCase();
+    if(!name||!reg)return alert("गाड़ी/मशीन का नाम और Registration No. जरूरी है।");
+    if(!document.getElementById("rental-vehicle-declaration")?.checked)return alert("Vehicle Declaration स्वीकार करें।");
+    const photo=await mbFile("rental-vehicle-photo"), rc=await mbFile("rental-vehicle-rc");
+    if(!photo||!rc)return alert("गाड़ी की Photo और RC/Registration Proof दोनों अनिवार्य हैं।");
+    const legal=await mbFile("rental-vehicle-legal"), ownership=await mbFile("rental-vehicle-ownership");
+    const v={
+      providerId:prov.id,providerPhone:phone,providerName:prov.data.name||"",
+      vehicleName:name,registrationNo:reg,
+      model:(document.getElementById("rental-vehicle-model")?.value||"").trim(),
+      rate:(document.getElementById("rental-vehicle-rate")?.value||"").trim(),
+      area:(document.getElementById("rental-vehicle-area")?.value||"").trim(),
+      capacity:(document.getElementById("rental-vehicle-capacity")?.value||"").trim(),
+      description:(document.getElementById("rental-vehicle-desc")?.value||"").trim(),
+      photo,rcProof:rc,legalProof:legal,ownershipProof:ownership,
+      providerLat:prov.data.lat||null,providerLng:prov.data.lng||null,
+      status:"pending",adminApprovalStatus:"pending",
+      createdAt:firebase.firestore.FieldValue.serverTimestamp(),
+      updatedAt:firebase.firestore.FieldValue.serverTimestamp()
+    };
+    await db.collection("rental_vehicles").add(v);
+    document.getElementById("rental-vehicle-form")?.reset();
+    document.getElementById("rental-vehicle-form")?.classList.add("hidden");
+    MB_loadRentalVehiclesForProvider();
+    alert("✅ गाड़ी की जानकारी और कागज़ Admin के पास भेज दिए गए हैं। Approval के बाद यही गाड़ी Live होगी।");
+  };
+
+  window.MB_loadRentalVehiclesForProvider=async function(){
+    const box=document.getElementById("rental-vehicle-list"); if(!box)return;
+    const phone=localStorage.getItem("mb_rental_phone"); if(!phone)return;
+    try{
+      const snap=await db.collection("rental_vehicles").where("providerPhone","==",phone).get();
+      box.innerHTML="";
+      if(snap.empty){box.innerHTML="<p class='text-[10px] text-slate-400'>अभी कोई गाड़ी Add नहीं है।</p>";return;}
+      snap.forEach(doc=>{
+        const d=doc.data()||{}, live=d.adminApprovalStatus==="approved"&&d.status==="live";
+        const el=document.createElement("div"); el.className="bg-slate-50 border rounded-xl p-3";
+        el.innerHTML=`<div class="flex gap-2 items-center">${d.photo?`<img src="${d.photo}" class="w-14 h-14 rounded-lg object-cover">`:''}<div class="flex-1"><b class="text-xs">${mbEsc(d.vehicleName)}</b><p class="text-[9px] text-slate-500">${mbEsc(d.registrationNo)} • ${mbEsc(d.area)}</p><p class="text-[10px] font-bold">${mbEsc(d.rate)}</p></div><span class="text-[9px] font-black ${live?'text-emerald-700':'text-amber-700'}">${live?'🟢 LIVE':'⏳ Pending'}</span></div>`;
+        box.appendChild(el);
+      });
+    }catch(err){box.innerHTML="<p class='text-[10px] text-rose-600'>गाड़ियाँ लोड नहीं हो सकीं।</p>";}
+  };
+
+  const oldRender=window.MB_renderProviderCard;
+  window.MB_renderProviderCard=function(collection,prefix,d,cardId){
+    if(oldRender)oldRender(collection,prefix,d,cardId);
+    if(prefix==="rental"){
+      const mgr=document.getElementById("rental-vehicle-manager");
+      if(mgr)mgr.classList.toggle("hidden",d.adminApprovalStatus!=="approved");
+      if(d.adminApprovalStatus==="approved")setTimeout(MB_loadRentalVehiclesForProvider,100);
+    }
+    if(prefix==="material"){
+      const ad=document.getElementById("material-promotion-box");
+      if(ad)ad.classList.toggle("hidden",d.adminApprovalStatus!=="approved");
+    }
+  };
+
+  // Material seller: ₹1,000 paid promotion request -> Admin approval -> existing shop_ads becomes live.
+  window.MB_submitMaterialPromotion=async function(){
+    const phone=localStorage.getItem("mb_material_phone"); if(!phone)return alert("पहले Material Seller Profile/Login करें।");
+    const utr=(document.getElementById("material-ad-utr")?.value||"").trim();
+    if(!utr)return alert("Payment UTR नंबर डालें।");
+    const prov=await mbExistingProvider("material_providers",phone);
+    if(!prov||prov.data.adminApprovalStatus!=="approved")return alert("पहले Material Seller Profile Admin से Approved होना चाहिए।");
+    const existing=await db.collection("material_ad_requests").where("providerId","==",prov.id).where("status","==","pending").limit(1).get();
+    if(!existing.empty)return alert("आपका एक Promotion Request पहले से Pending है।");
+    await db.collection("material_ad_requests").add({
+      providerId:prov.id,providerPhone:phone,shopName:prov.data.name||"",
+      location:prov.data.area||"",description:prov.data.description||prov.data.items||"",
+      phone:prov.data.phone||phone,material:prov.data.items||"",
+      amount:1000,utr,status:"pending",bannerUrl:prov.data.photo||"",
+      createdAt:firebase.firestore.FieldValue.serverTimestamp()
+    });
+    const st=document.getElementById("material-ad-status"); if(st)st.textContent="⏳ Payment request Admin के पास भेज दी गई है। Payment verify होने पर प्रचार Live होगा।";
+    alert("✅ ₹1,000 Promotion Request जमा हो गई। Admin payment देखकर Approve करेगा।");
+  };
+
+  window.MB_adminLoadRentalVehicles=async function(){
+    const box=document.getElementById("admin-rental-vehicles-list");if(!box)return;
+    box.innerHTML="<p class='text-xs text-slate-400'>लोड हो रहा है...</p>";
+    const snap=await db.collection("rental_vehicles").where("adminApprovalStatus","==","pending").get();
+    box.innerHTML="";
+    if(snap.empty){box.innerHTML="<p class='text-xs text-slate-400'>कोई Pending गाड़ी नहीं है।</p>";return;}
+    snap.forEach(doc=>{
+      const d=doc.data()||{}, id=doc.id;
+      const el=document.createElement("div");el.className="bg-white border rounded-xl p-3 space-y-2";
+      el.innerHTML=`<div class="flex gap-2">${d.photo?`<img src="${d.photo}" class="w-16 h-16 rounded-lg object-cover">`:''}<div><b class="text-xs">${mbEsc(d.vehicleName)}</b><p class="text-[9px] text-slate-500">${mbEsc(d.registrationNo)} • ${mbEsc(d.providerName)}</p><p class="text-[9px]">${mbEsc(d.area)} • ${mbEsc(d.rate)}</p></div></div><div class="text-[9px] space-y-1"><p>📄 RC: ${d.rcProof?'✅ उपलब्ध':'❌ नहीं'}</p><p>📄 Insurance/Fitness/Permit: ${d.legalProof?'✅':'—'}</p><p>📄 Ownership: ${d.ownershipProof?'✅':'—'}</p></div><div class="grid grid-cols-2 gap-2"><button onclick="MB_adminApproveRentalVehicle('${id}')" class="bg-emerald-600 text-white py-2 rounded-lg text-[10px] font-black">✅ Approve → LIVE</button><button onclick="MB_adminRejectRentalVehicle('${id}')" class="bg-rose-600 text-white py-2 rounded-lg text-[10px] font-black">❌ Reject</button></div>`;
+      box.appendChild(el);
+    });
+  };
+  window.MB_adminApproveRentalVehicle=async function(id){
+    if(!confirm("इस गाड़ी के कागज़ देखकर इसे LIVE करना है?"))return;
+    await db.collection("rental_vehicles").doc(id).update({adminApprovalStatus:"approved",status:"live",verifiedAt:firebase.firestore.FieldValue.serverTimestamp(),handledBy:typeof currentOperator!=="undefined"?currentOperator:"Admin"});
+    MB_adminLoadRentalVehicles();
+  };
+  window.MB_adminRejectRentalVehicle=async function(id){
+    const reason=prompt("Reject करने का कारण लिखें:")||"Documents/Information incomplete";
+    await db.collection("rental_vehicles").doc(id).update({adminApprovalStatus:"rejected",status:"rejected",rejectionReason:reason,handledBy:typeof currentOperator!=="undefined"?currentOperator:"Admin"});
+    MB_adminLoadRentalVehicles();
+  };
+
+  window.MB_adminLoadMaterialAds=async function(){
+    const box=document.getElementById("admin-material-ads-list");if(!box)return;
+    const snap=await db.collection("material_ad_requests").where("status","==","pending").get();
+    box.innerHTML="";
+    if(snap.empty){box.innerHTML="<p class='text-xs text-slate-400'>कोई Pending Promotion नहीं है।</p>";return;}
+    snap.forEach(doc=>{
+      const d=doc.data()||{},id=doc.id,el=document.createElement("div");el.className="bg-white border rounded-xl p-3 space-y-2";
+      el.innerHTML=`<div class="flex gap-2">${d.bannerUrl?`<img src="${d.bannerUrl}" class="w-14 h-14 rounded-lg object-cover">`:''}<div><b class="text-xs">${mbEsc(d.shopName)}</b><p class="text-[9px] text-slate-500">${mbEsc(d.location)} • ${mbEsc(d.phone)}</p><p class="text-[9px]">₹${d.amount||1000} • UTR: <b>${mbEsc(d.utr)}</b></p></div></div><div class="grid grid-cols-2 gap-2"><button onclick="MB_adminApproveMaterialAd('${id}')" class="bg-emerald-600 text-white py-2 rounded-lg text-[10px] font-black">✅ Payment सही → LIVE</button><button onclick="MB_adminRejectMaterialAd('${id}')" class="bg-rose-600 text-white py-2 rounded-lg text-[10px] font-black">❌ Reject</button></div>`;
+      box.appendChild(el);
+    });
+  };
+  window.MB_adminApproveMaterialAd=async function(id){
+    const ref=db.collection("material_ad_requests").doc(id),snap=await ref.get();if(!snap.exists)return;
+    const d=snap.data()||{};
+    const now=Date.now(), ends=new Date(now+30*24*60*60*1000);
+    await db.collection("shop_ads").add({shopName:d.shopName,phone:d.phone,location:d.location,description:d.description,material:d.material||"",planAmount:"1000",bannerUrl:d.bannerUrl||"",isActive:true,source:"material_provider_promotion",providerId:d.providerId,promotionStart:firebase.firestore.FieldValue.serverTimestamp(),promotionEnd:ends.toISOString(),createdBy:typeof currentOperator!=="undefined"?currentOperator:"Admin",createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+    await ref.update({status:"approved",approvedAt:firebase.firestore.FieldValue.serverTimestamp(),handledBy:typeof currentOperator!=="undefined"?currentOperator:"Admin"});
+    MB_adminLoadMaterialAds();
+  };
+  window.MB_adminRejectMaterialAd=async function(id){
+    await db.collection("material_ad_requests").doc(id).update({status:"rejected",handledBy:typeof currentOperator!=="undefined"?currentOperator:"Admin"});
+    MB_adminLoadMaterialAds();
+  };
+
+  window.MB_loadMarketplace=async function(){
+    const box=document.getElementById("mb-marketplace-list");if(!box)return;
+    try{
+      const [vSnap,mSnap]=await Promise.all([
+        db.collection("rental_vehicles").where("adminApprovalStatus","==","approved").where("status","==","live").get(),
+        db.collection("material_providers").where("adminApprovalStatus","==","approved").get()
+      ]);
+      let html="";
+      vSnap.forEach(doc=>{const d=doc.data()||{};html+=`<div class="bg-blue-50 border border-blue-200 rounded-xl p-3"><div class="flex gap-2">${d.photo?`<img src="${d.photo}" class="w-14 h-14 rounded-lg object-cover">`:''}<div><b class="text-xs">🚜 ${mbEsc(d.vehicleName)}</b><p class="text-[9px] text-slate-600">${mbEsc(d.area)} • ${mbEsc(d.rate)}</p><p class="text-[9px] text-slate-500">Provider: ${mbEsc(d.providerName)}</p></div></div></div>`;});
+      mSnap.forEach(doc=>{const d=doc.data()||{};html+=`<div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3"><div class="flex gap-2">${d.photo?`<img src="${d.photo}" class="w-14 h-14 rounded-lg object-cover">`:''}<div><b class="text-xs">🧱 ${mbEsc(d.name)}</b><p class="text-[9px] text-slate-600">${mbEsc(d.area)} • ${mbEsc(d.items)}</p><p class="text-[9px] text-slate-500">${mbEsc(d.delivery||"Delivery जानकारी उपलब्ध")}</p></div></div></div>`;});
+      box.innerHTML=html||"<p class='text-xs text-slate-400'>अभी कोई Admin-approved Rental Vehicle या Material Seller Live नहीं है।</p>";
+    }catch(e){box.innerHTML="<p class='text-xs text-rose-600'>Marketplace लोड नहीं हो पाया।</p>";}
+  };
+
+  // Load provider data and marketplace after existing page functions are available.
+  document.addEventListener("DOMContentLoaded",function(){
+    setTimeout(function(){
+      try{if(localStorage.getItem("mb_rental_phone"))MB_loadRentalVehiclesForProvider();}catch(e){}
+      try{if(window.MB_loadMarketplace)MB_loadMarketplace();}catch(e){}
+    },1200);
+  });
+})();
+</script>
+
+
+<script id="mb-material-gps-and-login-v2">
+(function(){
+  "use strict";
+  window.MB_captureMaterialGPS=function(){
+    const s=document.getElementById("material-provider-gps-status");
+    if(!navigator.geolocation)return alert("इस डिवाइस में GPS उपलब्ध नहीं है।");
+    if(s)s.textContent="GPS लिया जा रहा है...";
+    navigator.geolocation.getCurrentPosition(p=>{
+      document.getElementById("material-provider-lat").value=p.coords.latitude;
+      document.getElementById("material-provider-lng").value=p.coords.longitude;
+      if(s)s.textContent="✅ GPS सेव: "+p.coords.latitude.toFixed(5)+", "+p.coords.longitude.toFixed(5);
+    },()=>{if(s)s.textContent="❌ GPS नहीं मिला। अनुमति दें।";});
+  };
+  const oldMat=window.MB_saveMaterialProvider;
+  window.MB_saveMaterialProvider=async function(e){
+    const lat=document.getElementById("material-provider-lat")?.value,lng=document.getElementById("material-provider-lng")?.value;
+    if(!lat||!lng){e.preventDefault();return alert("पहले दुकान का GPS लेना जरूरी है।");}
+    await oldMat(e);
+    // Existing saver writes all standard fields. Add GPS to the same provider record.
+    try{
+      const phone="+91"+String(document.getElementById("material-provider-phone")?.value||"").replace(/\D/g,"").slice(-10);
+      const q=await db.collection("material_providers").where("phone","==",phone).limit(1).get();
+      if(!q.empty)await q.docs[0].ref.update({lat:parseFloat(lat),lng:parseFloat(lng),updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
+    }catch(err){console.warn("Material GPS save:",err);}
+  };
+
+  const oldLoadR=window.MB_loadRentalProvider;
+  window.MB_loadRentalProvider=async function(){
+    await oldLoadR();
+    document.getElementById("rental-provider-form")?.classList.add("hidden");
+    const phone=localStorage.getItem("mb_rental_phone");if(!phone)return;
+    const q=await db.collection("rental_providers").where("phone","==",phone).limit(1).get();if(q.empty)return;
+    const d=q.docs[0].data()||{};
+    const card=document.getElementById("rental-provider-card");if(card)card.classList.remove("hidden");
+    const mgr=document.getElementById("rental-vehicle-manager");
+    if(mgr)mgr.classList.toggle("hidden",d.adminApprovalStatus!=="approved");
+    if(d.adminApprovalStatus==="approved")MB_loadRentalVehiclesForProvider();
+  };
+  const oldLoadM=window.MB_loadMaterialProvider;
+  window.MB_loadMaterialProvider=async function(){
+    await oldLoadM();
+    document.getElementById("material-provider-form")?.classList.add("hidden");
+    const phone=localStorage.getItem("mb_material_phone");if(!phone)return;
+    const q=await db.collection("material_providers").where("phone","==",phone).limit(1).get();if(q.empty)return;
+    const d=q.docs[0].data()||{};
+    const ad=document.getElementById("material-promotion-box");if(ad)ad.classList.toggle("hidden",d.adminApprovalStatus!=="approved");
+  };
+})();
+</script>
+
 </body>
   </html>
