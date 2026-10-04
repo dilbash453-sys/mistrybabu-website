@@ -814,7 +814,64 @@
           <p class="text-[10px] mt-1">Admin ने payment confirm करके आपका profile सक्रिय कर दिया है। अब दोबारा form भरने की जरूरत नहीं है।</p>
         </div>
         <div id="con-active-profile-details" class="grid grid-cols-2 gap-2 text-[10px]"></div>
-        <div class="text-center"><span class="inline-block bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full font-black text-[10px]">✓ Verified Contractor</span></div>
+        <div class="text-center"><span id="con-active-verified-badge" class="inline-block bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full font-black text-[10px]">✓ Verified Contractor</span></div>
+
+        <!-- ACTIVE CONTRACTOR DASHBOARD -->
+        <div id="mb-contractor-active-dashboard" class="space-y-3 pt-2 border-t border-slate-200">
+          <div class="bg-slate-900 text-white rounded-2xl p-4">
+            <div class="flex items-center gap-3">
+              <div id="mb-con-avatar" class="w-14 h-14 rounded-full bg-amber-400 text-slate-900 flex items-center justify-center text-2xl font-black">👷</div>
+              <div class="min-w-0 flex-1">
+                <div id="mb-con-dashboard-name" class="font-black text-base truncate">ठेकेदार</div>
+                <div id="mb-con-dashboard-type" class="text-[10px] text-amber-300 font-bold">Small Contractor</div>
+                <div id="mb-con-dashboard-id" class="text-[9px] text-slate-300 mt-0.5">Contractor ID: —</div>
+              </div>
+              <span class="bg-emerald-500 text-slate-900 text-[9px] font-black px-2 py-1 rounded-full">🟢 ACTIVE</span>
+            </div>
+            <div id="mb-con-dashboard-location" class="text-[10px] text-slate-300 mt-2">📍 क्षेत्र उपलब्ध नहीं</div>
+          </div>
+
+          <div class="grid grid-cols-4 gap-2">
+            <div class="bg-blue-50 border border-blue-200 rounded-xl p-2 text-center"><b id="mb-con-stat-projects" class="block text-sm text-blue-700">0</b><span class="text-[8px] font-bold">Projects</span></div>
+            <div class="bg-amber-50 border border-amber-200 rounded-xl p-2 text-center"><b id="mb-con-stat-leads" class="block text-sm text-amber-700">0</b><span class="text-[8px] font-bold">Leads</span></div>
+            <div class="bg-violet-50 border border-violet-200 rounded-xl p-2 text-center"><b id="mb-con-stat-quotes" class="block text-sm text-violet-700">0</b><span class="text-[8px] font-bold">Quotes</span></div>
+            <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-2 text-center"><b id="mb-con-stat-rating" class="block text-sm text-emerald-700">—</b><span class="text-[8px] font-bold">Rating</span></div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <button type="button" onclick="MB_contractorDashboardAction('leads')" class="bg-amber-500 text-slate-900 p-3 rounded-xl font-black text-[11px]">📩 नए काम / Leads</button>
+            <button type="button" onclick="MB_contractorDashboardAction('projects')" class="bg-blue-600 text-white p-3 rounded-xl font-black text-[11px]">🏠 मेरे Projects</button>
+            <button type="button" onclick="MB_contractorDashboardAction('quotes')" class="bg-violet-600 text-white p-3 rounded-xl font-black text-[11px]">💰 मेरे Quotes</button>
+            <button type="button" onclick="MB_contractorDashboardAction('deals')" class="bg-emerald-600 text-white p-3 rounded-xl font-black text-[11px]">🤝 मेरे Deals</button>
+          </div>
+
+          <div class="bg-white border border-slate-200 rounded-xl p-3 space-y-2">
+            <h4 class="text-[11px] font-black text-slate-900">👤 मेरा Professional Profile</h4>
+            <div id="mb-con-profile-summary" class="grid grid-cols-2 gap-2 text-[9px] text-slate-600"></div>
+          </div>
+
+          <div id="mb-con-vip-verification" class="hidden bg-amber-50 border border-amber-300 rounded-xl p-3">
+            <h4 class="text-[11px] font-black text-amber-950 mb-2">👑 VIP Business Verification</h4>
+            <div class="grid grid-cols-2 gap-2 text-[9px]">
+              <span class="bg-white rounded-lg p-2">🪪 Aadhaar<br><b>✓ Verified</b></span>
+              <span class="bg-white rounded-lg p-2">🧾 GST/Udyam/PWD<br><b>✓ Verified</b></span>
+              <span class="bg-white rounded-lg p-2">🏢 Firm PAN<br><b>✓ Verified</b></span>
+              <span class="bg-white rounded-lg p-2">🏦 Bank Details<br><b>✓ Verified</b></span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <button type="button" onclick="MB_contractorDashboardAction('team')" class="bg-slate-100 text-slate-800 p-2.5 rounded-xl font-bold text-[10px]">👷 मेरी Labour Team</button>
+            <button type="button" onclick="MB_contractorDashboardAction('reviews')" class="bg-slate-100 text-slate-800 p-2.5 rounded-xl font-bold text-[10px]">⭐ Rating & Reviews</button>
+            <button type="button" onclick="MB_contractorDashboardAction('notifications')" class="bg-slate-100 text-slate-800 p-2.5 rounded-xl font-bold text-[10px]">🔔 Notifications</button>
+            <button type="button" onclick="MB_contractorDashboardAction('documents')" class="bg-slate-100 text-slate-800 p-2.5 rounded-xl font-bold text-[10px]">📄 Documents</button>
+          </div>
+
+          <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-center">
+            <span class="text-[10px] text-emerald-800 font-bold">Membership Status</span>
+            <div id="mb-con-membership-status" class="text-sm font-black text-emerald-900 mt-0.5">ACTIVE</div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -4503,8 +4560,10 @@
       }
       if(d.status==="Payment_Submitted") alertOnce("payment_submitted_"+appId,"✅ आपका payment/UTR Admin को मिल गया है। Admin payment confirm करेगा।");
       if(d.status==="Active_Contractor"){
+        d.applicationId=appId;
         const box=document.getElementById("con-active-profile-details");
         if(box) box.innerHTML=`<div class="bg-slate-50 p-2 rounded-lg"><b>नाम</b><br>${d.name||''}</div><div class="bg-slate-50 p-2 rounded-lg"><b>मोबाइल</b><br>${d.phone||''}</div><div class="bg-slate-50 p-2 rounded-lg"><b>स्तर</b><br>${d.contractorTier==='vip'?'👑 VIP':'🔨 Small'}</div><div class="bg-slate-50 p-2 rounded-lg"><b>स्थिति</b><br>ACTIVE</div>`;
+        if(window.MB_renderActiveContractorDashboard) window.MB_renderActiveContractorDashboard(d);
       }
     });
   };
@@ -4565,7 +4624,47 @@
     });
   };
 
-  const oldAlert=window.alert; window.alertOnce=function(key,msg){if(sessionStorage.getItem(key))return;sessionStorage.setItem(key,'1');oldAlert(msg);};
+  // Active Small/VIP Contractor Dashboard
+  window.MB_contractorDashboardAction = function(action){
+    const labels = {
+      leads:"नए काम / Leads जल्द इसी Dashboard में क्षेत्र और काम के अनुसार दिखेंगे।",
+      projects:"आपके चालू और पूरे किए गए Projects इसी सेक्शन में दिखेंगे।",
+      quotes:"आपके भेजे गए सभी Quotes/Rate यहाँ दिखेंगे।",
+      deals:"Selected/Confirmed/Completed Deals यहाँ दिखेंगे।",
+      team:"आपकी Labour/Mistri Team का प्रबंधन यहाँ होगा।",
+      reviews:"Customers की Rating & Reviews यहाँ दिखेंगी।",
+      notifications:"नए काम, Quote और Deal के Notifications यहाँ मिलेंगे।",
+      documents:"आपके verified documents सुरक्षित हैं; Aadhaar public नहीं दिखाया जाएगा।"
+    };
+    alert(labels[action]||"यह Dashboard विकल्प उपलब्ध है।");
+  };
+
+  window.MB_renderActiveContractorDashboard = function(d){
+    if(!d) return;
+    const tier = d.contractorTier==='vip' ? 'vip' : 'small';
+    const id = d.contractorId || ('MB-'+(tier==='vip'?'VIP':'SC')+'-'+String(d.applicationId||'').slice(-6).toUpperCase());
+    const nameEl=document.getElementById("mb-con-dashboard-name");
+    const typeEl=document.getElementById("mb-con-dashboard-type");
+    const idEl=document.getElementById("mb-con-dashboard-id");
+    const locEl=document.getElementById("mb-con-dashboard-location");
+    const summary=document.getElementById("mb-con-profile-summary");
+    const vip=document.getElementById("mb-con-vip-verification");
+    if(nameEl) nameEl.textContent=d.name||"ठेकेदार";
+    if(typeEl) typeEl.textContent=tier==='vip'?"👑 VIP Contractor":"🔨 Small Contractor";
+    if(idEl) idEl.textContent="Contractor ID: "+id;
+    if(locEl) locEl.textContent="📍 "+(d.district||d.city||d.state||"क्षेत्र सुरक्षित");
+    if(summary) summary.innerHTML=[
+      ["नाम",d.name||"—"],["मोबाइल",d.phone||"—"],["लेबर क्षमता",d.laborCapacity||"—"],["अनुभव",d.experience?d.experience+" वर्ष":"—"],
+      ["Aadhaar","✓ Verified"],["Membership",tier==='vip'?"VIP Contractor":"Small Contractor"]
+    ].map(x=>`<div class="bg-slate-50 rounded-lg p-2"><span class="block text-slate-400">${x[0]}</span><b class="text-slate-800">${x[1]}</b></div>`).join("");
+    if(vip) vip.classList.toggle("hidden",tier!=="vip");
+    const badge=document.getElementById("con-active-verified-badge");
+    if(badge) badge.textContent=tier==='vip'?"✓ Verified VIP Contractor":"✓ Verified Small Contractor";
+    const mem=document.getElementById("mb-con-membership-status");
+    if(mem) mem.textContent=tier==='vip'?"👑 VIP MEMBERSHIP ACTIVE":"🔨 SMALL MEMBERSHIP ACTIVE";
+  };
+
+    const oldAlert=window.alert; window.alertOnce=function(key,msg){if(sessionStorage.getItem(key))return;sessionStorage.setItem(key,'1');oldAlert(msg);};
   const oldCheck=window.checkContractorStatus;
   document.addEventListener('DOMContentLoaded',()=>setTimeout(()=>window.checkContractorStatus(),700));
 })();
