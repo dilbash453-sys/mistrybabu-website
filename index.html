@@ -772,6 +772,7 @@
             <span id="badge-verified-id" class="hidden bg-blue-500/20 text-blue-300 text-[9px] font-bold px-2 py-0.5 rounded-full border border-blue-400/30">🛡️ सत्यापित मिस्त्री</span>
             <span id="badge-contractor-vip" class="hidden bg-amber-400 text-slate-900 text-[9px] font-black px-2 py-0.5 rounded-full">👑 VIP ठेकेदार</span>
           </div>
+          <div id="my-prof-live-status" class="mt-2 inline-flex items-center rounded-full px-3 py-1 text-[10px] font-black bg-emerald-500/15 text-emerald-300 border border-emerald-400/30">🟢 अभी काम के लिए उपलब्ध है</div>
 
           <div class="mt-3 flex items-center justify-center gap-2 text-[10px] text-slate-300">
             <span>📍</span><span id="my-prof-location">बिहार •</span>
@@ -2271,17 +2272,54 @@
     function renderLiveStatusUI(status){
       const btn=document.getElementById("btn-live-status");
       const txt=document.getElementById("txt-live-status");
+      const profileStatus=document.getElementById("my-prof-live-status");
       const isBusy=(status==="busy");
-      if(txt) txt.innerText=isBusy ? "काम पर हैं 🔴" : "काम के लिए उपलब्ध 🟢";
+      const buttonText=isBusy ? "काम पर है 🔴" : "काम के लिए उपलब्ध 🟢";
+      const profileText=isBusy ? "🔴 अभी काम पर है" : "🟢 अभी काम के लिए उपलब्ध है";
+      if(txt) txt.innerText=buttonText;
+      if(profileStatus) profileStatus.innerText=profileText;
+      if(profileStatus){
+        profileStatus.classList.remove("bg-rose-500/15","text-rose-300","border-rose-400/30","bg-emerald-500/15","text-emerald-300","border-emerald-400/30");
+        profileStatus.classList.add(...(isBusy ? ["bg-rose-500/15","text-rose-300","border-rose-400/30"] : ["bg-emerald-500/15","text-emerald-300","border-emerald-400/30"]));
+      }
       if(btn){
-        btn.classList.toggle("bg-rose-500",isBusy);
-        btn.classList.toggle("bg-emerald-500",!isBusy);
-        btn.classList.toggle("text-white",isBusy);
-        btn.classList.toggle("text-slate-900",!isBusy);
+        // पुराने colour class को पहले हटाएँ, तभी नया colour लगेगा।
+        btn.classList.remove("bg-rose-500","bg-emerald-500","text-white","text-slate-900");
+        btn.classList.add(isBusy ? "bg-rose-500" : "bg-emerald-500");
+        btn.classList.add(isBusy ? "text-white" : "text-slate-900");
         btn.setAttribute("aria-pressed",isBusy?"true":"false");
+        btn.setAttribute("title",isBusy ? "अभी काम पर है — उपलब्ध नहीं" : "अभी काम के लिए उपलब्ध है");
       }
     }
-    async function toggleWorkerLiveStatus(){const phone=localStorage.getItem("mb_worker_phone");if(!phone)return alert("पहले मिस्त्री प्रोफ़ाइल खोलें।");const next=(localStorage.getItem("mb_worker_status")||"available")==="busy"?"available":"busy";localStorage.setItem("mb_worker_status",next);renderLiveStatusUI(next);try{const id=localStorage.getItem("mb_worker_doc_id");if(id)await db.collection("workers").doc(id).update({liveStatus:next});else{const snap=await db.collection("workers").where("private_phone","==","+91"+phone).limit(1).get();if(!snap.empty)await snap.docs[0].ref.update({liveStatus:next});}}catch(e){alert("स्टेटस सेव नहीं हो सका: "+e.message);}}
+    async function toggleWorkerLiveStatus(){
+      const phone=localStorage.getItem("mb_worker_phone");
+      if(!phone)return alert("पहले मिस्त्री प्रोफ़ाइल खोलें।");
+      const current=(localStorage.getItem("mb_worker_status")||"available");
+      const next=current==="busy"?"available":"busy";
+      const id=localStorage.getItem("mb_worker_doc_id");
+      try{
+        let saved=false;
+        if(id){
+          await db.collection("workers").doc(id).update({liveStatus:next});
+          saved=true;
+        }else{
+          const snap=await db.collection("workers").where("private_phone","==","+91"+phone).limit(1).get();
+          if(!snap.empty){
+            localStorage.setItem("mb_worker_doc_id",snap.docs[0].id);
+            await snap.docs[0].ref.update({liveStatus:next});
+            saved=true;
+          }
+        }
+        if(!saved) throw new Error("मिस्त्री प्रोफ़ाइल नहीं मिली");
+        localStorage.setItem("mb_worker_status",next);
+        renderLiveStatusUI(next);
+      }catch(e){
+        // Firebase save fail होने पर पुराना status ही दिखाएँ।
+        const oldStatus=localStorage.getItem("mb_worker_status")||"available";
+        renderLiveStatusUI(oldStatus);
+        alert("स्टेटस सेव नहीं हो सका: "+e.message);
+      }
+    }
     function toggleMainMenu(){document.getElementById("main-menu-drawer")?.classList.toggle("translate-x-full");document.getElementById("main-menu-overlay")?.classList.toggle("hidden");} function closeMainMenu(){document.getElementById("main-menu-drawer")?.classList.add("translate-x-full");document.getElementById("main-menu-overlay")?.classList.add("hidden");}
     function setAppLanguage(lang){localStorage.setItem("mb_lang",lang);document.documentElement.lang=lang==="en"?"en":"hi";const t={home:lang==="en"?"Home":"होम",jobs:lang==="en"?"Jobs":"काम देखें",post:lang==="en"?"Post":"काम दें",workers:lang==="en"?"Workers":"मिस्त्री खोजें",register:lang==="en"?"Profile":"प्रोफ़ाइल"};Object.entries(t).forEach(([k,v])=>{const e=document.getElementById("nav-"+k)?.querySelector("span");if(e)e.innerText=v;});}
     function setAppTheme(theme){localStorage.setItem("mb_theme",theme);document.body.classList.toggle("mb-dark",theme==="dark");} function applySavedUISettings(){setAppTheme(localStorage.getItem("mb_theme")||"light");setAppLanguage(localStorage.getItem("mb_lang")||"hi");}
