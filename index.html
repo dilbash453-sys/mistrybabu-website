@@ -5291,5 +5291,89 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
 })();
 </script>
 
+
+<script id="mb-provider-beautiful-profiles-v1">
+(function(){
+  "use strict";
+  const escP=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const money=v=>v?escP(v):"—";
+  function statusHtml(d,prefix){
+    const approved=d.adminApprovalStatus==="approved";
+    const verified=d.aadhaarVerified===true;
+    if(approved) return `<span class="bg-emerald-100 text-emerald-700 border border-emerald-200 px-2.5 py-1 rounded-full text-[9px] font-black">🟢 LIVE / APPROVED</span>`;
+    if(verified) return `<span class="bg-blue-100 text-blue-700 border border-blue-200 px-2.5 py-1 rounded-full text-[9px] font-black">🛡️ Aadhaar Verified • Approval Pending</span>`;
+    return `<span class="bg-amber-100 text-amber-800 border border-amber-200 px-2.5 py-1 rounded-full text-[9px] font-black">⏳ Admin Verification Pending</span>`;
+  }
+  function profileActions(prefix,d){
+    const approved=d.adminApprovalStatus==="approved";
+    if(prefix==="rental") return `<div class="grid grid-cols-2 gap-2 mt-3"><button type="button" onclick="MB_providerEditProfile('rental')" class="bg-slate-900 text-white py-2.5 rounded-xl text-[10px] font-black">✏️ Profile Update</button>${approved?`<button type="button" onclick="MB_openAddRentalVehicle()" class="bg-blue-700 text-white py-2.5 rounded-xl text-[10px] font-black">➕ गाड़ी Add करें</button>`:`<div class="col-span-1 bg-amber-50 text-amber-800 border border-amber-200 py-2.5 rounded-xl text-[9px] font-bold text-center">Admin Approval के बाद<br>गाड़ी Add होगी</div>`}</div>`;
+    return `<button type="button" onclick="MB_providerEditProfile('material')" class="w-full bg-slate-900 text-white py-2.5 rounded-xl text-[10px] font-black mt-3">✏️ Shop Profile Update</button>`;
+  }
+  window.MB_renderProviderCard=function(collection,prefix,d,cardId){
+    const c=document.getElementById(cardId); if(!c)return; c.classList.remove("hidden");
+    const approved=d.adminApprovalStatus==="approved";
+    const verified=d.aadhaarVerified===true;
+    if(prefix==="rental"){
+      c.innerHTML=`
+        <div class="overflow-hidden rounded-2xl border border-blue-200 bg-white shadow-sm">
+          <div class="bg-gradient-to-r from-blue-950 via-blue-900 to-slate-900 text-white p-4">
+            <div class="flex items-start gap-3">
+              <div class="w-16 h-16 rounded-2xl bg-blue-800/70 border border-blue-400/30 flex items-center justify-center text-3xl shrink-0">🚜</div>
+              <div class="min-w-0 flex-1"><div class="flex items-center gap-1.5 flex-wrap"><h3 class="font-black text-base">${escP(d.name||"Rental Provider")}</h3>${verified?`<span class="text-[8px] bg-emerald-400/20 text-emerald-200 border border-emerald-300/30 px-1.5 py-0.5 rounded-full">✓ Verified</span>`:""}</div><p class="text-[10px] text-blue-200 mt-0.5">🚜 Machine / Vehicle Rental Provider</p><p class="text-[9px] text-slate-300 mt-1">📍 GPS Location सुरक्षित है</p></div>
+              <div>${statusHtml(d,"rental")}</div>
+            </div>
+          </div>
+          <div class="p-3 space-y-2.5">
+            <div class="grid grid-cols-2 gap-2">
+              <div class="bg-slate-50 border border-slate-100 rounded-xl p-2.5"><span class="text-[8px] text-slate-400 block">मोबाइल</span><b class="text-[10px] text-slate-800">${escP(d.phone||"—")}</b><span class="block text-[8px] text-emerald-600 mt-0.5">🔐 सार्वजनिक रूप से छुपा रहेगा</span></div>
+              <div class="bg-blue-50 border border-blue-100 rounded-xl p-2.5"><span class="text-[8px] text-blue-500 block">Provider Status</span><b class="text-[10px] text-blue-900">${approved?"LIVE Provider":"Under Verification"}</b></div>
+            </div>
+            <div class="bg-blue-50/60 border border-blue-100 rounded-xl p-3"><p class="text-[9px] font-black text-blue-900 mb-2">📍 Provider Location</p><div class="grid grid-cols-2 gap-2 text-[9px]"><div class="bg-white rounded-lg p-2"><span class="text-slate-400 block">Latitude</span><b>${d.lat??"—"}</b></div><div class="bg-white rounded-lg p-2"><span class="text-slate-400 block">Longitude</span><b>${d.lng??"—"}</b></div></div></div>
+            <div class="bg-amber-50 border border-amber-200 rounded-xl p-3"><p class="text-[10px] font-black text-amber-900">🔐 दस्तावेज स्थिति</p><p class="text-[9px] text-slate-600 mt-1">Aadhaar Front + Back: ${d.aadhaarProvided?"✅ जमा":"—"} &nbsp; ${verified?"✓ Admin Verified":"⏳ Admin Review"}</p></div>
+            ${profileActions(prefix,d)}
+          </div>
+        </div>`;
+      const mgr=document.getElementById("rental-vehicle-manager"); if(mgr)mgr.classList.toggle("hidden",!approved);
+      if(approved && typeof MB_loadRentalVehiclesForProvider==='function') setTimeout(MB_loadRentalVehiclesForProvider,50);
+    }else{
+      const photo=d.photo||"";
+      const promotion=document.getElementById("material-promotion-box"); if(promotion)promotion.classList.toggle("hidden",!approved);
+      c.innerHTML=`
+        <div class="overflow-hidden rounded-2xl border border-emerald-200 bg-white shadow-sm">
+          <div class="bg-gradient-to-r from-emerald-950 via-emerald-900 to-slate-900 text-white p-4">
+            <div class="flex items-start gap-3">
+              ${photo?`<img src="${photo}" class="w-16 h-16 rounded-2xl object-cover border-2 border-emerald-300/50 shrink-0">`:`<div class="w-16 h-16 rounded-2xl bg-emerald-800/70 border border-emerald-400/30 flex items-center justify-center text-3xl shrink-0">🧱</div>`}
+              <div class="min-w-0 flex-1"><div class="flex items-center gap-1.5 flex-wrap"><h3 class="font-black text-base">${escP(d.name||"Material Seller")}</h3>${verified?`<span class="text-[8px] bg-emerald-400/20 text-emerald-200 border border-emerald-300/30 px-1.5 py-0.5 rounded-full">✓ Verified</span>`:""}</div><p class="text-[10px] text-emerald-200 mt-0.5">🧱 Construction Material Seller</p><p class="text-[9px] text-slate-300 mt-1">📍 ${escP(d.area||"Location सुरक्षित")}</p></div><div>${statusHtml(d,"material")}</div></div>
+          </div>
+          <div class="p-3 space-y-2.5">
+            <div class="grid grid-cols-2 gap-2">
+              <div class="bg-slate-50 border border-slate-100 rounded-xl p-2.5"><span class="text-[8px] text-slate-400 block">मोबाइल</span><b class="text-[10px]">${escP(d.phone||"—")}</b><span class="block text-[8px] text-emerald-600 mt-0.5">🔐 सार्वजनिक रूप से छुपा रहेगा</span></div>
+              <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-2.5"><span class="text-[8px] text-emerald-600 block">Delivery</span><b class="text-[10px] text-emerald-900">${escP(d.delivery||"जानकारी नहीं")}</b></div>
+            </div>
+            <div class="bg-emerald-50/60 border border-emerald-100 rounded-xl p-3"><p class="text-[9px] font-black text-emerald-900 mb-2">🧱 दुकान की जानकारी</p><div class="grid grid-cols-2 gap-2 text-[9px]"><div class="bg-white rounded-lg p-2"><span class="text-slate-400 block">Material</span><b>${escP(d.items||"—")}</b></div><div class="bg-white rounded-lg p-2"><span class="text-slate-400 block">Rate / Price</span><b>${money(d.rate)}</b></div></div>${d.description?`<p class="text-[9px] text-slate-600 mt-2">${escP(d.description)}</p>`:""}</div>
+            <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3"><p class="text-[10px] font-black text-emerald-900">📍 Shop GPS</p><p class="text-[9px] text-slate-600 mt-1">${d.lat!=null&&d.lng!=null?`✅ Location सुरक्षित • ${d.lat}, ${d.lng}`:"⏳ Location उपलब्ध नहीं"}</p></div>
+            <div class="bg-slate-50 border rounded-xl p-3"><p class="text-[10px] font-black">📄 Verification</p><p class="text-[9px] text-slate-600 mt-1">Aadhaar: ${d.aadhaarProvided?"✅ जमा":"—"} • Business Proof: ${Object.keys(d).filter(k=>/Proof$/.test(k)&&d[k]).length} saved</p></div>
+            ${approved?`<div class="bg-amber-50 border border-amber-300 rounded-xl p-3"><div class="flex items-center justify-between"><div><b class="text-[10px] text-amber-900">📢 Sponsored Promotion</b><p class="text-[9px] text-slate-600">₹1,000 / 1 महीना</p></div><span class="text-[9px] font-black text-amber-700">ADMIN APPROVAL</span></div></div>`:""}
+            ${profileActions(prefix,d)}
+          </div>
+        </div>`;
+    }
+  };
+  window.MB_providerEditProfile=function(prefix){
+    const form=document.getElementById(prefix==="rental"?"rental-provider-form":"material-provider-form");
+    if(form){form.classList.remove("hidden");form.scrollIntoView({behavior:"smooth",block:"center"});}
+  };
+  async function refresh(prefix){
+    const collection=prefix==="rental"?"rental_providers":"material_providers";
+    const phone=localStorage.getItem("mb_"+prefix+"_phone"); if(!phone)return;
+    try{const q=await db.collection(collection).where("phone","==",phone).limit(1).get();if(!q.empty)MB_renderProviderCard(collection,prefix,q.docs[0].data(),prefix==="rental"?"rental-provider-card":"material-provider-card");}catch(e){console.warn("Provider profile refresh",e);}
+  }
+  const saveR=window.MB_saveRentalProvider;
+  window.MB_saveRentalProvider=async function(e){await saveR(e);await refresh("rental");};
+  const saveM=window.MB_saveMaterialProvider;
+  window.MB_saveMaterialProvider=async function(e){await saveM(e);await refresh("material");};
+})();
+</script>
+
 </body>
   </html>
