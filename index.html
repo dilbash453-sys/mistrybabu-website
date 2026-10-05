@@ -23,6 +23,7 @@
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-analytics.js"></script>
   <style>
@@ -113,6 +114,44 @@
           <select id="home-district-filter" onchange="filterByDistrict()" class="w-full text-xs font-bold text-slate-800 bg-transparent border-none outline-none cursor-pointer">
             <option value="">सभी ज़िले देखें</option>
           </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== HOMEPAGE SIGN UP / LOGIN ==================== -->
+    <div id="homepage-auth-box" class="bg-white p-4 rounded-2xl border-2 border-amber-200 shadow-sm space-y-3">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-sm font-black text-slate-900">👤 Sign Up / Login</h3>
+          <p class="text-[10px] text-slate-500">एक ही मोबाइल + PIN से आपका बना हुआ अकाउंट तुरंत खोलें</p>
+        </div>
+        <span class="text-[9px] bg-emerald-100 text-emerald-700 font-black px-2 py-1 rounded-full">तेज़ Login</span>
+      </div>
+
+      <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 space-y-2">
+        <label class="block text-[10px] font-black text-slate-700">🔐 Login — Customer / Mistri / Contractor / Rental / Shop सभी के लिए</label>
+        <div class="grid grid-cols-2 gap-2">
+          <input type="tel" id="home-login-phone" maxlength="10" inputmode="numeric" placeholder="10 अंकों का मोबाइल" class="w-full rounded-lg border border-amber-300 px-2.5 py-2 text-xs bg-white">
+          <input type="password" id="home-login-pin" maxlength="4" inputmode="numeric" pattern="[0-9]{4}" placeholder="4 अंकों का PIN" class="w-full rounded-lg border border-amber-300 px-2.5 py-2 text-xs bg-white">
+        </div>
+        <div class="flex gap-2">
+          <button type="button" onclick="MB_homeLogin()" id="btn-home-login" class="flex-1 bg-slate-900 text-amber-400 font-black py-2 rounded-lg text-xs">🔓 Login</button>
+          <button type="button" onclick="openForgotPinModal()" class="bg-white border border-red-200 text-red-600 font-bold px-3 py-2 rounded-lg text-[10px]">PIN भूल गए?</button>
+        </div>
+        <p class="text-[9px] text-slate-500">सही मोबाइल और PIN डालते ही जिस category का अकाउंट बना है, वही Profile खुलेगी।</p>
+      </div>
+
+      <div class="border-t border-slate-100 pt-3">
+        <div class="flex items-center justify-between mb-2">
+          <div><span class="text-[11px] font-black text-slate-800">📝 नया Sign Up</span><p class="text-[9px] text-slate-500">पहले अपनी category चुनें</p></div>
+          <span class="text-[9px] bg-blue-50 text-blue-700 px-2 py-1 rounded-full font-bold">5 विकल्प</span>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <button type="button" onclick="openSignupCategory('client')" class="p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-left text-[10px] font-black">👤 Customer<br><span class="font-normal text-slate-500">ग्राहक</span></button>
+          <button type="button" onclick="openSignupCategory('worker')" class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-left text-[10px] font-black">🛠️ Mistri<br><span class="font-normal text-slate-500">मिस्त्री / मजदूर</span></button>
+          <button type="button" onclick="openSignupCategory('contractor')" class="p-2.5 rounded-xl bg-violet-50 border border-violet-200 text-left text-[10px] font-black">👑 Contractor VIP<br><span class="font-normal text-slate-500">कॉन्ट्रैक्टर</span></button>
+          <button type="button" onclick="openSignupCategory('rental')" class="p-2.5 rounded-xl bg-blue-50 border border-blue-200 text-left text-[10px] font-black">🚜 Rental<br><span class="font-normal text-slate-500">गाड़ी / मशीन</span></button>
+          <button type="button" onclick="openSignupCategory('material')" class="col-span-2 p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-left text-[10px] font-black">🧱 Shop / Material<br><span class="font-normal text-slate-500">सीमेंट, सरिया, बालू आदि</span></button>
         </div>
       </div>
     </div>
@@ -1527,6 +1566,37 @@
     <i class="fa-brands fa-whatsapp text-2xl"></i>
   </a>
 
+  <!-- ==================== FORGOT PIN / OTP RESET MODAL ==================== -->
+  <div id="forgot-pin-modal" class="fixed inset-0 bg-slate-900/60 z-[80] hidden items-end sm:items-center justify-center p-3">
+    <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden">
+      <div class="bg-slate-900 text-white p-4 flex justify-between items-center">
+        <div><h3 class="font-black text-sm">🔐 Forgot PIN</h3><p class="text-[9px] text-slate-300">OTP से सुरक्षित PIN बदलें</p></div>
+        <button type="button" onclick="closeForgotPinModal()" class="text-slate-300 text-xl">×</button>
+      </div>
+      <div class="p-4 space-y-3">
+        <div id="forgot-pin-step-1" class="space-y-3">
+          <label class="block text-[10px] font-bold text-slate-700">किस category का PIN भूल गए?</label>
+          <select id="forgot-pin-role" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs">
+            <option value="client">👤 Customer</option><option value="worker">🛠️ Mistri</option><option value="contractor">👑 Contractor VIP</option><option value="rental">🚜 Rental</option><option value="material">🧱 Shop / Material</option>
+          </select>
+          <input type="tel" id="forgot-pin-phone" maxlength="10" inputmode="numeric" placeholder="10 अंकों का मोबाइल नंबर" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs">
+          <div id="forgot-pin-recaptcha" class="min-h-[20px]"></div>
+          <button type="button" onclick="sendForgotPinOTP()" id="btn-send-forgot-otp" class="w-full bg-slate-900 text-amber-400 font-black py-2.5 rounded-xl text-xs">📲 OTP भेजें</button>
+        </div>
+        <div id="forgot-pin-step-2" class="hidden space-y-3">
+          <p class="text-[10px] bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-lg p-2">OTP आपके मोबाइल पर भेजा गया है। OTP और नया 4 अंकों का PIN डालें।</p>
+          <input type="tel" id="forgot-pin-otp" maxlength="6" inputmode="numeric" placeholder="6 अंकों का OTP" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs">
+          <div class="grid grid-cols-2 gap-2">
+            <input type="password" id="forgot-pin-new" maxlength="4" inputmode="numeric" pattern="[0-9]{4}" placeholder="नया 4 अंकों का PIN" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs">
+            <input type="password" id="forgot-pin-confirm" maxlength="4" inputmode="numeric" pattern="[0-9]{4}" placeholder="PIN दोबारा" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs">
+          </div>
+          <button type="button" onclick="verifyForgotPinOTP()" id="btn-reset-forgot-pin" class="w-full bg-emerald-600 text-white font-black py-2.5 rounded-xl text-xs">✅ OTP Verify करके PIN बदलें</button>
+        </div>
+        <p class="text-[9px] text-slate-500">नोट: OTP verification के बाद ही PIN बदलेगा। इससे किसी दूसरे व्यक्ति को केवल मोबाइल नंबर जानने से आपका अकाउंट बदलने की अनुमति नहीं मिलेगी।</p>
+      </div>
+    </div>
+  </div>
+
   <!-- Bottom Navigation Bar -->
   <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-4 py-2 flex justify-around items-center z-40 shadow-md max-w-md mx-auto">
     <button onclick="navTo('home')" id="nav-home" class="flex flex-col items-center text-amber-500">
@@ -1768,6 +1838,7 @@
 
     if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
     const db = firebase.firestore();
+    const auth = firebase.auth();
 
     let analytics = null;
     try {
@@ -2797,6 +2868,108 @@
       }
     }
 
+    function openSignupCategory(role){
+      navTo('register');
+      setTimeout(function(){
+        try { selectProfileCategory(role); } catch(e) { console.warn(e); }
+        document.getElementById('page-register')?.scrollIntoView({behavior:'smooth',block:'start'});
+      },80);
+    }
+
+    async function MB_homeLogin(){
+      const p=(document.getElementById('home-login-phone')?.value||'').replace(/\D/g,'').slice(-10);
+      const pin=(document.getElementById('home-login-pin')?.value||'').trim();
+      if(p.length!==10)return alert('10 अंकों का मोबाइल नंबर डालें।');
+      if(!/^\d{4}$/.test(pin))return alert('4 अंकों का PIN डालें।');
+      const a=document.getElementById('quick-login-phone'), b=document.getElementById('quick-login-pin');
+      if(a)a.value=p; if(b)b.value=pin;
+      await loginWithPhone();
+    }
+
+    function openForgotPinModal(){
+      const m=document.getElementById('forgot-pin-modal');
+      if(m){m.classList.remove('hidden');m.classList.add('flex');}
+      const p=document.getElementById('home-login-phone')?.value||'';
+      if(p && document.getElementById('forgot-pin-phone')) document.getElementById('forgot-pin-phone').value=p;
+    }
+    function closeForgotPinModal(){
+      const m=document.getElementById('forgot-pin-modal');
+      if(m){m.classList.add('hidden');m.classList.remove('flex');}
+      try{ if(window.mbForgotRecaptchaVerifier){window.mbForgotRecaptchaVerifier.clear();window.mbForgotRecaptchaVerifier=null;} }catch(e){}
+      window.mbForgotConfirmationResult=null;
+      document.getElementById('forgot-pin-step-1')?.classList.remove('hidden');
+      document.getElementById('forgot-pin-step-2')?.classList.add('hidden');
+    }
+
+    async function sendForgotPinOTP(){
+      const phone=(document.getElementById('forgot-pin-phone')?.value||'').replace(/\D/g,'').slice(-10);
+      const role=document.getElementById('forgot-pin-role')?.value||'client';
+      if(phone.length!==10)return alert('10 अंकों का मोबाइल नंबर डालें।');
+      try{
+        const fullPhone='+91'+phone;
+        const checks={
+          client: db.collection('customer_profiles').doc(fullPhone).get(),
+          worker: db.collection('workers').where('private_phone','==',fullPhone).limit(1).get(),
+          contractor: db.collection('contractor_applications').where('phone','==',fullPhone).limit(1).get(),
+          rental: db.collection('rental_providers').where('phone','==',fullPhone).limit(1).get(),
+          material: db.collection('material_providers').where('phone','==',fullPhone).limit(1).get()
+        };
+        const found=await checks[role];
+        const exists=role==='client' ? found.exists : !found.empty;
+        if(!exists)return alert('इस मोबाइल नंबर से चुनी हुई category का अकाउंट नहीं मिला। सही category चुनें।');
+
+        if(!window.mbForgotRecaptchaVerifier){
+          window.mbForgotRecaptchaVerifier=new firebase.auth.RecaptchaVerifier('forgot-pin-recaptcha',{size:'invisible'});
+        }
+        const provider=auth;
+        window.mbForgotConfirmationResult=await provider.signInWithPhoneNumber(fullPhone,window.mbForgotRecaptchaVerifier);
+        window.mbForgotPhone=phone; window.mbForgotRole=role;
+        document.getElementById('forgot-pin-step-1')?.classList.add('hidden');
+        document.getElementById('forgot-pin-step-2')?.classList.remove('hidden');
+        alert('📲 OTP भेज दिया गया है।');
+      }catch(err){
+        console.error(err);
+        alert('OTP भेजने में समस्या: '+(err.message||'कृपया Firebase Phone Authentication चालू होने की जाँच करें।'));
+        try{ if(window.mbForgotRecaptchaVerifier){window.mbForgotRecaptchaVerifier.clear();window.mbForgotRecaptchaVerifier=null;} }catch(e){}
+      }
+    }
+
+    async function verifyForgotPinOTP(){
+      const otp=(document.getElementById('forgot-pin-otp')?.value||'').replace(/\D/g,'');
+      const np=(document.getElementById('forgot-pin-new')?.value||'').trim();
+      const cp=(document.getElementById('forgot-pin-confirm')?.value||'').trim();
+      if(otp.length!==6)return alert('6 अंकों का OTP डालें।');
+      if(!/^\d{4}$/.test(np))return alert('नया PIN 4 अंकों का होना चाहिए।');
+      if(np!==cp)return alert('दोनों PIN एक जैसे नहीं हैं।');
+      if(!window.mbForgotConfirmationResult)return alert('पहले OTP भेजें।');
+      const btn=document.getElementById('btn-reset-forgot-pin');
+      if(btn){btn.disabled=true;btn.innerText='PIN बदला जा रहा है...';}
+      try{
+        await window.mbForgotConfirmationResult.confirm(otp);
+        const phone='+91'+window.mbForgotPhone, role=window.mbForgotRole, pinHash=await MB_hashPin(np);
+        if(role==='client'){
+          await db.collection('customer_profiles').doc(phone).update({pinHash:pinHash});
+        }else if(role==='worker'){
+          const q=await db.collection('workers').where('private_phone','==',phone).limit(1).get();
+          if(q.empty)throw new Error('Mistri account नहीं मिला।'); await q.docs[0].ref.update({pinHash:pinHash});
+        }else if(role==='contractor'){
+          const q=await db.collection('contractor_applications').where('phone','==',phone).limit(1).get();
+          if(q.empty)throw new Error('Contractor account नहीं मिला।'); await q.docs[0].ref.update({pinHash:pinHash});
+        }else if(role==='rental'){
+          const q=await db.collection('rental_providers').where('phone','==',phone).limit(1).get();
+          if(q.empty)throw new Error('Rental account नहीं मिला।'); await q.docs[0].ref.update({pinHash:pinHash});
+        }else if(role==='material'){
+          const q=await db.collection('material_providers').where('phone','==',phone).limit(1).get();
+          if(q.empty)throw new Error('Shop / Material account नहीं मिला।'); await q.docs[0].ref.update({pinHash:pinHash});
+        }
+        try{await auth.signOut();}catch(e){}
+        alert('✅ PIN सफलतापूर्वक बदल गया। अब Login करें — सही PIN पर आपका वही अकाउंट तुरंत खुलेगा।');
+        closeForgotPinModal();
+        const hp=document.getElementById('home-login-phone'), hpin=document.getElementById('home-login-pin'); if(hp)hp.value=window.mbForgotPhone; if(hpin)hpin.value=np;
+      }catch(err){alert('❌ OTP या PIN बदलने में समस्या: '+(err.message||err));}
+      finally{if(btn){btn.disabled=false;btn.innerText='✅ OTP Verify करके PIN बदलें';}}
+    }
+
     async function loginWithPhone() {
       const phoneInput = (document.getElementById("quick-login-phone")?.value||"").replace(/\D/g,"").slice(-10);
       const pin = (document.getElementById("quick-login-pin")?.value||"").trim();
@@ -2815,23 +2988,23 @@
         ]);
         if(c.exists && c.data()?.pinHash===pinHash){
           const p=c.data(); saveLocal(p); show(p); localStorage.setItem("current_user_role","client"); localStorage.setItem("mb_device_locked_role","client");
-          selectProfileCategory("client");
+          navTo("register"); selectProfileCategory("client");
           return alert("✅ Customer Profile खुल गई।");
         }
         if(!w.empty && w.docs[0].data()?.pinHash===pinHash){
-          const data=w.docs[0].data(); data.id=w.docs[0].id; setLoggedInWorker(data); selectProfileCategory("worker");
+          const data=w.docs[0].data(); data.id=w.docs[0].id; setLoggedInWorker(data); navTo("register"); selectProfileCategory("worker");
           return alert("✅ Mistri Profile खुल गई।");
         }
         if(!con.empty && con.docs[0].data()?.pinHash===pinHash){
-          const d=con.docs[0].data(); localStorage.setItem("mb_contractor_app_id",con.docs[0].id); localStorage.setItem("mb_contractor_app_tier",d.contractorTier||""); localStorage.setItem("current_user_role","contractor"); localStorage.setItem("mb_device_locked_role","contractor"); selectProfileCategory("contractor");
+          const d=con.docs[0].data(); localStorage.setItem("mb_contractor_app_id",con.docs[0].id); localStorage.setItem("mb_contractor_app_tier",d.contractorTier||""); localStorage.setItem("current_user_role","contractor"); localStorage.setItem("mb_device_locked_role","contractor"); navTo("register"); selectProfileCategory("contractor");
           return alert("✅ Contractor Profile खुल गई।");
         }
         if(!r.empty && r.docs[0].data()?.pinHash===pinHash){
-          const d=r.docs[0].data(); localStorage.setItem("mb_rental_phone",d.phone||fullPhone); localStorage.setItem("mb_rental_profile_id",r.docs[0].id); localStorage.setItem("current_user_role","rental"); localStorage.setItem("mb_device_locked_role","rental"); selectProfileCategory("rental");
+          const d=r.docs[0].data(); localStorage.setItem("mb_rental_phone",d.phone||fullPhone); localStorage.setItem("mb_rental_profile_id",r.docs[0].id); localStorage.setItem("current_user_role","rental"); localStorage.setItem("mb_device_locked_role","rental"); navTo("register"); selectProfileCategory("rental");
           return alert("✅ Rental Profile खुल गई।");
         }
         if(!m.empty && m.docs[0].data()?.pinHash===pinHash){
-          const d=m.docs[0].data(); localStorage.setItem("mb_material_phone",d.phone||fullPhone); localStorage.setItem("mb_material_profile_id",m.docs[0].id); localStorage.setItem("current_user_role","material"); localStorage.setItem("mb_device_locked_role","material"); selectProfileCategory("material");
+          const d=m.docs[0].data(); localStorage.setItem("mb_material_phone",d.phone||fullPhone); localStorage.setItem("mb_material_profile_id",m.docs[0].id); localStorage.setItem("current_user_role","material"); localStorage.setItem("mb_device_locked_role","material"); navTo("register"); selectProfileCategory("material");
           return alert("✅ Shop / Material Profile खुल गई।");
         }
         alert("❌ मोबाइल नंबर या PIN गलत है।");
