@@ -328,29 +328,6 @@
   </section>
   <!-- =================== PAGE 5: DASHBOARD =================== -->
   <section id="page-register" class="max-w-md mx-auto px-4 py-4 space-y-4">
-    <!-- ==================== UNIVERSAL MOBILE LOGIN / AUTO PROFILE OPEN ==================== -->
-    <div id="mb-universal-login-box" class="bg-white p-4 rounded-2xl border-2 border-amber-300 shadow-sm space-y-3 mb-3">
-      <div class="text-center">
-        <h3 class="text-sm font-black text-slate-900">📱 मोबाइल नंबर से अपना खाता खोलें</h3>
-        <p class="text-[10px] text-slate-500 mt-1">नंबर डालकर खोलें — Customer, Mistri, Contractor, Rental या Shop/Material में जो Account बना है, वही Profile सीधे खुलेगी।</p>
-      </div>
-      <div class="flex gap-2">
-        <input id="mb-universal-login-phone" type="tel" maxlength="10" inputmode="numeric" autocomplete="tel" class="flex-1 rounded-xl border border-slate-300 px-3 py-2.5 text-sm font-bold bg-slate-50" placeholder="10 अंकों का मोबाइल नंबर">
-        <button type="button" id="mb-universal-login-btn" onclick="MB_universalMobileLogin()" class="bg-slate-900 text-amber-400 font-black px-4 py-2.5 rounded-xl text-xs">खाता खोलें</button>
-      </div>
-      <div id="mb-universal-login-status" class="hidden rounded-xl p-3 text-[10px] font-bold"></div>
-      <div id="mb-universal-register-choice" class="hidden bg-amber-50 border border-amber-200 rounded-xl p-3 space-y-2">
-        <p class="text-[10px] font-black text-amber-950">इस नंबर से अभी Account नहीं मिला। किस Category में Register करना है?</p>
-        <div class="grid grid-cols-2 gap-2">
-          <button type="button" onclick="MB_universalChooseCategory('client')" class="p-2 rounded-lg bg-white border font-bold text-[10px]">👤 Customer</button>
-          <button type="button" onclick="MB_universalChooseCategory('worker')" class="p-2 rounded-lg bg-white border font-bold text-[10px]">🛠️ Mistri</button>
-          <button type="button" onclick="MB_universalChooseCategory('contractor')" class="p-2 rounded-lg bg-white border font-bold text-[10px]">👑 Contractor</button>
-          <button type="button" onclick="MB_universalChooseCategory('rental')" class="p-2 rounded-lg bg-white border font-bold text-[10px]">🚜 Rental</button>
-          <button type="button" onclick="MB_universalChooseCategory('material')" class="p-2 rounded-lg bg-white border font-bold text-[10px] col-span-2">🧱 Shop / Material</button>
-        </div>
-      </div>
-    </div>
-
     <!-- एक ही प्रोफाइल/रजिस्ट्रेशन टैब: क्लिक करने पर 5 विकल्प खुलेंगे -->
     <div class="relative mb-3">
       <button type="button" id="profile-category-tab" onclick="toggleProfileCategoryMenu()" class="w-full bg-slate-200 border border-slate-300 rounded-xl px-4 py-3 flex items-center justify-between text-xs font-black text-slate-800 shadow-xs">
@@ -772,7 +749,6 @@
             <span id="badge-verified-id" class="hidden bg-blue-500/20 text-blue-300 text-[9px] font-bold px-2 py-0.5 rounded-full border border-blue-400/30">🛡️ सत्यापित मिस्त्री</span>
             <span id="badge-contractor-vip" class="hidden bg-amber-400 text-slate-900 text-[9px] font-black px-2 py-0.5 rounded-full">👑 VIP ठेकेदार</span>
           </div>
-          <div id="my-prof-live-status" class="mt-2 inline-flex items-center rounded-full px-3 py-1 text-[10px] font-black bg-emerald-500/15 text-emerald-300 border border-emerald-400/30">🟢 अभी काम के लिए उपलब्ध है</div>
 
           <div class="mt-3 flex items-center justify-center gap-2 text-[10px] text-slate-300">
             <span>📍</span><span id="my-prof-location">बिहार •</span>
@@ -2272,63 +2248,42 @@
     function renderLiveStatusUI(status){
       const btn=document.getElementById("btn-live-status");
       const txt=document.getElementById("txt-live-status");
-      const profileStatus=document.getElementById("my-prof-live-status");
-      const normalized=(status==="busy") ? "busy" : "available";
-      const isBusy=(normalized==="busy");
-      const buttonText=isBusy ? "काम पर है 🔴" : "काम के लिए उपलब्ध 🟢";
-      const profileText=isBusy ? "🔴 अभी काम पर है" : "🟢 अभी काम के लिए उपलब्ध है";
-      if(txt) txt.innerText=buttonText;
-      if(profileStatus){
-        profileStatus.innerText=profileText;
-        profileStatus.classList.remove("bg-rose-500/15","text-rose-300","border-rose-400/30","bg-emerald-500/15","text-emerald-300","border-emerald-400/30");
-        profileStatus.classList.add(...(isBusy ? ["bg-rose-500/15","text-rose-300","border-rose-400/30"] : ["bg-emerald-500/15","text-emerald-300","border-emerald-400/30"]));
-      }
+      const isBusy=(status==="busy");
+      if(txt) txt.innerText=isBusy ? "काम पर हैं 🔴" : "काम के लिए उपलब्ध 🟢";
       if(btn){
-        btn.classList.remove("bg-rose-500","bg-emerald-500","text-white","text-slate-900");
-        btn.classList.add(isBusy ? "bg-rose-500" : "bg-emerald-500");
-        btn.classList.add(isBusy ? "text-white" : "text-slate-900");
+        btn.classList.toggle("bg-rose-500",isBusy);
+        btn.classList.toggle("bg-emerald-500",!isBusy);
+        btn.classList.toggle("text-white",isBusy);
+        btn.classList.toggle("text-slate-900",!isBusy);
         btn.setAttribute("aria-pressed",isBusy?"true":"false");
-        btn.setAttribute("title",isBusy ? "अभी काम पर है — उपलब्ध नहीं" : "अभी काम के लिए उपलब्ध है");
       }
-      return normalized;
     }
-
     async function toggleWorkerLiveStatus(){
-      const phone=(localStorage.getItem("mb_worker_phone")||"").replace(/\D/g,"").slice(-10);
-      if(phone.length!==10)return alert("पहले मिस्त्री प्रोफ़ाइल खोलें।");
-      const id=localStorage.getItem("mb_worker_doc_id");
+      const phone=localStorage.getItem("mb_worker_phone");
+      if(!phone)return alert("पहले मिस्त्री प्रोफ़ाइल खोलें।");
+      const current=(localStorage.getItem("mb_worker_status")||"available")==="busy"?"busy":"available";
+      const next=current==="busy"?"available":"busy";
       const btn=document.getElementById("btn-live-status");
-      if(btn)btn.disabled=true;
+      if(btn) btn.disabled=true;
       try{
-        // IMPORTANT: localStorage को source-of-truth न मानें। Firebase से वर्तमान status पढ़ें,
-        // ताकि पुराना/stale status होने पर भी सही Online/Busy state बदले।
-        let ref=null, data=null;
+        let ref=null;
+        const id=localStorage.getItem("mb_worker_doc_id");
         if(id){
-          const doc=await db.collection("workers").doc(id).get();
-          if(doc.exists){ ref=doc.ref; data=doc.data()||{}; }
-        }
-        if(!ref){
+          ref=db.collection("workers").doc(id);
+        }else{
           const snap=await db.collection("workers").where("private_phone","==","+91"+phone).limit(1).get();
-          if(!snap.empty){ ref=snap.docs[0].ref; data=snap.docs[0].data()||{}; localStorage.setItem("mb_worker_doc_id",snap.docs[0].id); }
+          if(!snap.empty){ref=snap.docs[0].ref;localStorage.setItem("mb_worker_doc_id",snap.docs[0].id);}
         }
-        if(!ref) throw new Error("मिस्त्री प्रोफ़ाइल नहीं मिली");
-
-        const current=(data.liveStatus==="busy") ? "busy" : "available";
-        const next=current==="busy" ? "available" : "busy";
+        if(!ref) throw new Error("मिस्त्री का Firebase प्रोफ़ाइल नहीं मिला।");
         await ref.update({liveStatus:next,liveStatusUpdatedAt:firebase.firestore.FieldValue.serverTimestamp()});
-
-        // Firebase save सफल होने के बाद ही local UI/session बदलें।
         localStorage.setItem("mb_worker_status",next);
         renderLiveStatusUI(next);
-
-        // दूसरी screen पर भी तुरन्त नया status दिखे।
-        if(typeof loadFullWorkers==="function" && document.getElementById("full-worker-grid")){
-          loadFullWorkers(window.currentWorkerSkillFilter||"");
-        }
+        if(typeof loadFullWorkers==="function") loadFullWorkers();
       }catch(e){
-        alert("स्टेटस सेव नहीं हो सका: "+(e&&e.message?e.message:e));
+        // Firebase में save सफल होने से पहले UI/localStorage को न बदलें।
+        alert("स्टेटस सेव नहीं हो सका: "+e.message);
       }finally{
-        if(btn)btn.disabled=false;
+        if(btn) btn.disabled=false;
       }
     }
     function toggleMainMenu(){document.getElementById("main-menu-drawer")?.classList.toggle("translate-x-full");document.getElementById("main-menu-overlay")?.classList.toggle("hidden");} function closeMainMenu(){document.getElementById("main-menu-drawer")?.classList.add("translate-x-full");document.getElementById("main-menu-overlay")?.classList.add("hidden");}
@@ -2507,7 +2462,8 @@
       localStorage.setItem("mb_worker_district", wData.district + (wData.block ? " (" + wData.block + ")" : ""));
       localStorage.setItem("mb_worker_phone", wData.private_phone.replace("+91", ""));
       localStorage.setItem("mb_worker_photo", wData.photo || "");
-      localStorage.setItem("mb_worker_status", wData.liveStatus || "available");
+      const firebaseLiveStatus=(wData.liveStatus === "busy") ? "busy" : "available";
+      localStorage.setItem("mb_worker_status", firebaseLiveStatus);
       localStorage.setItem("current_user_role", "worker");
       localStorage.setItem("mb_worker_level", wData.level || "कुशल कारीगर");
       localStorage.setItem("mb_worker_photos", JSON.stringify(wData.workPhotos || []));
@@ -2632,6 +2588,29 @@
       document.getElementById("worker-form-container").classList.remove("hidden");
     }
 
+    async function syncCurrentWorkerLiveStatus(){
+      const phone=localStorage.getItem("mb_worker_phone");
+      const id=localStorage.getItem("mb_worker_doc_id");
+      if(!phone && !id) return;
+      try{
+        let snap=null;
+        if(id){
+          const doc=await db.collection("workers").doc(id).get();
+          if(doc.exists) snap=doc;
+        }
+        if(!snap && phone){
+          const q=await db.collection("workers").where("private_phone","==","+91"+phone).limit(1).get();
+          if(!q.empty){snap=q.docs[0];localStorage.setItem("mb_worker_doc_id",snap.id);}
+        }
+        if(snap){
+          const data=snap.data()||{};
+          const status=data.liveStatus === "busy" ? "busy" : "available";
+          localStorage.setItem("mb_worker_status",status);
+          renderLiveStatusUI(status);
+        }
+      }catch(e){ console.warn("Live status sync failed:",e); }
+    }
+
     function updateRegisterScreenView() {
       const workerName = localStorage.getItem("mb_worker_name");
       const formBox = document.getElementById("worker-form-container");
@@ -2679,6 +2658,8 @@
 
         const status = localStorage.getItem("mb_worker_status") || "available";
         renderLiveStatusUI(status);
+        // Profile खुलते ही Firebase से fresh status लेकर यही status दिखाएँ।
+        syncCurrentWorkerLiveStatus();
 
         const isVerified = localStorage.getItem("mb_worker_id_verified") === "true";
         const idBadge = document.getElementById("badge-verified-id");
@@ -4163,6 +4144,8 @@
           if (filterSkill && !skillsList.some(s => s.includes(filterSkill))) return;
 
           const photoSrc = w.photo || 'logo.png';
+          // Public worker list और logged-in profile एक ही Firebase status दिखाएँ।
+          // Current profile के लिए भी stale localStorage को Firebase के विरुद्ध प्राथमिकता न दें।
           const isBusy = w.liveStatus === 'busy';
           const workPhotos = w.workPhotos || [];
           const proId = w.workerProId || ("#MB-PRO-" + doc.id.substring(0, 6).toUpperCase());
@@ -5442,101 +5425,6 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
   window.MB_saveRentalProvider=async function(e){await saveR(e);await refresh("rental");};
   const saveM=window.MB_saveMaterialProvider;
   window.MB_saveMaterialProvider=async function(e){await saveM(e);await refresh("material");};
-})();
-</script>
-
-
-<script id="mb-universal-mobile-auto-login-v1">
-(function(){
-  "use strict";
-  function norm(v){return String(v||"").replace(/\D/g,"").slice(-10);}
-  function status(msg,kind){
-    var b=document.getElementById("mb-universal-login-status"); if(!b)return;
-    b.classList.remove("hidden","bg-amber-50","bg-emerald-50","bg-rose-50","text-amber-900","text-emerald-800","text-rose-800");
-    var map={loading:["bg-amber-50","text-amber-900"],ok:["bg-emerald-50","text-emerald-800"],error:["bg-rose-50","text-rose-800"]};
-    (map[kind]||map.loading).forEach(function(c){b.classList.add(c);}); b.textContent=msg;
-  }
-  function resetOldSession(){
-    ["current_user_role","mb_device_locked_role","mb_client_phone","mb_client_name","mb_client_avatar","mb_worker_phone","mb_worker_doc_id","mb_worker_profile_complete","mb_contractor_app_id","mb_contractor_app_tier","mb_rental_phone","mb_rental_profile_id","mb_material_phone","mb_material_profile_id"].forEach(function(k){localStorage.removeItem(k);});
-  }
-  function phoneIn(v){return "+91"+norm(v);}
-  async function findAccount(p10){
-    var full=phoneIn(p10);
-    var jobs=[
-      db.collection("customer_profiles").doc(full).get().then(function(c){return c.exists?{role:"client",data:c.data(),id:c.id}:null;}),
-      db.collection("workers").where("private_phone","==",full).limit(1).get().then(function(w){return w.empty?null:{role:"worker",data:w.docs[0].data(),id:w.docs[0].id};}),
-      db.collection("contractor_applications").where("phone","==",full).limit(1).get().then(function(c){return c.empty?null:{role:"contractor",data:c.docs[0].data(),id:c.docs[0].id};}),
-      db.collection("rental_providers").where("phone","==",full).limit(1).get().then(function(r){return r.empty?null:{role:"rental",data:r.docs[0].data(),id:r.docs[0].id};}),
-      db.collection("material_providers").where("phone","==",full).limit(1).get().then(function(m){return m.empty?null:{role:"material",data:m.docs[0].data(),id:m.docs[0].id};})
-    ];
-    var settled=await Promise.allSettled(jobs);
-    var errors=settled.filter(function(x){return x.status==="rejected";});
-    if(errors.length===jobs.length) throw errors[0].reason;
-    return settled.filter(function(x){return x.status==="fulfilled"&&x.value;}).map(function(x){return x.value;});
-  }
-  function openAccount(a,p10){
-    resetOldSession();
-    var d=a.data||{}, full=phoneIn(p10);
-    localStorage.setItem("current_user_role",a.role);
-    localStorage.setItem("mb_device_locked_role",a.role);
-    if(a.role==="client"){
-      var ci=document.getElementById("mb-customer-login-phone"); if(ci)ci.value=p10;
-      navTo("register"); switchRoleTab("client");
-      if(typeof MB_customerLogin==="function")MB_customerLogin();
-    }else if(a.role==="worker"){
-      d.id=a.id; localStorage.setItem("mb_worker_phone",p10); localStorage.setItem("mb_worker_doc_id",a.id); if(typeof setLoggedInWorker==="function")setLoggedInWorker(d); navTo("register"); switchRoleTab("worker");
-    }else if(a.role==="contractor"){
-      localStorage.setItem("mb_contractor_app_id",a.id); localStorage.setItem("mb_contractor_app_tier",d.contractorTier||d.tier||"small"); localStorage.setItem("mb_contractor_phone",full); navTo("register"); switchRoleTab("contractor"); if(typeof checkContractorStatus==="function")checkContractorStatus();
-    }else if(a.role==="rental"){
-      localStorage.setItem("mb_rental_phone",full); localStorage.setItem("mb_rental_profile_id",a.id); navTo("register"); switchRoleTab("rental"); if(typeof MB_loadRentalProvider==="function")MB_loadRentalProvider();
-    }else if(a.role==="material"){
-      localStorage.setItem("mb_material_phone",full); localStorage.setItem("mb_material_profile_id",a.id); navTo("register"); switchRoleTab("material"); if(typeof MB_loadMaterialProvider==="function")MB_loadMaterialProvider();
-    }
-    var names={client:"Customer",worker:"Mistri",contractor:"Contractor",rental:"Rental",material:"Shop / Material"};
-    var loginBox=document.getElementById("mb-universal-login-box");
-    if(loginBox)loginBox.classList.add("hidden");
-    var categoryTab=document.getElementById("profile-category-tab");
-    if(categoryTab)categoryTab.classList.add("hidden");
-    document.getElementById("profile-category-menu")?.classList.add("hidden");
-    var choice=document.getElementById("mb-universal-register-choice");
-    if(choice)choice.classList.add("hidden");
-    status("✓ "+(names[a.role]||"Account")+" Account खुल गया। आपकी Profile सामने है।","ok");
-    setTimeout(function(){
-      if(a.role==="worker") renderLiveStatusUI(d.liveStatus||"available");
-      document.getElementById(a.role==="worker"?"worker-profile-view":a.role==="client"?"customer-professional-dashboard":a.role==="contractor"?"contractor-dashboard-box":a.role==="rental"?"rental-provider-box":"material-provider-box")?.scrollIntoView({behavior:"smooth",block:"start"});
-    },80);
-  }
-  window.MB_universalMobileLogin=async function(){
-    var p10=norm(document.getElementById("mb-universal-login-phone")?.value||"");
-    if(p10.length!==10)return status("10 अंकों का सही मोबाइल नंबर डालें।","error");
-    if(typeof db==="undefined")return status("Database अभी उपलब्ध नहीं है। फिर से कोशिश करें।","error");
-    var btn=document.getElementById("mb-universal-login-btn"); if(btn){btn.disabled=true;btn.textContent="खोज रहे हैं...";}
-    document.getElementById("mb-universal-register-choice")?.classList.add("hidden");
-    status("🔎 इस नंबर का Account खोजा जा रहा है...","loading");
-    try{
-      var found=await findAccount(p10);
-      if(found.length){
-        if(found.length>1){status("इस नंबर से एक से ज्यादा Category में Account मिला है। पहले Admin से duplicate Account ठीक कराएँ।","error");}
-        else openAccount(found[0],p10);
-      }else{
-        status("इस नंबर से अभी कोई Account नहीं मिला। नीचे Category चुनकर Registration Form भरें।","error");
-        document.getElementById("mb-universal-register-choice")?.classList.remove("hidden");
-      }
-    }catch(e){status("Account खोलने में समस्या: "+(e.message||e),"error");}
-    finally{if(btn){btn.disabled=false;btn.textContent="खाता खोलें";}}
-  };
-  window.MB_universalChooseCategory=function(role){
-    var p10=norm(document.getElementById("mb-universal-login-phone")?.value||"");
-    if(p10.length===10){var f=document.getElementById(role==="client"?"mb-customer-login-phone":role==="worker"?"pw-phone":role==="contractor"?"con-app-phone":role==="rental"?"rental-provider-phone":"material-provider-phone");if(f)f.value=p10;}
-    resetOldSession();
-    navTo("register"); selectProfileCategory(role);
-    status("Category चुन ली गई: अब इसी Category का Registration Form भरें।","loading");
-    setTimeout(function(){var target=role==="client"?"mb-customer-signup-form":role==="worker"?"worker-form-container":role==="contractor"?"contractor-dashboard-box":role==="rental"?"rental-provider-form":"material-provider-form";document.getElementById(target)?.scrollIntoView({behavior:"smooth",block:"start"});},120);
-  };
-  document.addEventListener("DOMContentLoaded",function(){
-    var i=document.getElementById("mb-universal-login-phone"); if(i)i.addEventListener("input",function(){this.value=norm(this.value);});
-    if(i)i.addEventListener("keydown",function(e){if(e.key==="Enter"){e.preventDefault();MB_universalMobileLogin();}});
-  });
 })();
 </script>
 
