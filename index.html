@@ -118,44 +118,6 @@
       </div>
     </div>
 
-    <!-- ==================== HOMEPAGE SIGN UP / LOGIN ==================== -->
-    <div id="homepage-auth-box" class="bg-white p-4 rounded-2xl border-2 border-amber-200 shadow-sm space-y-3">
-      <div class="flex items-center justify-between">
-        <div>
-          <h3 class="text-sm font-black text-slate-900">👤 Sign Up / Login</h3>
-          <p class="text-[10px] text-slate-500">एक ही मोबाइल + PIN से आपका बना हुआ अकाउंट तुरंत खोलें</p>
-        </div>
-        <span class="text-[9px] bg-emerald-100 text-emerald-700 font-black px-2 py-1 rounded-full">तेज़ Login</span>
-      </div>
-
-      <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 space-y-2">
-        <label class="block text-[10px] font-black text-slate-700">🔐 Login — Customer / Mistri / Contractor / Rental / Shop सभी के लिए</label>
-        <div class="grid grid-cols-2 gap-2">
-          <input type="tel" id="home-login-phone" maxlength="10" inputmode="numeric" placeholder="10 अंकों का मोबाइल" class="w-full rounded-lg border border-amber-300 px-2.5 py-2 text-xs bg-white">
-          <input type="password" id="home-login-pin" maxlength="4" inputmode="numeric" pattern="[0-9]{4}" placeholder="4 अंकों का PIN" class="w-full rounded-lg border border-amber-300 px-2.5 py-2 text-xs bg-white">
-        </div>
-        <div class="flex gap-2">
-          <button type="button" onclick="MB_homeLogin()" id="btn-home-login" class="flex-1 bg-slate-900 text-amber-400 font-black py-2 rounded-lg text-xs">🔓 Login</button>
-          <button type="button" onclick="openForgotPinModal()" class="bg-white border border-red-200 text-red-600 font-bold px-3 py-2 rounded-lg text-[10px]">PIN भूल गए?</button>
-        </div>
-        <p class="text-[9px] text-slate-500">सही मोबाइल और PIN डालते ही जिस category का अकाउंट बना है, वही Profile खुलेगी।</p>
-      </div>
-
-      <div class="border-t border-slate-100 pt-3">
-        <div class="flex items-center justify-between mb-2">
-          <div><span class="text-[11px] font-black text-slate-800">📝 नया Sign Up</span><p class="text-[9px] text-slate-500">पहले अपनी category चुनें</p></div>
-          <span class="text-[9px] bg-blue-50 text-blue-700 px-2 py-1 rounded-full font-bold">5 विकल्प</span>
-        </div>
-        <div class="grid grid-cols-2 gap-2">
-          <button type="button" onclick="openSignupCategory('client')" class="p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-left text-[10px] font-black">👤 Customer<br><span class="font-normal text-slate-500">ग्राहक</span></button>
-          <button type="button" onclick="openSignupCategory('worker')" class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-left text-[10px] font-black">🛠️ Mistri<br><span class="font-normal text-slate-500">मिस्त्री / मजदूर</span></button>
-          <button type="button" onclick="openSignupCategory('contractor')" class="p-2.5 rounded-xl bg-violet-50 border border-violet-200 text-left text-[10px] font-black">👑 Contractor VIP<br><span class="font-normal text-slate-500">कॉन्ट्रैक्टर</span></button>
-          <button type="button" onclick="openSignupCategory('rental')" class="p-2.5 rounded-xl bg-blue-50 border border-blue-200 text-left text-[10px] font-black">🚜 Rental<br><span class="font-normal text-slate-500">गाड़ी / मशीन</span></button>
-          <button type="button" onclick="openSignupCategory('material')" class="col-span-2 p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-left text-[10px] font-black">🧱 Shop / Material<br><span class="font-normal text-slate-500">सीमेंट, सरिया, बालू आदि</span></button>
-        </div>
-      </div>
-    </div>
-
     <!-- साइड-स्क्रॉलिंग विज्ञापन कार्ड (Horizontal Carousel) -->
     <div id="home-shop-ads-wrapper" class="space-y-1.5 hidden">
       <div class="flex justify-between items-center px-1">
@@ -1566,6 +1528,40 @@
     <i class="fa-brands fa-whatsapp text-2xl"></i>
   </a>
 
+  <!-- ==================== BOTTOM SIGN UP / SIGN IN MENU ==================== -->
+  <div id="bottom-auth-menu" class="fixed inset-0 bg-slate-900/50 z-[75] hidden items-end sm:items-center justify-center p-3" onclick="if(event.target===this)closeBottomAuthMenu()">
+    <div class="bg-white w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden">
+      <div class="bg-slate-900 text-white p-4 flex justify-between items-center">
+        <div><h3 class="font-black text-sm">👤 Account</h3><p class="text-[9px] text-slate-300">Sign Up या Sign In चुनें</p></div>
+        <button type="button" onclick="closeBottomAuthMenu()" class="text-slate-300 text-xl">×</button>
+      </div>
+      <div class="p-4 grid grid-cols-2 gap-3">
+        <button type="button" onclick="openBottomSignup()" class="bg-amber-500 text-slate-900 rounded-xl p-4 font-black text-sm">📝 Sign Up
+          <span class="block text-[9px] font-normal mt-1">नया अकाउंट बनाएँ</span>
+        </button>
+        <button type="button" onclick="openBottomSignin()" class="bg-slate-900 text-amber-400 rounded-xl p-4 font-black text-sm">🔐 Sign In
+          <span class="block text-[9px] font-normal mt-1 text-slate-300">पहले से अकाउंट है</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== BOTTOM SIGN IN MODAL ==================== -->
+  <div id="bottom-signin-modal" class="fixed inset-0 bg-slate-900/60 z-[76] hidden items-end sm:items-center justify-center p-3" onclick="if(event.target===this)closeBottomSignin()">
+    <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden">
+      <div class="bg-slate-900 text-white p-4 flex justify-between items-center">
+        <div><h3 class="font-black text-sm">🔐 Sign In</h3><p class="text-[9px] text-slate-300">आपका अकाउंट जिस category में है, वही Profile खुलेगी</p></div>
+        <button type="button" onclick="closeBottomSignin()" class="text-slate-300 text-xl">×</button>
+      </div>
+      <div class="p-4 space-y-3">
+        <input type="tel" id="bottom-login-phone" maxlength="10" inputmode="numeric" placeholder="मोबाइल No. ————————" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-xs">
+        <input type="password" id="bottom-login-pin" maxlength="4" inputmode="numeric" pattern="[0-9]{4}" placeholder="PIN ————" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-xs">
+        <button type="button" onclick="MB_bottomLogin()" id="btn-bottom-login" class="w-full bg-slate-900 text-amber-400 font-black py-2.5 rounded-xl text-xs">🔓 Sign In</button>
+        <button type="button" onclick="openForgotPinFromBottom()" class="w-full text-red-600 font-bold text-[10px] py-1">Forgot PIN?</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ==================== FORGOT PIN / OTP RESET MODAL ==================== -->
   <div id="forgot-pin-modal" class="fixed inset-0 bg-slate-900/60 z-[80] hidden items-end sm:items-center justify-center p-3">
     <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden">
@@ -1617,9 +1613,9 @@
       <i class="fa-solid fa-users text-base"></i>
       <span class="text-[9px] font-bold mt-0.5">मिस्त्री खोजें</span>
     </button>
-    <button onclick="navTo('register')" id="nav-register" class="flex flex-col items-center text-slate-400">
-      <i id="nav-reg-icon" class="fa-solid fa-user-gear text-base"></i>
-      <span id="nav-reg-text" class="text-[9px] font-bold mt-0.5">प्रोफ़ाइल</span>
+    <button onclick="openBottomAuthMenu()" id="nav-register" class="flex flex-col items-center text-slate-400">
+      <i id="nav-reg-icon" class="fa-solid fa-user-plus text-base"></i>
+      <span id="nav-reg-text" class="text-[9px] font-bold mt-0.5">Sign Up</span>
     </button>
   </nav>
 
@@ -2876,20 +2872,53 @@
       },80);
     }
 
-    async function MB_homeLogin(){
-      const p=(document.getElementById('home-login-phone')?.value||'').replace(/\D/g,'').slice(-10);
-      const pin=(document.getElementById('home-login-pin')?.value||'').trim();
+    function openBottomAuthMenu(){
+      const m=document.getElementById('bottom-auth-menu');
+      if(m){m.classList.remove('hidden');m.classList.add('flex');}
+    }
+    function closeBottomAuthMenu(){
+      const m=document.getElementById('bottom-auth-menu');
+      if(m){m.classList.add('hidden');m.classList.remove('flex');}
+    }
+    function openBottomSignup(){
+      closeBottomAuthMenu();
+      navTo('register');
+      setTimeout(function(){
+        try{ selectProfileCategory('client'); }catch(e){}
+        document.getElementById('page-register')?.scrollIntoView({behavior:'smooth',block:'start'});
+      },80);
+    }
+    function openBottomSignin(){
+      closeBottomAuthMenu();
+      const m=document.getElementById('bottom-signin-modal');
+      if(m){m.classList.remove('hidden');m.classList.add('flex');}
+    }
+    function closeBottomSignin(){
+      const m=document.getElementById('bottom-signin-modal');
+      if(m){m.classList.add('hidden');m.classList.remove('flex');}
+    }
+    async function MB_bottomLogin(){
+      const p=(document.getElementById('bottom-login-phone')?.value||'').replace(/\D/g,'').slice(-10);
+      const pin=(document.getElementById('bottom-login-pin')?.value||'').trim();
       if(p.length!==10)return alert('10 अंकों का मोबाइल नंबर डालें।');
       if(!/^\d{4}$/.test(pin))return alert('4 अंकों का PIN डालें।');
-      const a=document.getElementById('quick-login-phone'), b=document.getElementById('quick-login-pin');
-      if(a)a.value=p; if(b)b.value=pin;
+      const a=document.getElementById('quick-login-phone'),b=document.getElementById('quick-login-pin');
+      if(a)a.value=p;if(b)b.value=pin;
+      closeBottomSignin();
       await loginWithPhone();
+    }
+    function openForgotPinFromBottom(){
+      const p=document.getElementById('bottom-login-phone')?.value||'';
+      const f=document.getElementById('forgot-pin-phone');
+      if(f)f.value=p;
+      closeBottomSignin();
+      openForgotPinModal();
     }
 
     function openForgotPinModal(){
       const m=document.getElementById('forgot-pin-modal');
       if(m){m.classList.remove('hidden');m.classList.add('flex');}
-      const p=document.getElementById('home-login-phone')?.value||'';
+      const p=document.getElementById('bottom-login-phone')?.value||'';
       if(p && document.getElementById('forgot-pin-phone')) document.getElementById('forgot-pin-phone').value=p;
     }
     function closeForgotPinModal(){
@@ -2965,7 +2994,7 @@
         try{await auth.signOut();}catch(e){}
         alert('✅ PIN सफलतापूर्वक बदल गया। अब Login करें — सही PIN पर आपका वही अकाउंट तुरंत खुलेगा।');
         closeForgotPinModal();
-        const hp=document.getElementById('home-login-phone'), hpin=document.getElementById('home-login-pin'); if(hp)hp.value=window.mbForgotPhone; if(hpin)hpin.value=np;
+        const bp=document.getElementById('bottom-login-phone'), bpin=document.getElementById('bottom-login-pin'); if(bp)bp.value=window.mbForgotPhone; if(bpin)bpin.value=np;
       }catch(err){alert('❌ OTP या PIN बदलने में समस्या: '+(err.message||err));}
       finally{if(btn){btn.disabled=false;btn.innerText='✅ OTP Verify करके PIN बदलें';}}
     }
