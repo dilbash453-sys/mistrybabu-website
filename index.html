@@ -2426,164 +2426,281 @@
     // 4. मिस्त्री प्रोफ़ाइल
     async function saveWorkerProfile(e) {
       e.preventDefault();
-      const lockedRole = localStorage.getItem("mb_device_locked_role");
-      const currentRole = localStorage.getItem("current_user_role");
-      if ((lockedRole && lockedRole !== "worker") || (currentRole && currentRole !== "worker")) {
-        alert("🔒 आप पहले से दूसरे प्रोफ़ाइल में लॉगिन हैं। मिस्त्री फॉर्म भरने की अनुमति नहीं है।");
-        return;
-      }
-      if (localStorage.getItem("mb_worker_profile_complete") === "true") {
-        alert("✅ आपकी मिस्त्री प्रोफ़ाइल पहले से 100% पूरी है। अब कोई प्रोफ़ाइल फॉर्म भरने की अनुमति नहीं है।");
-        updateRegisterScreenView();
-        return;
-      }
-      const name = document.getElementById("pw-name").value.trim();
-      const phone = document.getElementById("pw-phone").value.trim();
-      const pinCheck = MB_validPinFields("pw-pin","pw-pin-confirm");
-      if(!pinCheck.ok) return alert(pinCheck.msg);
-      const pinHash = await MB_hashPin(pinCheck.pin);
-      const state = document.getElementById("pw-state").value;
-      const district = document.getElementById("pw-district").value;
-      const block = document.getElementById("pw-block").value;
-      const exp = parseInt(document.getElementById("pw-exp").value) || 0;
-      const idNumber = document.getElementById("pw-id-number").value.trim().toUpperCase();
-
-      const checkedBoxes = document.querySelectorAll("input[name='worker_skill']:checked");
-      const skillsArray = Array.from(checkedBoxes).map(cb => cb.value);
-      const savedSkills = (() => {
-        try { return JSON.parse(localStorage.getItem("mb_worker_skills") || "[]") || []; } catch(e) { return []; }
-      })();
-      if (skillsArray.length === 0 && savedSkills.length === 0) return alert("कृपया कम से कम एक काम (हुनर) चुनें!");
-
-      if (phone.length !== 10) return alert("10 अंकों का मोबाइल नंबर डालें!");
-      const fullPhone = "+91" + phone;
 
       const btn = document.getElementById("btn-save-worker");
-      btn.innerText = "जाँच हो रही है...";
+      const originalText = "पंजीकरण पूरा करें / अपडेट करें";
+      const setStatus = (msg) => { if (btn) btn.innerText = msg; };
 
-      if (idNumber) {
-        const idSnap = await db.collection("workers").where("idCardNumber", "==", idNumber).get();
-        let isDup = false;
-        idSnap.forEach(d => {
-          if (d.data().private_phone !== fullPhone) isDup = true;
-        });
-        if (isDup) {
-          btn.innerText = "पंजीकरण पूरा करें";
-          return alert("⚠️ यह पहचान पत्र पहले से किसी अन्य प्रोफ़ाइल पर पंजीकृत है! एक आईडी से केवल 1 खाता बन सकता है।");
+      try {
+        const lockedRole = localStorage.getItem("mb_device_locked_role");
+        const currentRole = localStorage.getItem("current_user_role");
+
+        if ((lockedRole && lockedRole !== "worker") || (currentRole && currentRole !== "worker")) {
+          alert("🔒 आप पहले से दूसरे प्रोफ़ाइल में लॉगिन हैं। मिस्त्री फॉर्म भरने की अनुमति नहीं है।");
+          return;
         }
-      }
 
-      let photoData = "";
-      const photoFile = document.getElementById("pw-photo-file").files[0];
-      if (photoFile) {
-        try { photoData = await fileToBase64(photoFile); } catch (err) {}
-      }
+        if (localStorage.getItem("mb_worker_profile_complete") === "true") {
+          alert("✅ आपकी मिस्त्री प्रोफ़ाइल पहले से 100% पूरी है।");
+          updateRegisterScreenView();
+          return;
+        }
 
-      const workPhotosFiles = document.getElementById("pw-work-photos").files;
-      let workPhotosArray = [];
-      if (workPhotosFiles && workPhotosFiles.length > 0) {
-        for (let i = 0; i < Math.min(workPhotosFiles.length, 3); i++) {
+        const name = document.getElementById("pw-name")?.value.trim() || "";
+        const phone = document.getElementById("pw-phone")?.value.trim() || "";
+        const pinCheck = MB_validPinFields("pw-pin", "pw-pin-confirm");
+        if (!pinCheck.ok) {
+          alert(pinCheck.msg);
+          return;
+        }
+
+        const pinHash = await MB_hashPin(pinCheck.pin);
+        const state = document.getElementById("pw-state")?.value || "";
+        const district = document.getElementById("pw-district")?.value || "";
+        const block = document.getElementById("pw-block")?.value || "";
+        const exp = parseInt(document.getElementById("pw-exp")?.value) || 0;
+        const idNumber = (document.getElementById("pw-id-number")?.value || "").trim().toUpperCase();
+
+        const checkedBoxes = document.querySelectorAll("input[name='worker_skill']:checked");
+        const skillsArray = Array.from(checkedBoxes).map(cb => cb.value);
+        const savedSkills = (() => {
           try {
-            const b64 = await fileToBase64(workPhotosFiles[i]);
-            workPhotosArray.push(b64);
-          } catch(e) {}
+            return JSON.parse(localStorage.getItem("mb_worker_skills") || "[]") || [];
+          } catch (e) {
+            return [];
+          }
+        })();
+
+        if (skillsArray.length === 0 && savedSkills.length === 0) {
+          alert("कृपया कम से कम एक काम (हुनर) चुनें!");
+          return;
+        }
+
+        if (!/^\d{10}$/.test(phone)) {
+          alert("10 अंकों का मोबाइल नंबर डालें!");
+          return;
+        }
+
+        if (typeof db === "undefined" || !db) {
+          alert("❌ Firebase Database अभी उपलब्ध नहीं है। Internet चालू करके फिर कोशिश करें।");
+          return;
+        }
+
+        const fullPhone = "+91" + phone;
+
+        if (btn) {
+          btn.disabled = true;
+          setStatus("जाँच हो रही है...");
+        }
+
+        // Firebase request को हमेशा समाप्त होने दें; network hang होने पर user को स्पष्ट error मिले।
+        const withTimeout = (promise, ms = 30000) => Promise.race([
+          promise,
+          new Promise((_, reject) =>
+            setTimeout(() => reject(new Error("नेटवर्क/Firebase से जवाब नहीं मिला। Internet जाँचकर फिर कोशिश करें।")), ms)
+          )
+        ]);
+
+        // पहचान पत्र duplicate check
+        if (idNumber) {
+          setStatus("पहचान पत्र जाँचा जा रहा है...");
+          const idSnap = await withTimeout(
+            db.collection("workers").where("idCardNumber", "==", idNumber).get()
+          );
+
+          let isDup = false;
+          idSnap.forEach(d => {
+            if (d.data().private_phone !== fullPhone) isDup = true;
+          });
+
+          if (isDup) {
+            alert("⚠️ यह पहचान पत्र पहले से किसी अन्य प्रोफ़ाइल पर पंजीकृत है! एक आईडी से केवल 1 खाता बन सकता है।");
+            return;
+          }
+        }
+
+        // प्रोफ़ाइल फोटो
+        let photoData = "";
+        const photoInput = document.getElementById("pw-photo-file");
+        const photoFile = photoInput?.files?.[0];
+
+        if (photoFile) {
+          setStatus("प्रोफ़ाइल फ़ोटो तैयार हो रही है...");
+          try {
+            photoData = await fileToBase64(photoFile);
+          } catch (err) {
+            console.warn("Profile photo conversion failed:", err);
+          }
+        }
+
+        // पुराने काम की अधिकतम 3 तस्वीरें
+        const workPhotosInput = document.getElementById("pw-work-photos");
+        const workPhotosFiles = workPhotosInput?.files;
+        let workPhotosArray = [];
+
+        if (workPhotosFiles && workPhotosFiles.length > 0) {
+          setStatus("काम की तस्वीरें तैयार हो रही हैं...");
+          for (let i = 0; i < Math.min(workPhotosFiles.length, 3); i++) {
+            try {
+              const b64 = await fileToBase64(workPhotosFiles[i]);
+              if (b64) workPhotosArray.push(b64);
+            } catch (err) {
+              console.warn("Work photo conversion failed:", err);
+            }
+          }
+        }
+
+        // ID/Aadhaar वैकल्पिक है
+        let idCardData = "";
+        let idCardBackData = "";
+        const idFrontFile = document.getElementById("id-front-file")?.files?.[0];
+        const idBackFile = document.getElementById("id-back-file")?.files?.[0];
+
+        if (idFrontFile) {
+          setStatus("ID Front तैयार हो रहा है...");
+          try { idCardData = await fileToBase64WithWatermark(idFrontFile); } catch (e) {
+            console.warn("ID front conversion failed:", e);
+          }
+        }
+
+        if (idBackFile) {
+          setStatus("ID Back तैयार हो रहा है...");
+          try { idCardBackData = await fileToBase64WithWatermark(idBackFile); } catch (e) {
+            console.warn("ID back conversion failed:", e);
+          }
+        }
+
+        let workerLevel = "नया कारीगर";
+        if (exp >= 8) workerLevel = "सीनियर उस्ताद";
+        else if (exp >= 3) workerLevel = "कुशल कारीगर";
+
+        setStatus("प्रोफ़ाइल सेव हो रही है...");
+
+        // पहले से मौजूद प्रोफ़ाइल खोजें
+        const snap = await withTimeout(
+          db.collection("workers").where("private_phone", "==", fullPhone).limit(1).get()
+        );
+
+        if (!snap.empty) {
+          const docId = snap.docs[0].id;
+          const existing = snap.docs[0].data();
+
+          const updatePayload = {
+            name: name || existing.name,
+            state: state || existing.state,
+            district: district || existing.district,
+            block: block || existing.block,
+            skills: skillsArray.length ? skillsArray : (existing.skills || []),
+            experience: exp || existing.experience || 0
+          };
+
+          if (pinHash) updatePayload.pinHash = pinHash;
+          if (photoData) updatePayload.photo = photoData;
+          if (workPhotosArray.length) updatePayload.workPhotos = workPhotosArray;
+          if (idCardData) updatePayload.idCardPhoto = idCardData;
+          if (idCardBackData) updatePayload.idCardBackPhoto = idCardBackData;
+          if (idNumber) updatePayload.idCardNumber = idNumber;
+
+          const hasPhoto = !!(photoData || existing.photo);
+          const hasWorkPhotos = !!(
+            workPhotosArray.length ||
+            (existing.workPhotos || []).length
+          );
+
+          updatePayload.profileComplete = !!(
+            updatePayload.name &&
+            phone.length === 10 &&
+            updatePayload.state &&
+            updatePayload.district &&
+            updatePayload.block &&
+            Array.isArray(updatePayload.skills) &&
+            updatePayload.skills.length > 0 &&
+            hasPhoto &&
+            hasWorkPhotos
+          );
+
+          await withTimeout(
+            db.collection("workers").doc(docId).update(updatePayload)
+          );
+
+          const updatedData = { ...existing, ...updatePayload, id: docId };
+          setLoggedInWorker(updatedData);
+
+          alert(
+            updatedData.profileComplete
+              ? "✅ आपकी मिस्त्री प्रोफ़ाइल अपडेट हो गई है और सुरक्षित लॉक कर दी गई है!"
+              : "✅ जानकारी सेव हो गई है। प्रोफ़ाइल में जो जानकारी बाकी है, उसे बाद में पूरा किया जा सकता है।"
+          );
+
+        } else {
+          const proId = generateWorkerId();
+
+          const data = {
+            workerProId: proId,
+            name: name,
+            state: state,
+            district: district,
+            block: block,
+            skills: skillsArray.length ? skillsArray : savedSkills,
+            experience: exp,
+            level: workerLevel,
+            private_phone: fullPhone,
+            pinHash: pinHash,
+            photo: photoData || "",
+            workPhotos: workPhotosArray,
+            idCardPhoto: idCardData || "",
+            idCardBackPhoto: idCardBackData || "",
+            idCardNumber: idNumber || "",
+            profileComplete: !!(
+              name &&
+              phone.length === 10 &&
+              state &&
+              district &&
+              block &&
+              (skillsArray.length || savedSkills.length) &&
+              photoData &&
+              workPhotosArray.length
+            ),
+            isIdVerified: false,
+            isContractorVIP: false,
+            contractorPlan: "",
+            contractorExpiry: null,
+            isBoostedTop: false,
+            boostExpiry: null,
+            isBlocked: false,
+            liveStatus: "available",
+            postsCount: 0,
+            allowJobPosting: false,
+            deviceFingerprint: getDeviceFingerprint(),
+            rating: 5.0,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          };
+
+          const docRef = await withTimeout(
+            db.collection("workers").add(data)
+          );
+
+          data.id = docRef.id;
+          setLoggedInWorker(data);
+          localStorage.setItem("mb_device_locked_role", "worker");
+
+          alert(
+            `🎉 बधाई हो! आपकी मिस्त्री प्रोफ़ाइल सेव हो गई है।\nमिस्त्री ID: ${proId}`
+          );
+        }
+
+      } catch (err) {
+        console.error("saveWorkerProfile error:", err);
+        alert(
+          "❌ प्रोफ़ाइल सेव नहीं हो पाई।\n\n" +
+          (err?.message || "कृपया Internet/Firebase connection जाँचें और फिर कोशिश करें।")
+        );
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerText = originalText;
         }
       }
-
-      // ID/Aadhaar वैकल्पिक है; सही HTML fields id-front-file / id-back-file हैं।
-      let idCardData = "";
-      let idCardBackData = "";
-      const idFrontFile = document.getElementById("id-front-file")?.files?.[0];
-      const idBackFile = document.getElementById("id-back-file")?.files?.[0];
-      if (idFrontFile) { try { idCardData = await fileToBase64WithWatermark(idFrontFile); } catch(e) {} }
-      if (idBackFile) { try { idCardBackData = await fileToBase64WithWatermark(idBackFile); } catch(e) {} }
-
-      let workerLevel = "नया कारीगर";
-      if (exp >= 8) workerLevel = "सीनियर उस्ताद";
-      else if (exp >= 3) workerLevel = "कुशल कारीगर";
-
-      db.collection("workers").where("private_phone", "==", fullPhone).limit(1).get()
-        .then(snap => {
-          if (!snap.empty) {
-            const docId = snap.docs[0].id;
-            const existing = snap.docs[0].data();
-            const updatePayload = {
-              name: name || existing.name,
-              state: state || existing.state,
-              district: district || existing.district,
-              block: block || existing.block,
-              skills: skillsArray.length ? skillsArray : (existing.skills || []),
-              experience: exp || existing.experience || 0
-            };
-
-            if (photoData) updatePayload.photo = photoData;
-            if (workPhotosArray.length) updatePayload.workPhotos = workPhotosArray;
-            if (idCardData) updatePayload.idCardPhoto = idCardData;
-            if (idCardBackData) updatePayload.idCardBackPhoto = idCardBackData;
-            if (idNumber) updatePayload.idCardNumber = idNumber;
-            const hasPhoto = !!(photoData || existing.photo);
-            const hasWorkPhotos = !!((workPhotosArray.length || (existing.workPhotos || []).length) > 0);
-            updatePayload.profileComplete = !!(
-              updatePayload.name &&
-              phone.length === 10 &&
-              updatePayload.state &&
-              updatePayload.district &&
-              updatePayload.block &&
-              Array.isArray(updatePayload.skills) && updatePayload.skills.length > 0 &&
-              hasPhoto && hasWorkPhotos
-            );
-
-            db.collection("workers").doc(docId).update(updatePayload).then(() => {
-              btn.innerText = "पंजीकरण पूरा करें";
-              const updatedData = { ...existing, ...updatePayload, id: docId };
-              setLoggedInWorker(updatedData);
-              alert("✅ आपकी मिस्त्री प्रोफ़ाइल अपडेट और सुरक्षित लॉक कर दी गई है!");
-            });
-          } else {
-            const proId = generateWorkerId();
-            const data = {
-              workerProId: proId,
-              name: name,
-              state: state,
-              district: district,
-              block: block,
-              skills: skillsArray,
-              experience: exp,
-              level: workerLevel,
-              private_phone: fullPhone,
-              photo: photoData || "",
-              workPhotos: workPhotosArray,
-              idCardPhoto: idCardData || "",
-              idCardBackPhoto: idCardBackData || "",
-              idCardNumber: idNumber || "",
-              profileComplete: !!(name && phone.length === 10 && state && district && block && skillsArray.length && photoData && workPhotosArray.length),
-              isIdVerified: false,
-              isContractorVIP: false,
-              contractorPlan: "",
-              contractorExpiry: null,
-              isBoostedTop: false,
-              boostExpiry: null,
-              isBlocked: false,
-              liveStatus: "available",
-              postsCount: 0,
-              allowJobPosting: false,
-              deviceFingerprint: getDeviceFingerprint(),
-              rating: 5.0,
-              createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            };
-
-            db.collection("workers").add(data).then(docRef => {
-              btn.innerText = "पंजीकरण पूरा करें";
-              data.id = docRef.id;
-              setLoggedInWorker(data);
-              localStorage.setItem("mb_device_locked_role", "worker");
-              alert(`बधाई हो! आपकी मिस्त्री प्रोफ़ाइल तुरंत लाइव हो गई है。\nमिस्त्री ID: ${proId}`);
-            });
-          }
-        }).catch(err => {
-          btn.innerText = "पंजीकरण पूरा करें";
-          alert("त्रुटि: " + err.message);
-        });
     }
 
     function setLoggedInWorker(wData) {
