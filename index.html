@@ -3786,13 +3786,61 @@
       });
     }
 
-    function adminDeleteDoc(coll, docId) {
-      if (!confirm("क्या आप वाकई इसे हमेशा के लिए डिलीट करना चाहते हैं?")) return;
-      db.collection(coll).doc(docId).delete().then(() => {
-        alert("🗑️ रिकॉर्ड डेटाबेस से हटा दिया गया!");
+    async function adminDeleteDoc(coll, docId) {
+      if (!confirm("⚠️ क्या आप वाकई इस अकाउंट को हमेशा के लिए डिलीट करना चाहते हैं?\\n\\nडिलीट होने के बाद यह रिकॉर्ड Firebase से हट जाएगा।")) return;
+
+      try {
+        if (typeof db === "undefined" || !db) {
+          throw new Error("Firebase Database उपलब्ध नहीं है।");
+        }
+
+        const btns = document.querySelectorAll(
+          `button[onclick*="adminDeleteDoc('${coll}', '${docId}')"]`
+        );
+        btns.forEach(b => {
+          b.disabled = true;
+          b.innerText = "⏳";
+        });
+
+        const ref = db.collection(coll).doc(docId);
+        const before = await ref.get();
+
+        if (!before.exists) {
+          alert("ℹ️ यह अकाउंट पहले ही Firebase से डिलीट हो चुका है।");
+          if (coll === "workers") loadAdminWorkersList();
+          return;
+        }
+
+        await ref.delete();
+
+        // Delete के बाद दोबारा पढ़कर पक्का करें कि रिकॉर्ड वास्तव में हट गया।
+        const after = await ref.get();
+        if (after.exists) {
+          throw new Error("Firebase ने डिलीट की अनुमति नहीं दी। Firestore Security Rules में DELETE permission जाँचें।");
+        }
+
+        alert("🗑️ अकाउंट सफलतापूर्वक Firebase से डिलीट हो गया!");
+
         const resBox = document.getElementById("admin-search-result");
-        if (resBox) resBox.classList.add("hidden");
-      });
+        if (resBox) {
+          resBox.classList.add("hidden");
+          resBox.innerHTML = "";
+        }
+
+        if (coll === "workers") {
+          loadAdminWorkersList();
+        } else if (coll === "shop_ads" && typeof loadAdminShopAdsList === "function") {
+          loadAdminShopAdsList();
+        }
+
+      } catch (err) {
+        console.error("ADMIN DELETE ERROR:", err);
+        alert(
+          "❌ अकाउंट डिलीट नहीं हुआ।\\n\\n" +
+          (err?.message || "अज्ञात Firebase error") +
+          "\\n\\nअगर 'permission-denied' दिखे तो Firestore Security Rules में DELETE की अनुमति देनी होगी।"
+        );
+      }
     }
 
     // 6. जॉब्स व फीड हैंडलिंग
