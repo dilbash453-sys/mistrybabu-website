@@ -358,9 +358,12 @@
         </div>
 
         <div id="mb-customer-login-row" class="bg-amber-50 border border-amber-200 p-3 rounded-xl space-y-2">
-          <label class="block text-[10px] font-bold text-slate-700">पहले से Customer हैं? मोबाइल नंबर से Login करें</label>
+          <label class="block text-[10px] font-bold text-slate-700">पहले से Customer हैं? मोबाइल नंबर + 4 अंकों के PIN से Login करें</label>
+          <div class="grid grid-cols-2 gap-2">
+            <input type="tel" id="mb-customer-login-phone" maxlength="10" inputmode="numeric" placeholder="10 अंकों का मोबाइल नंबर" class="w-full rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs bg-white">
+            <input type="password" id="mb-customer-login-pin" maxlength="4" inputmode="numeric" pattern="[0-9]{4}" placeholder="4 अंकों का PIN" class="w-full rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs bg-white">
+          </div>
           <div class="flex gap-2">
-            <input type="tel" id="mb-customer-login-phone" maxlength="10" inputmode="numeric" placeholder="10 अंकों का मोबाइल नंबर" class="flex-1 rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs bg-white">
             <button type="button" onclick="MB_customerLogin()" class="bg-slate-900 text-amber-400 text-xs font-bold px-3 py-1.5 rounded-lg">Login</button>
           </div>
         </div>
@@ -371,6 +374,10 @@
             <input id="mb-customer-name" required class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs" placeholder="पूरा नाम">
           </div>
           <input type="hidden" id="mb-customer-phone">
+          <div class="grid grid-cols-2 gap-2">
+            <input type="password" id="mb-customer-pin" required maxlength="4" inputmode="numeric" pattern="[0-9]{4}" placeholder="अपना 4 अंकों का PIN बनाएँ" class="w-full rounded-lg border border-slate-300 px-2.5 py-2 text-xs">
+            <input type="password" id="mb-customer-pin-confirm" required maxlength="4" inputmode="numeric" pattern="[0-9]{4}" placeholder="PIN दोबारा डालें" class="w-full rounded-lg border border-slate-300 px-2.5 py-2 text-xs">
+          </div>
           <div class="bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 text-[10px] text-slate-600">
             📱 Customer का मोबाइल नंबर ऊपर दिए गए <strong>Login / Check</strong> वाले नंबर से लिया जाएगा। नीचे दोबारा नंबर डालने की जरूरत नहीं है।
           </div>
@@ -496,6 +503,11 @@
         <input id="rental-provider-name" required class="w-full rounded-lg border px-3 py-2 text-xs" placeholder="पूरा नाम *">
         <input id="rental-provider-phone" required maxlength="10" inputmode="numeric" class="w-full rounded-lg border px-3 py-2 text-xs" placeholder="मोबाइल नंबर *">
 
+        <div class="grid grid-cols-2 gap-2">
+          <input type="password" id="rental-provider-pin" required maxlength="4" inputmode="numeric" pattern="[0-9]{4}" placeholder="4 अंकों का PIN" class="w-full rounded-lg border border-slate-300 p-2 text-xs">
+          <input type="password" id="rental-provider-pin-confirm" required maxlength="4" inputmode="numeric" pattern="[0-9]{4}" placeholder="PIN दोबारा" class="w-full rounded-lg border border-slate-300 p-2 text-xs">
+        </div>
+
         <div class="bg-blue-50 border border-blue-200 rounded-xl p-3 space-y-2">
           <p class="text-[10px] font-black text-blue-900">📍 Provider Location</p>
           <button type="button" onclick="MB_captureRentalGPS()" class="w-full bg-blue-700 text-white text-[10px] font-black py-2 rounded-lg">📍 अभी का GPS लें</button>
@@ -561,6 +573,11 @@
       <form id="material-provider-form" onsubmit="MB_saveMaterialProvider(event)" class="bg-white p-4 rounded-2xl border border-slate-200 space-y-2">
         <input id="material-provider-name" required class="w-full rounded-lg border px-3 py-2 text-xs" placeholder="Shop / Business Name *">
         <input id="material-provider-phone" required maxlength="10" inputmode="numeric" class="w-full rounded-lg border px-3 py-2 text-xs" placeholder="मोबाइल नंबर *">
+
+        <div class="grid grid-cols-2 gap-2">
+          <input type="password" id="material-provider-pin" required maxlength="4" inputmode="numeric" pattern="[0-9]{4}" placeholder="4 अंकों का PIN" class="w-full rounded-lg border border-slate-300 p-2 text-xs">
+          <input type="password" id="material-provider-pin-confirm" required maxlength="4" inputmode="numeric" pattern="[0-9]{4}" placeholder="PIN दोबारा" class="w-full rounded-lg border border-slate-300 p-2 text-xs">
+        </div>
         <input id="material-provider-items" required class="w-full rounded-lg border px-3 py-2 text-xs" placeholder="Material: सीमेंट, गिट्टी, बालू, ईंट, सरिया आदि *">
         <input id="material-provider-rate" required class="w-full rounded-lg border px-3 py-2 text-xs" placeholder="Rate / Price *">
         <input id="material-provider-area" required class="w-full rounded-lg border px-3 py-2 text-xs" placeholder="Area / District *">
@@ -632,7 +649,10 @@
         <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-4">
           <span class="text-[11px] font-bold text-slate-800 block mb-1.5">पहले से जुड़े हैं? मोबाइल नंबर डालें:</span>
           <div class="flex gap-2">
-            <input type="tel" id="quick-login-phone" maxlength="10" placeholder="10 अंकों का नंबर" class="flex-1 rounded-lg border border-amber-300 px-2.5 py-1.5 text-xs bg-white focus:outline-none">
+            <div class="grid grid-cols-2 gap-2 flex-1">
+              <input type="tel" id="quick-login-phone" maxlength="10" inputmode="numeric" placeholder="10 अंकों का नंबर" class="w-full rounded-lg border border-amber-300 px-2.5 py-1.5 text-xs bg-white focus:outline-none">
+              <input type="password" id="quick-login-pin" maxlength="4" inputmode="numeric" pattern="[0-9]{4}" placeholder="4 अंकों का PIN" class="w-full rounded-lg border border-amber-300 px-2.5 py-1.5 text-xs bg-white focus:outline-none">
+            </div>
             <button type="button" onclick="loginWithPhone()" id="btn-quick-login" class="bg-slate-900 text-amber-400 text-xs font-bold px-3 py-1.5 rounded-lg shadow-xs">खोलें</button>
           </div>
         </div>
@@ -680,6 +700,15 @@
               <span class="inline-flex items-center px-2.5 rounded-l-lg border border-r-0 border-slate-300 bg-slate-100 text-slate-600 text-xs font-bold">+91</span>
               <input type="tel" id="pw-phone" required maxlength="10" placeholder="10 अंकों का नंबर" class="flex-1 block w-full rounded-r-lg border border-slate-300 px-3 py-2 text-xs focus:outline-none">
             </div>
+          </div>
+
+          <div id="box-pw-pin">
+            <label class="block text-[11px] font-bold text-slate-700 mb-1">4 अंकों का Login PIN *</label>
+            <div class="grid grid-cols-2 gap-2">
+              <input type="password" id="pw-pin" required maxlength="4" inputmode="numeric" pattern="[0-9]{4}" placeholder="4 अंकों का PIN" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs">
+              <input type="password" id="pw-pin-confirm" required maxlength="4" inputmode="numeric" pattern="[0-9]{4}" placeholder="PIN दोबारा" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs">
+            </div>
+            <p class="text-[9px] text-slate-500 mt-1">इसी PIN से आगे Login होगा।</p>
           </div>
 
           <div id="box-pw-state">
@@ -905,6 +934,11 @@
           <div>
             <label class="block font-bold text-slate-700 mb-1">मोबाइल नंबर *</label>
             <input type="tel" id="con-app-phone" required maxlength="10" placeholder="10 अंकों का नंबर" class="w-full rounded-lg border border-slate-300 p-2 text-xs">
+
+          <div class="grid grid-cols-2 gap-2">
+            <input type="password" id="con-app-pin" required maxlength="4" inputmode="numeric" pattern="[0-9]{4}" placeholder="4 अंकों का PIN" class="w-full rounded-lg border border-slate-300 p-2 text-xs">
+            <input type="password" id="con-app-pin-confirm" required maxlength="4" inputmode="numeric" pattern="[0-9]{4}" placeholder="PIN दोबारा" class="w-full rounded-lg border border-slate-300 p-2 text-xs">
+          </div>
           </div>
 
           <div class="grid grid-cols-2 gap-2">
@@ -2239,6 +2273,22 @@
       });
     }
 
+    // ==================== SECURE 4-DIGIT PIN AUTH ====================
+    async function MB_hashPin(pin){
+      const value=String(pin||'').trim();
+      if(!/^\d{4}$/.test(value)) throw new Error('PIN 4 अंकों का होना चाहिए।');
+      const data=new TextEncoder().encode(value);
+      const hash=await crypto.subtle.digest('SHA-256',data);
+      return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('');
+    }
+    function MB_validPinFields(pinId,confirmId){
+      const pin=(document.getElementById(pinId)?.value||'').trim();
+      const confirm=(document.getElementById(confirmId)?.value||'').trim();
+      if(!/^\d{4}$/.test(pin)) return {ok:false,msg:'PIN ठीक 4 अंकों का होना चाहिए।'};
+      if(pin!==confirm) return {ok:false,msg:'दोनों PIN एक जैसे नहीं हैं।'};
+      return {ok:true,pin};
+    }
+
     // ==================== RESTORED / FIXED FEATURES ====================
     let currentVoiceRecognition = null, audioMemoRecorder = null, audioMemoChunks = [], currentAudioMemoBlob = null;
     function toggleGuide(contentId, iconId){const box=document.getElementById(contentId),icon=document.getElementById(iconId);if(!box)return;box.classList.toggle("hidden");if(icon)icon.classList.toggle("rotate-180");}
@@ -2322,6 +2372,9 @@
       }
       const name = document.getElementById("pw-name").value.trim();
       const phone = document.getElementById("pw-phone").value.trim();
+      const pinCheck = MB_validPinFields("pw-pin","pw-pin-confirm");
+      if(!pinCheck.ok) return alert(pinCheck.msg);
+      const pinHash = await MB_hashPin(pinCheck.pin);
       const state = document.getElementById("pw-state").value;
       const district = document.getElementById("pw-district").value;
       const block = document.getElementById("pw-block").value;
@@ -2744,30 +2797,46 @@
       }
     }
 
-    function loginWithPhone() {
-      const phoneInput = document.getElementById("quick-login-phone").value.trim();
-      if (phoneInput.length !== 10) return alert("10 अंकों का नंबर डालें!");
-
-      const btn = document.getElementById("btn-quick-login");
-      btn.innerText = "जाँच...";
-
-      const fullPhone = "+91" + phoneInput;
-      db.collection("workers").where("private_phone", "==", fullPhone).limit(1).get()
-        .then(snap => {
-          btn.innerText = "खोलें";
-          if (!snap.empty) {
-            const data = snap.docs[0].data();
-            data.id = snap.docs[0].id;
-            setLoggedInWorker(data);
-            alert("स्वागत है! आपकी मिस्त्री प्रोफ़ाइल खुल गई है।");
-          } else {
-            alert("यह नंबर रजिस्टर नहीं है! नीचे दिया गया फ़ॉर्म भरें।");
-            document.getElementById("pw-phone").value = phoneInput;
-          }
-        }).catch(err => {
-          btn.innerText = "खोलें";
-          alert("त्रुटि: " + err.message);
-        });
+    async function loginWithPhone() {
+      const phoneInput = (document.getElementById("quick-login-phone")?.value||"").replace(/\D/g,"").slice(-10);
+      const pin = (document.getElementById("quick-login-pin")?.value||"").trim();
+      if(phoneInput.length!==10)return alert("10 अंकों का मोबाइल नंबर डालें!");
+      if(!/^\d{4}$/.test(pin))return alert("4 अंकों का PIN डालें!");
+      const btn=document.getElementById("btn-quick-login");
+      if(btn){btn.disabled=true;btn.innerText="जाँच...";}
+      try{
+        const fullPhone="+91"+phoneInput, pinHash=await MB_hashPin(pin);
+        const [c,w,con,r,m]=await Promise.all([
+          db.collection("customer_profiles").doc(fullPhone).get(),
+          db.collection("workers").where("private_phone","==",fullPhone).limit(1).get(),
+          db.collection("contractor_applications").where("phone","==",fullPhone).limit(1).get(),
+          db.collection("rental_providers").where("phone","==",fullPhone).limit(1).get(),
+          db.collection("material_providers").where("phone","==",fullPhone).limit(1).get()
+        ]);
+        if(c.exists && c.data()?.pinHash===pinHash){
+          const p=c.data(); saveLocal(p); show(p); localStorage.setItem("current_user_role","client"); localStorage.setItem("mb_device_locked_role","client");
+          selectProfileCategory("client");
+          return alert("✅ Customer Profile खुल गई।");
+        }
+        if(!w.empty && w.docs[0].data()?.pinHash===pinHash){
+          const data=w.docs[0].data(); data.id=w.docs[0].id; setLoggedInWorker(data); selectProfileCategory("worker");
+          return alert("✅ Mistri Profile खुल गई।");
+        }
+        if(!con.empty && con.docs[0].data()?.pinHash===pinHash){
+          const d=con.docs[0].data(); localStorage.setItem("mb_contractor_app_id",con.docs[0].id); localStorage.setItem("mb_contractor_app_tier",d.contractorTier||""); localStorage.setItem("current_user_role","contractor"); localStorage.setItem("mb_device_locked_role","contractor"); selectProfileCategory("contractor");
+          return alert("✅ Contractor Profile खुल गई।");
+        }
+        if(!r.empty && r.docs[0].data()?.pinHash===pinHash){
+          const d=r.docs[0].data(); localStorage.setItem("mb_rental_phone",d.phone||fullPhone); localStorage.setItem("mb_rental_profile_id",r.docs[0].id); localStorage.setItem("current_user_role","rental"); localStorage.setItem("mb_device_locked_role","rental"); selectProfileCategory("rental");
+          return alert("✅ Rental Profile खुल गई।");
+        }
+        if(!m.empty && m.docs[0].data()?.pinHash===pinHash){
+          const d=m.docs[0].data(); localStorage.setItem("mb_material_phone",d.phone||fullPhone); localStorage.setItem("mb_material_profile_id",m.docs[0].id); localStorage.setItem("current_user_role","material"); localStorage.setItem("mb_device_locked_role","material"); selectProfileCategory("material");
+          return alert("✅ Shop / Material Profile खुल गई।");
+        }
+        alert("❌ मोबाइल नंबर या PIN गलत है।");
+      }catch(err){alert("Login में समस्या: "+err.message);}
+      finally{if(btn){btn.disabled=false;btn.innerText="खोलें";}}
     }
 
     function logoutWorker() {
@@ -4709,11 +4778,15 @@
 
   window.MB_customerLogin=async function(){
     var p10=norm(document.getElementById("mb-customer-login-phone")?.value||"");
+    var pin=(document.getElementById("mb-customer-login-pin")?.value||"").trim();
     if(p10.length!==10)return alert("10 अंकों का मोबाइल नंबर डालें।");
+    if(!/^\d{4}$/.test(pin))return alert("4 अंकों का PIN डालें।");
     try{
       var snap=await db.collection("customer_profiles").doc("+91"+p10).get();
       if(!snap.exists)return alert("इस नंबर से Customer Profile नहीं मिला। नीचे Sign Up करें।");
       var p=snap.data()||{};
+      const enteredHash=await MB_hashPin(pin);
+      if(!p.pinHash || p.pinHash!==enteredHash)return alert("मोबाइल नंबर या PIN गलत है।");
       if(!complete(p))return alert("Customer Profile अधूरी है।");
       saveLocal(p);show(p);
       try{ loadClientPosts(); }catch(e){}
@@ -4757,6 +4830,9 @@
     if(e)e.preventDefault();
     var name=(document.getElementById("mb-customer-name")?.value||"").trim();
     var p10=norm(document.getElementById("mb-customer-login-phone")?.value||document.getElementById("mb-customer-phone")?.value||"");
+    const pinCheck=MB_validPinFields("mb-customer-pin","mb-customer-pin-confirm");
+    if(!pinCheck.ok)return alert(pinCheck.msg);
+    const pinHash=await MB_hashPin(pinCheck.pin);
     var hiddenPhone=document.getElementById("mb-customer-phone");
     if(hiddenPhone) hiddenPhone.value=p10;
     var village=(document.getElementById("mb-customer-village")?.value||"").trim();
@@ -4784,7 +4860,7 @@
       var back=await fileData(document.getElementById("mb-customer-aadhaar-back")?.files?.[0]);
       if(!selfie){if(btn)btn.innerText="Customer Profile बनाएं / अपडेट करें";return alert("सेल्फी सुरक्षित नहीं हो सकी। फिर कोशिश करें।");}
 
-      var p={phone:full,name:name,selfie:selfie,village:village,state:state,city:city,district:district,address:address,
+      var p={phone:full,pinHash:pinHash,name:name,selfie:selfie,village:village,state:state,city:city,district:district,address:address,
         gps:{lat:parseFloat(document.getElementById("mb-customer-lat")?.value)||null,lng:parseFloat(document.getElementById("mb-customer-lng")?.value)||null},
         aadhaarFront:front||"",aadhaarBack:back||"",aadhaarProvided:!!(front||back),aadhaarVerified:false,
         createdAt:firebase.firestore.FieldValue.serverTimestamp(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
@@ -4840,7 +4916,10 @@
     e.preventDefault();
     const tier=val("con-app-tier");
     const name=val("con-app-name"), phone=val("con-app-phone"), capacity=val("con-app-capacity"), exp=val("con-app-exp");
+    const pinCheck=MB_validPinFields("con-app-pin","con-app-pin-confirm");
     if(!tier||!name||!phone||!capacity||!exp) return alert("कृपया सभी जरूरी जानकारी भरें।");
+    if(!pinCheck.ok) return alert(pinCheck.msg);
+    const pinHash=await MB_hashPin(pinCheck.pin);
     const btn=document.getElementById("btn-con-app-submit");
     if(btn){btn.disabled=true;btn.innerText="दस्तावेज़ सुरक्षित किए जा रहे हैं...";}
     try{
@@ -4857,7 +4936,7 @@
         docs.aadhaarBack=await b64("con-app-vip-aadhaar-back");
         if(!docs.govDoc||!docs.panDoc||!docs.bankDoc||!docs.aadhaarFront||!docs.aadhaarBack) throw new Error("VIP ठेकेदार के सभी जरूरी दस्तावेज़, Aadhaar Front/Back सहित, अपलोड करें।");
       }
-      const data={contractorTier:tier,name,phone:"+91"+phone,laborCapacity:capacity,experience:exp,
+      const data={contractorTier:tier,name,phone:"+91"+phone,pinHash,laborCapacity:capacity,experience:exp,
         aadhaarFront:docs.aadhaarFront,aadhaarBack:docs.aadhaarBack,
         govDoc:docs.govDoc||"",panDoc:docs.panDoc||"",bankDoc:docs.bankDoc||"",
         docProof:docs.aadhaarFront||docs.govDoc||"",status:"Under_Review",isEligible:false,
@@ -5115,11 +5194,14 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
     if(!front||!back)return alert("Aadhaar Front और Back दोनों जरूरी हैं।");
     const name=(document.getElementById("rental-provider-name")?.value||"").trim();
     const phone=(document.getElementById("rental-provider-phone")?.value||"").replace(/\D/g,"").slice(-10);
+    const pinCheck=MB_validPinFields("rental-provider-pin","rental-provider-pin-confirm");
     if(!name||!/^\d{10}$/.test(phone))return alert("नाम और सही 10 अंकों का मोबाइल नंबर डालें।");
+    if(!pinCheck.ok)return alert(pinCheck.msg);
+    const pinHash=await MB_hashPin(pinCheck.pin);
     if(!document.getElementById("rental-provider-declaration")?.checked)return alert("Declaration स्वीकार करें।");
     const existing=await mbExistingProvider("rental_providers",phone);
     const data={
-      name,phone:"+91"+phone,
+      name,phone:"+91"+phone,pinHash,
       lat:parseFloat(lat),lng:parseFloat(lng),
       aadhaarFront:front,aadhaarBack:back,aadhaarProvided:true,
       aadhaarVerified:false,adminApprovalStatus:"pending_verification",
@@ -5319,6 +5401,9 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
   };
   const oldMat=window.MB_saveMaterialProvider;
   window.MB_saveMaterialProvider=async function(e){
+    const pinCheck=MB_validPinFields("material-provider-pin","material-provider-pin-confirm");
+    if(!pinCheck.ok){e.preventDefault();return alert(pinCheck.msg);}
+    const pinHash=await MB_hashPin(pinCheck.pin);
     const lat=document.getElementById("material-provider-lat")?.value,lng=document.getElementById("material-provider-lng")?.value;
     if(!lat||!lng){e.preventDefault();return alert("पहले दुकान का GPS लेना जरूरी है।");}
     await oldMat(e);
@@ -5326,7 +5411,7 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
     try{
       const phone="+91"+String(document.getElementById("material-provider-phone")?.value||"").replace(/\D/g,"").slice(-10);
       const q=await db.collection("material_providers").where("phone","==",phone).limit(1).get();
-      if(!q.empty)await q.docs[0].ref.update({lat:parseFloat(lat),lng:parseFloat(lng),updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
+      if(!q.empty)await q.docs[0].ref.update({lat:parseFloat(lat),lng:parseFloat(lng),pinHash,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
     }catch(err){console.warn("Material GPS save:",err);}
   };
 
