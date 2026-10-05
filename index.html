@@ -731,7 +731,7 @@
             <span class="bg-emerald-500/15 text-emerald-300 border border-emerald-400/30 text-[9px] font-black px-2 py-1 rounded-full">🟢 LIVE MISTRI PROFILE</span>
           </div>
           <div class="absolute top-3 right-3">
-            <button onclick="toggleWorkerLiveStatus()" id="btn-live-status" class="bg-emerald-500 text-slate-900 text-[10px] font-black px-2.5 py-1 rounded-full shadow flex items-center space-x-1">
+            <button type="button" onclick="toggleWorkerLiveStatus()" id="btn-live-status" class="bg-emerald-500 text-slate-900 text-[10px] font-black px-2.5 py-1 rounded-full shadow flex items-center space-x-1">
               <span id="txt-live-status">काम के लिए उपलब्ध 🟢</span>
             </button>
           </div>
@@ -2261,26 +2261,42 @@
     async function toggleWorkerLiveStatus(){
       const phone=localStorage.getItem("mb_worker_phone");
       if(!phone)return alert("पहले मिस्त्री प्रोफ़ाइल खोलें।");
-      const current=(localStorage.getItem("mb_worker_status")||"available")==="busy"?"busy":"available";
-      const next=current==="busy"?"available":"busy";
       const btn=document.getElementById("btn-live-status");
+      const oldStatus=(localStorage.getItem("mb_worker_status")||"available")==="busy"?"busy":"available";
+      const next=oldStatus==="busy"?"available":"busy";
       if(btn) btn.disabled=true;
+
+      // पहले स्क्रीन पर तुरंत नया status दिखाएँ ताकि बटन सचमुच toggle हो।
+      localStorage.setItem("mb_worker_status",next);
+      renderLiveStatusUI(next);
+
       try{
         let ref=null;
         const id=localStorage.getItem("mb_worker_doc_id");
         if(id){
-          ref=db.collection("workers").doc(id);
-        }else{
+          const docRef=db.collection("workers").doc(id);
+          const docSnap=await docRef.get();
+          if(docSnap.exists) ref=docRef;
+        }
+        if(!ref){
           const snap=await db.collection("workers").where("private_phone","==","+91"+phone).limit(1).get();
-          if(!snap.empty){ref=snap.docs[0].ref;localStorage.setItem("mb_worker_doc_id",snap.docs[0].id);}
+          if(!snap.empty){
+            ref=snap.docs[0].ref;
+            localStorage.setItem("mb_worker_doc_id",snap.docs[0].id);
+          }
         }
         if(!ref) throw new Error("मिस्त्री का Firebase प्रोफ़ाइल नहीं मिला।");
         await ref.update({liveStatus:next,liveStatusUpdatedAt:firebase.firestore.FieldValue.serverTimestamp()});
-        localStorage.setItem("mb_worker_status",next);
-        renderLiveStatusUI(next);
+        // Save के बाद दोबारा Firebase से वही value पढ़ें, ताकि Profile और Mistri list एक रहें।
+        const saved=await ref.get();
+        const savedStatus=saved.exists && saved.data().liveStatus==="busy" ? "busy" : "available";
+        localStorage.setItem("mb_worker_status",savedStatus);
+        renderLiveStatusUI(savedStatus);
         if(typeof loadFullWorkers==="function") loadFullWorkers();
       }catch(e){
-        // Firebase में save सफल होने से पहले UI/localStorage को न बदलें।
+        // Save fail हो तो पुराना status वापस रखें; गलत green/red न छोड़ें।
+        localStorage.setItem("mb_worker_status",oldStatus);
+        renderLiveStatusUI(oldStatus);
         alert("स्टेटस सेव नहीं हो सका: "+e.message);
       }finally{
         if(btn) btn.disabled=false;
