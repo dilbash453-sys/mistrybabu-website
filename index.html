@@ -3797,16 +3797,78 @@
         b.innerText = "⏳";
       });
 
+      const resetButtons = () => {
+        buttons.forEach(b => {
+          b.disabled = false;
+          b.innerText = "🗑️";
+        });
+      };
+
       try {
         if (typeof db === "undefined" || !db) {
           throw new Error("Firebase Database उपलब्ध नहीं है।");
         }
 
-        // सीधे Firebase document delete करें — extra read/verification नहीं,
-        // ताकि DELETE के बाद UI Firebase response का इंतजार करके अटके नहीं।
-        await db.collection(coll).doc(docId).delete();
+        /*
+         * Admin panel का Firebase SDK delete request कुछ devices पर pending
+         * रह रहा था। इसलिए पहले Firestore REST DELETE इस्तेमाल किया जा रहा है।
+         * API key firebaseConfig से ही ली जाती है; कोई key code में hard-code नहीं है।
+         */
+        const projectId = firebase.app().options.projectId;
+        const apiKey = firebase.app().options.apiKey;
 
-        alert("🗑️ अकाउंट Firebase से सफलतापूर्वक डिलीट हो गया!");
+        if (!projectId || !apiKey) {
+          throw new Error("Firebase project configuration उपलब्ध नहीं है।");
+        }
+
+        const endpoint =
+          "https://firestore.googleapis.com/v1/projects/" +
+          encodeURIComponent(projectId) +
+          "/databases/(default)/documents/" +
+          encodeURIComponent(coll) + "/" +
+          encodeURIComponent(docId) +
+          "?key=" + encodeURIComponent(apiKey);
+
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
+
+        let response;
+        try {
+          response = await fetch(endpoint, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            signal: controller.signal,
+            cache: "no-store"
+          });
+        } finally {
+          clearTimeout(timeoutId);
+        }
+
+        // 200 = delete हुआ; 404 = रिकॉर्ड पहले ही हट चुका है।
+        if (!response.ok && response.status !== 404) {
+          let detail = "";
+          try {
+            const body = await response.json();
+            detail = body?.error?.message || "";
+          } catch (_) {}
+
+          if (response.status === 403) {
+            throw new Error(
+              "Firebase ने DELETE की अनुमति नहीं दी। Firestore Rules में DELETE permission जाँचें।"
+            );
+          }
+
+          throw new Error(
+            "Firebase DELETE error (" + response.status + ")" +
+            (detail ? ": " + detail : "")
+          );
+        }
+
+        alert(
+          response.status === 404
+            ? "ℹ️ यह अकाउंट पहले ही Firebase से डिलीट हो चुका है।"
+            : "🗑️ अकाउंट Firebase से सफलतापूर्वक डिलीट हो गया!"
+        );
 
         const resBox = document.getElementById("admin-search-result");
         if (resBox) {
@@ -3822,16 +3884,14 @@
 
       } catch (err) {
         console.error("ADMIN DELETE ERROR:", err);
-        alert(
-          "❌ अकाउंट डिलीट नहीं हुआ।\n\n" +
-          (err?.message || "Firebase से जवाब नहीं मिला।") +
-          "\n\nयदि 'permission-denied' दिखे तो Firestore Rules की अनुमति जाँचें।"
-        );
-        // Error होने पर बटन वापस सामान्य करें।
-        buttons.forEach(b => {
-          b.disabled = false;
-          b.innerText = "🗑️";
-        });
+        resetButtons();
+
+        const msg =
+          err?.name === "AbortError"
+            ? "Firebase ने 15 सेकंड में जवाब नहीं दिया। Internet connection जाँचकर फिर कोशिश करें।"
+            : (err?.message || "अज्ञात Firebase error");
+
+        alert("❌ अकाउंट डिलीट नहीं हुआ।\n\n" + msg);
       }
     }
 
