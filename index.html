@@ -2273,51 +2273,62 @@
       const btn=document.getElementById("btn-live-status");
       const txt=document.getElementById("txt-live-status");
       const profileStatus=document.getElementById("my-prof-live-status");
-      const isBusy=(status==="busy");
+      const normalized=(status==="busy") ? "busy" : "available";
+      const isBusy=(normalized==="busy");
       const buttonText=isBusy ? "काम पर है 🔴" : "काम के लिए उपलब्ध 🟢";
       const profileText=isBusy ? "🔴 अभी काम पर है" : "🟢 अभी काम के लिए उपलब्ध है";
       if(txt) txt.innerText=buttonText;
-      if(profileStatus) profileStatus.innerText=profileText;
       if(profileStatus){
+        profileStatus.innerText=profileText;
         profileStatus.classList.remove("bg-rose-500/15","text-rose-300","border-rose-400/30","bg-emerald-500/15","text-emerald-300","border-emerald-400/30");
         profileStatus.classList.add(...(isBusy ? ["bg-rose-500/15","text-rose-300","border-rose-400/30"] : ["bg-emerald-500/15","text-emerald-300","border-emerald-400/30"]));
       }
       if(btn){
-        // पुराने colour class को पहले हटाएँ, तभी नया colour लगेगा।
         btn.classList.remove("bg-rose-500","bg-emerald-500","text-white","text-slate-900");
         btn.classList.add(isBusy ? "bg-rose-500" : "bg-emerald-500");
         btn.classList.add(isBusy ? "text-white" : "text-slate-900");
         btn.setAttribute("aria-pressed",isBusy?"true":"false");
         btn.setAttribute("title",isBusy ? "अभी काम पर है — उपलब्ध नहीं" : "अभी काम के लिए उपलब्ध है");
       }
+      return normalized;
     }
+
     async function toggleWorkerLiveStatus(){
-      const phone=localStorage.getItem("mb_worker_phone");
-      if(!phone)return alert("पहले मिस्त्री प्रोफ़ाइल खोलें।");
-      const current=(localStorage.getItem("mb_worker_status")||"available");
-      const next=current==="busy"?"available":"busy";
+      const phone=(localStorage.getItem("mb_worker_phone")||"").replace(/\D/g,"").slice(-10);
+      if(phone.length!==10)return alert("पहले मिस्त्री प्रोफ़ाइल खोलें।");
       const id=localStorage.getItem("mb_worker_doc_id");
+      const btn=document.getElementById("btn-live-status");
+      if(btn)btn.disabled=true;
       try{
-        let saved=false;
+        // IMPORTANT: localStorage को source-of-truth न मानें। Firebase से वर्तमान status पढ़ें,
+        // ताकि पुराना/stale status होने पर भी सही Online/Busy state बदले।
+        let ref=null, data=null;
         if(id){
-          await db.collection("workers").doc(id).update({liveStatus:next});
-          saved=true;
-        }else{
-          const snap=await db.collection("workers").where("private_phone","==","+91"+phone).limit(1).get();
-          if(!snap.empty){
-            localStorage.setItem("mb_worker_doc_id",snap.docs[0].id);
-            await snap.docs[0].ref.update({liveStatus:next});
-            saved=true;
-          }
+          const doc=await db.collection("workers").doc(id).get();
+          if(doc.exists){ ref=doc.ref; data=doc.data()||{}; }
         }
-        if(!saved) throw new Error("मिस्त्री प्रोफ़ाइल नहीं मिली");
+        if(!ref){
+          const snap=await db.collection("workers").where("private_phone","==","+91"+phone).limit(1).get();
+          if(!snap.empty){ ref=snap.docs[0].ref; data=snap.docs[0].data()||{}; localStorage.setItem("mb_worker_doc_id",snap.docs[0].id); }
+        }
+        if(!ref) throw new Error("मिस्त्री प्रोफ़ाइल नहीं मिली");
+
+        const current=(data.liveStatus==="busy") ? "busy" : "available";
+        const next=current==="busy" ? "available" : "busy";
+        await ref.update({liveStatus:next,liveStatusUpdatedAt:firebase.firestore.FieldValue.serverTimestamp()});
+
+        // Firebase save सफल होने के बाद ही local UI/session बदलें।
         localStorage.setItem("mb_worker_status",next);
         renderLiveStatusUI(next);
+
+        // दूसरी screen पर भी तुरन्त नया status दिखे।
+        if(typeof loadFullWorkers==="function" && document.getElementById("full-worker-grid")){
+          loadFullWorkers(window.currentWorkerSkillFilter||"");
+        }
       }catch(e){
-        // Firebase save fail होने पर पुराना status ही दिखाएँ।
-        const oldStatus=localStorage.getItem("mb_worker_status")||"available";
-        renderLiveStatusUI(oldStatus);
-        alert("स्टेटस सेव नहीं हो सका: "+e.message);
+        alert("स्टेटस सेव नहीं हो सका: "+(e&&e.message?e.message:e));
+      }finally{
+        if(btn)btn.disabled=false;
       }
     }
     function toggleMainMenu(){document.getElementById("main-menu-drawer")?.classList.toggle("translate-x-full");document.getElementById("main-menu-overlay")?.classList.toggle("hidden");} function closeMainMenu(){document.getElementById("main-menu-drawer")?.classList.add("translate-x-full");document.getElementById("main-menu-overlay")?.classList.add("hidden");}
@@ -5491,7 +5502,7 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
     if(choice)choice.classList.add("hidden");
     status("✓ "+(names[a.role]||"Account")+" Account खुल गया। आपकी Profile सामने है।","ok");
     setTimeout(function(){
-      if(a.role==="worker") renderLiveStatusUI(localStorage.getItem("mb_worker_status")||d.liveStatus||"available");
+      if(a.role==="worker") renderLiveStatusUI(d.liveStatus||"available");
       document.getElementById(a.role==="worker"?"worker-profile-view":a.role==="client"?"customer-professional-dashboard":a.role==="contractor"?"contractor-dashboard-box":a.role==="rental"?"rental-provider-box":"material-provider-box")?.scrollIntoView({behavior:"smooth",block:"start"});
     },80);
   }
