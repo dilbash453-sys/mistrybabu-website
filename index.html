@@ -1613,7 +1613,7 @@
       <i class="fa-solid fa-users text-base"></i>
       <span class="text-[9px] font-bold mt-0.5">मिस्त्री खोजें</span>
     </button>
-    <button onclick="openBottomAuthMenu()" id="nav-register" class="flex flex-col items-center text-slate-400">
+    <button onclick="openProfileOrAuth()" id="nav-register" class="flex flex-col items-center text-slate-400">
       <i id="nav-reg-icon" class="fa-solid fa-user-plus text-base"></i>
       <span id="nav-reg-text" class="text-[9px] font-bold mt-0.5">Sign Up</span>
     </button>
@@ -2994,6 +2994,25 @@
         try { selectProfileCategory(role); } catch(e) { console.warn(e); }
         document.getElementById('page-register')?.scrollIntoView({behavior:'smooth',block:'start'});
       },80);
+    }
+
+    function openProfileOrAuth(){
+      const role = localStorage.getItem("current_user_role");
+      const lockedRole = localStorage.getItem("mb_device_locked_role");
+      const workerPhone = localStorage.getItem("mb_worker_phone");
+      const isLoggedIn = !!(role || lockedRole || workerPhone);
+
+      if (isLoggedIn) {
+        const activeRole = lockedRole || role || (workerPhone ? "worker" : "client");
+        navTo("register");
+        setTimeout(() => {
+          try { selectProfileCategory(activeRole); } catch (e) { console.warn(e); }
+          document.getElementById("page-register")?.scrollIntoView({behavior:"smooth",block:"start"});
+        }, 50);
+        return;
+      }
+
+      openBottomAuthMenu();
     }
 
     function openBottomAuthMenu(){
