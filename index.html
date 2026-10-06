@@ -2872,6 +2872,7 @@
     }
 
     function updateRegisterScreenView() {
+      updateProfileCategoryVisibility();
       const workerName = localStorage.getItem("mb_worker_name");
       const formBox = document.getElementById("worker-form-container");
       const profileBox = document.getElementById("worker-profile-view");
@@ -3004,6 +3005,7 @@
 
       if (isLoggedIn) {
         const activeRole = lockedRole || role || (workerPhone ? "worker" : "client");
+        updateProfileCategoryVisibility();
         navTo("register");
         setTimeout(() => {
           try { selectProfileCategory(activeRole); } catch (e) { console.warn(e); }
@@ -4762,7 +4764,36 @@
       if (modal) modal.classList.add("hidden");
     }
 
+    function isAnyUserLoggedIn() {
+      return !!(
+        localStorage.getItem('current_user_role') ||
+        localStorage.getItem('mb_device_locked_role') ||
+        localStorage.getItem('mb_worker_phone') ||
+        localStorage.getItem('mb_customer_profile') ||
+        localStorage.getItem('mb_contractor_app_id') ||
+        localStorage.getItem('mb_rental_phone') ||
+        localStorage.getItem('mb_material_phone')
+      );
+    }
+
+    function updateProfileCategoryVisibility() {
+      const wrap = document.getElementById('profile-category-tab')?.parentElement;
+      const menu = document.getElementById('profile-category-menu');
+      const loggedIn = isAnyUserLoggedIn();
+      if (loggedIn) {
+        // लॉगिन यूज़र के Profile में 5-category selector नहीं दिखेगा।
+        if (wrap) wrap.classList.add('hidden');
+        if (menu) menu.classList.add('hidden');
+      } else {
+        if (wrap) wrap.classList.remove('hidden');
+      }
+    }
+
     function toggleProfileCategoryMenu() {
+      if (isAnyUserLoggedIn()) {
+        updateProfileCategoryVisibility();
+        return;
+      }
       const menu = document.getElementById('profile-category-menu');
       const arrow = document.getElementById('profile-category-tab-arrow');
       if (!menu) return;
@@ -6011,3 +6042,14 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
 
 </body>
   </html>
+<script id="mb-profile-category-visibility-fix">
+(function(){
+  try {
+    document.addEventListener('DOMContentLoaded', function(){
+      setTimeout(function(){
+        try { if (typeof updateProfileCategoryVisibility === 'function') updateProfileCategoryVisibility(); } catch(e){}
+      }, 50);
+    });
+  } catch(e){}
+})();
+</script>
