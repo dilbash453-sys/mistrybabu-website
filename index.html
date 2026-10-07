@@ -4080,12 +4080,13 @@
                 ${j.sitePhoto ? `<img loading="lazy" src="${j.sitePhoto}" class="w-full h-32 rounded-lg object-cover border border-slate-100">` : ''}
                 <p class="text-xs text-slate-500">${j.desc || 'विवरण उपलब्ध नहीं है'}</p>
 
-                ${j.isPaidLead ? `<div class="mb-2 flex items-center justify-between bg-amber-50 border border-amber-200 rounded-lg px-2 py-1.5"><span class="text-[10px] font-black text-amber-800">💳 PAID LEAD</span><span class="text-[9px] font-bold text-slate-600">Unlock required</span></div>` : ""}
-                <div class="pt-2 border-t border-slate-100 flex justify-between items-center">
+                ${j.isPaidLead ? `<div class="mb-2 flex items-center justify-between bg-amber-50 border border-amber-200 rounded-lg px-2 py-1.5"><span class="text-[10px] font-black text-amber-800">💳 PAID LEAD</span><span class="text-[9px] font-bold text-slate-600">🔒 पहले Lead Unlock करें</span></div>` : ""}
+                <div class="pt-2 border-t border-slate-100 flex justify-between items-center gap-2">
                   <button onclick="shareJobOnWhatsApp('${j.workType}', '${j.district}', '${j.location}', '${sixId}', '${j.clientName}')" class="text-[11px] bg-emerald-50 text-emerald-700 font-bold px-2 py-1.5 rounded-lg flex items-center space-x-1 border border-emerald-200">
                     <i class="fa-brands fa-whatsapp text-emerald-600"></i>
                     <span>WhatsApp शेयर</span>
                   </button>
+                  ${j.isPaidLead ? `<button onclick="MB_paidLeadUnlock('${doc.id}', '${sixId}', '${j.phone}', '${j.workType}')" class="bg-amber-500 text-slate-900 px-3 py-1.5 rounded-lg text-xs font-black flex items-center space-x-1 shadow-xs"><i class="fa-solid fa-lock-open text-[10px]"></i><span>🔓 Lead Unlock करें</span></button>` : ""}
                   <button onclick="MB_paidLeadQuoteGuard('${doc.id}', '${sixId}', '${j.phone}', '${j.workType}', ${j.isPaidLead === true ? 'true' : 'false'})" class="bg-slate-900 text-amber-400 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center space-x-1 shadow-xs">
                     <i class="fa-solid fa-comment-dots text-[10px]"></i>
                     <span>रेट भेजें</span>
@@ -6081,20 +6082,31 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
 (function(){
   const FEE=49;
   function phone(){return (localStorage.getItem("mb_worker_phone")||"").replace(/\D/g,"").slice(-10);}
+  window.MB_paidLeadUnlock=async function(jobId,sixId,clientPhone,workType){
+    const wp=phone(); if(!wp)return alert("पहले Mistri Login करें।");
+    try{
+      const q=await db.collection("paid_lead_access").where("jobId","==",jobId).where("workerPhone","==",wp).limit(10).get();
+      let ok=false,pending=false;
+      q.forEach(function(d){const x=d.data()||{};if(x.status==="approved"||x.unlocked===true)ok=true;if(x.status==="pending")pending=true;});
+      if(ok)return alert("✅ यह Lead पहले ही Unlock है। अब आप रेट भेज सकते हैं।");
+      if(pending)return alert("⏳ आपकी Access Request पहले से Pending है। Admin verification के बाद Lead Unlock होगी।");
+      const utr=prompt("Paid Lead Unlock Fee ₹"+FEE+" — Payment UTR/Reference नंबर डालें:");
+      if(!utr||!utr.trim())return;
+      await db.collection("paid_lead_access").add({jobId:jobId,jobSixId:sixId,workerPhone:wp,clientPhone:clientPhone||"",workType:workType||"",amount:FEE,utr:utr.trim(),status:"pending",unlocked:false,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+      alert("✅ Lead Unlock Request Admin को भेज दी गई है। Approve होने के बाद रेट भेज सकेंगे।");
+    }catch(e){alert("Paid Lead Unlock Request नहीं भेजी गई: "+e.message);}
+  };
   window.MB_paidLeadQuoteGuard=async function(jobId,sixId,clientPhone,workType,isPaid){
     if(!isPaid){openProposalModal(jobId,sixId,clientPhone,workType);return;}
     const wp=phone(); if(!wp)return alert("पहले Mistri Login करें।");
     try{
-      const q=await db.collection("paid_lead_access").where("jobId","==",jobId).where("workerPhone","==",wp).limit(5).get();
+      const q=await db.collection("paid_lead_access").where("jobId","==",jobId).where("workerPhone","==",wp).limit(10).get();
       let ok=false,pending=false;
       q.forEach(function(d){const x=d.data()||{};if(x.status==="approved"||x.unlocked===true)ok=true;if(x.status==="pending")pending=true;});
       if(ok){openProposalModal(jobId,sixId,clientPhone,workType);return;}
-      if(pending)return alert("यह Paid Lead पहले से Pending है। Admin verification के बाद Rate भेज सकेंगे।");
-      const utr=prompt("Paid Lead Unlock Fee ₹"+FEE+" — Payment UTR/Reference नंबर डालें:");
-      if(!utr||!utr.trim())return;
-      await db.collection("paid_lead_access").add({jobId:jobId,jobSixId:sixId,workerPhone:wp,clientPhone:clientPhone||"",workType:workType||"",amount:FEE,utr:utr.trim(),status:"pending",unlocked:false,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
-      alert("✅ Access Request Admin को भेज दी गई है। Approve होने के बाद Rate भेज सकेंगे।");
-    }catch(e){alert("Paid Lead request नहीं भेजी गई: "+e.message);}
+      if(pending)return alert("⏳ यह Paid Lead अभी Pending है। Admin verification के बाद Rate भेज सकेंगे।");
+      return alert("🔒 पहले ‘Lead Unlock करें’ दबाकर Access Request भेजें।");
+    }catch(e){alert("Paid Lead access check नहीं हो सका: "+e.message);}
   };
   window.MB_adminLoadPaidLeads=async function(){
     const box=document.getElementById("admin-paid-leads-list");if(!box)return;box.innerHTML="लोड हो रहा है...";
