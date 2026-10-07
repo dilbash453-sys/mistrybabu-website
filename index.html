@@ -870,6 +870,7 @@
           <div class="grid grid-cols-2 gap-2">
             <button onclick="navTo('jobs')" class="bg-amber-500 text-slate-900 py-2.5 rounded-xl font-bold shadow-xs">🔎 नए काम देखें</button>
             <button onclick="navTo('jobs')" class="bg-slate-900 text-amber-400 py-2.5 rounded-xl font-bold shadow-xs">💰 Rate भेजें</button>
+            <button onclick="requestPaidLeadAccess()" class="bg-emerald-50 border border-emerald-300 text-emerald-800 py-2.5 rounded-xl font-bold">💳 Paid Leads</button>
             <button onclick="document.getElementById('worker-inbox-section')?.scrollIntoView({behavior:'smooth'})" class="bg-white border border-slate-200 text-slate-800 py-2.5 rounded-xl font-bold">🤝 मेरे Deals</button>
             <button onclick="document.getElementById('worker-inbox-section')?.scrollIntoView({behavior:'smooth'})" class="bg-white border border-slate-200 text-slate-800 py-2.5 rounded-xl font-bold">⭐ Rating & Reviews</button>
           </div>
@@ -1202,6 +1203,7 @@
           <button onclick="switchAdminSubTab('rental-vehicles')" id="btn-adm-rental-vehicles" class="py-1.5 rounded-lg text-slate-600">🚜 गाड़ियाँ</button>
           <button onclick="switchAdminSubTab('material-ads')" id="btn-adm-material-ads" class="py-1.5 rounded-lg text-slate-600">📢 Material Ads</button>
           <button onclick="switchAdminSubTab('shopads')" id="btn-adm-shopads" class="py-1.5 rounded-lg text-slate-600">दुकान ऐड</button>
+          <button onclick="switchAdminSubTab('paid-leads')" id="btn-adm-paid-leads" class="py-1.5 rounded-lg text-slate-600">💳 Paid Leads</button>
         </div>
 
         <div id="sec-adm-deals" class="space-y-2">
@@ -1252,6 +1254,15 @@
             <button onclick="MB_adminLoadMaterialAds()" class="text-emerald-600 font-bold text-[10px]">रिफ्रेश ↻</button>
           </div>
           <div id="admin-material-ads-list" class="space-y-2"><p class="text-slate-400 text-center py-3">Requests लोड हो रही हैं...</p></div>
+        </div>
+
+        <!-- Paid Leads Management -->
+        <div id="sec-adm-paid-leads" class="space-y-3 hidden">
+          <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-200">
+            <h4 class="font-black text-slate-900 text-[11px]">💳 Paid Leads / Lead Access Requests</h4>
+            <p class="text-[9px] text-slate-600 mt-1">यहाँ Mistri की Paid Lead Access Requests आएँगी। Admin approval के बाद संबंधित Lead unlock होगी।</p>
+          </div>
+          <div id="admin-paid-leads-container" class="space-y-2"></div>
         </div>
 
         <!-- दुकान विज्ञापन प्रबंधन -->
@@ -2113,6 +2124,11 @@
         isFactoryJob: isFactoryJob,
         isVerifiedClient: isVerified,
         isClosed: false,
+        // Paid Leads metadata — payment is never assumed successful here.
+        leadAccessMode: "free",
+        isPaidLead: false,
+        leadPrice: 0,
+        leadStatus: "available",
         deviceFingerprint: getDeviceFingerprint(),
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       };
@@ -2710,6 +2726,15 @@
       }
     }
 
+    async function requestPaidLeadAccess() {
+      const phone=(localStorage.getItem("mb_worker_phone")||"").replace(/\D/g,"");
+      if(!phone) return alert("पहले Mistri Login करें।");
+      try {
+        await db.collection("lead_access_requests").add({workerPhone:"+91"+phone,workerName:localStorage.getItem("mb_worker_name")||"",type:"membership_access",status:"pending",createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+        alert("💳 Paid Lead Access की Request Admin को भेज दी गई है। Payment/Plan Activate होने के बाद Access मिलेगा।");
+      } catch(e){ alert("Request नहीं भेजी गई: "+e.message); }
+    }
+
     function setLoggedInWorker(wData) {
       if (wData.isBlocked) {
         return alert("🚫 आपकी प्रोफ़ाइल को एडमिन द्वारा निलंबित (Block) कर दिया गया है। हेल्पलाइन पर संपर्क करें।");
@@ -3248,7 +3273,7 @@
 
     function switchAdminSubTab(tab) {
       currentAdminSubTab = tab;
-      const tabs = ['deals', 'workers', 'callbacks', 'contractors', 'rental-vehicles', 'material-ads', 'shopads'];
+      const tabs = ['deals', 'workers', 'callbacks', 'contractors', 'rental-vehicles', 'material-ads', 'shopads', 'paid-leads'];
       tabs.forEach(t => {
         document.getElementById(`sec-adm-${t}`)?.classList.add("hidden");
         document.getElementById(`btn-adm-${t}`)?.classList.remove("bg-white","text-slate-900","shadow-xs");
@@ -3264,7 +3289,20 @@
       else if (tab === 'rental-vehicles') MB_adminLoadRentalVehicles();
       else if (tab === 'material-ads') MB_adminLoadMaterialAds();
       else if (tab === 'shopads') loadAdminShopAdsList();
+      else if (tab === 'paid-leads') loadAdminPaidLeads();
     }
+
+    function loadAdminPaidLeads() {
+      const c=document.getElementById("admin-paid-leads-container"); if(!c)return;
+      c.innerHTML="<p class='text-xs text-slate-400 text-center py-4'>Requests लोड हो रही हैं...</p>";
+      db.collection("lead_access_requests").orderBy("createdAt","desc").limit(50).get().then(snap=>{
+        if(snap.empty){c.innerHTML="<p class='text-xs text-slate-400 text-center py-4'>कोई Paid Lead Request नहीं है।</p>";return;} c.innerHTML="";
+        snap.forEach(doc=>{const r=doc.data()||{}; const pending=r.status==="pending"; c.innerHTML+=`<div class="bg-white border border-slate-200 rounded-xl p-3 mb-2 text-xs"><div class="flex justify-between"><b>${r.jobSixId||r.type||"Lead Access"}</b><span class="font-bold ${pending?'text-amber-600':'text-emerald-600'}">${r.status||'pending'}</span></div><div class="text-slate-600 mt-1">👷 ${r.workerName||'—'} • ${r.workerPhone||'—'}</div><div class="text-slate-500 mt-1">${r.workType||'Paid Lead Access'} ${r.leadPrice?('• ₹'+r.leadPrice):''}</div>${pending&&r.jobId?`<button onclick="adminApprovePaidLead('${doc.id}')" class="mt-2 w-full bg-emerald-600 text-white py-2 rounded-lg font-bold">✓ Lead Unlock</button>`:''}</div>`;});
+      }).catch(e=>c.innerHTML=`<p class='text-xs text-red-500'>लोड नहीं हुआ: ${e.message}</p>`);
+    }
+
+    async function adminApprovePaidLead(requestId) {
+      try { const ref=db.collection("lead_access_requests").doc(requestId), snap=await ref.get(); if(!snap.exists)return alert("Request नहीं मिली।"); const r=snap.data()||{}; const phone=String(r.workerPhone||"").replace(/\D/g,""); if(!phone||!r.jobId)return alert("Worker/Job जानकारी अधूरी है।"); const ar=db.collection("lead_access").doc(phone); const old=await ar.get(); const a=old.exists?(old.data()||{}):{}; const ids=Array.isArray(a.jobIds)?a.jobIds.slice():[]; if(!ids.includes(r.jobId))ids.push(r.jobId); await ar.set({workerPhone:"+91"+phone,status:"active",jobIds:ids,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}); await ref.update({status:"approved",approvedAt:firebase.firestore.FieldValue.serverTimestamp(),approvedBy:currentOperator||"Admin"}); alert("✅ Paid Lead unlock हो गई।"); loadAdminPaidLeads(); } catch(e){alert("Unlock नहीं हुआ: "+e.message);} }
 
     function switchAdminDealTab(tab) {
       currentAdminDealTab = tab;
@@ -3987,7 +4025,7 @@
                   <h5 class="font-bold text-slate-800 mt-0.5">${j.workType}</h5>
                   <p class="text-[10px] text-slate-400">👤 ${j.clientName} ${j.isVerifiedClient ? '<span class="text-blue-600 font-bold">🛡️</span>' : ''} • 📍 ${j.district} (${timeInfo.timeAgo})</p>
                 </div>
-                <button onclick="openProposalModal('${doc.id}', '${sixId}', '${j.phone}', '${j.workType}')" class="bg-amber-500 text-slate-900 px-2.5 py-1 rounded-lg text-[10px] font-bold">रेट भेजें</button>
+                <button onclick="checkLeadAccessAndOpen('${doc.id}', '${sixId}', '${j.phone}', '${j.workType}')" class="bg-amber-500 text-slate-900 px-2.5 py-1 rounded-lg text-[10px] font-bold">रेट भेजें</button>
               </div>`;
           });
           if (count === 0) feed.innerHTML = "<p class='text-xs text-slate-400'>कोई नया काम नहीं है।</p>";
@@ -4089,6 +4127,25 @@
     function filterCategory(skillTitle) {
       navTo('workers');
       loadFullWorkers(skillTitle);
+    }
+
+    async function checkLeadAccessAndOpen(jobId, sixId, clientPhone, workType) {
+      try {
+        const jobSnap = await db.collection("job_posts").doc(jobId).get();
+        if (!jobSnap.exists) return alert("यह काम अब उपलब्ध नहीं है।");
+        const j = jobSnap.data() || {};
+        if (j.isPaidLead !== true && j.leadAccessMode !== "paid") return openProposalModal(jobId, sixId, clientPhone, workType);
+        const workerPhone = (localStorage.getItem("mb_worker_phone") || "").replace(/\D/g, "");
+        if (!workerPhone) return alert("पहले Mistri Login करें।");
+        const access = await db.collection("lead_access").doc(workerPhone).get();
+        const a = access.exists ? (access.data() || {}) : {};
+        const expiry = a.expiry ? (a.expiry.toDate ? a.expiry.toDate() : new Date(a.expiry)) : null;
+        const active = a.status === "active" && (!expiry || expiry > new Date());
+        if (active || (Array.isArray(a.jobIds) && a.jobIds.includes(jobId))) return openProposalModal(jobId, sixId, clientPhone, workType);
+        const pending = await db.collection("lead_access_requests").where("jobId", "==", jobId).where("workerPhone", "==", "+91" + workerPhone).where("status", "==", "pending").limit(1).get();
+        if (pending.empty) await db.collection("lead_access_requests").add({workerPhone:"+91"+workerPhone,workerName:localStorage.getItem("mb_worker_name")||"",jobId,jobSixId:sixId,workType,leadPrice:Number(j.leadPrice||0),status:"pending",createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+        alert("💰 यह Paid Lead है। Lead Access Request Admin को भेज दी गई है। Payment/Approval के बाद Lead unlock होगी।");
+      } catch(err) { console.error(err); alert("Lead Access जाँच नहीं हो सकी: "+err.message); }
     }
 
     function openProposalModal(jobId, sixId, clientPhone, workType) {
