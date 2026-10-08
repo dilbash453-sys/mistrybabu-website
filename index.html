@@ -1203,6 +1203,8 @@
           <button onclick="switchAdminSubTab('material-ads')" id="btn-adm-material-ads" class="py-1.5 rounded-lg text-slate-600">📢 Material Ads</button>
           <button onclick="switchAdminSubTab('shopads')" id="btn-adm-shopads" class="py-1.5 rounded-lg text-slate-600">दुकान ऐड</button>
           <button onclick="switchAdminSubTab('contact-visibility')" id="btn-adm-contact-visibility" class="py-1.5 rounded-lg text-slate-600">📞 Contact Pro</button>
+          <button onclick="switchAdminSubTab('business-dashboard')" id="btn-adm-business-dashboard" class="py-1.5 rounded-lg text-slate-600">📊 Business Dashboard</button>
+          <button onclick="switchAdminSubTab('income-sources')" id="btn-adm-income-sources" class="py-1.5 rounded-lg text-slate-600">💰 सभी Income Sources</button>
         </div>
 
         <div id="sec-adm-deals" class="space-y-2">
@@ -1259,6 +1261,19 @@
           <div class="flex justify-between items-center"><span class="font-bold text-slate-800">📞 Contact Visibility — Monthly Payment Requests</span><button onclick="MB_adminLoadContactVisibility()" class="text-amber-600 font-bold text-[10px]">रिफ्रेश ↻</button></div>
           <p class="text-[9px] text-slate-500 bg-slate-50 border rounded-lg p-2">Customer का नंबर हमेशा private रहेगा। केवल non-customer profiles के approved paid plan पर नंबर public listing में दिखेगा।</p>
           <div id="admin-contact-visibility-list" class="space-y-2"><p class="text-slate-400 text-center py-3">Requests लोड हो रही हैं...</p></div>
+        </div>
+
+        <div id="sec-adm-business-dashboard" class="space-y-3 hidden">
+          <div class="bg-slate-900 text-white rounded-xl p-3">
+            <div class="flex justify-between items-center gap-2"><div><h3 class="text-sm font-black">📊 Admin Business Dashboard</h3><p class="text-[9px] text-slate-300 mt-1">MistriBabu के Users, Jobs, Deals, Paid Services और Business Income का एक ही जगह overview.</p></div><button onclick="MB_adminLoadBusinessDashboard()" class="bg-amber-400 text-slate-900 px-3 py-1.5 rounded-lg text-[10px] font-black">🔄 Refresh</button></div>
+          </div>
+          <div id="admin-business-dashboard-grid" class="grid grid-cols-2 gap-2"></div>
+          <div id="admin-business-dashboard-income" class="bg-white border rounded-xl p-3 space-y-2"></div>
+        </div>
+
+        <div id="sec-adm-income-sources" class="space-y-3 hidden">
+          <div class="flex justify-between items-center"><div><h3 class="font-black text-slate-800">💰 सभी Income Sources</h3><p class="text-[9px] text-slate-500">जो paid services साइट पर मौजूद हैं, उनका अलग-अलग revenue overview.</p></div><button onclick="MB_adminLoadIncomeSources()" class="text-emerald-600 font-bold text-[10px]">🔄 Refresh</button></div>
+          <div id="admin-income-sources-list" class="space-y-2"><p class="text-slate-400 text-center py-3">Income data लोड करने के लिए Refresh दबाएँ।</p></div>
         </div>
 
         <!-- दुकान विज्ञापन प्रबंधन -->
@@ -3255,7 +3270,7 @@
 
     function switchAdminSubTab(tab) {
       currentAdminSubTab = tab;
-      const tabs = ['deals', 'workers', 'callbacks', 'contractors', 'rental-vehicles', 'material-ads', 'shopads', 'contact-visibility'];
+      const tabs = ['deals', 'workers', 'callbacks', 'contractors', 'rental-vehicles', 'material-ads', 'shopads', 'contact-visibility', 'business-dashboard', 'income-sources'];
       tabs.forEach(t => {
         document.getElementById(`sec-adm-${t}`)?.classList.add("hidden");
         document.getElementById(`btn-adm-${t}`)?.classList.remove("bg-white","text-slate-900","shadow-xs");
@@ -3272,6 +3287,8 @@
       else if (tab === 'material-ads') MB_adminLoadMaterialAds();
       else if (tab === 'shopads') loadAdminShopAdsList();
       else if (tab === 'contact-visibility') MB_adminLoadContactVisibility();
+      else if (tab === 'business-dashboard') MB_adminLoadBusinessDashboard();
+      else if (tab === 'income-sources') MB_adminLoadIncomeSources();
     }
 
     function switchAdminDealTab(tab) {
@@ -6058,6 +6075,55 @@ function role(){return localStorage.getItem("current_user_role")||localStorage.g
 function phoneForRole(r=role()){if(r==="worker")return "+91"+String(localStorage.getItem("mb_worker_phone")||"").replace(/\D/g,"").slice(-10);if(r==="rental")return String(localStorage.getItem("mb_rental_phone")||"");if(r==="material")return String(localStorage.getItem("mb_material_phone")||"");return "";}
 async function contractorPhone(){const id=localStorage.getItem("mb_contractor_app_id");if(!id||typeof db==="undefined")return "";try{const s=await db.collection("contractor_applications").doc(id).get();return s.exists?String(s.data().phone||""):"";}catch(e){return "";}}
 async function getCurrentPhone(){return role()==="contractor"?contractorPhone():phoneForRole();}
+async function MB_adminCountCollection(coll, queryFn){
+  try{
+    let q=db.collection(coll);
+    if(typeof queryFn==='function') q=queryFn(q);
+    const snap=await q.get();
+    return {count:snap.size,docs:snap.docs};
+  }catch(e){return {count:0,docs:[],error:e};}
+}
+window.MB_adminLoadBusinessDashboard=async function(){
+  const grid=document.getElementById('admin-business-dashboard-grid'), income=document.getElementById('admin-business-dashboard-income');
+  if(!grid)return;
+  grid.innerHTML='<p class="col-span-2 text-center text-slate-400 py-4">Business data लोड हो रहा है...</p>';
+  const defs=[
+    ['👷','Mistri','workers'],['👤','Customer Jobs','job_posts'],['🤝','Deals','confirmed_deals'],
+    ['🏗️','Contractor Applications','contractor_applications'],['🚜','Rental Vehicles','rental_vehicles'],
+    ['🧱','Material Providers','material_providers'],['📢','Shop Ads','shop_ads'],
+    ['📞','Contact Pro Payments','contact_visibility_payments']
+  ];
+  const results=await Promise.all(defs.map(x=>MB_adminCountCollection(x[2])));
+  grid.innerHTML=defs.map((x,i)=>`<div class="bg-white border rounded-xl p-3"><div class="text-lg">${x[0]}</div><div class="text-[10px] text-slate-500 mt-1">${x[1]}</div><div class="text-xl font-black text-slate-900 mt-0.5">${results[i].count}</div></div>`).join('');
+  const active=await MB_adminCountCollection('contact_visibility_subscriptions',q=>q.where('status','==','active'));
+  const pending=await MB_adminCountCollection('contact_visibility_payments',q=>q.where('status','==','Pending'));
+  income.innerHTML=`<div class="font-black text-xs">💼 Paid Service Status</div><div class="grid grid-cols-2 gap-2 text-[10px]"><div class="bg-emerald-50 border border-emerald-200 rounded-lg p-2">📞 Contact Pro Active<br><b>${active.count}</b></div><div class="bg-amber-50 border border-amber-200 rounded-lg p-2">⏳ Contact Pro Pending<br><b>${pending.count}</b></div></div><p class="text-[9px] text-slate-500">यह Dashboard existing Firestore collections से live count दिखाता है।</p>`;
+};
+window.MB_adminLoadIncomeSources=async function(){
+  const box=document.getElementById('admin-income-sources-list'); if(!box)return;
+  box.innerHTML='<p class="text-slate-400 text-center py-3">Income sources लोड हो रहे हैं...</p>';
+  const sources=[
+    {name:'💳 Paid Leads / Lead Unlock',coll:'paid_lead_payments',amount:['amount','fee','price']},
+    {name:'👑 Membership / Contractor Payment',coll:'contractor_payments',amount:['amount','paymentAmount','price']},
+    {name:'📞 Contact Pro — ₹99 / 30 दिन',coll:'contact_visibility_payments',amount:['amount','price']},
+    {name:'📢 Local / Shop Advertisement',coll:'shop_ads',amount:['planAmount','amount','price']},
+    {name:'📢 Material Advertisement',coll:'material_ad_requests',amount:['amount','planAmount','price']},
+    {name:'🚜 Machine Rental Commission',coll:'rental_bookings',amount:['commission','commissionAmount','amount']},
+    {name:'🧱 Material Marketplace Commission',coll:'material_orders',amount:['commission','commissionAmount','amount']}
+  ];
+  let html='',grand=0;
+  for(const src of sources){
+    const r=await MB_adminCountCollection(src.coll);
+    let total=0;
+    r.docs.forEach(d=>{const x=d.data()||{};for(const k of src.amount){const n=Number(String(x[k]??'').replace(/[^0-9.]/g,''));if(Number.isFinite(n)&&n>0){total+=n;break;}}});
+    grand+=total;
+    const exists=!r.error && r.count>0;
+    html+=`<div class="bg-white border rounded-xl p-3 flex justify-between items-center gap-2"><div><b class="text-[11px]">${src.name}</b><div class="text-[9px] text-slate-500">Records: ${r.count}${!exists?' • अभी data नहीं मिला':''}</div></div><div class="text-right"><div class="text-sm font-black text-emerald-700">₹${total.toLocaleString('en-IN')}</div><div class="text-[8px] text-slate-400">recorded amount</div></div></div>`;
+  }
+  html=`<div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3"><div class="text-[10px] text-emerald-800 font-bold">कुल उपलब्ध recorded income</div><div class="text-2xl font-black text-emerald-900">₹${grand.toLocaleString('en-IN')}</div><div class="text-[8px] text-emerald-700 mt-1">सिर्फ जिन Firestore records में amount मौजूद है, उनका total.</div></div>`+html;
+  box.innerHTML=html;
+};
+
 async function activeSub(phone){if(!phone||typeof db==="undefined")return null;const digits=String(phone).replace(/\D/g,"").slice(-10);if(digits.length!==10)return null;const p="+91"+digits;try{const q=await db.collection("contact_visibility_subscriptions").where("phone","==",p).where("status","==","active").limit(5).get();let best=null,now=Date.now();q.forEach(d=>{const x=d.data()||{},exp=x.expiresAt?.toDate?x.expiresAt.toDate().getTime():new Date(x.expiresAt||0).getTime();if(exp>now&&(!best||exp>best.exp))best={id:d.id,...x,exp};});return best;}catch(e){return null;}}
 async function pending(phone){if(!phone||typeof db==="undefined")return null;const digits=String(phone).replace(/\D/g,"").slice(-10);if(digits.length!==10)return null;const p="+91"+digits;try{const q=await db.collection("contact_visibility_payments").where("phone","==",p).where("status","==","Pending").limit(1).get();return q.empty?null:{id:q.docs[0].id,...q.docs[0].data()};}catch(e){return null;}}
 window.MB_isContactVisible=async phone=>!!(await activeSub(phone));
