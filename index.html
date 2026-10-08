@@ -174,11 +174,6 @@
       </div>
     </div>
 
-    <div class="bg-blue-50 border border-blue-200 rounded-2xl p-3 space-y-2">
-      <div class="flex items-center justify-between gap-2"><div><div class="text-xs font-black text-slate-900">📍 Nearby Jobs</div><div id="nearby-jobs-status" class="text-[9px] text-slate-500">अपने पास के काम देखने के लिए Location अनुमति दें।</div></div><button id="nearby-jobs-btn" type="button" onclick="toggleNearbyJobs()" class="bg-blue-600 text-white px-3 py-1.5 rounded-lg text-[10px] font-black">📍 मेरे पास के काम</button></div>
-      <div id="nearby-radius-row" class="hidden flex items-center gap-2"><span class="text-[10px] font-bold text-slate-600">दायरा:</span><select id="nearby-radius-select" onchange="setNearbyRadius(this.value)" class="flex-1 bg-white border border-blue-200 rounded-lg px-2 py-1.5 text-[10px] font-bold"><option value="5">5 KM</option><option value="10" selected>10 KM</option><option value="25">25 KM</option><option value="50">50 KM</option></select><button type="button" onclick="disableNearbyJobs()" class="bg-white border border-slate-200 text-slate-600 px-2 py-1.5 rounded-lg text-[10px] font-bold">सभी</button></div>
-    </div>
-
     <div class="flex bg-slate-200 p-1 rounded-xl text-xs font-bold">
       <button onclick="switchJobFeedTab('normal')" id="tab-feed-normal" class="flex-1 py-1.5 rounded-lg bg-white text-slate-900 shadow-xs">
         दिहाड़ी व छोटा काम 🧱
@@ -326,14 +321,6 @@
         <div class="bg-slate-50 p-2.5 rounded-xl border border-dashed border-slate-300"><label class="block text-[11px] font-bold text-slate-700 mb-0.5">काम की जगह की फ़ोटो (वैकल्पिक)</label><input type="file" id="pc-site-photo" accept="image/*" class="text-xs"></div>
         <div><div class="flex justify-between items-center mb-1"><label class="block text-[11px] font-bold text-slate-700">काम का पूरा विवरण</label><button type="button" onclick="startVoiceInput('pc-desc', 'voice-btn-post')" id="voice-btn-post" class="text-[10px] text-amber-600 bg-amber-50 px-2 py-0.5 rounded border border-amber-200 font-bold"><i class="fa-solid fa-microphone"></i> बोलकर लिखें</button></div><textarea id="pc-desc" rows="2" placeholder="काम के बारे में समझाकर लिखें..." class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs"></textarea></div>
 
-<div class="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-2">
-  <label class="flex items-center gap-2 text-[11px] font-bold text-slate-800">
-    <input type="checkbox" id="pc-paid-lead" class="w-4 h-4 accent-amber-500">
-    💳 Paid Lead — इस काम को Paid Lead के रूप में दिखाएँ
-  </label>
-  <p class="text-[9px] text-slate-500 mt-1">Paid Lead चुनने पर Mistri को Lead Unlock/Access के बाद ही Quote भेजने की अनुमति होगी।</p>
-</div>
-
 <button type="submit" id="btn-post-job" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold py-2.5 rounded-xl text-xs shadow-xs transition">
           काम पोस्ट करें
         </button>
@@ -364,14 +351,11 @@
       <!-- CUSTOMER PROFILE / SIGN UP + LOGIN -->
       <div id="mb-customer-profile-box" class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-3">
         <div class="flex items-center justify-between">
-          <div class="min-w-0">
-            <h3 id="mb-customer-profile-title" class="text-xs font-black text-slate-900">ग्राहक Sign Up / Login 👤</h3>
-            <p id="mb-customer-profile-subtitle" class="text-[10px] text-slate-500">एक मोबाइल नंबर = एक ही Customer Profile</p>
+          <div>
+            <h3 class="text-xs font-black text-slate-900">ग्राहक Sign Up / Login 👤</h3>
+            <p class="text-[10px] text-slate-500">एक मोबाइल नंबर = एक ही Customer Profile</p>
           </div>
-          <div class="flex items-center gap-2">
-            <span id="mb-customer-profile-status" class="text-[9px] bg-slate-100 text-slate-600 font-bold px-2 py-0.5 rounded-full">लॉगिन नहीं</span>
-            <button type="button" id="mb-customer-logout-btn" onclick="MB_customerLogout()" class="hidden bg-rose-50 text-rose-600 border border-rose-200 text-[9px] font-black px-2 py-1 rounded-lg">लॉगआउट</button>
-          </div>
+          <span id="mb-customer-profile-status" class="text-[9px] bg-slate-100 text-slate-600 font-bold px-2 py-0.5 rounded-full">लॉगिन नहीं</span>
         </div>
 
         <div id="mb-customer-login-row" class="bg-amber-50 border border-amber-200 p-3 rounded-xl space-y-2">
@@ -474,70 +458,40 @@
           <span class="absolute top-3 left-3 bg-emerald-500/15 text-emerald-300 border border-emerald-400/30 text-[9px] font-black px-2 py-1 rounded-full">🟢 LIVE CUSTOMER PROFILE</span>
           <div class="relative w-24 h-24 mx-auto mt-5"><img id="mb-cust-dash-photo" src="logo.png" class="w-24 h-24 rounded-full object-cover border-4 border-amber-400 bg-white shadow-lg"></div>
           <h3 id="mb-cust-dash-name" class="text-lg font-black mt-2">ग्राहक</h3>
+          <p id="mb-cust-dash-id" class="text-[10px] text-amber-300 font-bold">Customer ID</p>
           <div class="flex flex-wrap justify-center gap-1.5 mt-2"><span id="mb-cust-dash-verified" class="hidden bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-[9px] font-bold px-2 py-0.5 rounded-full">🛡️ Verified Customer</span><span class="bg-blue-400/20 text-blue-200 border border-blue-300/30 text-[9px] font-bold px-2 py-0.5 rounded-full">👤 Customer</span></div>
           <p id="mb-cust-dash-location" class="text-[10px] text-slate-300 mt-3">📍 स्थान</p>
-          <div id="mb-customer-rating-summary" class="inline-flex items-center justify-center mt-2 px-3 py-1.5 rounded-full bg-amber-400/15 border border-amber-300/30 text-amber-200 text-[10px] font-black">⭐ 0.0/5 • 0 Ratings</div>
         </div>
         <div class="p-4 space-y-3">
           <div class="grid grid-cols-4 gap-1.5">
-            <button onclick="MB_customerDashTab('posts')" class="bg-amber-50 border border-amber-200 rounded-xl p-2 text-center"><span class="block text-sm">📋</span><strong class="block text-[9px]">मेरी पोस्ट</strong></button>
-            <button onclick="MB_customerDashTab('replies')" class="bg-blue-50 border border-blue-200 rounded-xl p-2 text-center"><span class="block text-sm">📨</span><strong class="block text-[9px]">जवाब</strong></button>
-            <button onclick="MB_customerDashTab('deals')" class="bg-emerald-50 border border-emerald-200 rounded-xl p-2 text-center"><span class="block text-sm">🤝</span><strong class="block text-[9px]">Deals</strong></button>
-            <button onclick="MB_customerDashTab('notice')" class="bg-violet-50 border border-violet-200 rounded-xl p-2 text-center relative"><span class="block text-sm">🔔</span><strong class="block text-[9px]">सूचना</strong><span id="mb-customer-inbox-badge" class="hidden absolute -top-1 -right-1 bg-rose-600 text-white text-[8px] font-black px-1.5 py-0.5 rounded-full shadow">1 New Message</span></button>
+            <button onclick="MB_customerDashScroll('client-posts-list')" class="bg-amber-50 border border-amber-200 rounded-xl p-2 text-center"><span class="block text-sm">📋</span><strong class="block text-[9px]">मेरी पोस्ट</strong></button>
+            <button onclick="MB_customerDashScroll('client-inbox-section')" class="bg-blue-50 border border-blue-200 rounded-xl p-2 text-center"><span class="block text-sm">📨</span><strong class="block text-[9px]">जवाब</strong></button>
+            <button onclick="MB_customerDashScroll('client-inbox-section')" class="bg-emerald-50 border border-emerald-200 rounded-xl p-2 text-center"><span class="block text-sm">🤝</span><strong class="block text-[9px]">Deals</strong></button>
+            <button onclick="MB_customerDashScroll('client-inbox-section')" class="bg-violet-50 border border-violet-200 rounded-xl p-2 text-center"><span class="block text-sm">🔔</span><strong class="block text-[9px]">सूचना</strong></button>
           </div>
-          <div id="mb-customer-info-panel" class="bg-slate-50 border border-slate-200 rounded-2xl p-3 hidden"><div class="flex justify-between items-center mb-2"><div><h4 class="text-[11px] font-black">👤 मेरी जानकारी</h4><p class="text-[9px] text-slate-500">आपकी Customer Profile</p></div><span class="text-[9px] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded-full">Live</span></div><div class="grid grid-cols-2 gap-2 text-[10px]"><div class="bg-white rounded-lg p-2 border border-slate-100"><span class="text-[8px] text-slate-400 block">नाम</span><strong id="mb-cust-dash-name2">—</strong></div><div class="bg-white rounded-lg p-2 border border-slate-100"><span class="text-[8px] text-slate-400 block">Customer ID</span><strong id="mb-cust-dash-id">—</strong></div><div class="bg-white rounded-lg p-2 border border-slate-100"><span class="text-[8px] text-slate-400 block">मोबाइल</span><strong id="mb-cust-dash-phone">—</strong></div><div class="bg-white rounded-lg p-2 border border-slate-100"><span class="text-[8px] text-slate-400 block">पता</span><strong id="mb-cust-dash-address">—</strong></div></div></div>
-          <button id="mb-customer-new-post-btn" onclick="navTo('post')" class="w-full bg-amber-500 text-slate-900 py-2.5 rounded-xl font-black text-xs hidden">➕ नया काम पोस्ट करें</button>
-          <button id="mb-customer-edit-btn" onclick="MB_customerEditProfile()" class="w-full bg-slate-900 text-amber-400 py-2.5 rounded-xl font-bold text-xs hidden">✏️ प्रोफाइल बदलें / अपडेट करें</button>
-          <div id="mb-customer-rating-section" class="bg-amber-50 border border-amber-200 rounded-2xl p-3 space-y-2">
-            <div class="flex items-center justify-between">
-              <div><h4 class="text-[11px] font-black text-slate-900">⭐ मिस्त्री को रेटिंग दें</h4><p class="text-[9px] text-slate-500">काम पूरा होने के बाद आपकी Rating यहाँ आएगी।</p></div>
-              <span class="text-[9px] bg-white border border-amber-200 px-2 py-1 rounded-full font-bold">Customer</span>
-            </div>
-            <div id="mb-customer-rating-list" class="space-y-2">काम पूरा हुए Deals खोजे जा रहे हैं…</div>
-          </div>
-          <div id="mb-customer-received-rating-section" class="bg-blue-50 border border-blue-200 rounded-2xl p-3 space-y-2">
-            <div class="flex items-center justify-between">
-              <div><h4 class="text-[11px] font-black text-slate-900">⭐ मिस्त्री ने आपको दी Rating</h4><p class="text-[9px] text-slate-500">काम पूरा होने के बाद मिस्त्री की दी हुई Rating/Review यहाँ दिखेगी।</p></div>
-              <span class="text-[9px] bg-white border border-blue-200 px-2 py-1 rounded-full font-bold">Customer</span>
-            </div>
-            <div id="mb-customer-received-rating-list" class="space-y-2">आपको मिली Rating लोड हो रही है…</div>
-          </div>
+          <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3"><div class="flex justify-between items-center mb-2"><div><h4 class="text-[11px] font-black">👤 मेरी जानकारी</h4><p class="text-[9px] text-slate-500">आपकी Customer Profile</p></div><span class="text-[9px] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded-full">Live</span></div><div class="grid grid-cols-2 gap-2 text-[10px]"><div class="bg-white rounded-lg p-2 border border-slate-100"><span class="text-[8px] text-slate-400 block">नाम</span><strong id="mb-cust-dash-name2">—</strong></div><div class="bg-white rounded-lg p-2 border border-slate-100"><span class="text-[8px] text-slate-400 block">मोबाइल</span><strong id="mb-cust-dash-phone">—</strong></div><div class="bg-white rounded-lg p-2 border border-slate-100 col-span-2"><span class="text-[8px] text-slate-400 block">पता</span><strong id="mb-cust-dash-address">—</strong></div></div></div>
+          <button onclick="navTo('post')" class="w-full bg-amber-500 text-slate-900 py-2.5 rounded-xl font-black text-xs">➕ नया काम पोस्ट करें</button>
+          <button onclick="MB_customerEditProfile()" class="w-full bg-slate-900 text-amber-400 py-2.5 rounded-xl font-bold text-xs">✏️ प्रोफाइल बदलें / अपडेट करें</button>
           <p class="text-[9px] text-slate-500 text-center">🔐 Aadhaar केवल verification के लिए है; सार्वजनिक प्रोफाइल में नहीं दिखेगा।</p>
         </div>
       </div>
 
-      <div id="mb-customer-owner-work-placeholder" class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs hidden">
+      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
         <h3 class="text-xs font-black text-slate-900 uppercase">मालिक प्रोफ़ाइल / मेरा काम</h3>
         <p class="text-[11px] text-slate-500 mt-0.5">ऊपर Login किए गए उसी मोबाइल नंबर से आपकी पोस्ट और मिस्त्रियों के संदेश दिखेंगे।</p>
-      </div>
-
-      <div id="mb-customer-replies-section" class="hidden bg-blue-50/70 border border-blue-200 rounded-2xl p-4 shadow-xs">
-        <div class="flex items-center justify-between mb-2">
-          <h4 class="text-xs font-black text-slate-900">📨 मिस्त्रियों के जवाब</h4>
-          <span class="text-[9px] bg-white border border-blue-200 px-2 py-1 rounded-full font-bold">जवाब</span>
-        </div>
-        <div id="mb-customer-replies-list" class="space-y-2 text-xs"></div>
-      </div>
-
-      <div id="mb-customer-deals-section" class="hidden bg-emerald-50/70 border border-emerald-200 rounded-2xl p-4 shadow-xs">
-        <div class="flex items-center justify-between mb-2">
-          <h4 class="text-xs font-black text-slate-900">🤝 मेरी Deals</h4>
-          <span class="text-[9px] bg-white border border-emerald-200 px-2 py-1 rounded-full font-bold">Deals</span>
-        </div>
-        <div id="mb-customer-deals-list" class="space-y-2 text-xs"></div>
       </div>
 
       <div id="client-inbox-section" class="hidden bg-amber-50/70 border border-amber-200 rounded-2xl p-4 shadow-xs">
         <div class="flex items-center justify-between mb-2">
           <h4 class="text-xs font-black text-slate-900 flex items-center">
-            <span class="inline-flex w-7 h-7 items-center justify-center rounded-full bg-amber-100 border border-amber-300 mr-2"><i class="fa-solid fa-bell text-amber-600"></i></span> मिस्त्रीबाबू इनबॉक्स
+            <i class="fa-solid fa-bell text-amber-600 mr-1.5 animate-bounce"></i> मिस्त्रीबाबू इनबॉक्स
           </h4>
-          <span id="mb-client-inbox-count" class="hidden text-[9px] bg-rose-600 text-white font-black px-2 py-1 rounded-full">1 New Message</span>
+          <span class="text-[9px] bg-amber-200 text-amber-900 font-bold px-2 py-0.5 rounded-full">नया संदेश</span>
         </div>
         <div id="client-inbox-messages" class="space-y-2 text-xs"></div>
       </div>
 
-      <div id="client-posts-list" class="hidden space-y-3"></div>
+      <div id="client-posts-list" class="space-y-3"></div>
     </div>
     <!-- 1B. RENTAL PROVIDER PROFILE -->
     <div id="rental-provider-box" class="space-y-3 hidden">
@@ -829,7 +783,6 @@
           <div class="mt-3 flex items-center justify-center gap-2 text-[10px] text-slate-300">
             <span>📍</span><span id="my-prof-location">बिहार •</span>
           </div>
-          <div id="mb-worker-rating-summary" class="inline-flex items-center justify-center mt-2 px-3 py-1.5 rounded-full bg-amber-400/15 border border-amber-300/30 text-amber-200 text-[10px] font-black">⭐ 0.0/5 • 0 Ratings</div>
         </div>
 
         <div class="p-4 space-y-3 text-xs">
@@ -1248,8 +1201,8 @@
           <button onclick="switchAdminSubTab('contractors')" id="btn-adm-contractors" class="py-1.5 rounded-lg text-slate-600">ठेकेदारी VIP</button>
           <button onclick="switchAdminSubTab('rental-vehicles')" id="btn-adm-rental-vehicles" class="py-1.5 rounded-lg text-slate-600">🚜 गाड़ियाँ</button>
           <button onclick="switchAdminSubTab('material-ads')" id="btn-adm-material-ads" class="py-1.5 rounded-lg text-slate-600">📢 Material Ads</button>
-          <button onclick="switchAdminSubTab('paid-leads')" id="btn-adm-paid-leads" class="py-1.5 rounded-lg text-slate-600">💳 Paid Leads</button>
           <button onclick="switchAdminSubTab('shopads')" id="btn-adm-shopads" class="py-1.5 rounded-lg text-slate-600">दुकान ऐड</button>
+          <button onclick="switchAdminSubTab('contact-visibility')" id="btn-adm-contact-visibility" class="py-1.5 rounded-lg text-slate-600">📞 Contact Pro</button>
         </div>
 
         <div id="sec-adm-deals" class="space-y-2">
@@ -1302,15 +1255,13 @@
           <div id="admin-material-ads-list" class="space-y-2"><p class="text-slate-400 text-center py-3">Requests लोड हो रही हैं...</p></div>
         </div>
 
-        <!-- दुकान विज्ञापन प्रबंधन -->
-        <div id="sec-adm-paid-leads" class="space-y-3 hidden">
-  <div class="flex justify-between items-center">
-    <span class="font-bold text-slate-800">💳 Paid Lead Access Requests</span>
-    <button onclick="MB_adminLoadPaidLeads()" class="text-amber-600 font-bold text-[10px]">रिफ्रेश ↻</button>
-  </div>
-  <div id="admin-paid-leads-list" class="space-y-2"><p class="text-slate-400 text-center py-3">Requests लोड हो रही हैं...</p></div>
-</div>
+        <div id="sec-adm-contact-visibility" class="space-y-3 hidden">
+          <div class="flex justify-between items-center"><span class="font-bold text-slate-800">📞 Contact Visibility — Monthly Payment Requests</span><button onclick="MB_adminLoadContactVisibility()" class="text-amber-600 font-bold text-[10px]">रिफ्रेश ↻</button></div>
+          <p class="text-[9px] text-slate-500 bg-slate-50 border rounded-lg p-2">Customer का नंबर हमेशा private रहेगा। केवल non-customer profiles के approved paid plan पर नंबर public listing में दिखेगा।</p>
+          <div id="admin-contact-visibility-list" class="space-y-2"><p class="text-slate-400 text-center py-3">Requests लोड हो रही हैं...</p></div>
+        </div>
 
+        <!-- दुकान विज्ञापन प्रबंधन -->
         <div id="sec-adm-shopads" class="space-y-3 hidden">
           <div class="bg-blue-50 p-3 rounded-xl border border-blue-200 space-y-2">
             <h4 class="font-black text-slate-900 uppercase text-[11px]">➕ नया दुकान विज्ञापन बनाएँ</h4>
@@ -1485,29 +1436,9 @@
           <input type="tel" id="prop-worker-phone" required maxlength="10" placeholder="10 अंकों का नंबर" class="w-full rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs focus:outline-none">
         </div>
 
-        <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="block text-[10px] font-bold text-slate-700 uppercase mb-0.5">रेट / Quote (₹) *</label>
-            <input type="number" id="prop-quote-amount" min="1" step="1" required placeholder="जैसे 8500" class="w-full rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs focus:outline-none">
-          </div>
-          <div>
-            <label class="block text-[10px] font-bold text-slate-700 uppercase mb-0.5">समय *</label>
-            <input type="text" id="prop-quote-time" required placeholder="जैसे 3 दिन" class="w-full rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs focus:outline-none">
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-[10px] font-bold text-slate-700 uppercase mb-0.5">सामान किसका? *</label>
-          <select id="prop-material-responsibility" required class="w-full rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs focus:outline-none">
-            <option value="मालिक का">मालिक का सामान</option>
-            <option value="मिस्त्री का">मिस्त्री सामान देगा</option>
-            <option value="दोनों">दोनों मिलकर</option>
-          </select>
-        </div>
-
         <div>
           <div class="flex justify-between items-center mb-0.5">
-            <label class="block text-[10px] font-bold text-slate-700 uppercase">आपका संदेश *</label>
+            <label class="block text-[10px] font-bold text-slate-700 uppercase">आपका रेट व संदेश *</label>
             <button type="button" onclick="startVoiceInput('prop-message', 'voice-btn-prop')" id="voice-btn-prop" class="text-[9px] text-amber-600 bg-amber-50 px-2 py-0.5 rounded border border-amber-200 font-bold flex items-center space-x-1">
               <i class="fa-solid fa-microphone"></i>
               <span>बोलकर लिखें</span>
@@ -1703,8 +1634,6 @@
     let currentWorkerCoords = null;
     let currentAdminSubTab = 'deals';
     let currentJobFeedTab = 'normal';
-    let nearbyJobsEnabled = false;
-    let nearbyRadiusKm = 10;
     let currentOperator = localStorage.getItem("mb_active_operator") || "व्यवस्थापक";
 
     const ALLOWED_ADMIN_USERS = ["dilbas", "lehari", "monu"];
@@ -2189,10 +2118,6 @@
         isUrgent: isUrgent,
         isTheka: isTheka,
         isFactoryJob: isFactoryJob,
-        isPaidLead: document.getElementById("pc-paid-lead")?.checked === true,
-        leadAccessFee: document.getElementById("pc-paid-lead")?.checked === true ? 49 : 0,
-        leadAccessStatus: "locked",
-        leadAccessNote: "Paid Lead access requires Mistri request + Admin/payment verification.",
         isVerifiedClient: isVerified,
         isClosed: false,
         deviceFingerprint: getDeviceFingerprint(),
@@ -3330,7 +3255,7 @@
 
     function switchAdminSubTab(tab) {
       currentAdminSubTab = tab;
-      const tabs = ['deals', 'workers', 'callbacks', 'contractors', 'rental-vehicles', 'material-ads', 'paid-leads', 'shopads'];
+      const tabs = ['deals', 'workers', 'callbacks', 'contractors', 'rental-vehicles', 'material-ads', 'shopads', 'contact-visibility'];
       tabs.forEach(t => {
         document.getElementById(`sec-adm-${t}`)?.classList.add("hidden");
         document.getElementById(`btn-adm-${t}`)?.classList.remove("bg-white","text-slate-900","shadow-xs");
@@ -3345,8 +3270,8 @@
       else if (tab === 'contractors') loadAdminContractors();
       else if (tab === 'rental-vehicles') MB_adminLoadRentalVehicles();
       else if (tab === 'material-ads') MB_adminLoadMaterialAds();
-      else if (tab === 'paid-leads') MB_adminLoadPaidLeads();
       else if (tab === 'shopads') loadAdminShopAdsList();
+      else if (tab === 'contact-visibility') MB_adminLoadContactVisibility();
     }
 
     function switchAdminDealTab(tab) {
@@ -3433,8 +3358,7 @@
                 </div>
 
                 <div class="bg-amber-50 p-2 rounded-lg border border-amber-200 text-[10px] text-slate-700">
-                  <span class="font-bold">तय Quote:</span> ₹${Number(d.quoteAmount||0).toLocaleString('en-IN')} • ${d.quoteTime||'समय नहीं'} • सामान: ${d.materialResponsibility||'—'}
-                  <div class="mt-1"><span class="font-bold">संदेश:</span> ${d.rateMessage||'—'}</div>
+                  <span class="font-bold">तय रेट/संदेश:</span> ${d.rateMessage}
                 </div>
 
                 <div class="flex gap-1 pt-1">
@@ -4071,7 +3995,7 @@
                   <h5 class="font-bold text-slate-800 mt-0.5">${j.workType}</h5>
                   <p class="text-[10px] text-slate-400">👤 ${j.clientName} ${j.isVerifiedClient ? '<span class="text-blue-600 font-bold">🛡️</span>' : ''} • 📍 ${j.district} (${timeInfo.timeAgo})</p>
                 </div>
-                <button onclick="MB_paidLeadQuoteGuard('${doc.id}', '${sixId}', '${j.phone}', '${j.workType}', ${j.isPaidLead === true ? 'true' : 'false'})" class="bg-amber-500 text-slate-900 px-2.5 py-1 rounded-lg text-[10px] font-bold">रेट भेजें</button>
+                <button onclick="openProposalModal('${doc.id}', '${sixId}', '${j.phone}', '${j.workType}')" class="bg-amber-500 text-slate-900 px-2.5 py-1 rounded-lg text-[10px] font-bold">रेट भेजें</button>
               </div>`;
           });
           if (count === 0) feed.innerHTML = "<p class='text-xs text-slate-400'>कोई नया काम नहीं है।</p>";
@@ -4094,23 +4018,12 @@
 
           feed.innerHTML = "";
           let count = 0;
-          const jobDocs = snap.docs.slice().map(doc => ({ doc, data: doc.data() || {} }));
-          jobDocs.sort((a,b) => {
-            if (!nearbyJobsEnabled || !currentWorkerCoords) return 0;
-            const da = calculateDistanceKM(currentWorkerCoords.latitude,currentWorkerCoords.longitude,a.data.lat,a.data.lng);
-            const dbb = calculateDistanceKM(currentWorkerCoords.latitude,currentWorkerCoords.longitude,b.data.lat,b.data.lng);
-            return (da===null?999999:parseFloat(da))-(dbb===null?999999:parseFloat(dbb));
-          });
 
-          jobDocs.forEach(item => {
-            const doc = item.doc;
-            const j = item.data;
+          snap.forEach(doc => {
+            const j = doc.data();
             const timeInfo = formatTimeDetails(j.createdAt, j.isUrgent);
             if (timeInfo.isExpired || j.isClosed === true) return;
             if (filterDist && j.district !== filterDist) return;
-            let jobDistance = null;
-            if (currentWorkerCoords && j.lat && j.lng) jobDistance = parseFloat(calculateDistanceKM(currentWorkerCoords.latitude,currentWorkerCoords.longitude,j.lat,j.lng));
-            if (nearbyJobsEnabled && (jobDistance === null || jobDistance > nearbyRadiusKm)) return;
 
             const isThisTheka = j.isTheka === true;
             if (currentJobFeedTab === 'theka' && !isThisTheka) return;
@@ -4153,14 +4066,12 @@
                 ${j.sitePhoto ? `<img loading="lazy" src="${j.sitePhoto}" class="w-full h-32 rounded-lg object-cover border border-slate-100">` : ''}
                 <p class="text-xs text-slate-500">${j.desc || 'विवरण उपलब्ध नहीं है'}</p>
 
-                ${j.isPaidLead ? `<div class="mb-2 flex items-center justify-between bg-amber-50 border border-amber-200 rounded-lg px-2 py-1.5"><span class="text-[10px] font-black text-amber-800">💳 PAID LEAD</span><span class="text-[9px] font-bold text-slate-600">🔒 पहले Lead Unlock करें</span></div>` : ""}
-                <div class="pt-2 border-t border-slate-100 flex justify-between items-center gap-2">
+                <div class="pt-2 border-t border-slate-100 flex justify-between items-center">
                   <button onclick="shareJobOnWhatsApp('${j.workType}', '${j.district}', '${j.location}', '${sixId}', '${j.clientName}')" class="text-[11px] bg-emerald-50 text-emerald-700 font-bold px-2 py-1.5 rounded-lg flex items-center space-x-1 border border-emerald-200">
                     <i class="fa-brands fa-whatsapp text-emerald-600"></i>
                     <span>WhatsApp शेयर</span>
                   </button>
-                  ${j.isPaidLead ? `<button onclick="MB_paidLeadUnlock('${doc.id}', '${sixId}', '${j.phone}', '${j.workType}')" class="bg-amber-500 text-slate-900 px-3 py-1.5 rounded-lg text-xs font-black flex items-center space-x-1 shadow-xs"><i class="fa-solid fa-lock-open text-[10px]"></i><span>🔓 Lead Unlock करें</span></button>` : ""}
-                  <button onclick="MB_paidLeadQuoteGuard('${doc.id}', '${sixId}', '${j.phone}', '${j.workType}', ${j.isPaidLead === true ? 'true' : 'false'})" class="bg-slate-900 text-amber-400 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center space-x-1 shadow-xs">
+                  <button onclick="openProposalModal('${doc.id}', '${sixId}', '${j.phone}', '${j.workType}')" class="bg-slate-900 text-amber-400 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center space-x-1 shadow-xs">
                     <i class="fa-solid fa-comment-dots text-[10px]"></i>
                     <span>रेट भेजें</span>
                   </button>
@@ -4176,22 +4087,6 @@
           feed.innerHTML = "<p class='text-xs text-red-500'>काम लोड करने में समस्या आई।</p>";
         });
     }
-
-    function updateNearbyJobsUI(){
-      const row=document.getElementById("nearby-radius-row"), btn=document.getElementById("nearby-jobs-btn"), status=document.getElementById("nearby-jobs-status");
-      if(row) row.classList.toggle("hidden",!nearbyJobsEnabled);
-      if(btn) btn.innerText=nearbyJobsEnabled?"📍 Nearby ON":"📍 मेरे पास के काम";
-      if(status) status.innerText=nearbyJobsEnabled&&currentWorkerCoords?`${nearbyRadiusKm} KM के अंदर के काम पहले दिख रहे हैं।`:"अपने पास के काम देखने के लिए Location अनुमति दें।";
-    }
-    function toggleNearbyJobs(){
-      if(nearbyJobsEnabled) return disableNearbyJobs();
-      if(currentWorkerCoords){nearbyJobsEnabled=true;updateNearbyJobsUI();loadFullJobs();return;}
-      if(!navigator.geolocation) return alert("इस फोन में Location सुविधा उपलब्ध नहीं है।");
-      const status=document.getElementById("nearby-jobs-status"); if(status) status.innerText="📍 आपकी Location ली जा रही है...";
-      navigator.geolocation.getCurrentPosition(function(pos){currentWorkerCoords=pos.coords;nearbyJobsEnabled=true;updateNearbyJobsUI();loadFullJobs();},function(){if(status)status.innerText="❌ Location अनुमति नहीं मिली।";alert("Nearby Jobs के लिए Location permission जरूरी है।");},{enableHighAccuracy:true,timeout:10000,maximumAge:300000});
-    }
-    function setNearbyRadius(value){nearbyRadiusKm=parseInt(value,10)||10;nearbyJobsEnabled=true;updateNearbyJobsUI();loadFullJobs();}
-    function disableNearbyJobs(){nearbyJobsEnabled=false;updateNearbyJobsUI();loadFullJobs();}
 
     function filterByDistrict() {
       const dist = document.getElementById("home-district-filter").value;
@@ -4235,10 +4130,6 @@
         workerName: document.getElementById("prop-worker-name").value.trim(),
         workerPhone: "+91" + phone,
         message: document.getElementById("prop-message").value.trim(),
-        quoteAmount: Number(document.getElementById("prop-quote-amount").value || 0),
-        quoteTime: document.getElementById("prop-quote-time").value.trim(),
-        materialResponsibility: document.getElementById("prop-material-responsibility").value,
-        status: "Pending",
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       };
 
@@ -4252,12 +4143,9 @@
         return db.collection("job_proposals").add(pData);
       };
       saveProposal().then(() => {
-        alert("✅ Quote सफलतापूर्वक भेज दिया गया है! अब ग्राहक आपके रेट, समय और सामान की जिम्मेदारी की तुलना कर सकता है।");
+        alert("संदेश व रेट सफलतापूर्वक भेज दिया गया है!");
         btn.innerText = "रेट व संदेश भेजें";
         document.getElementById("prop-message").value = "";
-        document.getElementById("prop-quote-amount").value = "";
-        document.getElementById("prop-quote-time").value = "";
-        document.getElementById("prop-material-responsibility").value = "मालिक का";
         currentAudioMemoBlob = null;
         const audioTxt = document.getElementById("txt-audio-memo"); if (audioTxt) audioTxt.innerText = "ऑडियो रिकॉर्ड करें";
         closeProposalModal();
@@ -4313,13 +4201,6 @@
       if (pushHistory) history.pushState({ page: target }, "", "#" + target);
       if (target === 'jobs') loadFullJobs();
       if (target === 'workers') loadFullWorkers();
-      // Digital Agreement केवल Mistri के Profile (Register) पेज में दिखे।
-      try {
-        if (window.MB_setDigitalAgreementVisibility) {
-          window.MB_setDigitalAgreementVisibility(target === 'register');
-        }
-      } catch(e) {}
-
       if (target === 'register') {
         const lockedRole = localStorage.getItem("mb_device_locked_role");
         const savedWorker = localStorage.getItem("mb_worker_phone");
@@ -4501,10 +4382,10 @@
       });
     }
 
-    function loadClientPosts(phoneOverride) {
+    function loadClientPosts() {
       const topInput = document.getElementById("mb-customer-login-phone");
       const legacyInput = document.getElementById("dash-client-phone");
-      const p = String(phoneOverride || topInput?.value || legacyInput?.value || "").replace(/\D/g, "").slice(-10);
+      const p = (topInput?.value || legacyInput?.value || "").trim();
       if (p.length !== 10) return;
       if(legacyInput) legacyInput.value=p;
 
@@ -4600,36 +4481,25 @@
                   return;
                 }
                 bidsBox.innerHTML = "";
-                const dealAlreadyFinal = !!(j.selectedProposalId || j.dealStatus === "Selected" || j.dealStatus === "Completed" || j.isClosed);
                 pSnap.forEach(pDoc => {
                   const prop = pDoc.data();
-                  // Deal बनने/पूरा होने के बाद पुराने Quote cards में दोबारा Deal/Rating विकल्प नहीं दिखाएँ।
-                  if (dealAlreadyFinal && j.selectedProposalId && pDoc.id !== j.selectedProposalId) return;
                   bidsBox.innerHTML += `
                     <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs">
                       <div class="flex justify-between items-center mb-1">
                         <span class="font-black text-slate-900"><i class="fa-solid fa-user-gear text-amber-600 mr-1"></i>${prop.workerName}</span>
                         <span class="text-[9px] bg-slate-200 text-slate-600 px-1.5 py-0.5 rounded font-bold">🔒 नंबर सुरक्षित</span>
                       </div>
-                      <div class="grid grid-cols-3 gap-1.5 mb-2">
-                        <div class="bg-amber-50 border border-amber-200 rounded-lg p-2 text-center"><span class="block text-[8px] text-slate-500">QUOTE</span><b class="text-emerald-700">₹${Number(prop.quoteAmount||0).toLocaleString('en-IN')}</b></div>
-                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-2 text-center"><span class="block text-[8px] text-slate-500">समय</span><b class="text-blue-800">${prop.quoteTime||'—'}</b></div>
-                        <div class="bg-violet-50 border border-violet-200 rounded-lg p-2 text-center"><span class="block text-[8px] text-slate-500">सामान</span><b class="text-violet-800">${prop.materialResponsibility||'—'}</b></div>
-                      </div>
-                      <p class="text-[11px] text-slate-700 bg-white p-2 rounded-lg border border-slate-100 font-medium">${prop.message||'कोई अतिरिक्त संदेश नहीं'}</p>
+                      <p class="text-[11px] text-slate-700 bg-white p-2 rounded-lg border border-slate-100 font-medium">${prop.message}</p>
                       
                       <div class="mt-2 flex gap-1.5">
-                        ${dealAlreadyFinal ? `
-                          <div class="w-full bg-emerald-100 text-emerald-800 px-3 py-2 rounded-lg text-[10px] font-black text-center">
-                            ${j.dealStatus === "Completed" || j.isClosed ? "✅ Deal/काम पूरा हो चुका है" : "🤝 Deal पक्की हो चुकी है"}
-                          </div>
-                        ` : `
-                          <button onclick="confirmDealInApp('${sixId}', '${prop.workerName}', '${prop.workerPhone}', '${j.clientName}', '${j.phone}', '${j.workType}', '${j.district} (${j.location})', '${(prop.message||'').replace(/'/g, "\'")}', '${pDoc.id}', ${Number(prop.quoteAmount||0)}, '${(prop.quoteTime||'').replace(/'/g, "\'")}', '${(prop.materialResponsibility||'').replace(/'/g, "\'")}');" 
-                            class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded-lg text-[10px] flex items-center justify-center space-x-1 shadow-xs transition">
-                            <i class="fa-solid fa-handshake"></i>
-                            <span>डील पक्की करें</span>
-                          </button>
-                        `}
+                        <button onclick="confirmDealInApp('${sixId}', '${prop.workerName}', '${prop.workerPhone}', '${j.clientName}', '${j.phone}', '${j.workType}', '${j.district} (${j.location})', '${prop.message.replace(/'/g, "\\'")}');" 
+                          class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded-lg text-[10px] flex items-center justify-center space-x-1 shadow-xs transition">
+                          <i class="fa-solid fa-handshake"></i>
+                          <span>डील पक्की करें</span>
+                        </button>
+                        <button onclick="openReviewModal('${prop.workerPhone}', '${prop.workerName}', '${sixId}')" class="bg-amber-100 text-amber-900 px-2.5 py-2 rounded-lg text-[10px] font-bold">
+                          ⭐ रेटिंग दें
+                        </button>
                       </div>
                     </div>
                   `;
@@ -4649,7 +4519,7 @@
         });
     }
 
-    function confirmDealInApp(sixId, workerName, workerPhone, clientName, clientPhone, workType, location, rateMsg, proposalId, quoteAmount, quoteTime, materialResponsibility) {
+    function confirmDealInApp(sixId, workerName, workerPhone, clientName, clientPhone, workType, location, rateMsg) {
       if (!confirm(`क्या आप ${sixId} के लिए ${workerName} की डील फाइनल करना चाहते हैं?`)) return;
 
       const dealData = {
@@ -4661,10 +4531,6 @@
         workType: workType,
         location: location,
         rateMessage: rateMsg,
-        quoteAmount: Number(quoteAmount || 0),
-        quoteTime: quoteTime || "",
-        materialResponsibility: materialResponsibility || "",
-        selectedProposalId: proposalId || "",
         status: "Pending",
         isArchived: false,
         isLockedBy: "",
@@ -4673,19 +4539,8 @@
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       };
 
-      db.collection("confirmed_deals").add(dealData).then((dealRef) => {
-        const updates = {status: "Selected"};
-        const p1 = proposalId ? db.collection("job_proposals").doc(proposalId).update(updates) : Promise.resolve();
-        const jobSnap = db.collection("job_posts").where("jobSixId", "==", sixId).limit(1).get();
-        return Promise.all([p1, jobSnap]).then(([_, snap]) => {
-          if (!snap.empty) return snap.docs[0].ref.update({selectedProposalId: proposalId || "", selectedWorkerName: workerName, selectedQuoteAmount: Number(quoteAmount || 0), selectedQuoteTime: quoteTime || "", selectedMaterialResponsibility: materialResponsibility || "", dealStatus: "Selected"});
-        }).then(async () => {
-          try { await MB_createAgreement(dealRef.id); } catch(e) { console.warn("Agreement auto-create failed", e); }
-          alert(`✅ Quote select करके Deal बन गई!
-रेट: ₹${Number(quoteAmount || 0).toLocaleString('en-IN')} • समय: ${quoteTime || '—'}
-📄 Digital Agreement भी तैयार है। दोनों पक्ष उसे Accept कर सकते हैं।`);
-          try { MB_loadDigitalAgreements(); } catch(e) {}
-        });
+      db.collection("confirmed_deals").add(dealData).then(() => {
+        alert(`✅ डील दर्ज हो गई है! एडमिन द्वारा जाँचे जाने के बाद इनबॉक्स में नंबर आ जाएगा।`);
       }).catch(err => {
         alert("त्रुटि: " + err.message);
       });
@@ -4698,11 +4553,6 @@
       db.collection("inbox_messages")
         .where("recipientPhone", "==", phone)
         .onSnapshot(snap => {
-          const badge=document.getElementById("mb-customer-inbox-badge");
-          const countEl=document.getElementById("mb-client-inbox-count");
-          const count=snap.size||0;
-          if(badge){badge.textContent=count+" New Message";badge.classList.toggle("hidden",count===0);}
-          if(countEl){countEl.textContent=count+" New Message";countEl.classList.toggle("hidden",count===0);}
           if (!snap.empty) {
             inboxSec.classList.remove("hidden");
             inboxList.innerHTML = "";
@@ -4895,6 +4745,7 @@
                     <span class="text-[9px] font-bold text-slate-400 block">${proId}</span>
                     <span class="text-[9px] font-bold ${isBusy ? 'text-rose-500' : 'text-emerald-600'}">${isBusy ? 'काम में व्यस्त 🔴' : 'काम के लिए उपलब्ध 🟢'}</span>
                     <p class="text-[9px] text-slate-400">${w.state || 'बिहार'} • ${w.district} • ${w.experience || 0} साल अनुभव</p>
+                    <div id="mb-public-contact-${doc.id}" class="mt-0.5 text-[9px] font-bold text-slate-500">📵 नंबर छुपा है • Contact Pro लें</div>
                   </div>
                 </div>
                 <button onclick="navTo('post')" class="bg-amber-500 text-slate-900 px-3 py-1.5 rounded-lg text-[11px] font-bold shadow-xs">
@@ -5270,7 +5121,7 @@
 
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
-          function(pos) { currentWorkerCoords = pos.coords; if (nearbyJobsEnabled) { updateNearbyJobsUI(); loadFullJobs(); } },
+          function(pos) { currentWorkerCoords = pos.coords; },
           function() {},
           { enableHighAccuracy: true }
         );
@@ -5429,77 +5280,15 @@
     if(!p)return;
     document.getElementById("mb-customer-profile-card")?.classList.remove("hidden");
     document.getElementById("mb-customer-signup-form")?.classList.add("hidden");
-    document.getElementById("mb-customer-login-row")?.classList.add("hidden");
-    var title=document.getElementById("mb-customer-profile-title");
-    if(title)title.innerText="ग्राहक प्रोफाइल 👤";
-    var sub=document.getElementById("mb-customer-profile-subtitle");
-    if(sub)sub.innerText="आप Customer के रूप में लॉगिन हैं";
     var s=document.getElementById("mb-customer-profile-status");
-    if(s){s.innerText="✓ लॉगिन है";s.className="text-[9px] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded-full";}
-    var lo=document.getElementById("mb-customer-logout-btn");
-    if(lo)lo.classList.remove("hidden");
+    if(s){s.innerText="✓ Customer Login";s.className="text-[9px] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded-full";}
     var n=document.getElementById("mb-customer-profile-name");if(n)n.innerText=p.name||"";
     var l=document.getElementById("mb-customer-profile-location");if(l)l.innerText="📍 "+(p.village||"")+" • "+(p.city||"")+" • "+(p.district||"")+" • "+(p.state||"");
     var ph=document.getElementById("mb-customer-profile-phone");if(ph)ph.innerText="मोबाइल: "+(p.phone||"");
     var im=document.getElementById("mb-customer-profile-photo");if(im&&p.selfie)im.src=p.selfie;
     var badge=document.getElementById("mb-customer-aadhaar-badge");
     if(badge) badge.classList.toggle("hidden", p.aadhaarVerified !== true);
-    try{ MB_prepareCustomerEditForm(p); }catch(e){ console.warn("Customer edit form:",e); }
-    // Login के बाद Customer Dashboard और उसकी पोस्ट तुरंत दिखाएँ।
-    try{ if(typeof MB_renderCustomerDashboard === "function") MB_renderCustomerDashboard(p); }catch(e){ console.warn("Customer dashboard render:",e); }
-    try{ loadClientPosts(p.phone); }catch(e){ console.warn("Customer posts load:",e); }
   }
-
-  window.MB_prepareCustomerEditForm=function(p){
-    if(!p)return;
-    const val=(id,v)=>{const e=document.getElementById(id);if(e&&v!=null)e.value=v;};
-    val("mb-customer-name",p.name||"");
-    val("mb-customer-phone",digits(p.phone||""));
-    val("mb-customer-village",p.village||"");
-    val("mb-customer-city",p.city||"");
-    val("mb-customer-state",p.state||"बिहार");
-    try{handleStateChange("mb-customer-state","mb-customer-district","mb-customer-block");}catch(e){}
-    setTimeout(function(){val("mb-customer-district",p.district||"");},30);
-    val("mb-customer-address",p.address||"");
-    val("mb-customer-lat",p.gps&&p.gps.lat!=null?p.gps.lat:"");
-    val("mb-customer-lng",p.gps&&p.gps.lng!=null?p.gps.lng:"");
-    const selfie=document.getElementById("mb-customer-selfie");
-    if(selfie) selfie.required=!p.selfie;
-    const pin=document.getElementById("mb-customer-pin"), pin2=document.getElementById("mb-customer-pin-confirm");
-    if(pin){pin.required=!p.pinHash;pin.placeholder=p.pinHash?"PIN बदलना हो तो नया PIN डालें (वैकल्पिक)":"अपना 4 अंकों का PIN बनाएँ";}
-    if(pin2){pin2.required=!p.pinHash;pin2.placeholder=p.pinHash?"नया PIN फिर डालें (वैकल्पिक)":"PIN दोबारा डालें";}
-    ["mb-customer-name","mb-customer-village","mb-customer-city","mb-customer-state","mb-customer-district","mb-customer-address"].forEach(function(id){var e=document.getElementById(id);if(e){e.dataset.mbExisting=(e.value||"")?"1":"0";e.disabled=!!e.value;}});
-    var ph=document.getElementById("mb-customer-phone");if(ph)ph.value=digits(p.phone||"");
-    var note=document.getElementById("mb-customer-profile-subtitle");if(note&&p){note.innerText="भरी हुई जानकारी दोबारा नहीं भरनी है — केवल खाली जानकारी भरें।";}
-  };
-
-  window.MB_customerEditProfile=function(){
-    var p=window.MB_getCustomerProfile?window.MB_getCustomerProfile():null;
-    if(!p){try{p=JSON.parse(localStorage.getItem("mb_customer_profile")||"null");}catch(e){}}
-    var form=document.getElementById("mb-customer-signup-form");
-    if(form){form.classList.remove("hidden");try{MB_prepareCustomerEditForm(p||{});}catch(e){};form.scrollIntoView({behavior:"smooth",block:"center"});}
-  };
-
-  window.MB_customerLogout=function(){
-    if(!confirm("क्या आप Customer Profile से लॉगआउट करना चाहते हैं?"))return;
-    localStorage.removeItem("mb_customer_profile");
-    localStorage.removeItem("mb_client_phone");
-    localStorage.removeItem("mb_client_name");
-    localStorage.removeItem("mb_client_avatar");
-    if(localStorage.getItem("current_user_role")==="client") localStorage.removeItem("current_user_role");
-    if(localStorage.getItem("mb_device_locked_role")==="client") localStorage.removeItem("mb_device_locked_role");
-    document.getElementById("mb-customer-profile-card")?.classList.add("hidden");
-    document.getElementById("mb-customer-signup-form")?.classList.remove("hidden");
-    document.getElementById("mb-customer-login-row")?.classList.remove("hidden");
-    document.getElementById("mb-customer-profile-title")&&(document.getElementById("mb-customer-profile-title").innerText="ग्राहक Sign Up / Login 👤");
-    document.getElementById("mb-customer-profile-subtitle")&&(document.getElementById("mb-customer-profile-subtitle").innerText="एक मोबाइल नंबर = एक ही Customer Profile");
-    var st=document.getElementById("mb-customer-profile-status");
-    if(st){st.innerText="लॉगिन नहीं";st.className="text-[9px] bg-slate-100 text-slate-600 font-bold px-2 py-0.5 rounded-full";}
-    document.getElementById("mb-customer-logout-btn")?.classList.add("hidden");
-    document.getElementById("customer-professional-dashboard")?.classList.add("hidden");
-    alert("✅ Customer लॉगआउट हो गया।");
-    try{navTo("home");}catch(e){}
-  };
 
   async function fileData(file){
     if(!file)return "";
@@ -5520,7 +5309,7 @@
       if(!p.pinHash || p.pinHash!==enteredHash)return alert("मोबाइल नंबर या PIN गलत है।");
       if(!complete(p))return alert("Customer Profile अधूरी है।");
       saveLocal(p);show(p);
-      try{ loadClientPosts(p.phone); }catch(e){}
+      try{ loadClientPosts(); }catch(e){}
       if(localStorage.getItem("mb_pending_post_draft")){
         alert("✅ Customer Login सफल। आपका पहले भरा हुआ Post Form वापस लाया जा रहा है।");
         navTo("post");
@@ -5561,16 +5350,9 @@
     if(e)e.preventDefault();
     var name=(document.getElementById("mb-customer-name")?.value||"").trim();
     var p10=norm(document.getElementById("mb-customer-login-phone")?.value||document.getElementById("mb-customer-phone")?.value||"");
-    var existing=null;
-    try{existing=JSON.parse(localStorage.getItem("mb_customer_profile")||"null");}catch(e){}
-    var pin1=(document.getElementById("mb-customer-pin")?.value||"").trim();
-    var pin2=(document.getElementById("mb-customer-pin-confirm")?.value||"").trim();
-    var pinHash=(existing&&existing.pinHash)?existing.pinHash:"";
-    if(pin1||pin2){
-      const pinCheck=MB_validPinFields("mb-customer-pin","mb-customer-pin-confirm");
-      if(!pinCheck.ok)return alert(pinCheck.msg);
-      pinHash=await MB_hashPin(pinCheck.pin);
-    }
+    const pinCheck=MB_validPinFields("mb-customer-pin","mb-customer-pin-confirm");
+    if(!pinCheck.ok)return alert(pinCheck.msg);
+    const pinHash=await MB_hashPin(pinCheck.pin);
     var hiddenPhone=document.getElementById("mb-customer-phone");
     if(hiddenPhone) hiddenPhone.value=p10;
     var village=(document.getElementById("mb-customer-village")?.value||"").trim();
@@ -5579,35 +5361,32 @@
     var district=document.getElementById("mb-customer-district")?.value||"";
     var address=(document.getElementById("mb-customer-address")?.value||"").trim();
     var selfieFile=document.getElementById("mb-customer-selfie")?.files?.[0];
-    var oldSelfie=existing&&existing.selfie?existing.selfie:"";
-    if(!name||p10.length!==10||(!selfieFile&&!oldSelfie)||!village||!state||!city||!district||!address)
-      return alert("Customer Profile में केवल जो जानकारी खाली है वही भरें।");
+    if(!name||p10.length!==10||!selfieFile||!village||!state||!city||!district||!address)
+      return alert("Customer Profile की सभी जरूरी जानकारी भरें। Aadhaar वैकल्पिक है।");
 
     var btn=document.getElementById("mb-customer-save-btn");if(btn)btn.innerText="Profile सुरक्षित हो रही है...";
      try{ await window.MB_tryCustomerGPS(); }catch(gpsErr){ console.warn("Customer GPS:",gpsErr); }
     var full="+91"+p10;
     try{
       var c=await db.collection("customer_profiles").doc(full).get();
-      if(c.exists){ existing=c.data()||existing||{}; }
+      if(c.exists){if(btn)btn.innerText="Customer Profile बनाएं / अपडेट करें";return alert("इस मोबाइल नंबर से Customer Profile पहले से बनी है। कृपया Login करें।");}
       var w=await db.collection("workers").where("private_phone","==",full).limit(1).get();
       if(!w.empty){if(btn)btn.innerText="Customer Profile बनाएं / अपडेट करें";return alert("यह नंबर पहले से Mistri Profile में है। दूसरे प्रोफ़ाइल में उपयोग नहीं हो सकता।");}
       var con=await db.collection("contractor_applications").where("phone","==",p10).limit(1).get();
       if(!con.empty){if(btn)btn.innerText="Customer Profile बनाएं / अपडेट करें";return alert("यह नंबर पहले से Contractor Profile में है। दूसरे प्रोफ़ाइल में उपयोग नहीं हो सकता।");}
 
       var selfie=await fileData(selfieFile);
-      if(!selfie) selfie=oldSelfie || (existing&&existing.selfie) || "";
       var front=await fileData(document.getElementById("mb-customer-aadhaar-front")?.files?.[0]);
       var back=await fileData(document.getElementById("mb-customer-aadhaar-back")?.files?.[0]);
       if(!selfie){if(btn)btn.innerText="Customer Profile बनाएं / अपडेट करें";return alert("सेल्फी सुरक्षित नहीं हो सकी। फिर कोशिश करें।");}
 
-      var p=Object.assign({}, existing||{}, {phone:full,pinHash:pinHash||((existing||{}).pinHash||""),name:name,selfie:selfie,village:village,state:state,city:city,district:district,address:address,
-        gps:{lat:parseFloat(document.getElementById("mb-customer-lat")?.value)||((existing&&existing.gps&&existing.gps.lat)||null),lng:parseFloat(document.getElementById("mb-customer-lng")?.value)||((existing&&existing.gps&&existing.gps.lng)||null)},
-        aadhaarFront:front||((existing||{}).aadhaarFront||""),aadhaarBack:back||((existing||{}).aadhaarBack||""),aadhaarProvided:!!(front||back||((existing||{}).aadhaarProvided)),aadhaarVerified:(existing&&existing.aadhaarVerified===true)||false,
-        updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
-      if(!p.createdAt)p.createdAt=firebase.firestore.FieldValue.serverTimestamp();
+      var p={phone:full,pinHash:pinHash,name:name,selfie:selfie,village:village,state:state,city:city,district:district,address:address,
+        gps:{lat:parseFloat(document.getElementById("mb-customer-lat")?.value)||null,lng:parseFloat(document.getElementById("mb-customer-lng")?.value)||null},
+        aadhaarFront:front||"",aadhaarBack:back||"",aadhaarProvided:!!(front||back),aadhaarVerified:false,
+        createdAt:firebase.firestore.FieldValue.serverTimestamp(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
       await db.collection("customer_profiles").doc(full).set(p);
       p.createdAt=new Date().toISOString();p.updatedAt=new Date().toISOString();saveLocal(p);show(p);
-      try{ loadClientPosts(p.phone); }catch(e){}
+      try{ loadClientPosts(); }catch(e){}
       if(localStorage.getItem("mb_pending_post_draft")){
         alert("✅ Customer Profile बन गई। आपका पहले भरा हुआ Post Form वापस लाया जा रहा है।");
         navTo("post");
@@ -5818,8 +5597,8 @@
 </script>
 <script>
 function MB_customerDashScroll(id){const el=document.getElementById(id);if(el){el.classList.remove('hidden');el.scrollIntoView({behavior:'smooth',block:'start'});}}
-function MB_customerEditProfile(){var p=null;try{p=JSON.parse(localStorage.getItem('mb_customer_profile')||'null');}catch(e){};var form=document.getElementById('mb-customer-signup-form');if(form){form.classList.remove('hidden');try{MB_prepareCustomerEditForm(p||{});}catch(e){};form.scrollIntoView({behavior:'smooth',block:'center'});}}
-function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementById('customer-professional-dashboard');if(!d)return;d.classList.remove('hidden');const set=(id,v)=>{const e=document.getElementById(id);if(e)e.innerText=v||'—';};set('mb-cust-dash-name',p.name);set('mb-cust-dash-name2',p.name);set('mb-cust-dash-id',p.customerId||p.id||'MB-CUST-'+String(p.phone||'').slice(-4));set('mb-cust-dash-location','📍 '+[p.village,p.city,p.district,p.state].filter(Boolean).join(' • '));set('mb-cust-dash-phone',p.phone);set('mb-cust-dash-address',p.address);const im=document.getElementById('mb-cust-dash-photo');if(im&&p.selfie)im.src=p.selfie;document.getElementById('mb-cust-dash-verified')?.classList.toggle('hidden',p.aadhaarVerified!==true);}
+function MB_customerEditProfile(){document.getElementById('mb-customer-profile-box')?.scrollIntoView({behavior:'smooth'});document.getElementById('mb-customer-signup-form')?.classList.remove('hidden');}
+function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementById('customer-professional-dashboard');if(!d)return;d.classList.remove('hidden');const set=(id,v)=>{const e=document.getElementById(id);if(e)e.innerText=v||'—';};set('mb-cust-dash-name',p.name);set('mb-cust-dash-name2',p.name);set('mb-cust-dash-id','Customer ID: '+(p.customerId||p.id||'MB-CUST-'+String(p.phone||'').slice(-4)));set('mb-cust-dash-location','📍 '+[p.village,p.city,p.district,p.state].filter(Boolean).join(' • '));set('mb-cust-dash-phone',p.phone);set('mb-cust-dash-address',p.address);const im=document.getElementById('mb-cust-dash-photo');if(im&&p.selfie)im.src=p.selfie;document.getElementById('mb-cust-dash-verified')?.classList.toggle('hidden',p.aadhaarVerified!==true);}
 </script>
 <script>
 (function(){
@@ -6110,8 +5889,8 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
         db.collection("material_providers").where("adminApprovalStatus","==","approved").get()
       ]);
       let html="";
-      vSnap.forEach(doc=>{const d=doc.data()||{};html+=`<div class="bg-blue-50 border border-blue-200 rounded-xl p-3"><div class="flex gap-2">${d.photo?`<img src="${d.photo}" class="w-14 h-14 rounded-lg object-cover">`:''}<div><b class="text-xs">🚜 ${mbEsc(d.vehicleName)}</b><p class="text-[9px] text-slate-600">${mbEsc(d.area)} • ${mbEsc(d.rate)}</p><p class="text-[9px] text-slate-500">Provider: ${mbEsc(d.providerName)}</p></div></div></div>`;});
-      mSnap.forEach(doc=>{const d=doc.data()||{};html+=`<div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3"><div class="flex gap-2">${d.photo?`<img src="${d.photo}" class="w-14 h-14 rounded-lg object-cover">`:''}<div><b class="text-xs">🧱 ${mbEsc(d.name)}</b><p class="text-[9px] text-slate-600">${mbEsc(d.area)} • ${mbEsc(d.items)}</p><p class="text-[9px] text-slate-500">${mbEsc(d.delivery||"Delivery जानकारी उपलब्ध")}</p></div></div></div>`;});
+      vSnap.forEach(doc=>{const d=doc.data()||{};html+=`<div data-mb-contact-phone="${mbEsc(d.providerPhone||'')}" class="bg-blue-50 border border-blue-200 rounded-xl p-3"><div class="flex gap-2">${d.photo?`<img src="${d.photo}" class="w-14 h-14 rounded-lg object-cover">`:''}<div><b class="text-xs">🚜 ${mbEsc(d.vehicleName)}</b><p class="text-[9px] text-slate-600">${mbEsc(d.area)} • ${mbEsc(d.rate)}</p><p class="text-[9px] text-slate-500">Provider: ${mbEsc(d.providerName)}</p><div class="mb-public-provider-contact text-[9px] text-slate-400">📵 नंबर छुपा है</div></div></div></div>`;});
+      mSnap.forEach(doc=>{const d=doc.data()||{};html+=`<div data-mb-contact-phone="${mbEsc(d.phone||'')}" class="bg-emerald-50 border border-emerald-200 rounded-xl p-3"><div class="flex gap-2">${d.photo?`<img src="${d.photo}" class="w-14 h-14 rounded-lg object-cover">`:''}<div><b class="text-xs">🧱 ${mbEsc(d.name)}</b><p class="text-[9px] text-slate-600">${mbEsc(d.area)} • ${mbEsc(d.items)}</p><p class="text-[9px] text-slate-500">${mbEsc(d.delivery||"Delivery जानकारी उपलब्ध")}</p><div class="mb-public-provider-contact text-[9px] text-slate-400">📵 नंबर छुपा है</div></div></div></div>`;});
       box.innerHTML=html||"<p class='text-xs text-slate-400'>अभी कोई Admin-approved Rental Vehicle या Material Seller Live नहीं है।</p>";
     }catch(e){box.innerHTML="<p class='text-xs text-rose-600'>Marketplace लोड नहीं हो पाया।</p>";}
   };
@@ -6270,276 +6049,28 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
 })();
 </script>
 
-
-<!-- MB TWO-WAY RATING UI: Customer ↔ Mistri -->
-<div id="mb-two-way-rating-modal" class="fixed inset-0 bg-slate-900/70 z-[70] hidden items-center justify-center p-4">
-  <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl">
-    <div class="flex items-center justify-between mb-2">
-      <h4 id="mb-two-way-rating-title" class="text-sm font-black text-slate-900">⭐ Rating</h4>
-      <button type="button" onclick="MB_closeTwoWayRating()" class="text-slate-400 text-xl">×</button>
-    </div>
-    <p id="mb-two-way-rating-subtitle" class="text-[10px] text-slate-500 mb-3">आपका अनुभव कैसा रहा?</p>
-    <input type="hidden" id="mb-two-way-rating-deal">
-    <input type="hidden" id="mb-two-way-rating-role">
-    <input type="hidden" id="mb-two-way-rating-stars" value="5">
-    <div class="flex justify-center gap-2 text-3xl mb-3">
-      <button type="button" class="mb-two-star text-amber-400" onclick="MB_setTwoWayRating(1)">★</button>
-      <button type="button" class="mb-two-star text-amber-400" onclick="MB_setTwoWayRating(2)">★</button>
-      <button type="button" class="mb-two-star text-amber-400" onclick="MB_setTwoWayRating(3)">★</button>
-      <button type="button" class="mb-two-star text-amber-400" onclick="MB_setTwoWayRating(4)">★</button>
-      <button type="button" class="mb-two-star text-amber-400" onclick="MB_setTwoWayRating(5)">★</button>
-    </div>
-    <textarea id="mb-two-way-rating-comment" rows="3" class="w-full border border-slate-300 rounded-xl p-2 text-xs" placeholder="अपनी राय लिखें…"></textarea>
-    <button type="button" onclick="MB_submitTwoWayRating()" class="w-full mt-3 bg-amber-500 text-slate-900 font-black py-2.5 rounded-xl text-xs">⭐ Rating भेजें</button>
-  </div>
-</div>
-<script>
+<script id="mb-contact-visibility-v1">
 (function(){
-  "use strict";
-  function digits(v){return String(v||"").replace(/\D/g,"").slice(-10);}
-  function role(){return localStorage.getItem("current_user_role")||localStorage.getItem("mb_device_locked_role")||"";}
-  function phone(){return digits(role()==="worker"?localStorage.getItem("mb_worker_phone"):localStorage.getItem("mb_client_phone"));}
-  function esc(v){return String(v==null?"":v).replace(/[&<>"']/g,function(c){return ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]);});}
-  function modal(){return document.getElementById("mb-two-way-rating-modal");}
-  window.MB_openTwoWayRating=function(dealId,raterRole){
-    var m=modal(); if(!m)return;
-    document.getElementById("mb-two-way-rating-deal").value=dealId||"";
-    document.getElementById("mb-two-way-rating-role").value=raterRole||role();
-    document.getElementById("mb-two-way-rating-title").textContent=raterRole==="worker"?"⭐ ग्राहक को रेट करें":"⭐ मिस्त्री को रेट करें";
-    document.getElementById("mb-two-way-rating-subtitle").textContent=raterRole==="worker"?"ग्राहक के साथ आपका अनुभव कैसा रहा?":"मिस्त्री के काम का आपका अनुभव कैसा रहा?";
-    document.getElementById("mb-two-way-rating-comment").value="";
-    MB_setTwoWayRating(5);
-    m.classList.remove("hidden"); m.classList.add("flex");
-  };
-  window.MB_closeTwoWayRating=function(){var m=modal();if(m){m.classList.add("hidden");m.classList.remove("flex");}};
-  window.MB_setTwoWayRating=function(n){
-    document.getElementById("mb-two-way-rating-stars").value=String(n);
-    document.querySelectorAll(".mb-two-star").forEach(function(b,i){b.className="mb-two-star "+(i<n?"text-amber-400":"text-slate-300");});
-  };
-  window.MB_submitTwoWayRating=async function(){
-    var dealId=document.getElementById("mb-two-way-rating-deal").value;
-    var raterRole=document.getElementById("mb-two-way-rating-role").value||role();
-    var stars=parseInt(document.getElementById("mb-two-way-rating-stars").value,10)||5;
-    var comment=(document.getElementById("mb-two-way-rating-comment").value||"").trim();
-    if(!dealId)return alert("Deal नहीं मिला।");
-    try{
-      var existing=await db.collection("deal_ratings").where("dealId","==",dealId).where("raterPhone","==",currentPhone()).limit(1).get();
-      if(!existing.empty){MB_closeTwoWayRating();return alert("ℹ️ आपने इस Deal को पहले ही Rating दे दी है।");}
-      var snap=await db.collection("confirmed_deals").doc(dealId).get();
-      if(!snap.exists)return alert("Deal नहीं मिला।");
-      var d=snap.data()||{};
-      var ratedRole=raterRole==="worker"?"customer":"worker";
-      var ratedPhone=raterRole==="worker"?digits(d.clientPhone||d.customerPhone):digits(d.workerPhone);
-      var ratedName=raterRole==="worker"?(d.clientName||d.customerName||"ग्राहक"):(d.workerName||"मिस्त्री");
-      await db.collection("deal_ratings").add({dealId:dealId,jobId:d.jobId||d.jobSixId||"",raterRole:raterRole,raterPhone:phone(),ratedRole:ratedRole,ratedPhone:ratedPhone,ratedName:ratedName,stars:stars,comment:comment,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
-      if(ratedRole==="worker"){
-        await db.collection("worker_reviews").add({workerPhone:"+91"+ratedPhone,dealId:dealId,stars:stars,comment:comment,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
-      }else{
-        await db.collection("customer_reviews").add({customerPhone:"+91"+ratedPhone,dealId:dealId,stars:stars,comment:comment,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
-      }
-      MB_closeTwoWayRating();
-      alert("✅ आपकी Rating और Review दर्ज हो गई। धन्यवाद!");
-      try{MB_loadCustomerRatings();}catch(e){}
-      try{MB_loadDigitalAgreements();}catch(e){}
-    }catch(e){alert("Rating सेव नहीं हुई: "+e.message);}
-  };
-  window.MB_loadCustomerRatings=async function(){
-    var box=document.getElementById("mb-customer-rating-list"); if(!box)return;
-    if(role()!=="client"){box.innerHTML="";return;}
-    var ph=phone(); if(ph.length!==10){box.innerHTML="Login के बाद completed Deals यहाँ दिखेंगे।";return;}
-    try{
-      var snap=await db.collection("confirmed_deals").limit(100).get();
-      var deals=snap.docs.filter(function(x){var d=x.data()||{};return digits(d.clientPhone||d.customerPhone)===ph;});
-      var html=[];
-      for(var i=0;i<deals.length;i++){
-        var ref=deals[i].ref,d=deals[i].data()||{};
-        var ar=await db.collection("digital_agreements").doc(ref.id).get();
-        var a=ar.exists?(ar.data()||{}):{};
-        if((a.workStatus||"")!=="work_completed")continue;
-        var rr=await db.collection("deal_ratings").where("dealId","==",ref.id).where("raterPhone","==",ph).limit(1).get();
-        if(rr.empty){ rr=await db.collection("deal_ratings").where("dealId","==",ref.id).where("raterPhone","==","+91"+ph).limit(1).get(); }
-        if(rr.empty){
-          // पुराने Rating records में dealId न हो तो worker_reviews/customer_reviews में भी exact dealId देखें।
-          var legacy=await db.collection("worker_reviews").where("dealId","==",ref.id).where("workerPhone","==","+91"+digits(d.workerPhone||"")).limit(1).get();
-          if(legacy.empty) legacy=await db.collection("customer_reviews").where("dealId","==",ref.id).where("customerPhone","==","+91"+ph).limit(1).get();
-          if(!legacy.empty) rr=legacy;
-        }
-        if(!rr.empty){html.push('<div class="bg-white border border-emerald-200 rounded-xl p-2 text-[10px]"><b>✅ '+esc(d.jobSixId||a.jobId||ref.id)+'</b><span class="ml-2 text-emerald-700 font-bold">Rating दी जा चुकी है</span></div>');continue;}
-        html.push('<div class="bg-white border border-slate-200 rounded-xl p-2.5"><div class="flex justify-between gap-2"><div><b class="text-[10px]">'+esc(d.jobSixId||a.jobId||ref.id)+'</b><p class="text-[9px] text-slate-500">मिस्त्री: '+esc(d.workerName||a.workerName||"मिस्त्री")+' • ₹'+Number(a.amount||d.quoteAmount||0).toLocaleString("en-IN")+'</p></div><button onclick="MB_openTwoWayRating(\''+ref.id+'\',\'customer\')" class="bg-amber-500 text-slate-900 px-3 py-2 rounded-lg text-[10px] font-black">⭐ रेट करें</button></div></div>');
-      }
-      box.innerHTML=html.length?html.join(""):"<p class='text-[10px] text-slate-500'>अभी कोई पूरा हुआ Deal Rating के लिए उपलब्ध नहीं है।</p>";
-    }catch(e){box.innerHTML='<p class="text-[10px] text-rose-600">Rating सूची लोड नहीं हुई: '+esc(e.message)+'</p>';}
-  };
-  window.MB_loadCustomerReceivedRatings=async function(){
-    var box=document.getElementById("mb-customer-received-rating-list"); if(!box)return;
-    if(role()!=="client"){box.innerHTML="";return;}
-    var ph=phone(); if(ph.length!==10){box.innerHTML="Customer Login के बाद यहाँ मिस्त्री की Rating दिखेगी।";return;}
-    try{
-      var snap=await db.collection("customer_reviews").where("customerPhone","==","+91"+ph).limit(50).get();
-      if(snap.empty) snap=await db.collection("customer_reviews").where("customerPhone","==",ph).limit(50).get();
-      if(snap.empty){box.innerHTML="<p class='text-[10px] text-slate-500'>अभी किसी मिस्त्री ने आपको Rating नहीं दी है।</p>";return;}
-      var html=[];
-      snap.docs.forEach(function(ref){
-        var r=ref.data()||{}, stars=Math.max(1,Math.min(5,parseInt(r.stars,10)||0));
-        html.push('<div class="bg-white border border-blue-200 rounded-xl p-2.5">'+
-          '<div class="flex justify-between gap-2"><b class="text-[10px]">⭐ '+stars+'/5</b><span class="text-[9px] text-slate-400">'+esc(r.dealId||"")+'</span></div>'+
-          '<p class="text-[10px] text-slate-700 mt-1">'+esc(r.comment||"मिस्त्री ने कोई टिप्पणी नहीं लिखी।")+'</p></div>');
-      });
-      box.innerHTML=html.join("");
-    }catch(e){box.innerHTML='<p class="text-[10px] text-rose-600">मिली Rating लोड नहीं हुई: '+esc(e.message)+'</p>';}
-  };
-  document.addEventListener("DOMContentLoaded",function(){setTimeout(function(){try{MB_loadCustomerRatings();}catch(e){} try{MB_loadCustomerReceivedRatings();}catch(e){}},1400);});
-  window.addEventListener("hashchange",function(){setTimeout(function(){try{MB_loadCustomerRatings();}catch(e){}},300);});
+"use strict";
+const PLAN_AMOUNT=99,PLAN_DAYS=30,UPI_ID="mistrybabu@upi";
+const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function role(){return localStorage.getItem("current_user_role")||localStorage.getItem("mb_device_locked_role")||"";}
+function phoneForRole(r=role()){if(r==="worker")return "+91"+String(localStorage.getItem("mb_worker_phone")||"").replace(/\D/g,"").slice(-10);if(r==="rental")return String(localStorage.getItem("mb_rental_phone")||"");if(r==="material")return String(localStorage.getItem("mb_material_phone")||"");return "";}
+async function contractorPhone(){const id=localStorage.getItem("mb_contractor_app_id");if(!id||typeof db==="undefined")return "";try{const s=await db.collection("contractor_applications").doc(id).get();return s.exists?String(s.data().phone||""):"";}catch(e){return "";}}
+async function getCurrentPhone(){return role()==="contractor"?contractorPhone():phoneForRole();}
+async function activeSub(phone){if(!phone||typeof db==="undefined")return null;const p=phone.startsWith("+91")?phone:"+91"+phone.replace(/\D/g,"").slice(-10);try{const q=await db.collection("contact_visibility_subscriptions").where("phone","==",p).where("status","==","active").limit(5).get();let best=null,now=Date.now();q.forEach(d=>{const x=d.data()||{},exp=x.expiresAt?.toDate?x.expiresAt.toDate().getTime():new Date(x.expiresAt||0).getTime();if(exp>now&&(!best||exp>best.exp))best={id:d.id,...x,exp};});return best;}catch(e){return null;}}
+async function pending(phone){if(!phone||typeof db==="undefined")return null;const p=phone.startsWith("+91")?phone:"+91"+phone.replace(/\D/g,"").slice(-10);try{const q=await db.collection("contact_visibility_payments").where("phone","==",p).where("status","==","Pending").limit(1).get();return q.empty?null:{id:q.docs[0].id,...q.docs[0].data()};}catch(e){return null;}}
+window.MB_isContactVisible=async phone=>!!(await activeSub(phone));
+window.MB_requestContactVisibility=async function(){const r=role();if(!r||r==="client")return alert("❌ Customer के लिए Contact Pro उपलब्ध नहीं है। Customer का नंबर हमेशा private रहेगा।");const phone=await getCurrentPhone();if(!/^\+91\d{10}$/.test(phone))return alert("पहले अपना Profile/Login पूरा करें।");const a=await activeSub(phone);if(a)return alert(`✅ आपका Contact Pro पहले से ACTIVE है।\nवैधता: ${new Date(a.exp).toLocaleDateString('hi-IN')}`);const p=await pending(phone);if(p)return alert("⏳ आपका Contact Pro payment request पहले से Pending है। Admin payment verify करेगा।");const utr=prompt(`📞 Contact Pro — ₹${PLAN_AMOUNT}/30 दिन\n\nUPI: ${UPI_ID}\nPayment करने के बाद 12-अंकों का UTR/Reference नंबर डालें:`);if(!utr)return;const u=utr.trim();if(!/^\d{12}$/.test(u))return alert("12 अंकों का वैध UTR/Reference नंबर डालें।");await db.collection("contact_visibility_payments").add({phone,role:r,amount:PLAN_AMOUNT,plan:"contact_pro_30",validityDays:PLAN_DAYS,upiId:UPI_ID,utr:u,status:"Pending",createdAt:firebase.firestore.FieldValue.serverTimestamp()});alert("✅ Contact Pro request Admin को भेज दी गई है। Payment verify होने के बाद 30 दिनों के लिए नंबर public होगा।");MB_installContactCard();};
+window.MB_adminLoadContactVisibility=async function(){const box=document.getElementById("admin-contact-visibility-list");if(!box||typeof db==="undefined")return;box.innerHTML="<p class='text-xs text-slate-400'>लोड हो रहा है...</p>";try{const snap=await db.collection("contact_visibility_payments").where("status","==","Pending").get();if(snap.empty){box.innerHTML="<p class='text-xs text-slate-400 text-center py-3'>कोई Pending Contact Pro request नहीं है।</p>";return;}box.innerHTML="";snap.forEach(doc=>{const d=doc.data()||{},id=doc.id,el=document.createElement("div");el.className="bg-white border rounded-xl p-3 space-y-2";el.innerHTML=`<div class="flex justify-between gap-2"><div><b>${esc(d.phone||'—')}</b><div class="text-[9px] text-slate-500">${esc(d.role||'provider')} • ₹${d.amount||PLAN_AMOUNT} • ${d.validityDays||PLAN_DAYS} दिन</div></div><span class="text-[9px] bg-amber-100 text-amber-800 px-2 py-1 rounded font-bold">PENDING</span></div><div class="text-[10px] bg-slate-50 rounded p-2">UPI: ${esc(d.upiId||UPI_ID)}<br>UTR: <b>${esc(d.utr||'—')}</b></div><div class="grid grid-cols-2 gap-2"><button onclick="MB_adminApproveContactVisibility('${id}')" class="bg-emerald-600 text-white py-2 rounded-lg text-[10px] font-black">✅ Payment सही → LIVE</button><button onclick="MB_adminRejectContactVisibility('${id}')" class="bg-rose-600 text-white py-2 rounded-lg text-[10px] font-black">❌ Reject</button></div>`;box.appendChild(el);});}catch(e){box.innerHTML=`<p class='text-xs text-rose-600'>लोड नहीं हो पाया: ${esc(e.message||e)}</p>`;}};
+window.MB_adminApproveContactVisibility=async function(id){const ref=db.collection("contact_visibility_payments").doc(id),snap=await ref.get();if(!snap.exists)return;const d=snap.data()||{},end=new Date(Date.now()+PLAN_DAYS*86400000),old=await db.collection("contact_visibility_subscriptions").where("phone","==",d.phone).where("status","==","active").get(),batch=db.batch();old.forEach(x=>batch.update(x.ref,{status:"expired",expiredBy:"renewal"}));const sub=db.collection("contact_visibility_subscriptions").doc();batch.set(sub,{phone:d.phone,role:d.role,plan:"contact_pro_30",amount:d.amount||PLAN_AMOUNT,validityDays:PLAN_DAYS,status:"active",startsAt:firebase.firestore.FieldValue.serverTimestamp(),expiresAt:end.toISOString(),paymentId:id,utr:d.utr||"",approvedBy:typeof currentOperator!=="undefined"?currentOperator:"Admin",createdAt:firebase.firestore.FieldValue.serverTimestamp()});batch.update(ref,{status:"Approved",approvedAt:firebase.firestore.FieldValue.serverTimestamp(),handledBy:typeof currentOperator!=="undefined"?currentOperator:"Admin",subscriptionId:sub.id});await batch.commit();alert("✅ Contact Pro ACTIVE कर दिया गया।");MB_adminLoadContactVisibility();};
+window.MB_adminRejectContactVisibility=async function(id){await db.collection("contact_visibility_payments").doc(id).update({status:"Rejected",handledBy:typeof currentOperator!=="undefined"?currentOperator:"Admin",rejectedAt:firebase.firestore.FieldValue.serverTimestamp()});MB_adminLoadContactVisibility();};
+window.MB_installContactCard=async function(){const r=role();if(!r||r==="client")return;const targets={worker:"worker-profile-view",contractor:"contractor-dashboard-box",rental:"rental-provider-card",material:"material-provider-card"},parent=document.getElementById(targets[r]);if(!parent)return;let card=document.getElementById("mb-contact-pro-card");if(!card){card=document.createElement("div");card.id="mb-contact-pro-card";card.className="mt-3 bg-amber-50 border border-amber-200 rounded-2xl p-3 space-y-2";parent.appendChild(card);}const phone=await getCurrentPhone(),a=await activeSub(phone),p=await pending(phone);card.innerHTML=`<div class="flex justify-between items-center gap-2"><div><h4 class="text-[11px] font-black text-slate-900">📞 Contact Pro</h4><p class="text-[9px] text-slate-600">Customer को आपका फोन नंबर दिखाना है? ₹${PLAN_AMOUNT}/माह में 30 दिन के लिए नंबर public listing में दिखाएँ।</p></div><span class="text-[9px] font-black px-2 py-1 rounded-full ${a?'bg-emerald-100 text-emerald-700':p?'bg-slate-100 text-slate-600':'bg-amber-100 text-amber-800'}">${a?'ACTIVE':p?'PAYMENT PENDING':'OFF'}</span></div>${a?`<div class="text-[10px] text-emerald-700 font-bold">📞 Public number: ${esc(phone)} • वैध ${new Date(a.exp).toLocaleDateString('hi-IN')} तक</div>`:p?`<div class="text-[10px] text-slate-600">⏳ UTR ${esc(p.utr||'')} • Admin verification बाकी है।</div>`:`<button type="button" onclick="MB_requestContactVisibility()" class="w-full bg-slate-900 text-amber-400 py-2.5 rounded-xl text-[10px] font-black">📞 ₹${PLAN_AMOUNT} / 30 दिन — Contact Pro चालू करें</button>`}`;};
+window.MB_publicContactHtml=async function(phone){const a=await activeSub(phone);return a?`<a href="tel:${esc(phone)}" class="text-[9px] font-bold text-emerald-700">📞 ${esc(phone)}</a>`:`<span class="text-[9px] text-slate-400">📵 नंबर छुपा है</span>`;};
+document.addEventListener("DOMContentLoaded",()=>setTimeout(()=>MB_installContactCard(),1200));setInterval(()=>{try{MB_installContactCard();}catch(e){}},5000);
 })();
 </script>
-
-<script id="mb-customer-four-tabs-final">
-(function(){
-  "use strict";
-  function dig(v){return String(v||"").replace(/\D/g,"").slice(-10);}
-  function esc(v){return String(v==null?"":v).replace(/[&<>"']/g,function(c){return ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]);});}
-  function customerPhone(){
-    var p=localStorage.getItem("mb_client_phone")||localStorage.getItem("mb_customer_phone")||"";
-    return dig(p);
-  }
-  function hideAll(){
-    ["client-posts-list","mb-customer-replies-section","mb-customer-deals-section","client-inbox-section",
-     "mb-customer-rating-section","mb-customer-received-rating-section","mb-customer-new-post-btn","mb-customer-edit-btn",
-     "mb-customer-owner-work-placeholder","mb-customer-info-panel"].forEach(function(id){
-      var e=document.getElementById(id); if(e)e.classList.add("hidden");
-    });
-  }
-  function clearTabPanels(){
-    hideAll();
-  }
-  window.MB_customerDashTab=async function(tab){
-    clearTabPanels();
-    if(tab==="posts"){
-      var e=document.getElementById("client-posts-list"); if(e){e.classList.remove("hidden"); e.scrollIntoView({behavior:"smooth",block:"start"});}
-      try{var p=customerPhone(); if(p) loadClientPosts("+91"+p);}catch(err){console.warn(err);}
-      return;
-    }
-    if(tab==="replies"){
-      var r=document.getElementById("mb-customer-replies-section"); if(r){r.classList.remove("hidden"); r.scrollIntoView({behavior:"smooth",block:"start"});}
-      try{await window.MB_loadCustomerReplies();}catch(err){console.warn(err);}
-      return;
-    }
-    if(tab==="deals"){
-      var d=document.getElementById("mb-customer-deals-section"); if(d){d.classList.remove("hidden"); d.scrollIntoView({behavior:"smooth",block:"start"});}
-      try{await window.MB_loadCustomerDeals();}catch(err){console.warn(err);}
-      return;
-    }
-    if(tab==="notice"){
-      var n=document.getElementById("client-inbox-section"); if(n){n.classList.remove("hidden"); n.scrollIntoView({behavior:"smooth",block:"start"});}
-      try{var p=customerPhone(); if(p) listenClientInbox("+91"+p);}catch(err){console.warn(err);}
-    }
-  };
-  window.MB_loadCustomerReplies=async function(){
-    var box=document.getElementById("mb-customer-replies-list"); if(!box)return;
-    var ph=customerPhone();
-    if(ph.length!==10){box.innerHTML="<p class='text-[10px] text-slate-500'>Customer Login के बाद जवाब यहाँ दिखेंगे।</p>";return;}
-    box.innerHTML="<p class='text-[10px] text-slate-400'>मिस्त्रियों के जवाब खोजे जा रहे हैं…</p>";
-    try{
-      var jobs=await db.collection("job_posts").where("phone","==","+91"+ph).get();
-      var out=[];
-      for(const jd of jobs.docs){
-        var j=jd.data()||{};
-        var ps=await db.collection("job_proposals").where("jobId","==",jd.id).get();
-        ps.docs.forEach(function(pd){var q=pd.data()||{}; out.push('<div class="bg-white border border-blue-200 rounded-xl p-3"><div class="flex justify-between gap-2"><b>'+esc(j.jobSixId||("#MB-JOB-"+jd.id.slice(0,6)))+'</b><span class="text-[9px] text-slate-500">'+esc(q.workerName||"मिस्त्री")+'</span></div><div class="grid grid-cols-3 gap-1.5 mt-2"><div class="bg-amber-50 rounded-lg p-2 text-center"><span class="block text-[8px]">रेट</span><b>₹'+Number(q.quoteAmount||0).toLocaleString("en-IN")+'</b></div><div class="bg-blue-50 rounded-lg p-2 text-center"><span class="block text-[8px]">समय</span><b>'+esc(q.quoteTime||"—")+'</b></div><div class="bg-violet-50 rounded-lg p-2 text-center"><span class="block text-[8px]">सामान</span><b>'+esc(q.materialResponsibility||"—")+'</b></div></div><p class="mt-2 text-[10px]">'+esc(q.message||"कोई संदेश नहीं")+'</p></div>');});
-      }
-      box.innerHTML=out.length?out.join(""):"<p class='text-[10px] text-slate-500'>अभी कोई मिस्त्री का जवाब नहीं आया है।</p>";
-    }catch(e){box.innerHTML='<p class="text-[10px] text-rose-600">जवाब लोड नहीं हुए: '+esc(e.message)+'</p>';}
-  };
-  window.MB_loadCustomerDeals=async function(){
-    var box=document.getElementById("mb-customer-deals-list"); if(!box)return;
-    var ph=customerPhone();
-    if(ph.length!==10){box.innerHTML="<p class='text-[10px] text-slate-500'>Customer Login के बाद Deals यहाँ दिखेंगी।</p>";return;}
-    box.innerHTML="<p class='text-[10px] text-slate-400'>Deals खोजी जा रही हैं…</p>";
-    try{
-      var snap=await db.collection("confirmed_deals").limit(100).get();
-      var rows=snap.docs.filter(function(x){var d=x.data()||{};return dig(d.clientPhone||d.customerPhone)===ph;});
-      if(!rows.length){box.innerHTML="<p class='text-[10px] text-slate-500'>अभी कोई Deal नहीं है।</p>";return;}
-      var out=[];
-      for(const ref of rows){
-        var d=ref.data()||{}, status=d.status||"Pending";
-        try{var a=await db.collection("digital_agreements").doc(ref.id).get(); if(a.exists){var ad=a.data()||{}; if(ad.workStatus==="work_completed")status="Completed"; else if(ad.workStatus==="work_started")status="Work Started"; else if(ad.status==="accepted")status="Agreement Accepted";}}catch(e){}
-        out.push('<div class="bg-white border border-emerald-200 rounded-xl p-3"><div class="flex justify-between gap-2"><b>'+esc(d.jobSixId||ref.id)+'</b><span class="text-[9px] font-bold">'+esc(status)+'</span></div><p class="text-[10px] mt-1">मिस्त्री: '+esc(d.workerName||"मिस्त्री")+' • ₹'+Number(d.quoteAmount||0).toLocaleString("en-IN")+' • समय: '+esc(d.quoteTime||"—")+'</p></div>');
-      }
-      box.innerHTML=out.join("");
-    }catch(e){box.innerHTML='<p class="text-[10px] text-rose-600">Deals लोड नहीं हुईं: '+esc(e.message)+'</p>';}
-  };
-  // Keep only the profile + four boxes visible on initial dashboard load.
-  function initTabs(){
-    hideAll();
-    var dash=document.getElementById("customer-professional-dashboard");
-    if(dash) dash.setAttribute("data-tabs-ready","1");
-  }
-  document.addEventListener("DOMContentLoaded",function(){setTimeout(initTabs,500);});
-})();
-</script>
-
-\n<!-- MB FINAL CUSTOMER PROFILE / INBOX / RATING SUMMARY PATCH -->
-<script id="mb-final-customer-profile-polish">
-(function(){
-  "use strict";
-  function d10(v){ return String(v||"").replace(/\D/g,"").slice(-10); }
-  function esc(v){ return String(v==null?"":v).replace(/[&<>"']/g,function(c){ return ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]); }); }
-
-  /* Inbox is a 🔔 tab only. Loading posts must never unhide it. */
-  var inboxUnsub=null;
-  window.listenClientInbox=function(phone){
-    var full=d10(phone); if(full.length!==10)return; full="+91"+full;
-    var sec=document.getElementById("client-inbox-section"), list=document.getElementById("client-inbox-messages");
-    var badge=document.getElementById("mb-customer-inbox-badge"), countEl=document.getElementById("mb-client-inbox-count");
-    if(inboxUnsub){try{inboxUnsub();}catch(e){} inboxUnsub=null;}
-    inboxUnsub=db.collection("inbox_messages").where("recipientPhone","==",full).onSnapshot(function(snap){
-      var count=snap.size||0;
-      if(badge){badge.textContent=count+" New Message";badge.classList.toggle("hidden",count===0);}
-      if(countEl){countEl.textContent=count+" New Message";countEl.classList.toggle("hidden",count===0);}
-      /* Critical: do not remove hidden here. Only the सूचना tab does that. */
-      if(!sec || sec.classList.contains("hidden"))return;
-      list.innerHTML="";
-      snap.forEach(function(doc){
-        var m=doc.data()||{};
-        list.innerHTML += '<div class="bg-white p-2.5 rounded-xl border border-amber-300 shadow-2xs"><div class="flex justify-between items-center mb-1"><span class="font-black text-amber-800 text-[10px]">'+esc(m.title||"मिस्त्रीबाबू सूचना")+'</span><span class="text-[9px] text-slate-400">'+esc(m.jobSixId||"")+'</span></div><p class="text-slate-800 text-xs font-semibold leading-relaxed">'+esc(m.message||"")+'</p>'+(m.contactNumber?'<div class="mt-1.5 pt-1.5 border-t border-slate-100 flex items-center justify-between"><span class="text-[10px] text-slate-500 font-bold">संपर्क नंबर:</span><a href="tel:'+esc(m.contactNumber)+'" class="bg-emerald-600 text-white px-2 py-0.5 rounded text-[10px] font-bold">☎ '+esc(m.contactNumber)+'</a></div>':'')+'</div>';
-      });
-      if(!snap.size)list.innerHTML='<p class="text-[10px] text-slate-500">अभी कोई नया संदेश नहीं है।</p>';
-    });
-  };
-
-  /* Four boxes are exclusive: only the selected panel can be visible. */
-  var oldTab=window.MB_customerDashTab;
-  window.MB_customerDashTab=function(tab){
-    ["client-posts-list","mb-customer-replies-section","mb-customer-deals-section","client-inbox-section"].forEach(function(id){var e=document.getElementById(id);if(e)e.classList.add("hidden");});
-    var dash=document.getElementById("customer-professional-dashboard"); if(dash)dash.setAttribute("data-mb-open-tab",String(tab||""));
-    if(typeof oldTab==='function')return oldTab.apply(this,arguments);
-  };
-
-  async function ratingSummary(collection,phoneValue,boxId){
-    var box=document.getElementById(boxId);if(!box)return;
-    var ph=d10(phoneValue);if(ph.length!==10){box.textContent="⭐ 0.0/5 • 0 Ratings";return;}
-    try{
-      var snap=await db.collection(collection).where(collection==="customer_reviews"?"customerPhone":"workerPhone","==","+91"+ph).limit(100).get();
-      if(snap.empty)snap=await db.collection(collection).where(collection==="customer_reviews"?"customerPhone":"workerPhone","==",ph).limit(100).get();
-      var vals=[];snap.docs.forEach(function(x){var n=parseFloat((x.data()||{}).stars);if(isFinite(n)&&n>0)vals.push(Math.max(1,Math.min(5,n)));});
-      var count=vals.length,avg=count?vals.reduce(function(a,b){return a+b;},0)/count:0;
-      box.textContent="⭐ "+avg.toFixed(1)+"/5 • "+count+" "+(count===1?"Rating":"Ratings");
-    }catch(e){box.textContent="⭐ Rating उपलब्ध नहीं";}
-  }
-  window.MB_refreshCustomerRatingSummary=function(){return ratingSummary("customer_reviews",localStorage.getItem("mb_client_phone")||localStorage.getItem("mb_customer_phone"),"mb-customer-rating-summary");};
-  window.MB_refreshWorkerRatingSummary=function(){return ratingSummary("worker_reviews",localStorage.getItem("mb_worker_phone"),"mb-worker-rating-summary");};
-
-  function boot(){
-    setTimeout(function(){
-      try{window.MB_refreshCustomerRatingSummary();}catch(e){}
-      try{window.MB_refreshWorkerRatingSummary();}catch(e){}
-      try{var role=localStorage.getItem("current_user_role")||localStorage.getItem("mb_device_locked_role")||"";if(role==="client"){var p=d10(localStorage.getItem("mb_client_phone")||localStorage.getItem("mb_customer_phone"));if(p.length===10)window.listenClientInbox(p);}}catch(e){}
-    },900);
-  }
-  document.addEventListener("DOMContentLoaded",boot);
-  window.addEventListener("hashchange",function(){setTimeout(function(){try{window.MB_refreshCustomerRatingSummary();}catch(e){}try{window.MB_refreshWorkerRatingSummary();}catch(e){}},300);});
-})();
-</script>\n</body>
+</body>
   </html>
 <script id="mb-profile-category-visibility-fix">
 (function(){
@@ -6550,517 +6081,9 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
       }, 50);
     });
   } catch(e){}
-})();
-
-
-/* ================= PAID LEADS FULL FLOW ================= */
-(function(){
-  const FEE=49;
-  const MB_PAID_LEAD_UPI="mistrybabu@upi";
-  function phone(){return (localStorage.getItem("mb_worker_phone")||"").replace(/\D/g,"").slice(-10);}
-  function mbClosePaidLeadPayment(){document.getElementById("mb-paid-lead-payment-modal")?.remove();}
-  window.MB_paidLeadUnlock=async function(jobId,sixId,clientPhone,workType){
-    const wp=phone(); if(!wp)return alert("पहले Mistri Login करें।");
-    try{
-      const q=await db.collection("paid_lead_access").where("jobId","==",jobId).where("workerPhone","==",wp).limit(10).get();
-      let ok=false,pending=false;
-      q.forEach(function(d){const x=d.data()||{};if(x.status==="approved"||x.unlocked===true)ok=true;if(x.status==="pending")pending=true;});
-      if(ok)return alert("✅ यह Lead पहले ही Unlock है। अब आप रेट भेज सकते हैं।");
-      if(pending)return alert("⏳ आपकी Access Request पहले से Pending है। Admin verification के बाद Lead Unlock होगी।");
-      const upiLink="upi://pay?pa="+encodeURIComponent(MB_PAID_LEAD_UPI)+"&pn="+encodeURIComponent("MistriBabu")+"&am="+FEE+"&cu=INR&tn="+encodeURIComponent("Paid Lead "+sixId);
-      const qr="https://quickchart.io/qr?size=240&text="+encodeURIComponent(upiLink);
-      const modal=document.createElement("div");
-      modal.id="mb-paid-lead-payment-modal";
-      modal.className="fixed inset-0 z-[9999] bg-black/60 flex items-end sm:items-center justify-center p-3";
-      modal.innerHTML=`<div class="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden">
-        <div class="bg-slate-950 text-white p-4 flex items-center justify-between"><div><b class="text-base">💳 Paid Lead Unlock</b><p class="text-[10px] text-slate-300">Lead ID: ${sixId||jobId}</p></div><button type="button" onclick="mbClosePaidLeadPayment()" class="text-2xl text-slate-300">×</button></div>
-        <div class="p-4 space-y-3">
-          <div class="text-center bg-amber-50 border border-amber-200 rounded-xl p-3"><div class="text-[11px] text-slate-600">Unlock Fee</div><div class="text-2xl font-black text-amber-700">₹${FEE}</div></div>
-          <p class="text-[11px] text-slate-700 font-bold text-center">नीचे दिए UPI QR से ₹${FEE} भुगतान करें</p>
-          <img src="${qr}" alt="Paid Lead UPI QR" class="w-44 h-44 mx-auto rounded-xl border p-1 bg-white" onerror="this.style.display='none'">
-          <div class="bg-slate-50 border rounded-xl p-3 text-center"><div class="text-[10px] text-slate-500">UPI ID</div><div class="font-black text-amber-700 select-all">${MB_PAID_LEAD_UPI}</div></div>
-          <a href="${upiLink}" class="block text-center bg-emerald-600 text-white font-black rounded-xl py-3">📲 UPI App से ₹${FEE} Pay करें</a>
-          <div><label class="block text-[10px] font-bold text-slate-700 mb-1">Payment UTR / Reference नंबर</label><input id="mb-paid-lead-utr" maxlength="22" class="w-full border border-slate-300 rounded-xl px-3 py-3 text-sm font-bold" placeholder="Payment के बाद UTR डालें"></div>
-          <button type="button" id="mb-paid-lead-submit" class="w-full bg-slate-950 text-white rounded-xl py-3 font-black">✅ UTR Submit करके Verification भेजें</button>
-          <p class="text-[9px] text-slate-500 text-center">Admin payment verify करने के बाद ही Lead Unlock होगी।</p>
-        </div></div>`;
-      document.body.appendChild(modal);
-      document.getElementById("mb-paid-lead-submit").onclick=async function(){
-        const btn=this,utr=(document.getElementById("mb-paid-lead-utr")?.value||"").trim();
-        if(!utr || !/^[A-Za-z0-9]{8,22}$/.test(utr))return alert("कृपया सही UTR / Reference नंबर डालें (8–22 अक्षर/अंक)।");
-        btn.disabled=true;btn.innerText="भेजा जा रहा है...";
-        try{
-          await db.collection("paid_lead_access").add({jobId:jobId,jobSixId:sixId,workerPhone:wp,clientPhone:clientPhone||"",workType:workType||"",amount:FEE,upiId:MB_PAID_LEAD_UPI,utr:utr,status:"pending",paymentStatus:"submitted",unlocked:false,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
-          mbClosePaidLeadPayment();
-          alert("✅ Payment/UTR Admin को भेज दिया गया है। Verification के बाद Lead Unlock होगी।");
-        }catch(e){btn.disabled=false;btn.innerText="✅ UTR Submit करके Verification भेजें";alert("Request नहीं भेजी गई: "+e.message);}
-      };
-    }catch(e){alert("Paid Lead Unlock Request नहीं खुली: "+e.message);}
-  };
-  window.MB_paidLeadQuoteGuard=async function(jobId,sixId,clientPhone,workType,isPaid){
-    if(!isPaid){openProposalModal(jobId,sixId,clientPhone,workType);return;}
-    const wp=phone(); if(!wp)return alert("पहले Mistri Login करें।");
-    try{
-      const q=await db.collection("paid_lead_access").where("jobId","==",jobId).where("workerPhone","==",wp).limit(10).get();
-      let ok=false,pending=false;
-      q.forEach(function(d){const x=d.data()||{};if(x.status==="approved"||x.unlocked===true)ok=true;if(x.status==="pending")pending=true;});
-      if(ok){openProposalModal(jobId,sixId,clientPhone,workType);return;}
-      if(pending)return alert("⏳ यह Paid Lead अभी Pending है। Admin verification के बाद Rate भेज सकेंगे।");
-      return alert("🔒 पहले ‘Lead Unlock करें’ दबाकर Access Request भेजें।");
-    }catch(e){alert("Paid Lead access check नहीं हो सका: "+e.message);}
-  };
-  window.MB_adminLoadPaidLeads=async function(){
-    const box=document.getElementById("admin-paid-leads-list");if(!box)return;box.innerHTML="लोड हो रहा है...";
-    try{const snap=await db.collection("paid_lead_access").orderBy("createdAt","desc").limit(100).get();box.innerHTML="";
-      if(snap.empty){box.innerHTML="<p class='text-slate-400 text-center py-3'>कोई Paid Lead Request नहीं है।</p>";return;}
-      snap.forEach(function(doc){const d=doc.data()||{};const st=d.status||"pending";const el=document.createElement("div");el.className="bg-white border rounded-xl p-3";
-        el.innerHTML="<b>💳 "+(d.jobSixId||d.jobId||"Lead")+"</b><p class='text-[10px]'>Mistri: "+(d.workerPhone||"—")+" • काम: "+(d.workType||"—")+"</p><p class='text-[10px]'>UTR: "+(d.utr||"—")+" • ₹"+(d.amount||FEE)+" • <b>"+st.toUpperCase()+"</b></p>"+(st==="pending"?"<div class='flex gap-2 mt-2'><button onclick=\"MB_adminApprovePaidLead('"+doc.id+"')\" class='flex-1 bg-emerald-600 text-white rounded p-1 text-[10px]'>✓ Approve / Unlock</button><button onclick=\"MB_adminRejectPaidLead('"+doc.id+"')\" class='flex-1 bg-rose-600 text-white rounded p-1 text-[10px]'>✕ Reject</button></div>":"");box.appendChild(el);});
-    }catch(e){box.innerHTML="<p class='text-rose-600'>Paid Leads लोड नहीं हुए: "+e.message+"</p>";}
-  };
-  window.MB_adminApprovePaidLead=async function(id){if(!confirm("Paid Lead Approve करके Unlock करें?"))return;await db.collection("paid_lead_access").doc(id).update({status:"approved",unlocked:true,approvedAt:firebase.firestore.FieldValue.serverTimestamp(),approvedBy:localStorage.getItem("mb_active_operator")||"admin"});MB_adminLoadPaidLeads();};
-  window.MB_adminRejectPaidLead=async function(id){if(!confirm("Paid Lead Request Reject करें?"))return;await db.collection("paid_lead_access").doc(id).update({status:"rejected",unlocked:false,rejectedAt:firebase.firestore.FieldValue.serverTimestamp(),rejectedBy:localStorage.getItem("mb_active_operator")||"admin"});MB_adminLoadPaidLeads();};
-  function addCard(){const h=document.getElementById("worker-profile-view");if(!h||document.getElementById("mb-paid-lead-dashboard-card"))return;const c=document.createElement("div");c.id="mb-paid-lead-dashboard-card";c.className="mx-3 mb-3 bg-amber-50 border border-amber-200 rounded-xl p-3";c.innerHTML="<b class='text-xs'>💳 Paid Leads</b><p class='text-[9px] text-slate-500'>Approved Access के बाद ही Paid Lead पर Rate भेजें।</p>";h.insertBefore(c,h.firstChild);}
-  document.addEventListener("DOMContentLoaded",addCard);
-})();
-/* ================= END PAID LEADS FULL FLOW ================= */
-</script>
-\n<!-- MB DIGITAL AGREEMENT VISIBLE UI -->
-<section id="mb-digital-agreement-section" class="max-w-2xl mx-auto px-4 py-4 hidden">
-  <div class="bg-white rounded-2xl border border-amber-200 shadow-sm overflow-hidden">
-    <div class="bg-slate-900 text-white px-4 py-3 flex items-center justify-between">
-      <div><div class="font-black text-sm">📄 Digital Agreement</div><div class="text-[10px] text-slate-300">Confirmed Deal के बाद दोनों पक्ष यहाँ Agreement स्वीकार करेंगे।</div></div>
-      <span class="text-[10px] bg-amber-400 text-slate-900 px-2 py-1 rounded-full font-black">DEAL</span>
-    </div>
-    <div id="mb-digital-agreement-list" class="p-3 space-y-3"></div>
-  </div>
-</section>
-<script>
-(function(){
-  "use strict";
-  function digits(v){return String(v||"").replace(/\D/g,"").slice(-10);}
-  function esc(v){return String(v==null?"":v).replace(/[&<>"']/g,function(c){return ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]);});}
-  function currentRole(){return localStorage.getItem("current_user_role")||localStorage.getItem("mb_device_locked_role")||"";}
-  function isMistriProfileActive(){
-    var role=currentRole();
-    var profile=document.getElementById("worker-profile-view");
-    return role==="worker" && location.hash==="#register" && !!profile && !profile.classList.contains("hidden");
-  }
-  function currentPhone(){
-    var r=currentRole();
-    return digits(r==="worker" ? localStorage.getItem("mb_worker_phone") : localStorage.getItem("mb_client_phone"));
-  }
-  function showSection(show){
-    var s=document.getElementById("mb-digital-agreement-section");
-    if(s)s.classList.toggle("hidden",!(show && isMistriProfileActive()));
-  }
-  window.MB_setDigitalAgreementVisibility=function(shouldShow){
-    var s=document.getElementById("mb-digital-agreement-section");
-    if(!s)return;
-    if(!shouldShow || !isMistriProfileActive()){s.classList.add("hidden");return;}
-    try{MB_loadDigitalAgreements();}catch(e){}
-  };
-  function statusText(a){
-    if(a.status==="accepted" || (a.customerAccepted&&a.workerAccepted)) return "✅ दोनों पक्ष ने Accept कर दिया";
-    if(a.customerAccepted) return "🟡 Customer ने Accept किया — Mistri की सहमति बाकी";
-    if(a.workerAccepted) return "🟡 Mistri ने Accept किया — Customer की सहमति बाकी";
-    return "🟠 दोनों पक्ष की सहमति बाकी";
-  }
-  function card(dealId,d,a,role,alreadyRated){
-    var accepted = role==="worker" ? !!a.workerAccepted : !!a.customerAccepted;
-    var both = !!a.customerAccepted && !!a.workerAccepted;
-    var workStatus=a.workStatus||"";
-    var workLabel=workStatus==="work_started"?"🟢 काम शुरू":workStatus==="work_completed"?"✅ काम पूरा":both?"🟢 Ready to Start":"⏳ Agreement Pending";
-    var html=`<div class="border border-slate-200 rounded-xl p-3 bg-slate-50">
-      <div class="flex justify-between gap-2"><div class="font-black text-xs">${esc(d.jobSixId||a.jobId||dealId)}</div><span class="text-[9px] font-black px-2 py-1 rounded-full bg-white border">${esc(workLabel)}</span></div>
-      <div class="grid grid-cols-2 gap-2 mt-2 text-[10px]">
-        <div><b>काम:</b> ${esc(a.workType||d.workType||"—")}</div><div><b>राशि:</b> ₹${Number(a.amount||d.quoteAmount||0).toLocaleString('en-IN')}</div>
-        <div><b>समय:</b> ${esc(d.quoteTime||a.startDate||"—")}</div><div><b>Material:</b> ${esc(a.materialResponsibility||d.materialResponsibility||"आपसी सहमति")}</div>
-      </div>
-      <div class="mt-2 text-[10px] font-bold">${esc(statusText(a))}</div>
-      <div class="flex flex-wrap gap-2 mt-3">
-        ${!accepted ? `<button onclick="MB_acceptAgreement('${dealId}','${role}')" class="bg-emerald-600 text-white px-3 py-2 rounded-lg text-[10px] font-black">✓ Agreement Accept करें</button>` : `<span class="bg-emerald-100 text-emerald-800 px-3 py-2 rounded-lg text-[10px] font-black">✓ आपकी Acceptance सेव है</span>`}
-        ${both && workStatus!=="work_started" && workStatus!=="work_completed" ? `<button onclick="MB_updateWorkStatus('${dealId}','work_started');setTimeout(MB_loadDigitalAgreements,500)" class="bg-blue-600 text-white px-3 py-2 rounded-lg text-[10px] font-black">▶ काम शुरू</button>` : ``}
-        ${both && workStatus==="work_started" ? `<button onclick="MB_updateWorkStatus('${dealId}','work_completed');setTimeout(MB_loadDigitalAgreements,500)" class="bg-amber-500 text-slate-900 px-3 py-2 rounded-lg text-[10px] font-black">✓ काम पूरा</button>` : ``}
-        ${workStatus==="work_completed" && !alreadyRated ? `<button onclick="MB_openTwoWayRating('${dealId}','${role}')" class="bg-violet-600 text-white px-3 py-2 rounded-lg text-[10px] font-black">⭐ ${role==="worker"?"ग्राहक को रेट करें":"मिस्त्री को रेट करें"}</button>` : ``}
-        ${workStatus==="work_completed" && alreadyRated ? `<span class="bg-emerald-100 text-emerald-800 px-3 py-2 rounded-lg text-[10px] font-black">⭐ आपकी Rating सेव है</span>` : ``}
-      </div>
-    </div>`;
-    return html;
-  }
-  window.MB_loadDigitalAgreements=async function(){
-    var list=document.getElementById("mb-digital-agreement-list"); if(!list)return;
-    var phone=currentPhone(); if(phone.length!==10){showSection(false);return;}
-    list.innerHTML='<div class="text-center text-[10px] text-slate-500 py-3">Agreement लोड हो रहा है…</div>';
-    try{
-      var snap=await db.collection("confirmed_deals").limit(50).get();
-      var deals=snap.docs.filter(function(x){var d=x.data()||{};return digits(d.clientPhone)===phone || digits(d.customerPhone)===phone || digits(d.workerPhone)===phone;});
-      if(!deals.length){showSection(false);return;}
-      var role=currentRole()==="worker"?"worker":"customer";
-      var parts=[];
-      for(var i=0;i<deals.length;i++){
-        var ref=deals[i].ref, d=deals[i].data()||{};
-        var ar=await db.collection("digital_agreements").doc(ref.id).get();
-        var a=ar.exists?(ar.data()||{}):{};
-        var ratedSnap=await db.collection("deal_ratings").where("dealId","==",ref.id).where("raterPhone","==",currentPhone()).limit(1).get();
-        var alreadyRated=!ratedSnap.empty;
-        window.__MB_agreementCache=window.__MB_agreementCache||{};
-        window.__MB_agreementCache[ref.id]=a;
-        window.__MB_agreementCache[ref.id].alreadyRated=alreadyRated;
-        parts.push(card(ref.id,d,a,role,alreadyRated));
-      }
-      list.innerHTML=parts.join(""); showSection(true);
-    }catch(e){showSection(true);list.innerHTML='<div class="text-[10px] text-red-600">Agreement लोड नहीं हुआ: '+esc(e.message)+'</div>';}
-  };
-  document.addEventListener("DOMContentLoaded",function(){
-    setTimeout(function(){try{MB_loadDigitalAgreements();}catch(e){}},1200);
-    try{
-      var profile=document.getElementById("worker-profile-view");
-      if(profile){
-        new MutationObserver(function(){
-          if(isMistriProfileActive()) MB_loadDigitalAgreements();
-          else showSection(false);
-        }).observe(profile,{attributes:true,attributeFilter:["class"]});
-      }
-      window.addEventListener("hashchange",function(){
-        if(isMistriProfileActive()) MB_loadDigitalAgreements();
-        else showSection(false);
-      });
-    }catch(e){}
-  });
+window.MB_refreshPublicWorkerContacts=async function(){const nodes=[...document.querySelectorAll("[id^='mb-public-contact-']")];if(!nodes.length||typeof db==="undefined")return;const docs=[...document.querySelectorAll("#full-worker-grid [id^='mb-public-contact-']")];for(const el of docs){const id=el.id.replace("mb-public-contact-","");try{const w=await db.collection("workers").doc(id).get();if(w.exists&&await activeSub(w.data().private_phone)){el.innerHTML=`📞 <a href="tel:${esc(w.data().private_phone)}" class="text-emerald-700 underline">${esc(w.data().private_phone)}</a>`;el.className="mt-0.5 text-[9px] font-bold text-emerald-700";}}catch(e){}}};
+window.MB_refreshMarketplaceContacts=async function(){for(const el of document.querySelectorAll("[data-mb-contact-phone]")){const phone=el.getAttribute("data-mb-contact-phone");if(phone&&await activeSub(phone)){const c=el.querySelector(".mb-public-provider-contact");if(c){c.innerHTML=`📞 <a href="tel:${esc(phone)}" class="text-emerald-700 underline">${esc(phone)}</a>`;c.className="mb-public-provider-contact text-[9px] font-bold text-emerald-700";}}}};
+setTimeout(()=>{const oldLoad=window.loadFullWorkers;if(typeof oldLoad==='function'&&!oldLoad.__mbContactWrap){const f=function(){const r=oldLoad.apply(this,arguments);setTimeout(MB_refreshPublicWorkerContacts,1200);return r;};f.__mbContactWrap=true;window.loadFullWorkers=f;}},1500);
+document.addEventListener("DOMContentLoaded",()=>setTimeout(()=>{MB_refreshPublicWorkerContacts();MB_refreshMarketplaceContacts();},2500));
 })();
 </script>
-<!-- MB DIGITAL AGREEMENT FLOW -->
-<script>
-(function(){
-  window.MB_createAgreement=async function(dealId){
-    if(!dealId)return alert('Deal ID नहीं मिला।');
-    try{
-      const ref=db.collection('confirmed_deals').doc(dealId); const snap=await ref.get();
-      if(snap.empty)return alert('Deal नहीं मिला।');
-      const d=snap.data()||{};
-      await db.collection('digital_agreements').doc(dealId).set({dealId:dealId,jobId:d.jobId||'',customerPhone:d.clientPhone||d.customerPhone||'',workerPhone:d.workerPhone||'',workerName:d.workerName||'',amount:d.amount||d.quoteAmount||0,workType:d.workType||'',materialResponsibility:d.materialResponsibility||'आपसी सहमति से',startDate:d.startDate||'',endDate:d.endDate||'',customerAccepted:false,workerAccepted:false,status:'pending',createdAt:firebase.firestore.FieldValue.serverTimestamp(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
-      alert('✅ Digital Agreement तैयार हो गया। दोनों पक्ष की सहमति बाकी है।');
-    }catch(e){alert('Agreement बनाने में समस्या: '+e.message);}
-  };
-  window.MB_acceptAgreement=async function(dealId,role){
-    if(!dealId||!role)return; const field=role==='customer'?'customerAccepted':'workerAccepted';
-    try{
-      const ref=db.collection('digital_agreements').doc(dealId); const snap=await ref.get(); if(snap.empty)return alert('Agreement नहीं मिला।');
-      const data=snap.data()||{}; const patch={}; patch[field]=true; patch.updatedAt=firebase.firestore.FieldValue.serverTimestamp();
-      if((field==='customerAccepted'&&data.workerAccepted)||(field==='workerAccepted'&&data.customerAccepted)){patch.status='accepted';patch.workStatus='ready_to_start';}
-      else patch.status='waiting_for_other_party';
-      await ref.set(patch,{merge:true});
-      // तुरंत local UI state भी बदलें, ताकि Accept करने के बाद वही बटन दोबारा न दिखे।
-      try{
-        if(window.__MB_agreementCache){
-          var cached=window.__MB_agreementCache[dealId]||{};
-          cached[field]=true;
-          if(cached.customerAccepted&&cached.workerAccepted){cached.status='accepted';cached.workStatus='ready_to_start';}
-          else cached.status='waiting_for_other_party';
-          window.__MB_agreementCache[dealId]=cached;
-        }
-      }catch(e){}
-      alert('✅ आपकी Agreement acceptance सेव हो गई।');
-      setTimeout(function(){try{MB_loadDigitalAgreements();}catch(e){}},150);
-    }catch(e){alert('Acceptance सेव नहीं हुई: '+e.message);}
-  };
-  window.MB_updateWorkStatus=async function(dealId,status){
-    const allowed=['ready_to_start','work_started','work_completed']; if(!allowed.includes(status))return;
-    try{
-      const now=firebase.firestore.FieldValue.serverTimestamp();
-      await db.collection('digital_agreements').doc(dealId).set({workStatus:status,updatedAt:now},{merge:true});
-
-      // Deal/Job को भी उसी स्थिति में sync रखें, ताकि पुराने Quote card में
-      // दोबारा "डील पक्की करें" या गलत active status न दिखे।
-      const dealRef=db.collection('confirmed_deals').doc(dealId);
-      const dealSnap=await dealRef.get();
-      if(dealSnap.exists){
-        const dd=dealSnap.data()||{};
-        await dealRef.set({
-          status: status==='work_completed' ? 'Completed' : status==='work_started' ? 'In Progress' : 'Pending',
-          workStatus:status,
-          updatedAt:now
-        },{merge:true});
-        const six=dd.jobSixId||dd.jobId||'';
-        if(six){
-          const js=await db.collection('job_posts').where('jobSixId','==',six).limit(1).get();
-          if(!js.empty){
-            await js.docs[0].ref.set({
-              dealStatus: status==='work_completed' ? 'Completed' : status==='work_started' ? 'In Progress' : 'Selected',
-              isClosed: status==='work_completed' ? true : (js.docs[0].data().isClosed||false),
-              closedReason: status==='work_completed' ? 'काम पूरा' : (js.docs[0].data().closedReason||''),
-              updatedAt:now
-            },{merge:true});
-          }
-        }
-      }
-      alert(status==='work_started'?'🟢 काम शुरू दर्ज हो गया।':status==='work_completed'?'✅ काम पूरा दर्ज हो गया।':'Agreement तैयार है।');
-      try{MB_loadDigitalAgreements();}catch(e){}
-    }catch(e){alert('Status अपडेट नहीं हुआ: '+e.message);}
-  };
-})();
-</script>
-<script id="mb-customer-profile-initial-view-final-fix">
-(function(){
-  "use strict";
-  var contentIds=["client-posts-list","mb-customer-replies-section","mb-customer-deals-section","client-inbox-section","mb-customer-rating-section","mb-customer-received-rating-section","mb-customer-new-post-btn","mb-customer-edit-btn","mb-customer-owner-work-placeholder"];
-  function el(id){return document.getElementById(id);}
-  function hideContent(){
-    contentIds.forEach(function(id){var e=el(id);if(e)e.classList.add("hidden");});
-    /* Customer profile details stay visible. */
-    var info=el("mb-customer-info-panel"); if(info) info.classList.remove("hidden");
-  }
-  function clearIfNoTab(){
-    var dash=el("customer-professional-dashboard");
-    if(!dash || dash.classList.contains("hidden")) return;
-    if(!dash.getAttribute("data-mb-open-tab")) hideContent();
-  }
-  var oldTab=window.MB_customerDashTab;
-  window.MB_customerDashTab=function(tab){
-    var dash=el("customer-professional-dashboard");
-    if(dash) dash.setAttribute("data-mb-open-tab",String(tab||""));
-    if(typeof oldTab==='function') return oldTab.apply(this,arguments);
-  };
-  function boot(){
-    setTimeout(clearIfNoTab,80);
-    setTimeout(clearIfNoTab,500);
-    setTimeout(clearIfNoTab,1500);
-    setTimeout(clearIfNoTab,3000);
-    setTimeout(clearIfNoTab,5000);
-  }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot); else boot();
-})();
-</script>
-
-
-<!-- MB FINAL TWO-WAY RATING RELIABILITY PATCH -->
-<script id="mb-final-two-way-rating-fix">
-(function(){
-  "use strict";
-  function d10(v){return String(v||"").replace(/\D/g,"").slice(-10);}
-  function rr(){return localStorage.getItem("current_user_role")||localStorage.getItem("mb_device_locked_role")||"";}
-  function rp(){var r=rr();return d10(r==="worker"?localStorage.getItem("mb_worker_phone"):localStorage.getItem("mb_client_phone"));}
-  function esc2(v){return String(v==null?"":v).replace(/[&<>"']/g,function(c){return ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]);});}
-
-  async function hasDealRating(dealId, raterPhone, raterRole){
-    var p=d10(raterPhone); if(!p)return false;
-    var q=await db.collection("deal_ratings").where("dealId","==",dealId).limit(100).get();
-    for(var i=0;i<q.docs.length;i++){
-      var x=q.docs[i].data()||{};
-      if(d10(x.raterPhone)===p && (!raterRole || x.raterRole===raterRole)) return true;
-    }
-    // पुराने records को भी पहचानें।
-    var coll=raterRole==="customer"?"worker_reviews":"customer_reviews";
-    var field=raterRole==="customer"?"workerPhone":"customerPhone";
-    var legacy=await db.collection(coll).where("dealId","==",dealId).limit(100).get();
-    for(var j=0;j<legacy.docs.length;j++){
-      var y=legacy.docs[j].data()||{};
-      if(field==="workerPhone"){
-        // Customer की पुरानी Worker Review में workerPhone अलग है; इसलिए dealId मिलने पर इसे rated माना जाएगा।
-        if(y.dealId===dealId)return true;
-      }else if(d10(y[field])===p)return true;
-    }
-    return false;
-  }
-
-  window.MB_submitTwoWayRating=async function(){
-    var dealId=(document.getElementById("mb-two-way-rating-deal")||{}).value||"";
-    var raterRole=(document.getElementById("mb-two-way-rating-role")||{}).value||rr();
-    var stars=parseInt((document.getElementById("mb-two-way-rating-stars")||{}).value,10)||5;
-    var comment=((document.getElementById("mb-two-way-rating-comment")||{}).value||"").trim();
-    var raterPhone=rp();
-    if(!dealId)return alert("Deal नहीं मिला।");
-    if(!raterPhone)return alert("Login मोबाइल नहीं मिला।");
-    try{
-      if(await hasDealRating(dealId,raterPhone,raterRole)){
-        try{MB_closeTwoWayRating();}catch(e){}
-        try{MB_loadDigitalAgreements();}catch(e){}
-        try{MB_loadCustomerRatings();}catch(e){}
-        return alert("ℹ️ इस Deal पर आपकी Rating पहले ही सेव है।");
-      }
-      var snap=await db.collection("confirmed_deals").doc(dealId).get();
-      if(!snap.exists)return alert("Deal नहीं मिला।");
-      var deal=snap.data()||{};
-      var ratedRole=raterRole==="worker"?"customer":"worker";
-      var ratedPhone=raterRole==="worker"?d10(deal.clientPhone||deal.customerPhone):d10(deal.workerPhone);
-      var ratedName=raterRole==="worker"?(deal.clientName||deal.customerName||"ग्राहक"):(deal.workerName||"मिस्त्री");
-      if(!ratedPhone)return alert("दूसरे पक्ष का मोबाइल नहीं मिला।");
-      var ratingData={dealId:dealId,jobId:deal.jobId||deal.jobSixId||"",raterRole:raterRole,raterPhone:raterPhone,ratedRole:ratedRole,ratedPhone:ratedPhone,ratedName:ratedName,stars:Math.max(1,Math.min(5,stars)),comment:comment,createdAt:firebase.firestore.FieldValue.serverTimestamp()};
-      // deterministic document ID: एक पक्ष एक Deal पर केवल एक Rating.
-      var ratingRef=db.collection("deal_ratings").doc(dealId+"__"+raterRole+"__"+raterPhone);
-      await ratingRef.set(ratingData,{merge:false});
-      if(ratedRole==="worker"){
-        var wr=await db.collection("worker_reviews").where("dealId","==",dealId).limit(100).get();
-        var already=false; wr.docs.forEach(function(x){if(d10((x.data()||{}).workerPhone)===ratedPhone)already=true;});
-        if(!already) await db.collection("worker_reviews").add({workerPhone:"+91"+ratedPhone,dealId:dealId,jobId:deal.jobId||deal.jobSixId||"",raterRole:"customer",raterPhone:raterPhone,stars:ratingData.stars,comment:comment,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
-      }else{
-        var cr=await db.collection("customer_reviews").where("dealId","==",dealId).limit(100).get();
-        var alreadyC=false; cr.docs.forEach(function(x){if(d10((x.data()||{}).customerPhone)===ratedPhone)alreadyC=true;});
-        if(!alreadyC) await db.collection("customer_reviews").add({customerPhone:"+91"+ratedPhone,dealId:dealId,jobId:deal.jobId||deal.jobSixId||"",raterRole:"worker",raterPhone:raterPhone,stars:ratingData.stars,comment:comment,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
-      }
-      try{MB_closeTwoWayRating();}catch(e){}
-      alert("✅ आपकी Rating सेव हो गई। इस Deal पर दोबारा Rating नहीं मांगी जाएगी।");
-      try{MB_loadDigitalAgreements();}catch(e){}
-      try{MB_loadCustomerRatings();}catch(e){}
-      try{MB_loadCustomerReceivedRatings();}catch(e){}
-    }catch(e){alert("Rating सेव नहीं हुई: "+e.message);}
-  };
-
-  // पुराना Customer rating modal भी इसी सुरक्षित two-way flow में जाए।
-  window.submitReview=async function(){
-    var workerPhone=((document.getElementById("rev-worker-phone")||{}).value||"");
-    var dealId=((document.getElementById("rev-job-id")||{}).value||"");
-    var stars=parseInt((document.getElementById("rev-stars")||{}).value,10)||5;
-    var comment=((document.getElementById("rev-comment")||{}).value||"").trim();
-    if(dealId && typeof window.MB_openTwoWayRating==="function"){
-      var r=rr();
-      if(r!=="client")return alert("यह Rating Customer के लिए है।");
-      document.getElementById("mb-two-way-rating-deal").value=dealId;
-      document.getElementById("mb-two-way-rating-role").value="customer";
-      document.getElementById("mb-two-way-rating-stars").value=String(stars);
-      document.getElementById("mb-two-way-rating-comment").value=comment;
-      return window.MB_submitTwoWayRating();
-    }
-    if(!workerPhone)return alert("मिस्त्री की जानकारी नहीं मिली।");
-    try{
-      var ph=rp();
-      var old=await db.collection("worker_reviews").where("workerPhone","==",workerPhone).limit(50).get();
-      if(!old.empty)return alert("ℹ️ इस Rating को पहले ही सेव किया जा चुका है।");
-      await db.collection("worker_reviews").add({workerPhone:workerPhone,stars:stars,comment:comment,raterRole:"customer",raterPhone:ph,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
-      alert("✅ आपकी Rating सेव हो गई।");
-      try{closeReviewModal();}catch(e){}
-    }catch(e){alert("Rating सेव नहीं हुई: "+e.message);}
-  };
-
-  // Agreement card में पहले से Rating होने पर हमेशा 'Rating सेव है' ही दिखे।
-  window.MB_ratingAlreadyGiven=async function(dealId){
-    try{return await hasDealRating(dealId,rp(),rr()==="worker"?"worker":"customer");}catch(e){return false;}
-  };
-})();
-</script>
-
-<!-- MB INBOX READ/UNREAD FIX: seen messages stay visible; New Message badge only for unread -->
-<script id="mb-inbox-read-unread-fix">
-(function(){
-  "use strict";
-  function d10(v){return String(v||"").replace(/\D/g,"").slice(-10);}
-  function readKey(phone){return "mb_inbox_read_"+d10(phone);}
-  function getRead(phone){
-    try{return JSON.parse(localStorage.getItem(readKey(phone))||"[]");}catch(e){return [];}
-  }
-  function setRead(phone,ids){
-    try{
-      ids=Array.from(new Set((ids||[]).filter(Boolean))).slice(-500);
-      localStorage.setItem(readKey(phone),JSON.stringify(ids));
-    }catch(e){}
-  }
-  function docIdFor(doc){return doc&&doc.id?doc.id:"";}
-  function updateBadge(count){
-    var badge=document.getElementById("mb-customer-inbox-badge");
-    var countEl=document.getElementById("mb-client-inbox-count");
-    [badge,countEl].forEach(function(el){
-      if(!el)return;
-      el.textContent=count+" New Message";
-      el.classList.toggle("hidden",count===0);
-    });
-  }
-  function renderMessages(list,snap){
-    if(!list)return;
-    list.innerHTML="";
-    if(!snap||snap.empty){
-      list.innerHTML='<p class="text-[10px] text-slate-500">अभी कोई संदेश नहीं है।</p>';
-      return;
-    }
-    var docs=snap.docs.slice().sort(function(a,b){
-      var aa=(a.data()||{}).createdAt, bb=(b.data()||{}).createdAt;
-      var am=aa&&typeof aa.toMillis==="function"?aa.toMillis():0;
-      var bm=bb&&typeof bb.toMillis==="function"?bb.toMillis():0;
-      return bm-am;
-    });
-    docs.forEach(function(doc){
-      var m=doc.data()||{};
-      var esc=function(v){return String(v==null?"":v).replace(/[&<>"']/g,function(c){return ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]);});};
-      list.innerHTML += '<div class="bg-white p-2.5 rounded-xl border border-amber-300 shadow-2xs"><div class="flex justify-between items-center mb-1"><span class="font-black text-amber-800 text-[10px]">'+esc(m.title||"मिस्त्रीबाबू सूचना")+'</span><span class="text-[9px] text-slate-400">'+esc(m.jobSixId||"")+'</span></div><p class="text-slate-800 text-xs font-semibold leading-relaxed">'+esc(m.message||"")+'</p>'+(m.contactNumber?'<div class="mt-1.5 pt-1.5 border-t border-slate-100 flex items-center justify-between"><span class="text-[10px] text-slate-500 font-bold">संपर्क नंबर:</span><a href="tel:'+esc(m.contactNumber)+'" class="bg-emerald-600 text-white px-2 py-0.5 rounded text-[10px] font-bold">☎ '+esc(m.contactNumber)+'</a></div>':'')+'</div>';
-    });
-  }
-
-  var inboxUnsub=null;
-  var clientInboxViewing=false;
-
-  window.listenClientInbox=function(phone){
-    var full=d10(phone); if(full.length!==10)return; full="+91"+full;
-    var sec=document.getElementById("client-inbox-section");
-    var list=document.getElementById("client-inbox-messages");
-    if(inboxUnsub){try{inboxUnsub();}catch(e){} inboxUnsub=null;}
-    inboxUnsub=db.collection("inbox_messages").where("recipientPhone","==",full).onSnapshot(function(snap){
-      var read=getRead(full);
-      var unread=snap.docs.filter(function(doc){return read.indexOf(docIdFor(doc))===-1;});
-      updateBadge(unread.length);
-      if(sec && !sec.classList.contains("hidden")) renderMessages(list,snap);
-      if(clientInboxViewing){
-        var ids=snap.docs.map(docIdFor);
-        if(ids.length){setRead(full,ids);updateBadge(0);}
-      }
-    });
-  };
-
-  function markClientInboxRead(){
-    var full=d10((typeof customerPhone==='function'?customerPhone():localStorage.getItem("mb_client_phone")||localStorage.getItem("mb_customer_phone")));
-    if(full.length!==10)return;
-    full="+91"+full;
-    db.collection("inbox_messages").where("recipientPhone","==",full).get().then(function(snap){
-      setRead(full,snap.docs.map(docIdFor));
-      updateBadge(0);
-      var sec=document.getElementById("client-inbox-section"),list=document.getElementById("client-inbox-messages");
-      if(sec && !sec.classList.contains("hidden"))renderMessages(list,snap);
-    }).catch(function(e){console.warn("Inbox read state:",e);});
-  }
-
-  var oldDashTab=window.MB_customerDashTab;
-  window.MB_customerDashTab=function(tab){
-    clientInboxViewing=(tab==="notice");
-    var result=typeof oldDashTab==='function'?oldDashTab.apply(this,arguments):undefined;
-    if(tab==="notice"){
-      setTimeout(markClientInboxRead,350);
-    }
-    return result;
-  };
-
-  document.addEventListener("DOMContentLoaded",function(){
-    setTimeout(function(){
-      try{
-        var role=localStorage.getItem("current_user_role")||localStorage.getItem("mb_device_locked_role")||"";
-        if(role==="client"){
-          var p=d10(localStorage.getItem("mb_client_phone")||localStorage.getItem("mb_customer_phone"));
-          if(p.length===10)window.listenClientInbox(p);
-        }
-      }catch(e){}
-    },1000);
-  });
-})();
-</script>
-
-<!-- MB NO.6 VERIFIED PROFILE V1 -->
-<script id="mb-verified-profile-v1">
-(function(){
-  'use strict';
-  function addCard(parentId, cardId, title, text, badgeId, verifiedKey, uploadSelector){
-    var p=document.getElementById(parentId); if(!p || document.getElementById(cardId)) return;
-    var c=document.createElement('div'); c.id=cardId;
-    c.className='mt-3 bg-emerald-50 border border-emerald-200 rounded-2xl p-3';
-    c.innerHTML='<div class="flex items-center justify-between gap-2"><div><div class="text-xs font-black text-slate-900">🛡️ MistriBabu Verified Profile</div><p class="text-[9px] text-slate-600 mt-0.5">'+text+'</p></div><span id="'+badgeId+'" class="text-[9px] font-black px-2 py-1 rounded-full bg-amber-100 text-amber-800">⏳ Pending</span></div>';
-    p.appendChild(c);
-  }
-  function refresh(){
-    addCard('worker-profile-view','mb-worker-verified-profile-card','Verified','ID Proof Admin verification के बाद ही Verified Badge मिलेगा.','mb-worker-verified-badge');
-    addCard('customer-professional-dashboard','mb-customer-verified-profile-card','Verified','ID Proof केवल Admin verification के लिए है; public profile में ID नहीं दिखेगी.','mb-customer-verified-badge');
-    var wb=document.getElementById('mb-worker-verified-badge');
-    if(wb){var ok=localStorage.getItem('mb_worker_id_verified')==='true';wb.textContent=ok?'🛡️ Verified':'⏳ Verification Pending';wb.className='text-[9px] font-black px-2 py-1 rounded-full '+(ok?'bg-emerald-100 text-emerald-700':'bg-amber-100 text-amber-800');}
-    var cb=document.getElementById('mb-customer-verified-badge');
-    if(cb){var p=window.MB_getCustomerProfile?window.MB_getCustomerProfile():null;var ok=!!(p&&p.aadhaarVerified===true);cb.textContent=ok?'🛡️ Verified':'⏳ Verification Pending';cb.className='text-[9px] font-black px-2 py-1 rounded-full '+(ok?'bg-emerald-100 text-emerald-700':'bg-amber-100 text-amber-800');}
-  }
-  document.addEventListener('DOMContentLoaded',function(){setTimeout(refresh,900);setTimeout(refresh,2200);});
-  window.MB_refreshVerifiedProfile=refresh;
-})();
-</script>
-<!-- END MB NO.6 VERIFIED PROFILE V1 -->
