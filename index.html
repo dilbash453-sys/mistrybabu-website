@@ -1449,9 +1449,29 @@
           <input type="tel" id="prop-worker-phone" required maxlength="10" placeholder="10 अंकों का नंबर" class="w-full rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs focus:outline-none">
         </div>
 
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[10px] font-bold text-slate-700 uppercase mb-0.5">रेट / Quote (₹) *</label>
+            <input type="number" id="prop-quote-amount" min="1" step="1" required placeholder="जैसे 8500" class="w-full rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold text-slate-700 uppercase mb-0.5">समय *</label>
+            <input type="text" id="prop-quote-time" required placeholder="जैसे 3 दिन" class="w-full rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs focus:outline-none">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-[10px] font-bold text-slate-700 uppercase mb-0.5">सामान किसका? *</label>
+          <select id="prop-material-responsibility" required class="w-full rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs focus:outline-none">
+            <option value="मालिक का">मालिक का सामान</option>
+            <option value="मिस्त्री का">मिस्त्री सामान देगा</option>
+            <option value="दोनों">दोनों मिलकर</option>
+          </select>
+        </div>
+
         <div>
           <div class="flex justify-between items-center mb-0.5">
-            <label class="block text-[10px] font-bold text-slate-700 uppercase">आपका रेट व संदेश *</label>
+            <label class="block text-[10px] font-bold text-slate-700 uppercase">आपका संदेश *</label>
             <button type="button" onclick="startVoiceInput('prop-message', 'voice-btn-prop')" id="voice-btn-prop" class="text-[9px] text-amber-600 bg-amber-50 px-2 py-0.5 rounded border border-amber-200 font-bold flex items-center space-x-1">
               <i class="fa-solid fa-microphone"></i>
               <span>बोलकर लिखें</span>
@@ -3375,7 +3395,8 @@
                 </div>
 
                 <div class="bg-amber-50 p-2 rounded-lg border border-amber-200 text-[10px] text-slate-700">
-                  <span class="font-bold">तय रेट/संदेश:</span> ${d.rateMessage}
+                  <span class="font-bold">तय Quote:</span> ₹${Number(d.quoteAmount||0).toLocaleString('en-IN')} • ${d.quoteTime||'समय नहीं'} • सामान: ${d.materialResponsibility||'—'}
+                  <div class="mt-1"><span class="font-bold">संदेश:</span> ${d.rateMessage||'—'}</div>
                 </div>
 
                 <div class="flex gap-1 pt-1">
@@ -4149,6 +4170,10 @@
         workerName: document.getElementById("prop-worker-name").value.trim(),
         workerPhone: "+91" + phone,
         message: document.getElementById("prop-message").value.trim(),
+        quoteAmount: Number(document.getElementById("prop-quote-amount").value || 0),
+        quoteTime: document.getElementById("prop-quote-time").value.trim(),
+        materialResponsibility: document.getElementById("prop-material-responsibility").value,
+        status: "Pending",
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       };
 
@@ -4162,9 +4187,12 @@
         return db.collection("job_proposals").add(pData);
       };
       saveProposal().then(() => {
-        alert("संदेश व रेट सफलतापूर्वक भेज दिया गया है!");
+        alert("✅ Quote सफलतापूर्वक भेज दिया गया है! अब ग्राहक आपके रेट, समय और सामान की जिम्मेदारी की तुलना कर सकता है।");
         btn.innerText = "रेट व संदेश भेजें";
         document.getElementById("prop-message").value = "";
+        document.getElementById("prop-quote-amount").value = "";
+        document.getElementById("prop-quote-time").value = "";
+        document.getElementById("prop-material-responsibility").value = "मालिक का";
         currentAudioMemoBlob = null;
         const audioTxt = document.getElementById("txt-audio-memo"); if (audioTxt) audioTxt.innerText = "ऑडियो रिकॉर्ड करें";
         closeProposalModal();
@@ -4508,10 +4536,15 @@
                         <span class="font-black text-slate-900"><i class="fa-solid fa-user-gear text-amber-600 mr-1"></i>${prop.workerName}</span>
                         <span class="text-[9px] bg-slate-200 text-slate-600 px-1.5 py-0.5 rounded font-bold">🔒 नंबर सुरक्षित</span>
                       </div>
-                      <p class="text-[11px] text-slate-700 bg-white p-2 rounded-lg border border-slate-100 font-medium">${prop.message}</p>
+                      <div class="grid grid-cols-3 gap-1.5 mb-2">
+                        <div class="bg-amber-50 border border-amber-200 rounded-lg p-2 text-center"><span class="block text-[8px] text-slate-500">QUOTE</span><b class="text-emerald-700">₹${Number(prop.quoteAmount||0).toLocaleString('en-IN')}</b></div>
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-2 text-center"><span class="block text-[8px] text-slate-500">समय</span><b class="text-blue-800">${prop.quoteTime||'—'}</b></div>
+                        <div class="bg-violet-50 border border-violet-200 rounded-lg p-2 text-center"><span class="block text-[8px] text-slate-500">सामान</span><b class="text-violet-800">${prop.materialResponsibility||'—'}</b></div>
+                      </div>
+                      <p class="text-[11px] text-slate-700 bg-white p-2 rounded-lg border border-slate-100 font-medium">${prop.message||'कोई अतिरिक्त संदेश नहीं'}</p>
                       
                       <div class="mt-2 flex gap-1.5">
-                        <button onclick="confirmDealInApp('${sixId}', '${prop.workerName}', '${prop.workerPhone}', '${j.clientName}', '${j.phone}', '${j.workType}', '${j.district} (${j.location})', '${prop.message.replace(/'/g, "\\'")}');" 
+                        <button onclick="confirmDealInApp('${sixId}', '${prop.workerName}', '${prop.workerPhone}', '${j.clientName}', '${j.phone}', '${j.workType}', '${j.district} (${j.location})', '${(prop.message||'').replace(/'/g, "\\'")}', '${pDoc.id}', ${Number(prop.quoteAmount||0)}, '${(prop.quoteTime||'').replace(/'/g, "\\'")}', '${(prop.materialResponsibility||'').replace(/'/g, "\\'")}');" 
                           class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded-lg text-[10px] flex items-center justify-center space-x-1 shadow-xs transition">
                           <i class="fa-solid fa-handshake"></i>
                           <span>डील पक्की करें</span>
@@ -4538,7 +4571,7 @@
         });
     }
 
-    function confirmDealInApp(sixId, workerName, workerPhone, clientName, clientPhone, workType, location, rateMsg) {
+    function confirmDealInApp(sixId, workerName, workerPhone, clientName, clientPhone, workType, location, rateMsg, proposalId, quoteAmount, quoteTime, materialResponsibility) {
       if (!confirm(`क्या आप ${sixId} के लिए ${workerName} की डील फाइनल करना चाहते हैं?`)) return;
 
       const dealData = {
@@ -4550,6 +4583,10 @@
         workType: workType,
         location: location,
         rateMessage: rateMsg,
+        quoteAmount: Number(quoteAmount || 0),
+        quoteTime: quoteTime || "",
+        materialResponsibility: materialResponsibility || "",
+        selectedProposalId: proposalId || "",
         status: "Pending",
         isArchived: false,
         isLockedBy: "",
@@ -4558,8 +4595,19 @@
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       };
 
-      db.collection("confirmed_deals").add(dealData).then(() => {
-        alert(`✅ डील दर्ज हो गई है! एडमिन द्वारा जाँचे जाने के बाद इनबॉक्स में नंबर आ जाएगा।`);
+      db.collection("confirmed_deals").add(dealData).then((dealRef) => {
+        const updates = {status: "Selected"};
+        const p1 = proposalId ? db.collection("job_proposals").doc(proposalId).update(updates) : Promise.resolve();
+        const jobSnap = db.collection("job_posts").where("jobSixId", "==", sixId).limit(1).get();
+        return Promise.all([p1, jobSnap]).then(([_, snap]) => {
+          if (!snap.empty) return snap.docs[0].ref.update({selectedProposalId: proposalId || "", selectedWorkerName: workerName, selectedQuoteAmount: Number(quoteAmount || 0), selectedQuoteTime: quoteTime || "", selectedMaterialResponsibility: materialResponsibility || "", dealStatus: "Selected"});
+        }).then(async () => {
+          try { await MB_createAgreement(dealRef.id); } catch(e) { console.warn("Agreement auto-create failed", e); }
+          alert(`✅ Quote select करके Deal बन गई!
+रेट: ₹${Number(quoteAmount || 0).toLocaleString('en-IN')} • समय: ${quoteTime || '—'}
+📄 Digital Agreement भी तैयार है। दोनों पक्ष उसे Accept कर सकते हैं।`);
+          try { MB_loadDigitalAgreements(); } catch(e) {}
+        });
       }).catch(err => {
         alert("त्रुटि: " + err.message);
       });
@@ -6179,4 +6227,103 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
   document.addEventListener("DOMContentLoaded",addCard);
 })();
 /* ================= END PAID LEADS FULL FLOW ================= */
+</script>
+\n<!-- MB DIGITAL AGREEMENT VISIBLE UI -->
+<section id="mb-digital-agreement-section" class="max-w-2xl mx-auto px-4 py-4 hidden">
+  <div class="bg-white rounded-2xl border border-amber-200 shadow-sm overflow-hidden">
+    <div class="bg-slate-900 text-white px-4 py-3 flex items-center justify-between">
+      <div><div class="font-black text-sm">📄 Digital Agreement</div><div class="text-[10px] text-slate-300">Confirmed Deal के बाद दोनों पक्ष यहाँ Agreement स्वीकार करेंगे।</div></div>
+      <span class="text-[10px] bg-amber-400 text-slate-900 px-2 py-1 rounded-full font-black">DEAL</span>
+    </div>
+    <div id="mb-digital-agreement-list" class="p-3 space-y-3"></div>
+  </div>
+</section>
+<script>
+(function(){
+  "use strict";
+  function digits(v){return String(v||"").replace(/\D/g,"").slice(-10);}
+  function esc(v){return String(v==null?"":v).replace(/[&<>"']/g,function(c){return ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]);});}
+  function currentRole(){return localStorage.getItem("current_user_role")||localStorage.getItem("mb_device_locked_role")||"";}
+  function currentPhone(){
+    var r=currentRole();
+    return digits(r==="worker" ? localStorage.getItem("mb_worker_phone") : localStorage.getItem("mb_client_phone"));
+  }
+  function showSection(show){var s=document.getElementById("mb-digital-agreement-section"); if(s)s.classList.toggle("hidden",!show);}
+  function statusText(a){
+    if(a.status==="accepted" || (a.customerAccepted&&a.workerAccepted)) return "✅ दोनों पक्ष ने Accept कर दिया";
+    if(a.customerAccepted) return "🟡 Customer ने Accept किया — Mistri की सहमति बाकी";
+    if(a.workerAccepted) return "🟡 Mistri ने Accept किया — Customer की सहमति बाकी";
+    return "🟠 दोनों पक्ष की सहमति बाकी";
+  }
+  function card(dealId,d,a,role){
+    var accepted = role==="worker" ? !!a.workerAccepted : !!a.customerAccepted;
+    var both = !!a.customerAccepted && !!a.workerAccepted;
+    var workStatus=a.workStatus||"";
+    var workLabel=workStatus==="work_started"?"🟢 काम शुरू":workStatus==="work_completed"?"✅ काम पूरा":both?"🟢 Ready to Start":"⏳ Agreement Pending";
+    var html=`<div class="border border-slate-200 rounded-xl p-3 bg-slate-50">
+      <div class="flex justify-between gap-2"><div class="font-black text-xs">${esc(d.jobSixId||a.jobId||dealId)}</div><span class="text-[9px] font-black px-2 py-1 rounded-full bg-white border">${esc(workLabel)}</span></div>
+      <div class="grid grid-cols-2 gap-2 mt-2 text-[10px]">
+        <div><b>काम:</b> ${esc(a.workType||d.workType||"—")}</div><div><b>राशि:</b> ₹${Number(a.amount||d.quoteAmount||0).toLocaleString('en-IN')}</div>
+        <div><b>समय:</b> ${esc(d.quoteTime||a.startDate||"—")}</div><div><b>Material:</b> ${esc(a.materialResponsibility||d.materialResponsibility||"आपसी सहमति")}</div>
+      </div>
+      <div class="mt-2 text-[10px] font-bold">${esc(statusText(a))}</div>
+      <div class="flex flex-wrap gap-2 mt-3">
+        ${!accepted ? `<button onclick="MB_acceptAgreement('${dealId}','${role}')" class="bg-emerald-600 text-white px-3 py-2 rounded-lg text-[10px] font-black">✓ Agreement Accept करें</button>` : `<span class="bg-emerald-100 text-emerald-800 px-3 py-2 rounded-lg text-[10px] font-black">✓ आपकी Acceptance सेव है</span>`}
+        ${both && workStatus!=="work_started" && workStatus!=="work_completed" ? `<button onclick="MB_updateWorkStatus('${dealId}','work_started');setTimeout(MB_loadDigitalAgreements,500)" class="bg-blue-600 text-white px-3 py-2 rounded-lg text-[10px] font-black">▶ काम शुरू</button>` : ``}
+        ${both && workStatus==="work_started" ? `<button onclick="MB_updateWorkStatus('${dealId}','work_completed');setTimeout(MB_loadDigitalAgreements,500)" class="bg-amber-500 text-slate-900 px-3 py-2 rounded-lg text-[10px] font-black">✓ काम पूरा</button>` : ``}
+      </div>
+    </div>`;
+    return html;
+  }
+  window.MB_loadDigitalAgreements=async function(){
+    var list=document.getElementById("mb-digital-agreement-list"); if(!list)return;
+    var phone=currentPhone(); if(phone.length!==10){showSection(false);return;}
+    list.innerHTML='<div class="text-center text-[10px] text-slate-500 py-3">Agreement लोड हो रहा है…</div>';
+    try{
+      var snap=await db.collection("confirmed_deals").limit(50).get();
+      var deals=snap.docs.filter(function(x){var d=x.data()||{};return digits(d.clientPhone)===phone || digits(d.customerPhone)===phone || digits(d.workerPhone)===phone;});
+      if(!deals.length){showSection(false);return;}
+      var role=currentRole()==="worker"?"worker":"customer";
+      var parts=[];
+      for(var i=0;i<deals.length;i++){
+        var ref=deals[i].ref, d=deals[i].data()||{};
+        var ar=await db.collection("digital_agreements").doc(ref.id).get();
+        var a=ar.exists?(ar.data()||{}):{};
+        parts.push(card(ref.id,d,a,role));
+      }
+      list.innerHTML=parts.join(""); showSection(true);
+    }catch(e){showSection(true);list.innerHTML='<div class="text-[10px] text-red-600">Agreement लोड नहीं हुआ: '+esc(e.message)+'</div>';}
+  };
+  document.addEventListener("DOMContentLoaded",function(){setTimeout(function(){try{MB_loadDigitalAgreements();}catch(e){}},1200);});
+})();
+</script>
+<!-- MB DIGITAL AGREEMENT FLOW -->
+<script>
+(function(){
+  window.MB_createAgreement=async function(dealId){
+    if(!dealId)return alert('Deal ID नहीं मिला।');
+    try{
+      const ref=db.collection('confirmed_deals').doc(dealId); const snap=await ref.get();
+      if(snap.empty)return alert('Deal नहीं मिला।');
+      const d=snap.data()||{};
+      await db.collection('digital_agreements').doc(dealId).set({dealId:dealId,jobId:d.jobId||'',customerPhone:d.clientPhone||d.customerPhone||'',workerPhone:d.workerPhone||'',workerName:d.workerName||'',amount:d.amount||d.quoteAmount||0,workType:d.workType||'',materialResponsibility:d.materialResponsibility||'आपसी सहमति से',startDate:d.startDate||'',endDate:d.endDate||'',customerAccepted:false,workerAccepted:false,status:'pending',createdAt:firebase.firestore.FieldValue.serverTimestamp(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
+      alert('✅ Digital Agreement तैयार हो गया। दोनों पक्ष की सहमति बाकी है।');
+    }catch(e){alert('Agreement बनाने में समस्या: '+e.message);}
+  };
+  window.MB_acceptAgreement=async function(dealId,role){
+    if(!dealId||!role)return; const field=role==='customer'?'customerAccepted':'workerAccepted';
+    try{
+      const ref=db.collection('digital_agreements').doc(dealId); const snap=await ref.get(); if(snap.empty)return alert('Agreement नहीं मिला।');
+      const data=snap.data()||{}; const patch={}; patch[field]=true; patch.updatedAt=firebase.firestore.FieldValue.serverTimestamp();
+      if((field==='customerAccepted'&&data.workerAccepted)||(field==='workerAccepted'&&data.customerAccepted)){patch.status='accepted';patch.workStatus='ready_to_start';}
+      else patch.status='waiting_for_other_party';
+      await ref.set(patch,{merge:true}); alert('✅ आपकी Agreement acceptance सेव हो गई।');
+    }catch(e){alert('Acceptance सेव नहीं हुई: '+e.message);}
+  };
+  window.MB_updateWorkStatus=async function(dealId,status){
+    const allowed=['ready_to_start','work_started','work_completed']; if(!allowed.includes(status))return;
+    try{await db.collection('digital_agreements').doc(dealId).set({workStatus:status,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}); alert(status==='work_started'?'🟢 काम शुरू दर्ज हो गया।':status==='work_completed'?'✅ काम पूरा दर्ज हो गया।':'Agreement तैयार है।');}
+    catch(e){alert('Status अपडेट नहीं हुआ: '+e.message);}
+  };
+})();
 </script>
