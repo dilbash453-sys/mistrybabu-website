@@ -4548,6 +4548,10 @@
         workType: workType,
         location: location,
         rateMessage: rateMsg,
+        bookingStatus: "not_scheduled",
+        startDate: "",
+        startTime: "",
+        duration: "",
         status: "Pending",
         isArchived: false,
         isLockedBy: "",
@@ -6205,6 +6209,7 @@ document.addEventListener("DOMContentLoaded",()=>setTimeout(()=>{MB_refreshPubli
   };
   MBX.loadEstimates=async function(){const box=document.getElementById('mb-estimate-list');if(!box||typeof db==='undefined')return;const phone=await MBX.phone();if(!phone)return;try{const snap=await db.collection('estimates').where('createdByPhone','==',phone).limit(10).get();if(snap.empty){box.innerHTML='<p class="text-[9px] text-slate-400">अभी कोई saved estimate नहीं है।</p>';return;}box.innerHTML=snap.docs.map(d=>{const x=d.data()||{};return `<div class="border rounded-lg p-2 bg-slate-50 text-[9px]"><b>${esc(x.workName||'Estimate')}</b> • ₹${money(x.total||0)}<br><span class="text-slate-500">${esc(x.note||'')}</span></div>`;}).join('');}catch(e){box.innerHTML='<p class="text-[9px] text-rose-600">Estimate load नहीं हुआ।</p>';}};
 
+  /* Booking + Schedule is integrated into the existing Deal/Agreement flow above. */
   /* ==================== 2) DIGITAL WORK AGREEMENT ==================== */
   MBX.dealDocs=async function(){
     if(typeof db==='undefined')return [];
@@ -6223,7 +6228,58 @@ document.addEventListener("DOMContentLoaded",()=>setTimeout(()=>{MB_refreshPubli
   MBX.acceptAgreement=async function(id,role){const ref=db.collection('digital_agreements').doc(id),snap=await ref.get();if(!snap.exists)return;const x=snap.data()||{},upd={updatedAt:fsNow()};if(role==='client')upd.customerAccepted=true;else upd.workerAccepted=true;const ca=role==='client'?true:!!x.customerAccepted,wa=role==='worker'?true:!!x.workerAccepted;upd.status=ca&&wa?'accepted':'waiting_for_other_party';if(ca&&wa)upd.workStatus='ready_to_start';await ref.update(upd);MBX.loadAgreements();};
   MBX.setWorkStatus=async function(id,status){if(!['ready_to_start','work_started','work_completed'].includes(status))return;await db.collection('digital_agreements').doc(id).update({workStatus:status,updatedAt:fsNow()});MBX.loadAgreements();};
   MBX.agreementHtml=function(list){const r=MBX.role();if(!list.length)return '<p class="text-[9px] text-slate-400">अभी कोई Deal नहीं मिली।</p>';return list.map(x=>`<div class="border rounded-xl p-2.5 bg-slate-50 space-y-1.5"><div class="flex justify-between gap-2"><b class="text-[10px]">🤝 ${esc(x.jobSixId||x.id)}</b><span class="text-[8px] bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">${esc(x.status||'Pending')}</span></div><div class="text-[9px]">${esc(x.workType||'काम')} • ₹${esc(x.amount||x.rate||'—')}</div><div class="text-[9px] text-slate-500">${esc(x.clientName||'Customer')} ↔ ${esc(x.workerName||'Mistri')}</div><div class="text-[9px]">Agreement: ${x.customerAccepted?'Customer ✓':'Customer ⏳'} • ${x.workerAccepted?'Mistri ✓':'Mistri ⏳'} • Work: <b>${esc(x.workStatus||'ready_to_start')}</b></div><div class="grid grid-cols-2 gap-1.5"><button type="button" onclick="MBX_acceptAgreement('${x.id}','${r==='client'?'client':'worker'}')" class="bg-emerald-600 text-white rounded-lg py-1.5 text-[9px] font-black">${r==='client'?(x.customerAccepted?'✓ Accepted':'Accept Agreement'):(x.workerAccepted?'✓ Accepted':'Accept Agreement')}</button><button type="button" onclick="MBX_raiseComplaint('${x.id}')" class="bg-rose-50 text-rose-700 border border-rose-200 rounded-lg py-1.5 text-[9px] font-black">⚠️ शिकायत</button></div>${x.customerAccepted&&x.workerAccepted?`<div class="grid grid-cols-3 gap-1"><button onclick="MBX_setWorkStatus('${x.id}','ready_to_start')" class="bg-blue-50 text-blue-700 rounded p-1 text-[8px]">Ready</button><button onclick="MBX_setWorkStatus('${x.id}','work_started')" class="bg-amber-50 text-amber-700 rounded p-1 text-[8px]">काम शुरू</button><button onclick="MBX_setWorkStatus('${x.id}','work_completed')" class="bg-emerald-50 text-emerald-700 rounded p-1 text-[8px]">काम पूरा</button></div>`:''}</div>`).join('');};
-  MBX.loadAgreements=async function(){const box=document.getElementById('mb-agreement-list');if(!box)return;box.innerHTML='<p class="text-[9px] text-slate-400">Deals/Agreement लोड हो रहे हैं...</p>';try{const deals=await MBX.dealDocs();const out=[];for(const d of deals)out.push(await MBX.ensureAgreement(d));box.innerHTML=MBX.agreementHtml(out);}catch(e){box.innerHTML='<p class="text-[9px] text-rose-600">Agreement load नहीं हुआ: '+esc(e.message)+'</p>';}};
+  /* ==================== 1B) BOOKING + SCHEDULE ==================== */
+  MBX.bookingForDeal=async function(dealId){
+    try{const s=await db.collection('job_bookings').doc(dealId).get();return s.exists?{id:s.id,...(s.data()||{})}:null;}catch(e){return null;}
+  };
+  MBX.saveBooking=async function(dealId,side){
+    const phone=await MBX.phone(); if(!phone)return alert('पहले Login/Profile पूरा करें।');
+    const role=MBX.role(); if(!['client','worker'].includes(role))return alert('Booking केवल Customer और Mistri Deal में उपलब्ध है।');
+    const date=prompt('📅 काम शुरू होने की तारीख डालें (YYYY-MM-DD):',''); if(!date)return;
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(date))return alert('तारीख का format YYYY-MM-DD रखें।');
+    const time=prompt('⏰ काम शुरू होने का समय डालें (जैसे 08:00 AM):','08:00 AM'); if(!time)return;
+    const duration=prompt('⏳ अनुमानित अवधि लिखें (जैसे 7 दिन):',''); if(!duration)return;
+    const note=prompt('📝 Booking की कोई जरूरी बात (optional):','')||'';
+    const ref=db.collection('job_bookings').doc(dealId);
+    const old=await ref.get();
+    const current=old.exists?(old.data()||{}):{};
+    const requesterRole=role==='client'?'customer':'worker';
+    const status=requesterRole==='customer'?'pending_worker':'pending_customer';
+    const data={dealId,requestedByPhone:phone,requestedByRole:requesterRole,startDate:date,startTime:time,duration,note,status,updatedAt:fsNow(),createdAt:current.createdAt||fsNow()};
+    await ref.set(data,{merge:true});
+    await db.collection('confirmed_deals').doc(dealId).set({bookingStatus:status,startDate:date,startTime:time,duration,bookingNote:note,updatedAt:fsNow()},{merge:true});
+    alert(status==='pending_worker'?'📅 Booking request Mistri को भेज दी गई है।':'📅 Booking proposal Customer को भेज दी गई है।');
+    MBX.loadAgreements();
+  };
+  MBX.bookingDecision=async function(dealId,decision){
+    const role=MBX.role(); const phone=await MBX.phone(); if(!phone)return;
+    const ref=db.collection('job_bookings').doc(dealId),snap=await ref.get(); if(!snap.exists)return alert('Booking नहीं मिली।');
+    const b=snap.data()||{};
+    const isCustomer=role==='client',isWorker=role==='worker';
+    if((b.status==='pending_worker'&&!isWorker)||(b.status==='pending_customer'&&!isCustomer))return alert('यह Booking आपके approval के लिए नहीं है।');
+    if(decision==='reject'){
+      await ref.set({status:'rejected',rejectedByRole:isCustomer?'customer':'worker',rejectedByPhone:phone,updatedAt:fsNow()},{merge:true});
+      await db.collection('confirmed_deals').doc(dealId).set({bookingStatus:'rejected',updatedAt:fsNow()},{merge:true});
+      alert('❌ Booking reject कर दी गई।');
+    }else{
+      await ref.set({status:'confirmed',confirmedByRole:isCustomer?'customer':'worker',confirmedByPhone:phone,confirmedAt:fsNow(),updatedAt:fsNow()},{merge:true});
+      await db.collection('confirmed_deals').doc(dealId).set({bookingStatus:'confirmed',startDate:b.startDate||'',startTime:b.startTime||'',duration:b.duration||'',bookingNote:b.note||'',updatedAt:fsNow()},{merge:true});
+      await db.collection('digital_agreements').doc(dealId).set({startDate:b.startDate||'',endDate:b.duration||'',scheduleTime:b.startTime||'',bookingStatus:'confirmed',updatedAt:fsNow()},{merge:true});
+      alert('✅ Booking confirm हो गई।');
+    }
+    MBX.loadAgreements();
+  };
+  MBX.bookingHtml=function(x,r){
+    const b=x._booking;
+    if(!b)return `<div class="bg-blue-50 border border-blue-200 rounded-lg p-2 text-[9px]"><b>📅 Booking / Schedule</b><div class="text-slate-500 mt-1">अभी तारीख और समय तय नहीं हुआ है।</div><button type="button" onclick="MBX_saveBooking('${x.id}','${r}')" class="mt-1.5 bg-blue-600 text-white rounded-lg px-2 py-1.5 text-[9px] font-black">📅 Booking तय करें</button></div>`;
+    const label={pending_worker:'⏳ Mistri की approval बाकी',pending_customer:'⏳ Customer की approval बाकी',confirmed:'✅ Booking Confirmed',rejected:'❌ Booking Rejected'}[b.status]||b.status;
+    let actions='';
+    if((b.status==='pending_worker'&&r==='worker')||(b.status==='pending_customer'&&r==='client'))actions=`<div class="grid grid-cols-2 gap-1.5 mt-1.5"><button type="button" onclick="MBX_bookingDecision('${x.id}','confirm')" class="bg-emerald-600 text-white rounded-lg py-1.5 text-[9px] font-black">✓ Confirm</button><button type="button" onclick="MBX_bookingDecision('${x.id}','reject')" class="bg-rose-50 text-rose-700 border border-rose-200 rounded-lg py-1.5 text-[9px] font-black">✕ Reject</button></div>`;
+    return `<div class="bg-blue-50 border border-blue-200 rounded-lg p-2 text-[9px]"><div class="flex justify-between gap-2"><b>📅 Booking / Schedule</b><span class="font-black">${label}</span></div><div class="mt-1">📆 ${esc(b.startDate||'—')} • ⏰ ${esc(b.startTime||'—')} • ⏳ ${esc(b.duration||'—')}</div>${b.note?`<div class="text-slate-500 mt-1">📝 ${esc(b.note)}</div>`:''}${actions}<button type="button" onclick="MBX_saveBooking('${x.id}','${r}')" class="mt-1.5 text-blue-700 font-bold underline">${b.status==='confirmed'?'📅 Schedule बदलें':'📅 नया समय प्रस्तावित करें'}</button></div>`;
+  };
+  const _oldAgreementHtml=MBX.agreementHtml;
+  MBX.agreementHtml=function(list){const r=MBX.role();if(!list.length)return '<p class="text-[9px] text-slate-400">अभी कोई Deal नहीं मिली।</p>';return list.map(x=>`<div class="border rounded-xl p-2.5 bg-slate-50 space-y-1.5"><div class="flex justify-between gap-2"><b class="text-[10px]">🤝 ${esc(x.jobSixId||x.id)}</b><span class="text-[8px] bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">${esc(x.status||'Pending')}</span></div><div class="text-[9px]">${esc(x.workType||'काम')} • ₹${esc(x.amount||x.rate||'—')}</div><div class="text-[9px] text-slate-500">${esc(x.clientName||'Customer')} ↔ ${esc(x.workerName||'Mistri')}</div><div class="text-[9px]">Agreement: ${x.customerAccepted?'Customer ✓':'Customer ⏳'} • ${x.workerAccepted?'Mistri ✓':'Mistri ⏳'} • Work: <b>${esc(x.workStatus||'ready_to_start')}</b></div>${MBX.bookingHtml(x,r)}<div class="grid grid-cols-2 gap-1.5"><button type="button" onclick="MBX_acceptAgreement('${x.id}','${r==='client'?'client':'worker'}')" class="bg-emerald-600 text-white rounded-lg py-1.5 text-[9px] font-black">${r==='client'?(x.customerAccepted?'✓ Accepted':'Accept Agreement'):(x.workerAccepted?'✓ Accepted':'Accept Agreement')}</button><button type="button" onclick="MBX_raiseComplaint('${x.id}')" class="bg-rose-50 text-rose-700 border border-rose-200 rounded-lg py-1.5 text-[9px] font-black">⚠️ शिकायत</button></div>${x.customerAccepted&&x.workerAccepted?`<div class="grid grid-cols-3 gap-1"><button onclick="MBX_setWorkStatus('${x.id}','ready_to_start')" class="bg-blue-50 text-blue-700 rounded p-1 text-[8px]">Ready</button><button onclick="MBX_setWorkStatus('${x.id}','work_started')" class="bg-amber-50 text-amber-700 rounded p-1 text-[8px]">काम शुरू</button><button onclick="MBX_setWorkStatus('${x.id}','work_completed')" class="bg-emerald-50 text-emerald-700 rounded p-1 text-[8px]">काम पूरा</button></div>`:''}</div>`).join('');};
+  MBX.loadAgreements=async function(){const box=document.getElementById('mb-agreement-list');if(!box)return;box.innerHTML='<p class="text-[9px] text-slate-400">Deals/Agreement लोड हो रहे हैं...</p>';try{const deals=await MBX.dealDocs();const out=[];for(const d of deals){const a=await MBX.ensureAgreement(d);a._booking=await MBX.bookingForDeal(d.id);out.push(a);}box.innerHTML=MBX.agreementHtml(out);}catch(e){box.innerHTML='<p class="text-[9px] text-rose-600">Agreement load नहीं हुआ: '+esc(e.message)+'</p>';}};
 
   /* ==================== 3) COMPLAINT / DISPUTE ==================== */
   MBX.raiseComplaint=async function(dealId){
@@ -6256,7 +6312,7 @@ document.addEventListener("DOMContentLoaded",()=>setTimeout(()=>{MB_refreshPubli
     if(!document.getElementById('sec-adm-complaints')){const d=document.createElement('div');d.id='sec-adm-complaints';d.className='space-y-3 hidden';d.innerHTML='<div class="flex justify-between"><h3 class="font-black">⚠️ Complaint / Dispute</h3><button onclick="MBX_adminLoadComplaints()" class="text-rose-600 text-[10px] font-bold">Refresh</button></div><div id="admin-complaints-list" class="space-y-2"></div>';sec.parentElement.insertBefore(d,sec);}
     if(!document.getElementById('sec-adm-memberships')){const d=document.createElement('div');d.id='sec-adm-memberships';d.className='space-y-3 hidden';d.innerHTML='<div class="flex justify-between"><h3 class="font-black">👑 Membership Payment Requests</h3><button onclick="MBX_adminLoadMemberships()" class="text-violet-600 text-[10px] font-bold">Refresh</button></div><div id="admin-memberships-list" class="space-y-2"></div>';sec.parentElement.insertBefore(d,sec);}
   };
-  MBX.adminLoadAgreements=async function(){const box=document.getElementById('admin-agreements-list');if(!box)return;try{const s=await db.collection('digital_agreements').orderBy('createdAt','desc').limit(50).get();box.innerHTML=s.empty?'<p class="text-xs text-slate-400">कोई Agreement नहीं।</p>':s.docs.map(d=>{const x=d.data()||{};return `<div class="bg-white border rounded-xl p-3 text-[9px]"><b>${esc(x.jobSixId||x.dealId)}</b> • ${x.customerAccepted?'Customer ✓':'Customer ⏳'} • ${x.workerAccepted?'Mistri ✓':'Mistri ⏳'}<br>Work: ${esc(x.workStatus||'ready_to_start')} • ₹${esc(x.amount||'—')}</div>`;}).join('');}catch(e){box.innerHTML='<p class="text-xs text-rose-600">Agreement error: '+esc(e.message)+'</p>';}};
+  MBX.adminLoadAgreements=async function(){const box=document.getElementById('admin-agreements-list');if(!box)return;try{const s=await db.collection('digital_agreements').orderBy('createdAt','desc').limit(50).get();if(s.empty){box.innerHTML='<p class="text-xs text-slate-400">कोई Agreement नहीं।</p>';return;}const arr=[];for(const d of s.docs){const x=d.data()||{};const bs=await db.collection('job_bookings').doc(d.id).get();const b=bs.exists?(bs.data()||{}):null;arr.push(`<div class="bg-white border rounded-xl p-3 text-[9px]"><b>${esc(x.jobSixId||x.dealId)}</b> • ${x.customerAccepted?'Customer ✓':'Customer ⏳'} • ${x.workerAccepted?'Mistri ✓':'Mistri ⏳'}<br>Work: ${esc(x.workStatus||'ready_to_start')} • ₹${esc(x.amount||'—')}<br>📅 ${b?esc(b.startDate||'—')+' • '+esc(b.startTime||'—')+' • '+esc(b.duration||'—')+' • '+esc(b.status||'Pending'):'Booking अभी तय नहीं'}</div>`);}box.innerHTML=arr.join('');}catch(e){box.innerHTML='<p class="text-xs text-rose-600">Agreement error: '+esc(e.message)+'</p>';}};
   MBX.adminLoadComplaints=async function(){const box=document.getElementById('admin-complaints-list');if(!box)return;try{const s=await db.collection('deal_complaints').orderBy('createdAt','desc').limit(50).get();box.innerHTML=s.empty?'<p class="text-xs text-slate-400">कोई complaint नहीं।</p>':s.docs.map(d=>{const x=d.data()||{};return `<div class="bg-white border rounded-xl p-3 space-y-2 text-[9px]"><div><b>${esc(x.category||'Complaint')}</b> • <span class="font-black">${esc(x.status||'Pending')}</span></div><p>${esc(x.description||'')}</p><div class="grid grid-cols-3 gap-1">${['Reviewing','Resolved','Rejected'].map(st=>`<button onclick="MBX_adminComplaintStatus('${d.id}','${st}')" class="bg-slate-100 rounded py-1 font-bold">${st}</button>`).join('')}</div></div>`;}).join('');}catch(e){box.innerHTML='<p class="text-xs text-rose-600">Complaint error: '+esc(e.message)+'</p>';}};
   MBX.adminComplaintStatus=async function(id,status){await db.collection('deal_complaints').doc(id).update({status,updatedAt:fsNow(),handledBy:typeof currentOperator!=='undefined'?currentOperator:'Admin'});MBX.adminLoadComplaints();};
   MBX.adminLoadMemberships=async function(){const box=document.getElementById('admin-memberships-list');if(!box)return;try{const s=await db.collection('membership_payments').where('status','==','Pending').limit(50).get();box.innerHTML=s.empty?'<p class="text-xs text-slate-400">कोई Pending Membership नहीं।</p>':s.docs.map(d=>{const x=d.data()||{};return `<div class="bg-white border rounded-xl p-3 text-[9px] space-y-2"><div><b>${esc(x.phone||'—')}</b> • ${esc(x.planName||x.planId)} • ₹${x.amount||0}</div><div>UTR: <b>${esc(x.utr||'—')}</b> • ${x.validityDays||0} दिन</div><div class="grid grid-cols-2 gap-2"><button onclick="MBX_adminApproveMembership('${d.id}')" class="bg-emerald-600 text-white rounded py-2 font-black">✓ Approve</button><button onclick="MBX_adminRejectMembership('${d.id}')" class="bg-rose-600 text-white rounded py-2 font-black">✕ Reject</button></div></div>`;}).join('');}catch(e){box.innerHTML='<p class="text-xs text-rose-600">Membership error: '+esc(e.message)+'</p>';}};
