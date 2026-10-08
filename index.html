@@ -6210,7 +6210,7 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
     var comment=(document.getElementById("mb-two-way-rating-comment").value||"").trim();
     if(!dealId)return alert("Deal नहीं मिला।");
     try{
-      var existing=await db.collection("deal_ratings").where("dealId","==",dealId).where("raterPhone","==",phone()).limit(1).get();
+      var existing=await db.collection("deal_ratings").where("dealId","==",dealId).where("raterPhone","==",currentPhone()).limit(1).get();
       if(!existing.empty){MB_closeTwoWayRating();return alert("ℹ️ आपने इस Deal को पहले ही Rating दे दी है।");}
       var snap=await db.collection("confirmed_deals").doc(dealId).get();
       if(!snap.exists)return alert("Deal नहीं मिला।");
@@ -6416,7 +6416,7 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
         var ref=deals[i].ref, d=deals[i].data()||{};
         var ar=await db.collection("digital_agreements").doc(ref.id).get();
         var a=ar.exists?(ar.data()||{}):{};
-        var ratedSnap=await db.collection("deal_ratings").where("dealId","==",ref.id).where("raterPhone","==",phone()).limit(1).get();
+        var ratedSnap=await db.collection("deal_ratings").where("dealId","==",ref.id).where("raterPhone","==",currentPhone()).limit(1).get();
         var alreadyRated=!ratedSnap.empty;
         window.__MB_agreementCache=window.__MB_agreementCache||{};
         window.__MB_agreementCache[ref.id]=a;
