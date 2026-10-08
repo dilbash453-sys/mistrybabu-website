@@ -474,20 +474,27 @@
         </div>
         <div class="p-4 space-y-3">
           <div class="grid grid-cols-4 gap-1.5">
-            <button onclick="MB_customerDashScroll('client-posts-list')" class="bg-amber-50 border border-amber-200 rounded-xl p-2 text-center"><span class="block text-sm">📋</span><strong class="block text-[9px]">मेरी पोस्ट</strong></button>
-            <button onclick="MB_customerDashScroll('client-inbox-section')" class="bg-blue-50 border border-blue-200 rounded-xl p-2 text-center"><span class="block text-sm">📨</span><strong class="block text-[9px]">जवाब</strong></button>
-            <button onclick="MB_customerDashScroll('client-inbox-section')" class="bg-emerald-50 border border-emerald-200 rounded-xl p-2 text-center"><span class="block text-sm">🤝</span><strong class="block text-[9px]">Deals</strong></button>
-            <button onclick="MB_customerDashScroll('client-inbox-section')" class="bg-violet-50 border border-violet-200 rounded-xl p-2 text-center relative"><span class="block text-sm">🔔</span><strong class="block text-[9px]">सूचना</strong><span id="mb-customer-inbox-badge" class="hidden absolute -top-1 -right-1 bg-rose-600 text-white text-[8px] font-black px-1.5 py-0.5 rounded-full shadow">1 New Message</span></button>
+            <button onclick="MB_customerDashTab('posts')" class="bg-amber-50 border border-amber-200 rounded-xl p-2 text-center"><span class="block text-sm">📋</span><strong class="block text-[9px]">मेरी पोस्ट</strong></button>
+            <button onclick="MB_customerDashTab('replies')" class="bg-blue-50 border border-blue-200 rounded-xl p-2 text-center"><span class="block text-sm">📨</span><strong class="block text-[9px]">जवाब</strong></button>
+            <button onclick="MB_customerDashTab('deals')" class="bg-emerald-50 border border-emerald-200 rounded-xl p-2 text-center"><span class="block text-sm">🤝</span><strong class="block text-[9px]">Deals</strong></button>
+            <button onclick="MB_customerDashTab('notice')" class="bg-violet-50 border border-violet-200 rounded-xl p-2 text-center relative"><span class="block text-sm">🔔</span><strong class="block text-[9px]">सूचना</strong><span id="mb-customer-inbox-badge" class="hidden absolute -top-1 -right-1 bg-rose-600 text-white text-[8px] font-black px-1.5 py-0.5 rounded-full shadow">1 New Message</span></button>
           </div>
           <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3"><div class="flex justify-between items-center mb-2"><div><h4 class="text-[11px] font-black">👤 मेरी जानकारी</h4><p class="text-[9px] text-slate-500">आपकी Customer Profile</p></div><span class="text-[9px] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded-full">Live</span></div><div class="grid grid-cols-2 gap-2 text-[10px]"><div class="bg-white rounded-lg p-2 border border-slate-100"><span class="text-[8px] text-slate-400 block">नाम</span><strong id="mb-cust-dash-name2">—</strong></div><div class="bg-white rounded-lg p-2 border border-slate-100"><span class="text-[8px] text-slate-400 block">Customer ID</span><strong id="mb-cust-dash-id">—</strong></div><div class="bg-white rounded-lg p-2 border border-slate-100"><span class="text-[8px] text-slate-400 block">मोबाइल</span><strong id="mb-cust-dash-phone">—</strong></div><div class="bg-white rounded-lg p-2 border border-slate-100"><span class="text-[8px] text-slate-400 block">पता</span><strong id="mb-cust-dash-address">—</strong></div></div></div>
-          <button onclick="navTo('post')" class="w-full bg-amber-500 text-slate-900 py-2.5 rounded-xl font-black text-xs">➕ नया काम पोस्ट करें</button>
-          <button onclick="MB_customerEditProfile()" class="w-full bg-slate-900 text-amber-400 py-2.5 rounded-xl font-bold text-xs">✏️ प्रोफाइल बदलें / अपडेट करें</button>
+          <button id="mb-customer-new-post-btn" onclick="navTo('post')" class="w-full bg-amber-500 text-slate-900 py-2.5 rounded-xl font-black text-xs hidden">➕ नया काम पोस्ट करें</button>
+          <button id="mb-customer-edit-btn" onclick="MB_customerEditProfile()" class="w-full bg-slate-900 text-amber-400 py-2.5 rounded-xl font-bold text-xs hidden">✏️ प्रोफाइल बदलें / अपडेट करें</button>
           <div id="mb-customer-rating-section" class="bg-amber-50 border border-amber-200 rounded-2xl p-3 space-y-2">
             <div class="flex items-center justify-between">
               <div><h4 class="text-[11px] font-black text-slate-900">⭐ मिस्त्री को रेटिंग दें</h4><p class="text-[9px] text-slate-500">काम पूरा होने के बाद आपकी Rating यहाँ आएगी।</p></div>
               <span class="text-[9px] bg-white border border-amber-200 px-2 py-1 rounded-full font-bold">Customer</span>
             </div>
             <div id="mb-customer-rating-list" class="space-y-2">काम पूरा हुए Deals खोजे जा रहे हैं…</div>
+          </div>
+          <div id="mb-customer-received-rating-section" class="bg-blue-50 border border-blue-200 rounded-2xl p-3 space-y-2">
+            <div class="flex items-center justify-between">
+              <div><h4 class="text-[11px] font-black text-slate-900">⭐ मिस्त्री ने आपको दी Rating</h4><p class="text-[9px] text-slate-500">काम पूरा होने के बाद मिस्त्री की दी हुई Rating/Review यहाँ दिखेगी।</p></div>
+              <span class="text-[9px] bg-white border border-blue-200 px-2 py-1 rounded-full font-bold">Customer</span>
+            </div>
+            <div id="mb-customer-received-rating-list" class="space-y-2">आपको मिली Rating लोड हो रही है…</div>
           </div>
           <p class="text-[9px] text-slate-500 text-center">🔐 Aadhaar केवल verification के लिए है; सार्वजनिक प्रोफाइल में नहीं दिखेगा।</p>
         </div>
@@ -496,6 +503,22 @@
       <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
         <h3 class="text-xs font-black text-slate-900 uppercase">मालिक प्रोफ़ाइल / मेरा काम</h3>
         <p class="text-[11px] text-slate-500 mt-0.5">ऊपर Login किए गए उसी मोबाइल नंबर से आपकी पोस्ट और मिस्त्रियों के संदेश दिखेंगे।</p>
+      </div>
+
+      <div id="mb-customer-replies-section" class="hidden bg-blue-50/70 border border-blue-200 rounded-2xl p-4 shadow-xs">
+        <div class="flex items-center justify-between mb-2">
+          <h4 class="text-xs font-black text-slate-900">📨 मिस्त्रियों के जवाब</h4>
+          <span class="text-[9px] bg-white border border-blue-200 px-2 py-1 rounded-full font-bold">जवाब</span>
+        </div>
+        <div id="mb-customer-replies-list" class="space-y-2 text-xs"></div>
+      </div>
+
+      <div id="mb-customer-deals-section" class="hidden bg-emerald-50/70 border border-emerald-200 rounded-2xl p-4 shadow-xs">
+        <div class="flex items-center justify-between mb-2">
+          <h4 class="text-xs font-black text-slate-900">🤝 मेरी Deals</h4>
+          <span class="text-[9px] bg-white border border-emerald-200 px-2 py-1 rounded-full font-bold">Deals</span>
+        </div>
+        <div id="mb-customer-deals-list" class="space-y-2 text-xs"></div>
       </div>
 
       <div id="client-inbox-section" class="hidden bg-amber-50/70 border border-amber-200 rounded-2xl p-4 shadow-xs">
@@ -508,7 +531,7 @@
         <div id="client-inbox-messages" class="space-y-2 text-xs"></div>
       </div>
 
-      <div id="client-posts-list" class="space-y-3"></div>
+      <div id="client-posts-list" class="hidden space-y-3"></div>
     </div>
     <!-- 1B. RENTAL PROVIDER PROFILE -->
     <div id="rental-provider-box" class="space-y-3 hidden">
@@ -6311,10 +6334,113 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
       box.innerHTML=html.length?html.join(""):"<p class='text-[10px] text-slate-500'>अभी कोई पूरा हुआ Deal Rating के लिए उपलब्ध नहीं है।</p>";
     }catch(e){box.innerHTML='<p class="text-[10px] text-rose-600">Rating सूची लोड नहीं हुई: '+esc(e.message)+'</p>';}
   };
-  document.addEventListener("DOMContentLoaded",function(){setTimeout(function(){try{MB_loadCustomerRatings();}catch(e){}},1400);});
+  window.MB_loadCustomerReceivedRatings=async function(){
+    var box=document.getElementById("mb-customer-received-rating-list"); if(!box)return;
+    if(role()!=="client"){box.innerHTML="";return;}
+    var ph=phone(); if(ph.length!==10){box.innerHTML="Customer Login के बाद यहाँ मिस्त्री की Rating दिखेगी।";return;}
+    try{
+      var snap=await db.collection("customer_reviews").where("customerPhone","==","+91"+ph).limit(50).get();
+      if(snap.empty) snap=await db.collection("customer_reviews").where("customerPhone","==",ph).limit(50).get();
+      if(snap.empty){box.innerHTML="<p class='text-[10px] text-slate-500'>अभी किसी मिस्त्री ने आपको Rating नहीं दी है।</p>";return;}
+      var html=[];
+      snap.docs.forEach(function(ref){
+        var r=ref.data()||{}, stars=Math.max(1,Math.min(5,parseInt(r.stars,10)||0));
+        html.push('<div class="bg-white border border-blue-200 rounded-xl p-2.5">'+
+          '<div class="flex justify-between gap-2"><b class="text-[10px]">⭐ '+stars+'/5</b><span class="text-[9px] text-slate-400">'+esc(r.dealId||"")+'</span></div>'+
+          '<p class="text-[10px] text-slate-700 mt-1">'+esc(r.comment||"मिस्त्री ने कोई टिप्पणी नहीं लिखी।")+'</p></div>');
+      });
+      box.innerHTML=html.join("");
+    }catch(e){box.innerHTML='<p class="text-[10px] text-rose-600">मिली Rating लोड नहीं हुई: '+esc(e.message)+'</p>';}
+  };
+  document.addEventListener("DOMContentLoaded",function(){setTimeout(function(){try{MB_loadCustomerRatings();}catch(e){} try{MB_loadCustomerReceivedRatings();}catch(e){}},1400);});
   window.addEventListener("hashchange",function(){setTimeout(function(){try{MB_loadCustomerRatings();}catch(e){}},300);});
 })();
 </script>
+
+<script id="mb-customer-four-tabs-final">
+(function(){
+  "use strict";
+  function dig(v){return String(v||"").replace(/\D/g,"").slice(-10);}
+  function esc(v){return String(v==null?"":v).replace(/[&<>"']/g,function(c){return ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]);});}
+  function customerPhone(){
+    var p=localStorage.getItem("mb_client_phone")||localStorage.getItem("mb_customer_phone")||"";
+    return dig(p);
+  }
+  function hideAll(){
+    ["client-posts-list","mb-customer-replies-section","mb-customer-deals-section","client-inbox-section",
+     "mb-customer-rating-section","mb-customer-received-rating-section","mb-customer-new-post-btn","mb-customer-edit-btn"].forEach(function(id){
+      var e=document.getElementById(id); if(e)e.classList.add("hidden");
+    });
+  }
+  function clearTabPanels(){
+    hideAll();
+  }
+  window.MB_customerDashTab=async function(tab){
+    clearTabPanels();
+    if(tab==="posts"){
+      var e=document.getElementById("client-posts-list"); if(e){e.classList.remove("hidden"); e.scrollIntoView({behavior:"smooth",block:"start"});}
+      try{var p=customerPhone(); if(p) loadClientPosts("+91"+p);}catch(err){console.warn(err);}
+      return;
+    }
+    if(tab==="replies"){
+      var r=document.getElementById("mb-customer-replies-section"); if(r){r.classList.remove("hidden"); r.scrollIntoView({behavior:"smooth",block:"start"});}
+      try{await window.MB_loadCustomerReplies();}catch(err){console.warn(err);}
+      return;
+    }
+    if(tab==="deals"){
+      var d=document.getElementById("mb-customer-deals-section"); if(d){d.classList.remove("hidden"); d.scrollIntoView({behavior:"smooth",block:"start"});}
+      try{await window.MB_loadCustomerDeals();}catch(err){console.warn(err);}
+      return;
+    }
+    if(tab==="notice"){
+      var n=document.getElementById("client-inbox-section"); if(n){n.classList.remove("hidden"); n.scrollIntoView({behavior:"smooth",block:"start"});}
+      try{var p=customerPhone(); if(p) listenClientInbox("+91"+p);}catch(err){console.warn(err);}
+    }
+  };
+  window.MB_loadCustomerReplies=async function(){
+    var box=document.getElementById("mb-customer-replies-list"); if(!box)return;
+    var ph=customerPhone();
+    if(ph.length!==10){box.innerHTML="<p class='text-[10px] text-slate-500'>Customer Login के बाद जवाब यहाँ दिखेंगे।</p>";return;}
+    box.innerHTML="<p class='text-[10px] text-slate-400'>मिस्त्रियों के जवाब खोजे जा रहे हैं…</p>";
+    try{
+      var jobs=await db.collection("job_posts").where("phone","==","+91"+ph).get();
+      var out=[];
+      for(const jd of jobs.docs){
+        var j=jd.data()||{};
+        var ps=await db.collection("job_proposals").where("jobId","==",jd.id).get();
+        ps.docs.forEach(function(pd){var q=pd.data()||{}; out.push('<div class="bg-white border border-blue-200 rounded-xl p-3"><div class="flex justify-between gap-2"><b>'+esc(j.jobSixId||("#MB-JOB-"+jd.id.slice(0,6)))+'</b><span class="text-[9px] text-slate-500">'+esc(q.workerName||"मिस्त्री")+'</span></div><div class="grid grid-cols-3 gap-1.5 mt-2"><div class="bg-amber-50 rounded-lg p-2 text-center"><span class="block text-[8px]">रेट</span><b>₹'+Number(q.quoteAmount||0).toLocaleString("en-IN")+'</b></div><div class="bg-blue-50 rounded-lg p-2 text-center"><span class="block text-[8px]">समय</span><b>'+esc(q.quoteTime||"—")+'</b></div><div class="bg-violet-50 rounded-lg p-2 text-center"><span class="block text-[8px]">सामान</span><b>'+esc(q.materialResponsibility||"—")+'</b></div></div><p class="mt-2 text-[10px]">'+esc(q.message||"कोई संदेश नहीं")+'</p></div>');});
+      }
+      box.innerHTML=out.length?out.join(""):"<p class='text-[10px] text-slate-500'>अभी कोई मिस्त्री का जवाब नहीं आया है।</p>";
+    }catch(e){box.innerHTML='<p class="text-[10px] text-rose-600">जवाब लोड नहीं हुए: '+esc(e.message)+'</p>';}
+  };
+  window.MB_loadCustomerDeals=async function(){
+    var box=document.getElementById("mb-customer-deals-list"); if(!box)return;
+    var ph=customerPhone();
+    if(ph.length!==10){box.innerHTML="<p class='text-[10px] text-slate-500'>Customer Login के बाद Deals यहाँ दिखेंगी।</p>";return;}
+    box.innerHTML="<p class='text-[10px] text-slate-400'>Deals खोजी जा रही हैं…</p>";
+    try{
+      var snap=await db.collection("confirmed_deals").limit(100).get();
+      var rows=snap.docs.filter(function(x){var d=x.data()||{};return dig(d.clientPhone||d.customerPhone)===ph;});
+      if(!rows.length){box.innerHTML="<p class='text-[10px] text-slate-500'>अभी कोई Deal नहीं है।</p>";return;}
+      var out=[];
+      for(const ref of rows){
+        var d=ref.data()||{}, status=d.status||"Pending";
+        try{var a=await db.collection("digital_agreements").doc(ref.id).get(); if(a.exists){var ad=a.data()||{}; if(ad.workStatus==="work_completed")status="Completed"; else if(ad.workStatus==="work_started")status="Work Started"; else if(ad.status==="accepted")status="Agreement Accepted";}}catch(e){}
+        out.push('<div class="bg-white border border-emerald-200 rounded-xl p-3"><div class="flex justify-between gap-2"><b>'+esc(d.jobSixId||ref.id)+'</b><span class="text-[9px] font-bold">'+esc(status)+'</span></div><p class="text-[10px] mt-1">मिस्त्री: '+esc(d.workerName||"मिस्त्री")+' • ₹'+Number(d.quoteAmount||0).toLocaleString("en-IN")+' • समय: '+esc(d.quoteTime||"—")+'</p></div>');
+      }
+      box.innerHTML=out.join("");
+    }catch(e){box.innerHTML='<p class="text-[10px] text-rose-600">Deals लोड नहीं हुईं: '+esc(e.message)+'</p>';}
+  };
+  // Keep only the profile + four boxes visible on initial dashboard load.
+  function initTabs(){
+    hideAll();
+    var dash=document.getElementById("customer-professional-dashboard");
+    if(dash) dash.setAttribute("data-tabs-ready","1");
+  }
+  document.addEventListener("DOMContentLoaded",function(){setTimeout(initTabs,500);});
+})();
+</script>
+
 </body>
   </html>
 <script id="mb-profile-category-visibility-fix">
