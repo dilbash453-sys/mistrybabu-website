@@ -6380,7 +6380,7 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
     if(a.workerAccepted) return "🟡 Mistri ने Accept किया — Customer की सहमति बाकी";
     return "🟠 दोनों पक्ष की सहमति बाकी";
   }
-  function card(dealId,d,a,role){
+  function card(dealId,d,a,role,alreadyRated){
     var accepted = role==="worker" ? !!a.workerAccepted : !!a.customerAccepted;
     var both = !!a.customerAccepted && !!a.workerAccepted;
     var workStatus=a.workStatus||"";
@@ -6396,7 +6396,8 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
         ${!accepted ? `<button onclick="MB_acceptAgreement('${dealId}','${role}')" class="bg-emerald-600 text-white px-3 py-2 rounded-lg text-[10px] font-black">✓ Agreement Accept करें</button>` : `<span class="bg-emerald-100 text-emerald-800 px-3 py-2 rounded-lg text-[10px] font-black">✓ आपकी Acceptance सेव है</span>`}
         ${both && workStatus!=="work_started" && workStatus!=="work_completed" ? `<button onclick="MB_updateWorkStatus('${dealId}','work_started');setTimeout(MB_loadDigitalAgreements,500)" class="bg-blue-600 text-white px-3 py-2 rounded-lg text-[10px] font-black">▶ काम शुरू</button>` : ``}
         ${both && workStatus==="work_started" ? `<button onclick="MB_updateWorkStatus('${dealId}','work_completed');setTimeout(MB_loadDigitalAgreements,500)" class="bg-amber-500 text-slate-900 px-3 py-2 rounded-lg text-[10px] font-black">✓ काम पूरा</button>` : ``}
-        ${workStatus==="work_completed" && role==="worker" ? `<button onclick="MB_openTwoWayRating('${dealId}','worker')" class="bg-violet-600 text-white px-3 py-2 rounded-lg text-[10px] font-black">⭐ ग्राहक को रेट करें</button>` : ``}
+        ${workStatus==="work_completed" && !alreadyRated ? `<button onclick="MB_openTwoWayRating('${dealId}','${role}')" class="bg-violet-600 text-white px-3 py-2 rounded-lg text-[10px] font-black">⭐ ${role==="worker"?"ग्राहक को रेट करें":"मिस्त्री को रेट करें"}</button>` : ``}
+        ${workStatus==="work_completed" && alreadyRated ? `<span class="bg-emerald-100 text-emerald-800 px-3 py-2 rounded-lg text-[10px] font-black">⭐ आपकी Rating सेव है</span>` : ``}
       </div>
     </div>`;
     return html;
@@ -6415,9 +6416,12 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
         var ref=deals[i].ref, d=deals[i].data()||{};
         var ar=await db.collection("digital_agreements").doc(ref.id).get();
         var a=ar.exists?(ar.data()||{}):{};
+        var ratedSnap=await db.collection("deal_ratings").where("dealId","==",ref.id).where("raterPhone","==",phone()).limit(1).get();
+        var alreadyRated=!ratedSnap.empty;
         window.__MB_agreementCache=window.__MB_agreementCache||{};
         window.__MB_agreementCache[ref.id]=a;
-        parts.push(card(ref.id,d,a,role));
+        window.__MB_agreementCache[ref.id].alreadyRated=alreadyRated;
+        parts.push(card(ref.id,d,a,role,alreadyRated));
       }
       list.innerHTML=parts.join(""); showSection(true);
     }catch(e){showSection(true);list.innerHTML='<div class="text-[10px] text-red-600">Agreement लोड नहीं हुआ: '+esc(e.message)+'</div>';}
