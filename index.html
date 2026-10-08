@@ -483,6 +483,13 @@
           <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3"><div class="flex justify-between items-center mb-2"><div><h4 class="text-[11px] font-black">👤 मेरी जानकारी</h4><p class="text-[9px] text-slate-500">आपकी Customer Profile</p></div><span class="text-[9px] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded-full">Live</span></div><div class="grid grid-cols-2 gap-2 text-[10px]"><div class="bg-white rounded-lg p-2 border border-slate-100"><span class="text-[8px] text-slate-400 block">नाम</span><strong id="mb-cust-dash-name2">—</strong></div><div class="bg-white rounded-lg p-2 border border-slate-100"><span class="text-[8px] text-slate-400 block">मोबाइल</span><strong id="mb-cust-dash-phone">—</strong></div><div class="bg-white rounded-lg p-2 border border-slate-100 col-span-2"><span class="text-[8px] text-slate-400 block">पता</span><strong id="mb-cust-dash-address">—</strong></div></div></div>
           <button onclick="navTo('post')" class="w-full bg-amber-500 text-slate-900 py-2.5 rounded-xl font-black text-xs">➕ नया काम पोस्ट करें</button>
           <button onclick="MB_customerEditProfile()" class="w-full bg-slate-900 text-amber-400 py-2.5 rounded-xl font-bold text-xs">✏️ प्रोफाइल बदलें / अपडेट करें</button>
+          <div id="mb-customer-rating-section" class="bg-amber-50 border border-amber-200 rounded-2xl p-3 space-y-2">
+            <div class="flex items-center justify-between">
+              <div><h4 class="text-[11px] font-black text-slate-900">⭐ मिस्त्री को रेटिंग दें</h4><p class="text-[9px] text-slate-500">काम पूरा होने के बाद आपकी Rating यहाँ आएगी।</p></div>
+              <span class="text-[9px] bg-white border border-amber-200 px-2 py-1 rounded-full font-bold">Customer</span>
+            </div>
+            <div id="mb-customer-rating-list" class="space-y-2">काम पूरा हुए Deals खोजे जा रहे हैं…</div>
+          </div>
           <p class="text-[9px] text-slate-500 text-center">🔐 Aadhaar केवल verification के लिए है; सार्वजनिक प्रोफाइल में नहीं दिखेगा।</p>
         </div>
       </div>
@@ -6150,6 +6157,103 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
 })();
 </script>
 
+
+<!-- MB TWO-WAY RATING UI: Customer ↔ Mistri -->
+<div id="mb-two-way-rating-modal" class="fixed inset-0 bg-slate-900/70 z-[70] hidden items-center justify-center p-4">
+  <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl">
+    <div class="flex items-center justify-between mb-2">
+      <h4 id="mb-two-way-rating-title" class="text-sm font-black text-slate-900">⭐ Rating</h4>
+      <button type="button" onclick="MB_closeTwoWayRating()" class="text-slate-400 text-xl">×</button>
+    </div>
+    <p id="mb-two-way-rating-subtitle" class="text-[10px] text-slate-500 mb-3">आपका अनुभव कैसा रहा?</p>
+    <input type="hidden" id="mb-two-way-rating-deal">
+    <input type="hidden" id="mb-two-way-rating-role">
+    <input type="hidden" id="mb-two-way-rating-stars" value="5">
+    <div class="flex justify-center gap-2 text-3xl mb-3">
+      <button type="button" class="mb-two-star text-amber-400" onclick="MB_setTwoWayRating(1)">★</button>
+      <button type="button" class="mb-two-star text-amber-400" onclick="MB_setTwoWayRating(2)">★</button>
+      <button type="button" class="mb-two-star text-amber-400" onclick="MB_setTwoWayRating(3)">★</button>
+      <button type="button" class="mb-two-star text-amber-400" onclick="MB_setTwoWayRating(4)">★</button>
+      <button type="button" class="mb-two-star text-amber-400" onclick="MB_setTwoWayRating(5)">★</button>
+    </div>
+    <textarea id="mb-two-way-rating-comment" rows="3" class="w-full border border-slate-300 rounded-xl p-2 text-xs" placeholder="अपनी राय लिखें…"></textarea>
+    <button type="button" onclick="MB_submitTwoWayRating()" class="w-full mt-3 bg-amber-500 text-slate-900 font-black py-2.5 rounded-xl text-xs">⭐ Rating भेजें</button>
+  </div>
+</div>
+<script>
+(function(){
+  "use strict";
+  function digits(v){return String(v||"").replace(/\D/g,"").slice(-10);}
+  function role(){return localStorage.getItem("current_user_role")||localStorage.getItem("mb_device_locked_role")||"";}
+  function phone(){return digits(role()==="worker"?localStorage.getItem("mb_worker_phone"):localStorage.getItem("mb_client_phone"));}
+  function esc(v){return String(v==null?"":v).replace(/[&<>"']/g,function(c){return ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]);});}
+  function modal(){return document.getElementById("mb-two-way-rating-modal");}
+  window.MB_openTwoWayRating=function(dealId,raterRole){
+    var m=modal(); if(!m)return;
+    document.getElementById("mb-two-way-rating-deal").value=dealId||"";
+    document.getElementById("mb-two-way-rating-role").value=raterRole||role();
+    document.getElementById("mb-two-way-rating-title").textContent=raterRole==="worker"?"⭐ ग्राहक को रेट करें":"⭐ मिस्त्री को रेट करें";
+    document.getElementById("mb-two-way-rating-subtitle").textContent=raterRole==="worker"?"ग्राहक के साथ आपका अनुभव कैसा रहा?":"मिस्त्री के काम का आपका अनुभव कैसा रहा?";
+    document.getElementById("mb-two-way-rating-comment").value="";
+    MB_setTwoWayRating(5);
+    m.classList.remove("hidden"); m.classList.add("flex");
+  };
+  window.MB_closeTwoWayRating=function(){var m=modal();if(m){m.classList.add("hidden");m.classList.remove("flex");}};
+  window.MB_setTwoWayRating=function(n){
+    document.getElementById("mb-two-way-rating-stars").value=String(n);
+    document.querySelectorAll(".mb-two-star").forEach(function(b,i){b.className="mb-two-star "+(i<n?"text-amber-400":"text-slate-300");});
+  };
+  window.MB_submitTwoWayRating=async function(){
+    var dealId=document.getElementById("mb-two-way-rating-deal").value;
+    var raterRole=document.getElementById("mb-two-way-rating-role").value||role();
+    var stars=parseInt(document.getElementById("mb-two-way-rating-stars").value,10)||5;
+    var comment=(document.getElementById("mb-two-way-rating-comment").value||"").trim();
+    if(!dealId)return alert("Deal नहीं मिला।");
+    try{
+      var existing=await db.collection("deal_ratings").where("dealId","==",dealId).where("raterPhone","==",phone()).limit(1).get();
+      if(!existing.empty){MB_closeTwoWayRating();return alert("ℹ️ आपने इस Deal को पहले ही Rating दे दी है।");}
+      var snap=await db.collection("confirmed_deals").doc(dealId).get();
+      if(!snap.exists)return alert("Deal नहीं मिला।");
+      var d=snap.data()||{};
+      var ratedRole=raterRole==="worker"?"customer":"worker";
+      var ratedPhone=raterRole==="worker"?digits(d.clientPhone||d.customerPhone):digits(d.workerPhone);
+      var ratedName=raterRole==="worker"?(d.clientName||d.customerName||"ग्राहक"):(d.workerName||"मिस्त्री");
+      await db.collection("deal_ratings").add({dealId:dealId,jobId:d.jobId||d.jobSixId||"",raterRole:raterRole,raterPhone:phone(),ratedRole:ratedRole,ratedPhone:ratedPhone,ratedName:ratedName,stars:stars,comment:comment,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+      if(ratedRole==="worker"){
+        await db.collection("worker_reviews").add({workerPhone:"+91"+ratedPhone,dealId:dealId,stars:stars,comment:comment,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+      }else{
+        await db.collection("customer_reviews").add({customerPhone:"+91"+ratedPhone,dealId:dealId,stars:stars,comment:comment,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+      }
+      MB_closeTwoWayRating();
+      alert("✅ आपकी Rating और Review दर्ज हो गई। धन्यवाद!");
+      try{MB_loadCustomerRatings();}catch(e){}
+      try{MB_loadDigitalAgreements();}catch(e){}
+    }catch(e){alert("Rating सेव नहीं हुई: "+e.message);}
+  };
+  window.MB_loadCustomerRatings=async function(){
+    var box=document.getElementById("mb-customer-rating-list"); if(!box)return;
+    if(role()!=="client"){box.innerHTML="";return;}
+    var ph=phone(); if(ph.length!==10){box.innerHTML="Login के बाद completed Deals यहाँ दिखेंगे।";return;}
+    try{
+      var snap=await db.collection("confirmed_deals").limit(100).get();
+      var deals=snap.docs.filter(function(x){var d=x.data()||{};return digits(d.clientPhone||d.customerPhone)===ph;});
+      var html=[];
+      for(var i=0;i<deals.length;i++){
+        var ref=deals[i].ref,d=deals[i].data()||{};
+        var ar=await db.collection("digital_agreements").doc(ref.id).get();
+        var a=ar.exists?(ar.data()||{}):{};
+        if((a.workStatus||"")!=="work_completed")continue;
+        var rr=await db.collection("deal_ratings").where("dealId","==",ref.id).where("raterPhone","==",ph).limit(1).get();
+        if(!rr.empty){html.push('<div class="bg-white border border-emerald-200 rounded-xl p-2 text-[10px]"><b>✅ '+esc(d.jobSixId||a.jobId||ref.id)+'</b><span class="ml-2 text-emerald-700 font-bold">Rating दी जा चुकी है</span></div>');continue;}
+        html.push('<div class="bg-white border border-slate-200 rounded-xl p-2.5"><div class="flex justify-between gap-2"><div><b class="text-[10px]">'+esc(d.jobSixId||a.jobId||ref.id)+'</b><p class="text-[9px] text-slate-500">मिस्त्री: '+esc(d.workerName||a.workerName||"मिस्त्री")+' • ₹'+Number(a.amount||d.quoteAmount||0).toLocaleString("en-IN")+'</p></div><button onclick="MB_openTwoWayRating(\''+ref.id+'\',\'customer\')" class="bg-amber-500 text-slate-900 px-3 py-2 rounded-lg text-[10px] font-black">⭐ रेट करें</button></div></div>');
+      }
+      box.innerHTML=html.length?html.join(""):"<p class='text-[10px] text-slate-500'>अभी कोई पूरा हुआ Deal Rating के लिए उपलब्ध नहीं है।</p>";
+    }catch(e){box.innerHTML='<p class="text-[10px] text-rose-600">Rating सूची लोड नहीं हुई: '+esc(e.message)+'</p>';}
+  };
+  document.addEventListener("DOMContentLoaded",function(){setTimeout(function(){try{MB_loadCustomerRatings();}catch(e){}},1400);});
+  window.addEventListener("hashchange",function(){setTimeout(function(){try{MB_loadCustomerRatings();}catch(e){}},300);});
+})();
+</script>
 </body>
   </html>
 <script id="mb-profile-category-visibility-fix">
@@ -6292,6 +6396,7 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
         ${!accepted ? `<button onclick="MB_acceptAgreement('${dealId}','${role}')" class="bg-emerald-600 text-white px-3 py-2 rounded-lg text-[10px] font-black">✓ Agreement Accept करें</button>` : `<span class="bg-emerald-100 text-emerald-800 px-3 py-2 rounded-lg text-[10px] font-black">✓ आपकी Acceptance सेव है</span>`}
         ${both && workStatus!=="work_started" && workStatus!=="work_completed" ? `<button onclick="MB_updateWorkStatus('${dealId}','work_started');setTimeout(MB_loadDigitalAgreements,500)" class="bg-blue-600 text-white px-3 py-2 rounded-lg text-[10px] font-black">▶ काम शुरू</button>` : ``}
         ${both && workStatus==="work_started" ? `<button onclick="MB_updateWorkStatus('${dealId}','work_completed');setTimeout(MB_loadDigitalAgreements,500)" class="bg-amber-500 text-slate-900 px-3 py-2 rounded-lg text-[10px] font-black">✓ काम पूरा</button>` : ``}
+        ${workStatus==="work_completed" && role==="worker" ? `<button onclick="MB_openTwoWayRating('${dealId}','worker')" class="bg-violet-600 text-white px-3 py-2 rounded-lg text-[10px] font-black">⭐ ग्राहक को रेट करें</button>` : ``}
       </div>
     </div>`;
     return html;
