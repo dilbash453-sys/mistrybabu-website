@@ -4248,6 +4248,13 @@
       if (pushHistory) history.pushState({ page: target }, "", "#" + target);
       if (target === 'jobs') loadFullJobs();
       if (target === 'workers') loadFullWorkers();
+      // Digital Agreement केवल Mistri के Profile (Register) पेज में दिखे।
+      try {
+        if (window.MB_setDigitalAgreementVisibility) {
+          window.MB_setDigitalAgreementVisibility(target === 'register');
+        }
+      } catch(e) {}
+
       if (target === 'register') {
         const lockedRole = localStorage.getItem("mb_device_locked_role");
         const savedWorker = localStorage.getItem("mb_worker_phone");
@@ -6244,11 +6251,25 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
   function digits(v){return String(v||"").replace(/\D/g,"").slice(-10);}
   function esc(v){return String(v==null?"":v).replace(/[&<>"']/g,function(c){return ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]);});}
   function currentRole(){return localStorage.getItem("current_user_role")||localStorage.getItem("mb_device_locked_role")||"";}
+  function isMistriProfileActive(){
+    var role=currentRole();
+    var profile=document.getElementById("worker-profile-view");
+    return role==="worker" && location.hash==="#register" && !!profile && !profile.classList.contains("hidden");
+  }
   function currentPhone(){
     var r=currentRole();
     return digits(r==="worker" ? localStorage.getItem("mb_worker_phone") : localStorage.getItem("mb_client_phone"));
   }
-  function showSection(show){var s=document.getElementById("mb-digital-agreement-section"); if(s)s.classList.toggle("hidden",!show);}
+  function showSection(show){
+    var s=document.getElementById("mb-digital-agreement-section");
+    if(s)s.classList.toggle("hidden",!(show && isMistriProfileActive()));
+  }
+  window.MB_setDigitalAgreementVisibility=function(shouldShow){
+    var s=document.getElementById("mb-digital-agreement-section");
+    if(!s)return;
+    if(!shouldShow || !isMistriProfileActive()){s.classList.add("hidden");return;}
+    try{MB_loadDigitalAgreements();}catch(e){}
+  };
   function statusText(a){
     if(a.status==="accepted" || (a.customerAccepted&&a.workerAccepted)) return "✅ दोनों पक्ष ने Accept कर दिया";
     if(a.customerAccepted) return "🟡 Customer ने Accept किया — Mistri की सहमति बाकी";
@@ -6296,7 +6317,22 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
       list.innerHTML=parts.join(""); showSection(true);
     }catch(e){showSection(true);list.innerHTML='<div class="text-[10px] text-red-600">Agreement लोड नहीं हुआ: '+esc(e.message)+'</div>';}
   };
-  document.addEventListener("DOMContentLoaded",function(){setTimeout(function(){try{MB_loadDigitalAgreements();}catch(e){}},1200);});
+  document.addEventListener("DOMContentLoaded",function(){
+    setTimeout(function(){try{MB_loadDigitalAgreements();}catch(e){}},1200);
+    try{
+      var profile=document.getElementById("worker-profile-view");
+      if(profile){
+        new MutationObserver(function(){
+          if(isMistriProfileActive()) MB_loadDigitalAgreements();
+          else showSection(false);
+        }).observe(profile,{attributes:true,attributeFilter:["class"]});
+      }
+      window.addEventListener("hashchange",function(){
+        if(isMistriProfileActive()) MB_loadDigitalAgreements();
+        else showSection(false);
+      });
+    }catch(e){}
+  });
 })();
 </script>
 <!-- MB DIGITAL AGREEMENT FLOW -->
