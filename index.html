@@ -4542,8 +4542,11 @@
                   return;
                 }
                 bidsBox.innerHTML = "";
+                const dealAlreadyFinal = !!(j.selectedProposalId || j.dealStatus === "Selected" || j.dealStatus === "Completed" || j.isClosed);
                 pSnap.forEach(pDoc => {
                   const prop = pDoc.data();
+                  // Deal बनने/पूरा होने के बाद पुराने Quote cards में दोबारा Deal/Rating विकल्प नहीं दिखाएँ।
+                  if (dealAlreadyFinal && j.selectedProposalId && pDoc.id !== j.selectedProposalId) return;
                   bidsBox.innerHTML += `
                     <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs">
                       <div class="flex justify-between items-center mb-1">
@@ -4558,14 +4561,17 @@
                       <p class="text-[11px] text-slate-700 bg-white p-2 rounded-lg border border-slate-100 font-medium">${prop.message||'कोई अतिरिक्त संदेश नहीं'}</p>
                       
                       <div class="mt-2 flex gap-1.5">
-                        <button onclick="confirmDealInApp('${sixId}', '${prop.workerName}', '${prop.workerPhone}', '${j.clientName}', '${j.phone}', '${j.workType}', '${j.district} (${j.location})', '${(prop.message||'').replace(/'/g, "\\'")}', '${pDoc.id}', ${Number(prop.quoteAmount||0)}, '${(prop.quoteTime||'').replace(/'/g, "\\'")}', '${(prop.materialResponsibility||'').replace(/'/g, "\\'")}');" 
-                          class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded-lg text-[10px] flex items-center justify-center space-x-1 shadow-xs transition">
-                          <i class="fa-solid fa-handshake"></i>
-                          <span>डील पक्की करें</span>
-                        </button>
-                        <button onclick="openReviewModal('${prop.workerPhone}', '${prop.workerName}', '${sixId}')" class="bg-amber-100 text-amber-900 px-2.5 py-2 rounded-lg text-[10px] font-bold">
-                          ⭐ रेटिंग दें
-                        </button>
+                        ${dealAlreadyFinal ? `
+                          <div class="w-full bg-emerald-100 text-emerald-800 px-3 py-2 rounded-lg text-[10px] font-black text-center">
+                            ${j.dealStatus === "Completed" || j.isClosed ? "✅ Deal/काम पूरा हो चुका है" : "🤝 Deal पक्की हो चुकी है"}
+                          </div>
+                        ` : `
+                          <button onclick="confirmDealInApp('${sixId}', '${prop.workerName}', '${prop.workerPhone}', '${j.clientName}', '${j.phone}', '${j.workType}', '${j.district} (${j.location})', '${(prop.message||'').replace(/'/g, "\'")}', '${pDoc.id}', ${Number(prop.quoteAmount||0)}, '${(prop.quoteTime||'').replace(/'/g, "\'")}', '${(prop.materialResponsibility||'').replace(/'/g, "\'")}');" 
+                            class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded-lg text-[10px] flex items-center justify-center space-x-1 shadow-xs transition">
+                            <i class="fa-solid fa-handshake"></i>
+                            <span>डील पक्की करें</span>
+                          </button>
+                        `}
                       </div>
                     </div>
                   `;
@@ -6481,8 +6487,37 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
   };
   window.MB_updateWorkStatus=async function(dealId,status){
     const allowed=['ready_to_start','work_started','work_completed']; if(!allowed.includes(status))return;
-    try{await db.collection('digital_agreements').doc(dealId).set({workStatus:status,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}); alert(status==='work_started'?'🟢 काम शुरू दर्ज हो गया।':status==='work_completed'?'✅ काम पूरा दर्ज हो गया।':'Agreement तैयार है।');}
-    catch(e){alert('Status अपडेट नहीं हुआ: '+e.message);}
+    try{
+      const now=firebase.firestore.FieldValue.serverTimestamp();
+      await db.collection('digital_agreements').doc(dealId).set({workStatus:status,updatedAt:now},{merge:true});
+
+      // Deal/Job को भी उसी स्थिति में sync रखें, ताकि पुराने Quote card में
+      // दोबारा "डील पक्की करें" या गलत active status न दिखे।
+      const dealRef=db.collection('confirmed_deals').doc(dealId);
+      const dealSnap=await dealRef.get();
+      if(dealSnap.exists){
+        const dd=dealSnap.data()||{};
+        await dealRef.set({
+          status: status==='work_completed' ? 'Completed' : status==='work_started' ? 'In Progress' : 'Pending',
+          workStatus:status,
+          updatedAt:now
+        },{merge:true});
+        const six=dd.jobSixId||dd.jobId||'';
+        if(six){
+          const js=await db.collection('job_posts').where('jobSixId','==',six).limit(1).get();
+          if(!js.empty){
+            await js.docs[0].ref.set({
+              dealStatus: status==='work_completed' ? 'Completed' : status==='work_started' ? 'In Progress' : 'Selected',
+              isClosed: status==='work_completed' ? true : (js.docs[0].data().isClosed||false),
+              closedReason: status==='work_completed' ? 'काम पूरा' : (js.docs[0].data().closedReason||''),
+              updatedAt:now
+            },{merge:true});
+          }
+        }
+      }
+      alert(status==='work_started'?'🟢 काम शुरू दर्ज हो गया।':status==='work_completed'?'✅ काम पूरा दर्ज हो गया।':'Agreement तैयार है।');
+      try{MB_loadDigitalAgreements();}catch(e){}
+    }catch(e){alert('Status अपडेट नहीं हुआ: '+e.message);}
   };
 })();
 </script>
