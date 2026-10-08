@@ -4443,10 +4443,10 @@
       });
     }
 
-    function loadClientPosts() {
+    function loadClientPosts(phoneOverride) {
       const topInput = document.getElementById("mb-customer-login-phone");
       const legacyInput = document.getElementById("dash-client-phone");
-      const p = (topInput?.value || legacyInput?.value || "").trim();
+      const p = String(phoneOverride || topInput?.value || legacyInput?.value || "").replace(/\D/g, "").slice(-10);
       if (p.length !== 10) return;
       if(legacyInput) legacyInput.value=p;
 
@@ -5381,6 +5381,9 @@
     var im=document.getElementById("mb-customer-profile-photo");if(im&&p.selfie)im.src=p.selfie;
     var badge=document.getElementById("mb-customer-aadhaar-badge");
     if(badge) badge.classList.toggle("hidden", p.aadhaarVerified !== true);
+    // Login के बाद Customer Dashboard और उसकी पोस्ट तुरंत दिखाएँ।
+    try{ if(typeof MB_renderCustomerDashboard === "function") MB_renderCustomerDashboard(p); }catch(e){ console.warn("Customer dashboard render:",e); }
+    try{ loadClientPosts(p.phone); }catch(e){ console.warn("Customer posts load:",e); }
   }
 
   window.MB_customerLogout=function(){
@@ -5423,7 +5426,7 @@
       if(!p.pinHash || p.pinHash!==enteredHash)return alert("मोबाइल नंबर या PIN गलत है।");
       if(!complete(p))return alert("Customer Profile अधूरी है।");
       saveLocal(p);show(p);
-      try{ loadClientPosts(); }catch(e){}
+      try{ loadClientPosts(p.phone); }catch(e){}
       if(localStorage.getItem("mb_pending_post_draft")){
         alert("✅ Customer Login सफल। आपका पहले भरा हुआ Post Form वापस लाया जा रहा है।");
         navTo("post");
@@ -5500,7 +5503,7 @@
         createdAt:firebase.firestore.FieldValue.serverTimestamp(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
       await db.collection("customer_profiles").doc(full).set(p);
       p.createdAt=new Date().toISOString();p.updatedAt=new Date().toISOString();saveLocal(p);show(p);
-      try{ loadClientPosts(); }catch(e){}
+      try{ loadClientPosts(p.phone); }catch(e){}
       if(localStorage.getItem("mb_pending_post_draft")){
         alert("✅ Customer Profile बन गई। आपका पहले भरा हुआ Post Form वापस लाया जा रहा है।");
         navTo("post");
