@@ -6289,6 +6289,8 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
         var ref=deals[i].ref, d=deals[i].data()||{};
         var ar=await db.collection("digital_agreements").doc(ref.id).get();
         var a=ar.exists?(ar.data()||{}):{};
+        window.__MB_agreementCache=window.__MB_agreementCache||{};
+        window.__MB_agreementCache[ref.id]=a;
         parts.push(card(ref.id,d,a,role));
       }
       list.innerHTML=parts.join(""); showSection(true);
@@ -6317,7 +6319,19 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
       const data=snap.data()||{}; const patch={}; patch[field]=true; patch.updatedAt=firebase.firestore.FieldValue.serverTimestamp();
       if((field==='customerAccepted'&&data.workerAccepted)||(field==='workerAccepted'&&data.customerAccepted)){patch.status='accepted';patch.workStatus='ready_to_start';}
       else patch.status='waiting_for_other_party';
-      await ref.set(patch,{merge:true}); alert('✅ आपकी Agreement acceptance सेव हो गई।');
+      await ref.set(patch,{merge:true});
+      // तुरंत local UI state भी बदलें, ताकि Accept करने के बाद वही बटन दोबारा न दिखे।
+      try{
+        if(window.__MB_agreementCache){
+          var cached=window.__MB_agreementCache[dealId]||{};
+          cached[field]=true;
+          if(cached.customerAccepted&&cached.workerAccepted){cached.status='accepted';cached.workStatus='ready_to_start';}
+          else cached.status='waiting_for_other_party';
+          window.__MB_agreementCache[dealId]=cached;
+        }
+      }catch(e){}
+      alert('✅ आपकी Agreement acceptance सेव हो गई।');
+      setTimeout(function(){try{MB_loadDigitalAgreements();}catch(e){}},150);
     }catch(e){alert('Acceptance सेव नहीं हुई: '+e.message);}
   };
   window.MB_updateWorkStatus=async function(dealId,status){
