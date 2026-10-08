@@ -471,6 +471,7 @@
           <h3 id="mb-cust-dash-name" class="text-lg font-black mt-2">ग्राहक</h3>
           <div class="flex flex-wrap justify-center gap-1.5 mt-2"><span id="mb-cust-dash-verified" class="hidden bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-[9px] font-bold px-2 py-0.5 rounded-full">🛡️ Verified Customer</span><span class="bg-blue-400/20 text-blue-200 border border-blue-300/30 text-[9px] font-bold px-2 py-0.5 rounded-full">👤 Customer</span></div>
           <p id="mb-cust-dash-location" class="text-[10px] text-slate-300 mt-3">📍 स्थान</p>
+          <div id="mb-customer-rating-summary" class="inline-flex items-center justify-center mt-2 px-3 py-1.5 rounded-full bg-amber-400/15 border border-amber-300/30 text-amber-200 text-[10px] font-black">⭐ 0.0/5 • 0 Ratings</div>
         </div>
         <div class="p-4 space-y-3">
           <div class="grid grid-cols-4 gap-1.5">
@@ -823,6 +824,7 @@
           <div class="mt-3 flex items-center justify-center gap-2 text-[10px] text-slate-300">
             <span>📍</span><span id="my-prof-location">बिहार •</span>
           </div>
+          <div id="mb-worker-rating-summary" class="inline-flex items-center justify-center mt-2 px-3 py-1.5 rounded-full bg-amber-400/15 border border-amber-300/30 text-amber-200 text-[10px] font-black">⭐ 0.0/5 • 0 Ratings</div>
         </div>
 
         <div class="p-4 space-y-3 text-xs">
@@ -6442,7 +6444,68 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
 })();
 </script>
 
-</body>
+\n<!-- MB FINAL CUSTOMER PROFILE / INBOX / RATING SUMMARY PATCH -->
+<script id="mb-final-customer-profile-polish">
+(function(){
+  "use strict";
+  function d10(v){ return String(v||"").replace(/\D/g,"").slice(-10); }
+  function esc(v){ return String(v==null?"":v).replace(/[&<>"']/g,function(c){ return ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]); }); }
+
+  /* Inbox is a 🔔 tab only. Loading posts must never unhide it. */
+  var inboxUnsub=null;
+  window.listenClientInbox=function(phone){
+    var full=d10(phone); if(full.length!==10)return; full="+91"+full;
+    var sec=document.getElementById("client-inbox-section"), list=document.getElementById("client-inbox-messages");
+    var badge=document.getElementById("mb-customer-inbox-badge"), countEl=document.getElementById("mb-client-inbox-count");
+    if(inboxUnsub){try{inboxUnsub();}catch(e){} inboxUnsub=null;}
+    inboxUnsub=db.collection("inbox_messages").where("recipientPhone","==",full).onSnapshot(function(snap){
+      var count=snap.size||0;
+      if(badge){badge.textContent=count+" New Message";badge.classList.toggle("hidden",count===0);}
+      if(countEl){countEl.textContent=count+" New Message";countEl.classList.toggle("hidden",count===0);}
+      /* Critical: do not remove hidden here. Only the सूचना tab does that. */
+      if(!sec || sec.classList.contains("hidden"))return;
+      list.innerHTML="";
+      snap.forEach(function(doc){
+        var m=doc.data()||{};
+        list.innerHTML += '<div class="bg-white p-2.5 rounded-xl border border-amber-300 shadow-2xs"><div class="flex justify-between items-center mb-1"><span class="font-black text-amber-800 text-[10px]">'+esc(m.title||"मिस्त्रीबाबू सूचना")+'</span><span class="text-[9px] text-slate-400">'+esc(m.jobSixId||"")+'</span></div><p class="text-slate-800 text-xs font-semibold leading-relaxed">'+esc(m.message||"")+'</p>'+(m.contactNumber?'<div class="mt-1.5 pt-1.5 border-t border-slate-100 flex items-center justify-between"><span class="text-[10px] text-slate-500 font-bold">संपर्क नंबर:</span><a href="tel:'+esc(m.contactNumber)+'" class="bg-emerald-600 text-white px-2 py-0.5 rounded text-[10px] font-bold">☎ '+esc(m.contactNumber)+'</a></div>':'')+'</div>';
+      });
+      if(!snap.size)list.innerHTML='<p class="text-[10px] text-slate-500">अभी कोई नया संदेश नहीं है।</p>';
+    });
+  };
+
+  /* Four boxes are exclusive: only the selected panel can be visible. */
+  var oldTab=window.MB_customerDashTab;
+  window.MB_customerDashTab=function(tab){
+    ["client-posts-list","mb-customer-replies-section","mb-customer-deals-section","client-inbox-section"].forEach(function(id){var e=document.getElementById(id);if(e)e.classList.add("hidden");});
+    var dash=document.getElementById("customer-professional-dashboard"); if(dash)dash.setAttribute("data-mb-open-tab",String(tab||""));
+    if(typeof oldTab==='function')return oldTab.apply(this,arguments);
+  };
+
+  async function ratingSummary(collection,phoneValue,boxId){
+    var box=document.getElementById(boxId);if(!box)return;
+    var ph=d10(phoneValue);if(ph.length!==10){box.textContent="⭐ 0.0/5 • 0 Ratings";return;}
+    try{
+      var snap=await db.collection(collection).where(collection==="customer_reviews"?"customerPhone":"workerPhone","==","+91"+ph).limit(100).get();
+      if(snap.empty)snap=await db.collection(collection).where(collection==="customer_reviews"?"customerPhone":"workerPhone","==",ph).limit(100).get();
+      var vals=[];snap.docs.forEach(function(x){var n=parseFloat((x.data()||{}).stars);if(isFinite(n)&&n>0)vals.push(Math.max(1,Math.min(5,n)));});
+      var count=vals.length,avg=count?vals.reduce(function(a,b){return a+b;},0)/count:0;
+      box.textContent="⭐ "+avg.toFixed(1)+"/5 • "+count+" "+(count===1?"Rating":"Ratings");
+    }catch(e){box.textContent="⭐ Rating उपलब्ध नहीं";}
+  }
+  window.MB_refreshCustomerRatingSummary=function(){return ratingSummary("customer_reviews",localStorage.getItem("mb_client_phone")||localStorage.getItem("mb_customer_phone"),"mb-customer-rating-summary");};
+  window.MB_refreshWorkerRatingSummary=function(){return ratingSummary("worker_reviews",localStorage.getItem("mb_worker_phone"),"mb-worker-rating-summary");};
+
+  function boot(){
+    setTimeout(function(){
+      try{window.MB_refreshCustomerRatingSummary();}catch(e){}
+      try{window.MB_refreshWorkerRatingSummary();}catch(e){}
+      try{var role=localStorage.getItem("current_user_role")||localStorage.getItem("mb_device_locked_role")||"";if(role==="client"){var p=d10(localStorage.getItem("mb_client_phone")||localStorage.getItem("mb_customer_phone"));if(p.length===10)window.listenClientInbox(p);}}catch(e){}
+    },900);
+  }
+  document.addEventListener("DOMContentLoaded",boot);
+  window.addEventListener("hashchange",function(){setTimeout(function(){try{window.MB_refreshCustomerRatingSummary();}catch(e){}try{window.MB_refreshWorkerRatingSummary();}catch(e){}},300);});
+})();
+</script>\n</body>
   </html>
 <script id="mb-profile-category-visibility-fix">
 (function(){
@@ -6839,5 +6902,106 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
   window.MB_ratingAlreadyGiven=async function(dealId){
     try{return await hasDealRating(dealId,rp(),rr()==="worker"?"worker":"customer");}catch(e){return false;}
   };
+})();
+</script>
+
+<!-- MB INBOX READ/UNREAD FIX: seen messages stay visible; New Message badge only for unread -->
+<script id="mb-inbox-read-unread-fix">
+(function(){
+  "use strict";
+  function d10(v){return String(v||"").replace(/\D/g,"").slice(-10);}
+  function readKey(phone){return "mb_inbox_read_"+d10(phone);}
+  function getRead(phone){
+    try{return JSON.parse(localStorage.getItem(readKey(phone))||"[]");}catch(e){return [];}
+  }
+  function setRead(phone,ids){
+    try{
+      ids=Array.from(new Set((ids||[]).filter(Boolean))).slice(-500);
+      localStorage.setItem(readKey(phone),JSON.stringify(ids));
+    }catch(e){}
+  }
+  function docIdFor(doc){return doc&&doc.id?doc.id:"";}
+  function updateBadge(count){
+    var badge=document.getElementById("mb-customer-inbox-badge");
+    var countEl=document.getElementById("mb-client-inbox-count");
+    [badge,countEl].forEach(function(el){
+      if(!el)return;
+      el.textContent=count+" New Message";
+      el.classList.toggle("hidden",count===0);
+    });
+  }
+  function renderMessages(list,snap){
+    if(!list)return;
+    list.innerHTML="";
+    if(!snap||snap.empty){
+      list.innerHTML='<p class="text-[10px] text-slate-500">अभी कोई संदेश नहीं है।</p>';
+      return;
+    }
+    var docs=snap.docs.slice().sort(function(a,b){
+      var aa=(a.data()||{}).createdAt, bb=(b.data()||{}).createdAt;
+      var am=aa&&typeof aa.toMillis==="function"?aa.toMillis():0;
+      var bm=bb&&typeof bb.toMillis==="function"?bb.toMillis():0;
+      return bm-am;
+    });
+    docs.forEach(function(doc){
+      var m=doc.data()||{};
+      var esc=function(v){return String(v==null?"":v).replace(/[&<>"']/g,function(c){return ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]);});};
+      list.innerHTML += '<div class="bg-white p-2.5 rounded-xl border border-amber-300 shadow-2xs"><div class="flex justify-between items-center mb-1"><span class="font-black text-amber-800 text-[10px]">'+esc(m.title||"मिस्त्रीबाबू सूचना")+'</span><span class="text-[9px] text-slate-400">'+esc(m.jobSixId||"")+'</span></div><p class="text-slate-800 text-xs font-semibold leading-relaxed">'+esc(m.message||"")+'</p>'+(m.contactNumber?'<div class="mt-1.5 pt-1.5 border-t border-slate-100 flex items-center justify-between"><span class="text-[10px] text-slate-500 font-bold">संपर्क नंबर:</span><a href="tel:'+esc(m.contactNumber)+'" class="bg-emerald-600 text-white px-2 py-0.5 rounded text-[10px] font-bold">☎ '+esc(m.contactNumber)+'</a></div>':'')+'</div>';
+    });
+  }
+
+  var inboxUnsub=null;
+  var clientInboxViewing=false;
+
+  window.listenClientInbox=function(phone){
+    var full=d10(phone); if(full.length!==10)return; full="+91"+full;
+    var sec=document.getElementById("client-inbox-section");
+    var list=document.getElementById("client-inbox-messages");
+    if(inboxUnsub){try{inboxUnsub();}catch(e){} inboxUnsub=null;}
+    inboxUnsub=db.collection("inbox_messages").where("recipientPhone","==",full).onSnapshot(function(snap){
+      var read=getRead(full);
+      var unread=snap.docs.filter(function(doc){return read.indexOf(docIdFor(doc))===-1;});
+      updateBadge(unread.length);
+      if(sec && !sec.classList.contains("hidden")) renderMessages(list,snap);
+      if(clientInboxViewing){
+        var ids=snap.docs.map(docIdFor);
+        if(ids.length){setRead(full,ids);updateBadge(0);}
+      }
+    });
+  };
+
+  function markClientInboxRead(){
+    var full=d10((typeof customerPhone==='function'?customerPhone():localStorage.getItem("mb_client_phone")||localStorage.getItem("mb_customer_phone")));
+    if(full.length!==10)return;
+    full="+91"+full;
+    db.collection("inbox_messages").where("recipientPhone","==",full).get().then(function(snap){
+      setRead(full,snap.docs.map(docIdFor));
+      updateBadge(0);
+      var sec=document.getElementById("client-inbox-section"),list=document.getElementById("client-inbox-messages");
+      if(sec && !sec.classList.contains("hidden"))renderMessages(list,snap);
+    }).catch(function(e){console.warn("Inbox read state:",e);});
+  }
+
+  var oldDashTab=window.MB_customerDashTab;
+  window.MB_customerDashTab=function(tab){
+    clientInboxViewing=(tab==="notice");
+    var result=typeof oldDashTab==='function'?oldDashTab.apply(this,arguments):undefined;
+    if(tab==="notice"){
+      setTimeout(markClientInboxRead,350);
+    }
+    return result;
+  };
+
+  document.addEventListener("DOMContentLoaded",function(){
+    setTimeout(function(){
+      try{
+        var role=localStorage.getItem("current_user_role")||localStorage.getItem("mb_device_locked_role")||"";
+        if(role==="client"){
+          var p=d10(localStorage.getItem("mb_client_phone")||localStorage.getItem("mb_customer_phone"));
+          if(p.length===10)window.listenClientInbox(p);
+        }
+      }catch(e){}
+    },1000);
+  });
 })();
 </script>
