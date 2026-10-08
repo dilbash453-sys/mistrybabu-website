@@ -6153,5 +6153,150 @@ document.addEventListener("DOMContentLoaded",()=>setTimeout(()=>{MB_refreshPubli
 })();
 </script>
 
+
+
+<!-- MistriBabu Step-by-Step Feature Pack: Estimate + Digital Agreement + Complaint/Dispute + Membership -->
+<script id="mb-stepwise-feature-pack-v1">
+(function(){
+  "use strict";
+  const MBX={};
+  const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const money=v=>Number(v||0).toLocaleString('en-IN');
+  const fsNow=()=>firebase.firestore.FieldValue.serverTimestamp();
+
+  MBX.role=function(){return localStorage.getItem('current_user_role')||localStorage.getItem('mb_device_locked_role')||'';};
+  MBX.phone=async function(){
+    const r=MBX.role();
+    if(r==='client'){const p=window.MB_getCustomerProfile?window.MB_getCustomerProfile():null;return p?.phone||localStorage.getItem('mb_client_phone')||'';}
+    if(typeof getCurrentPhone==='function'){try{return await getCurrentPhone();}catch(e){}}
+    const raw=localStorage.getItem('mb_worker_phone')||localStorage.getItem('mb_rental_phone')||localStorage.getItem('mb_material_phone')||'';
+    const d=String(raw).replace(/\D/g,'').slice(-10); return d?'+91'+d:'';
+  };
+
+  /* ==================== 1) ESTIMATE CENTER ==================== */
+  MBX.estimateHtml=function(){return `
+    <div id="mb-estimate-center" class="bg-white border border-slate-200 rounded-2xl p-3 shadow-xs mt-3">
+      <div class="flex justify-between items-center gap-2"><div><h4 class="font-black text-xs">📊 Estimate Center</h4><p class="text-[9px] text-slate-500">काम शुरू करने से पहले अनुमान तैयार करें।</p></div><span class="text-[9px] bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-bold">SAVE</span></div>
+      <div class="grid grid-cols-2 gap-2 mt-2">
+        <input id="mb-est-name" class="rounded-lg border p-2 text-[10px]" placeholder="काम का नाम">
+        <input id="mb-est-qty" type="number" step="0.01" class="rounded-lg border p-2 text-[10px]" placeholder="मात्रा">
+        <input id="mb-est-rate" type="number" step="0.01" class="rounded-lg border p-2 text-[10px]" placeholder="रेट / यूनिट ₹">
+        <input id="mb-est-labor" type="number" step="0.01" class="rounded-lg border p-2 text-[10px]" placeholder="Labour ₹">
+        <input id="mb-est-material" type="number" step="0.01" class="rounded-lg border p-2 text-[10px]" placeholder="Material ₹">
+        <input id="mb-est-extra" type="number" step="0.01" class="rounded-lg border p-2 text-[10px]" placeholder="Other ₹">
+      </div>
+      <textarea id="mb-est-note" class="w-full rounded-lg border p-2 text-[10px] mt-2" rows="2" placeholder="काम/सामग्री की शर्तें"></textarea>
+      <div id="mb-est-total" class="bg-blue-50 border border-blue-200 rounded-lg p-2 mt-2 text-sm font-black text-blue-900">कुल अनुमान: ₹0</div>
+      <div class="grid grid-cols-2 gap-2 mt-2"><button type="button" onclick="MBX_calcEstimate()" class="bg-slate-900 text-white rounded-lg py-2 text-[10px] font-black">गणना करें</button><button type="button" onclick="MBX_saveEstimate()" class="bg-blue-600 text-white rounded-lg py-2 text-[10px] font-black">💾 Estimate Save</button></div>
+      <div id="mb-estimate-list" class="mt-2 space-y-1"></div>
+    </div>`;};
+  MBX.calcEstimate=function(){
+    const qty=Number(document.getElementById('mb-est-qty')?.value||0),rate=Number(document.getElementById('mb-est-rate')?.value||0),labor=Number(document.getElementById('mb-est-labor')?.value||0),material=Number(document.getElementById('mb-est-material')?.value||0),extra=Number(document.getElementById('mb-est-extra')?.value||0);
+    const total=(qty*rate)+labor+material+extra; const el=document.getElementById('mb-est-total');if(el)el.textContent='कुल अनुमान: ₹'+money(total);return total;
+  };
+  MBX.saveEstimate=async function(){
+    if(typeof db==='undefined')return alert('Database अभी उपलब्ध नहीं है।');
+    const phone=await MBX.phone();if(!phone)return alert('पहले Login/Profile पूरा करें।');
+    const name=document.getElementById('mb-est-name')?.value.trim();const qty=Number(document.getElementById('mb-est-qty')?.value||0),rate=Number(document.getElementById('mb-est-rate')?.value||0),labor=Number(document.getElementById('mb-est-labor')?.value||0),material=Number(document.getElementById('mb-est-material')?.value||0),extra=Number(document.getElementById('mb-est-extra')?.value||0),note=document.getElementById('mb-est-note')?.value.trim();
+    if(!name)return alert('काम का नाम भरें।');if(qty<0||rate<0||labor<0||material<0||extra<0)return alert('राशि गलत है।');
+    const total=(qty*rate)+labor+material+extra;
+    await db.collection('estimates').add({estimateId:'MB-EST-'+Math.floor(100000+Math.random()*900000),createdByPhone:phone,createdByRole:MBX.role(),workName:name,quantity:qty,unitRate:rate,labor,laborCost:labor,materialCost:material,otherCost:extra,total,note,status:'draft',createdAt:fsNow()});
+    alert('✅ Estimate सुरक्षित हो गया।');MBX.loadEstimates();
+  };
+  MBX.loadEstimates=async function(){const box=document.getElementById('mb-estimate-list');if(!box||typeof db==='undefined')return;const phone=await MBX.phone();if(!phone)return;try{const snap=await db.collection('estimates').where('createdByPhone','==',phone).limit(10).get();if(snap.empty){box.innerHTML='<p class="text-[9px] text-slate-400">अभी कोई saved estimate नहीं है।</p>';return;}box.innerHTML=snap.docs.map(d=>{const x=d.data()||{};return `<div class="border rounded-lg p-2 bg-slate-50 text-[9px]"><b>${esc(x.workName||'Estimate')}</b> • ₹${money(x.total||0)}<br><span class="text-slate-500">${esc(x.note||'')}</span></div>`;}).join('');}catch(e){box.innerHTML='<p class="text-[9px] text-rose-600">Estimate load नहीं हुआ।</p>';}};
+
+  /* ==================== 2) DIGITAL WORK AGREEMENT ==================== */
+  MBX.dealDocs=async function(){
+    if(typeof db==='undefined')return [];
+    const phone=await MBX.phone();if(!phone)return [];
+    const [a,b]=await Promise.all([
+      db.collection('confirmed_deals').where('clientPhone','==',phone).limit(30).get(),
+      db.collection('confirmed_deals').where('workerPhone','==',phone).limit(30).get()
+    ]);
+    const map=new Map();[...a.docs,...b.docs].forEach(d=>map.set(d.id,{id:d.id,...d.data()}));return [...map.values()];
+  };
+  MBX.ensureAgreement=async function(deal){
+    const ref=db.collection('digital_agreements').doc(deal.id),snap=await ref.get();if(snap.exists)return {id:ref.id,...snap.data()};
+    const data={dealId:deal.id,jobSixId:deal.jobSixId||'',clientName:deal.clientName||'',clientPhone:deal.clientPhone||'',workerName:deal.workerName||'',workerPhone:deal.workerPhone||'',workType:deal.workType||'',location:deal.location||'',amount:deal.amount||deal.rate||'',rateMessage:deal.rateMessage||'',materialResponsibility:deal.materialResponsibility||'',startDate:deal.startDate||'',endDate:deal.endDate||'',customerAccepted:false,workerAccepted:false,status:'pending',workStatus:'ready_to_start',createdAt:fsNow(),updatedAt:fsNow()};
+    await ref.set(data);return {id:ref.id,...data};
+  };
+  MBX.acceptAgreement=async function(id,role){const ref=db.collection('digital_agreements').doc(id),snap=await ref.get();if(!snap.exists)return;const x=snap.data()||{},upd={updatedAt:fsNow()};if(role==='client')upd.customerAccepted=true;else upd.workerAccepted=true;const ca=role==='client'?true:!!x.customerAccepted,wa=role==='worker'?true:!!x.workerAccepted;upd.status=ca&&wa?'accepted':'waiting_for_other_party';if(ca&&wa)upd.workStatus='ready_to_start';await ref.update(upd);MBX.loadAgreements();};
+  MBX.setWorkStatus=async function(id,status){if(!['ready_to_start','work_started','work_completed'].includes(status))return;await db.collection('digital_agreements').doc(id).update({workStatus:status,updatedAt:fsNow()});MBX.loadAgreements();};
+  MBX.agreementHtml=function(list){const r=MBX.role();if(!list.length)return '<p class="text-[9px] text-slate-400">अभी कोई Deal नहीं मिली।</p>';return list.map(x=>`<div class="border rounded-xl p-2.5 bg-slate-50 space-y-1.5"><div class="flex justify-between gap-2"><b class="text-[10px]">🤝 ${esc(x.jobSixId||x.id)}</b><span class="text-[8px] bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">${esc(x.status||'Pending')}</span></div><div class="text-[9px]">${esc(x.workType||'काम')} • ₹${esc(x.amount||x.rate||'—')}</div><div class="text-[9px] text-slate-500">${esc(x.clientName||'Customer')} ↔ ${esc(x.workerName||'Mistri')}</div><div class="text-[9px]">Agreement: ${x.customerAccepted?'Customer ✓':'Customer ⏳'} • ${x.workerAccepted?'Mistri ✓':'Mistri ⏳'} • Work: <b>${esc(x.workStatus||'ready_to_start')}</b></div><div class="grid grid-cols-2 gap-1.5"><button type="button" onclick="MBX_acceptAgreement('${x.id}','${r==='client'?'client':'worker'}')" class="bg-emerald-600 text-white rounded-lg py-1.5 text-[9px] font-black">${r==='client'?(x.customerAccepted?'✓ Accepted':'Accept Agreement'):(x.workerAccepted?'✓ Accepted':'Accept Agreement')}</button><button type="button" onclick="MBX_raiseComplaint('${x.id}')" class="bg-rose-50 text-rose-700 border border-rose-200 rounded-lg py-1.5 text-[9px] font-black">⚠️ शिकायत</button></div>${x.customerAccepted&&x.workerAccepted?`<div class="grid grid-cols-3 gap-1"><button onclick="MBX_setWorkStatus('${x.id}','ready_to_start')" class="bg-blue-50 text-blue-700 rounded p-1 text-[8px]">Ready</button><button onclick="MBX_setWorkStatus('${x.id}','work_started')" class="bg-amber-50 text-amber-700 rounded p-1 text-[8px]">काम शुरू</button><button onclick="MBX_setWorkStatus('${x.id}','work_completed')" class="bg-emerald-50 text-emerald-700 rounded p-1 text-[8px]">काम पूरा</button></div>`:''}</div>`).join('');};
+  MBX.loadAgreements=async function(){const box=document.getElementById('mb-agreement-list');if(!box)return;box.innerHTML='<p class="text-[9px] text-slate-400">Deals/Agreement लोड हो रहे हैं...</p>';try{const deals=await MBX.dealDocs();const out=[];for(const d of deals)out.push(await MBX.ensureAgreement(d));box.innerHTML=MBX.agreementHtml(out);}catch(e){box.innerHTML='<p class="text-[9px] text-rose-600">Agreement load नहीं हुआ: '+esc(e.message)+'</p>';}};
+
+  /* ==================== 3) COMPLAINT / DISPUTE ==================== */
+  MBX.raiseComplaint=async function(dealId){
+    const phone=await MBX.phone();if(!phone)return alert('पहले Login करें।');
+    const category=prompt('शिकायत का कारण लिखें: जैसे Payment, काम की गुणवत्ता, काम बंद, गलत जानकारी');if(!category)return;
+    const description=prompt('पूरी शिकायत / विवरण लिखें:');if(!description)return;
+    await db.collection('deal_complaints').add({dealId,raisedByPhone:phone,raisedByRole:MBX.role(),category:category.trim(),description:description.trim(),status:'Pending',createdAt:fsNow(),updatedAt:fsNow()});
+    alert('✅ शिकायत Admin को भेज दी गई है।');MBX.loadComplaints();
+  };
+  MBX.loadComplaints=async function(){const box=document.getElementById('mb-my-complaints');if(!box)return;const phone=await MBX.phone();if(!phone)return;try{const snap=await db.collection('deal_complaints').where('raisedByPhone','==',phone).limit(20).get();box.innerHTML=snap.empty?'<p class="text-[9px] text-slate-400">अभी कोई शिकायत नहीं है।</p>':snap.docs.map(d=>{const x=d.data()||{};return `<div class="border rounded-lg p-2 text-[9px]"><b>${esc(x.category||'शिकायत')}</b> • <span class="font-bold">${esc(x.status||'Pending')}</span><br>${esc(x.description||'')}</div>`;}).join('');}catch(e){box.innerHTML='<p class="text-[9px] text-rose-600">शिकायत लोड नहीं हुई।</p>';}};
+
+  /* ==================== 4) MEMBERSHIP CENTER ==================== */
+  const PLANS=[{id:'provider_monthly',name:'Provider Monthly',amount:99,days:30,desc:'30 दिन का प्रोफाइल/व्यवसाय membership'},{id:'provider_quarterly',name:'Provider Quarterly',amount:249,days:90,desc:'90 दिन का membership'}];
+  MBX.membershipPhone=async function(){return MBX.phone();};
+  MBX.membershipActive=async function(phone){if(!phone)return null;try{const q=await db.collection('membership_subscriptions').where('phone','==',phone).where('status','==','active').limit(5).get();let best=null,now=Date.now();q.forEach(d=>{const x=d.data()||{},e=new Date(x.expiresAt||0).getTime();if(e>now&&(!best||e>best.exp))best={id:d.id,...x,exp:e};});return best;}catch(e){return null;}};
+  MBX.requestMembership=async function(planId){const r=MBX.role();if(!r||r==='client')return alert('❌ Customer के लिए Membership उपलब्ध नहीं है।');const plan=PLANS.find(x=>x.id===planId);if(!plan)return;const phone=await MBX.membershipPhone();if(!phone)return alert('पहले Profile/Login पूरा करें।');const a=await MBX.membershipActive(phone);if(a)return alert('✅ Membership पहले से ACTIVE है।');const utr=prompt(`👑 ${plan.name}\n₹${plan.amount} / ${plan.days} दिन\n\nUPI: mistrybabu@upi\nPayment के बाद 12-अंकों का UTR डालें:`);if(!utr)return;if(!/^\d{12}$/.test(utr.trim()))return alert('12 अंकों का सही UTR डालें।');await db.collection('membership_payments').add({phone,role:r,planId:plan.id,planName:plan.name,amount:plan.amount,validityDays:plan.days,upiId:'mistrybabu@upi',utr:utr.trim(),status:'Pending',createdAt:fsNow()});alert('✅ Membership request Admin को भेज दी गई है। Payment verify होने के बाद activate होगी।');MBX.loadMembership();};
+  MBX.loadMembership=async function(){const box=document.getElementById('mb-membership-center');if(!box)return;const r=MBX.role();if(!r||r==='client'){box.innerHTML='';return;}const phone=await MBX.membershipPhone(),a=await MBX.membershipActive(phone);let pending=null;try{const q=await db.collection('membership_payments').where('phone','==',phone).where('status','==','Pending').limit(1).get();if(!q.empty)pending=q.docs[0].data();}catch(e){}box.innerHTML=`<div class="bg-violet-50 border border-violet-200 rounded-2xl p-3 mt-3"><div class="flex justify-between"><div><b class="text-xs">👑 Membership Center</b><p class="text-[9px] text-slate-500">Customer को छोड़कर provider profiles के लिए।</p></div><span class="text-[9px] font-black ${a?'text-emerald-700':'text-slate-500'}">${a?'ACTIVE':'INACTIVE'}</span></div>${a?`<p class="text-[9px] text-emerald-700 font-bold mt-2">${esc(a.planName||a.planId)} • वैध ${new Date(a.exp).toLocaleDateString('hi-IN')} तक</p>`:pending?`<p class="text-[9px] text-amber-700 font-bold mt-2">⏳ Payment Pending • UTR ${esc(pending.utr||'')}</p>`:`<div class="grid grid-cols-2 gap-2 mt-2">${PLANS.map(p=>`<button onclick="MBX_requestMembership('${p.id}')" class="bg-white border border-violet-200 rounded-xl p-2 text-left"><b class="text-[10px]">${esc(p.name)}</b><span class="block text-[9px] text-violet-700 font-black">₹${p.amount} / ${p.days} दिन</span><span class="block text-[8px] text-slate-500">${esc(p.desc)}</span></button>`).join('')}</div>`}</div>`;};
+
+  /* ==================== ADMIN: AGREEMENTS + COMPLAINTS + MEMBERSHIP ==================== */
+  MBX.adminInstall=function(){
+    const grid=document.querySelector('#sec-adm-deals')?.parentElement?.querySelector('.grid.grid-cols-2.sm\\:grid-cols-4');
+    const anchor=document.getElementById('btn-adm-income-sources');
+    if(anchor&&!document.getElementById('btn-adm-agreements')){
+      const b1=document.createElement('button');b1.id='btn-adm-agreements';b1.onclick=()=>switchAdminSubTab('agreements');b1.className='py-1.5 rounded-lg text-slate-600';b1.textContent='📄 Agreements';anchor.parentElement.appendChild(b1);
+      const b2=document.createElement('button');b2.id='btn-adm-complaints';b2.onclick=()=>switchAdminSubTab('complaints');b2.className='py-1.5 rounded-lg text-slate-600';b2.textContent='⚠️ Complaints';anchor.parentElement.appendChild(b2);
+      const b3=document.createElement('button');b3.id='btn-adm-memberships';b3.onclick=()=>switchAdminSubTab('memberships');b3.className='py-1.5 rounded-lg text-slate-600';b3.textContent='👑 Membership';anchor.parentElement.appendChild(b3);
+    }
+    const sec=document.getElementById('sec-adm-income-sources');if(!sec)return;
+    if(!document.getElementById('sec-adm-agreements')){const d=document.createElement('div');d.id='sec-adm-agreements';d.className='space-y-3 hidden';d.innerHTML='<div class="flex justify-between"><h3 class="font-black">📄 Digital Agreements</h3><button onclick="MBX_adminLoadAgreements()" class="text-blue-600 text-[10px] font-bold">Refresh</button></div><div id="admin-agreements-list" class="space-y-2"></div>';sec.parentElement.insertBefore(d,sec);}
+    if(!document.getElementById('sec-adm-complaints')){const d=document.createElement('div');d.id='sec-adm-complaints';d.className='space-y-3 hidden';d.innerHTML='<div class="flex justify-between"><h3 class="font-black">⚠️ Complaint / Dispute</h3><button onclick="MBX_adminLoadComplaints()" class="text-rose-600 text-[10px] font-bold">Refresh</button></div><div id="admin-complaints-list" class="space-y-2"></div>';sec.parentElement.insertBefore(d,sec);}
+    if(!document.getElementById('sec-adm-memberships')){const d=document.createElement('div');d.id='sec-adm-memberships';d.className='space-y-3 hidden';d.innerHTML='<div class="flex justify-between"><h3 class="font-black">👑 Membership Payment Requests</h3><button onclick="MBX_adminLoadMemberships()" class="text-violet-600 text-[10px] font-bold">Refresh</button></div><div id="admin-memberships-list" class="space-y-2"></div>';sec.parentElement.insertBefore(d,sec);}
+  };
+  MBX.adminLoadAgreements=async function(){const box=document.getElementById('admin-agreements-list');if(!box)return;try{const s=await db.collection('digital_agreements').orderBy('createdAt','desc').limit(50).get();box.innerHTML=s.empty?'<p class="text-xs text-slate-400">कोई Agreement नहीं।</p>':s.docs.map(d=>{const x=d.data()||{};return `<div class="bg-white border rounded-xl p-3 text-[9px]"><b>${esc(x.jobSixId||x.dealId)}</b> • ${x.customerAccepted?'Customer ✓':'Customer ⏳'} • ${x.workerAccepted?'Mistri ✓':'Mistri ⏳'}<br>Work: ${esc(x.workStatus||'ready_to_start')} • ₹${esc(x.amount||'—')}</div>`;}).join('');}catch(e){box.innerHTML='<p class="text-xs text-rose-600">Agreement error: '+esc(e.message)+'</p>';}};
+  MBX.adminLoadComplaints=async function(){const box=document.getElementById('admin-complaints-list');if(!box)return;try{const s=await db.collection('deal_complaints').orderBy('createdAt','desc').limit(50).get();box.innerHTML=s.empty?'<p class="text-xs text-slate-400">कोई complaint नहीं।</p>':s.docs.map(d=>{const x=d.data()||{};return `<div class="bg-white border rounded-xl p-3 space-y-2 text-[9px]"><div><b>${esc(x.category||'Complaint')}</b> • <span class="font-black">${esc(x.status||'Pending')}</span></div><p>${esc(x.description||'')}</p><div class="grid grid-cols-3 gap-1">${['Reviewing','Resolved','Rejected'].map(st=>`<button onclick="MBX_adminComplaintStatus('${d.id}','${st}')" class="bg-slate-100 rounded py-1 font-bold">${st}</button>`).join('')}</div></div>`;}).join('');}catch(e){box.innerHTML='<p class="text-xs text-rose-600">Complaint error: '+esc(e.message)+'</p>';}};
+  MBX.adminComplaintStatus=async function(id,status){await db.collection('deal_complaints').doc(id).update({status,updatedAt:fsNow(),handledBy:typeof currentOperator!=='undefined'?currentOperator:'Admin'});MBX.adminLoadComplaints();};
+  MBX.adminLoadMemberships=async function(){const box=document.getElementById('admin-memberships-list');if(!box)return;try{const s=await db.collection('membership_payments').where('status','==','Pending').limit(50).get();box.innerHTML=s.empty?'<p class="text-xs text-slate-400">कोई Pending Membership नहीं।</p>':s.docs.map(d=>{const x=d.data()||{};return `<div class="bg-white border rounded-xl p-3 text-[9px] space-y-2"><div><b>${esc(x.phone||'—')}</b> • ${esc(x.planName||x.planId)} • ₹${x.amount||0}</div><div>UTR: <b>${esc(x.utr||'—')}</b> • ${x.validityDays||0} दिन</div><div class="grid grid-cols-2 gap-2"><button onclick="MBX_adminApproveMembership('${d.id}')" class="bg-emerald-600 text-white rounded py-2 font-black">✓ Approve</button><button onclick="MBX_adminRejectMembership('${d.id}')" class="bg-rose-600 text-white rounded py-2 font-black">✕ Reject</button></div></div>`;}).join('');}catch(e){box.innerHTML='<p class="text-xs text-rose-600">Membership error: '+esc(e.message)+'</p>';}};
+  MBX.adminApproveMembership=async function(id){const ref=db.collection('membership_payments').doc(id),s=await ref.get();if(!s.exists)return;const x=s.data()||{},old=await db.collection('membership_subscriptions').where('phone','==',x.phone).where('status','==','active').get(),batch=db.batch();old.forEach(d=>batch.update(d.ref,{status:'expired'}));const end=new Date(Date.now()+Number(x.validityDays||30)*86400000),sub=db.collection('membership_subscriptions').doc();batch.set(sub,{phone:x.phone,role:x.role,planId:x.planId,planName:x.planName,amount:x.amount,validityDays:x.validityDays,status:'active',startsAt:fsNow(),expiresAt:end.toISOString(),paymentId:id,utr:x.utr||'',approvedBy:typeof currentOperator!=='undefined'?currentOperator:'Admin',createdAt:fsNow()});batch.update(ref,{status:'Approved',approvedAt:fsNow(),subscriptionId:sub.id});await batch.commit();alert('✅ Membership ACTIVE कर दी गई।');MBX.adminLoadMemberships();};
+  MBX.adminRejectMembership=async function(id){await db.collection('membership_payments').doc(id).update({status:'Rejected',rejectedAt:fsNow(),handledBy:typeof currentOperator!=='undefined'?currentOperator:'Admin'});MBX.adminLoadMemberships();};
+
+  window.MBX_calcEstimate=MBX.calcEstimate;window.MBX_saveEstimate=MBX.saveEstimate;window.MBX_acceptAgreement=MBX.acceptAgreement;window.MBX_setWorkStatus=MBX.setWorkStatus;window.MBX_raiseComplaint=MBX.raiseComplaint;window.MBX_requestMembership=MBX.requestMembership;window.MBX_adminLoadAgreements=MBX.adminLoadAgreements;window.MBX_adminLoadComplaints=MBX.adminLoadComplaints;window.MBX_adminComplaintStatus=MBX.adminComplaintStatus;window.MBX_adminLoadMemberships=MBX.adminLoadMemberships;window.MBX_adminApproveMembership=MBX.adminApproveMembership;window.MBX_adminRejectMembership=MBX.adminRejectMembership;
+
+  function injectUserPanels(){
+    const r=MBX.role();
+    const cust=document.getElementById('customer-professional-dashboard');
+    const worker=document.getElementById('worker-profile-view');
+    if(r==='client' && cust && !document.getElementById('mb-user-feature-panels')){
+      const wrap=document.createElement('div');wrap.id='mb-user-feature-panels';wrap.className='p-4 pt-0';wrap.innerHTML=MBX.estimateHtml()+`<div id="mb-agreement-center" class="bg-white border border-slate-200 rounded-2xl p-3 shadow-xs mt-3"><div class="flex justify-between"><h4 class="font-black text-xs">📄 Digital Work Agreement</h4><button onclick="MBX_loadAgreements()" class="text-blue-600 text-[9px] font-bold">Refresh</button></div><div id="mb-agreement-list" class="mt-2 space-y-2"></div></div><div class="bg-white border border-slate-200 rounded-2xl p-3 shadow-xs mt-3"><h4 class="font-black text-xs">⚠️ मेरी Complaints</h4><div id="mb-my-complaints" class="mt-2 space-y-1"></div></div><div id="mb-membership-center"></div>`;cust.appendChild(wrap);
+    }
+    if(r==='worker' && worker && !document.getElementById('mb-worker-feature-panels')){
+      const w=document.createElement('div');w.id='mb-worker-feature-panels';w.className='p-4';w.innerHTML=MBX.estimateHtml()+`<div class="bg-white border border-slate-200 rounded-2xl p-3 shadow-xs mt-3"><div class="flex justify-between"><h4 class="font-black text-xs">📄 Digital Work Agreement</h4><button onclick="MBX_loadAgreements()" class="text-blue-600 text-[9px] font-bold">Refresh</button></div><div id="mb-agreement-list" class="mt-2 space-y-2"></div></div><div class="bg-white border border-slate-200 rounded-2xl p-3 shadow-xs mt-3"><h4 class="font-black text-xs">⚠️ मेरी Complaints</h4><div id="mb-my-complaints" class="mt-2 space-y-1"></div></div><div id="mb-membership-center"></div>`;worker.appendChild(w);
+    }
+    if(r==='contractor' || r==='rental' || r==='material'){
+      const targets={contractor:'contractor-dashboard-box',rental:'rental-provider-card',material:'material-provider-card'};
+      const parent=document.getElementById(targets[r]);
+      if(parent && !parent.querySelector('#mb-membership-center')){const d=document.createElement('div');d.id='mb-membership-center';parent.appendChild(d);}
+    }
+    if(r && r!=='client'){setTimeout(()=>{MBX.loadMembership();MBX.loadAgreements();MBX.loadComplaints();MBX.loadEstimates();},700);}
+    else if(r==='client'){setTimeout(()=>{MBX.loadAgreements();MBX.loadComplaints();MBX.loadEstimates();},700);}
+  }
+
+  window.MBX_loadAgreements=MBX.loadAgreements;window.MBX_loadComplaints=MBX.loadComplaints;
+
+  const oldSwitch=window.switchAdminSubTab;
+  window.switchAdminSubTab=function(tab){
+    const base=['deals','workers','callbacks','contractors','rental-vehicles','material-ads','shopads','contact-visibility','business-dashboard','income-sources','agreements','complaints','memberships'];
+    base.forEach(t=>{document.getElementById('sec-adm-'+t)?.classList.add('hidden');document.getElementById('btn-adm-'+t)?.classList.remove('bg-white','text-slate-900','shadow-xs');document.getElementById('btn-adm-'+t)?.classList.add('text-slate-600');});
+    document.getElementById('sec-adm-'+tab)?.classList.remove('hidden');const b=document.getElementById('btn-adm-'+tab);if(b){b.classList.remove('text-slate-600');b.classList.add('bg-white','text-slate-900','shadow-xs');}
+    if(tab==='agreements')MBX.adminLoadAgreements();else if(tab==='complaints')MBX.adminLoadComplaints();else if(tab==='memberships')MBX.adminLoadMemberships();else if(typeof oldSwitch==='function')oldSwitch(tab);
+  };
+
+  document.addEventListener('DOMContentLoaded',()=>{setTimeout(()=>{injectUserPanels();MBX.adminInstall();},900);});
+  setInterval(()=>{try{injectUserPanels();MBX.adminInstall();}catch(e){}},5000);
+})();
+</script>
 </body>
 </html>
