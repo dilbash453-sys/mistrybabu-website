@@ -174,6 +174,11 @@
       </div>
     </div>
 
+    <div class="bg-blue-50 border border-blue-200 rounded-2xl p-3 space-y-2">
+      <div class="flex items-center justify-between gap-2"><div><div class="text-xs font-black text-slate-900">📍 Nearby Jobs</div><div id="nearby-jobs-status" class="text-[9px] text-slate-500">अपने पास के काम देखने के लिए Location अनुमति दें।</div></div><button id="nearby-jobs-btn" type="button" onclick="toggleNearbyJobs()" class="bg-blue-600 text-white px-3 py-1.5 rounded-lg text-[10px] font-black">📍 मेरे पास के काम</button></div>
+      <div id="nearby-radius-row" class="hidden flex items-center gap-2"><span class="text-[10px] font-bold text-slate-600">दायरा:</span><select id="nearby-radius-select" onchange="setNearbyRadius(this.value)" class="flex-1 bg-white border border-blue-200 rounded-lg px-2 py-1.5 text-[10px] font-bold"><option value="5">5 KM</option><option value="10" selected>10 KM</option><option value="25">25 KM</option><option value="50">50 KM</option></select><button type="button" onclick="disableNearbyJobs()" class="bg-white border border-slate-200 text-slate-600 px-2 py-1.5 rounded-lg text-[10px] font-bold">सभी</button></div>
+    </div>
+
     <div class="flex bg-slate-200 p-1 rounded-xl text-xs font-bold">
       <button onclick="switchJobFeedTab('normal')" id="tab-feed-normal" class="flex-1 py-1.5 rounded-lg bg-white text-slate-900 shadow-xs">
         दिहाड़ी व छोटा काम 🧱
@@ -1698,6 +1703,8 @@
     let currentWorkerCoords = null;
     let currentAdminSubTab = 'deals';
     let currentJobFeedTab = 'normal';
+    let nearbyJobsEnabled = false;
+    let nearbyRadiusKm = 10;
     let currentOperator = localStorage.getItem("mb_active_operator") || "व्यवस्थापक";
 
     const ALLOWED_ADMIN_USERS = ["dilbas", "lehari", "monu"];
@@ -4087,12 +4094,23 @@
 
           feed.innerHTML = "";
           let count = 0;
+          const jobDocs = snap.docs.slice().map(doc => ({ doc, data: doc.data() || {} }));
+          jobDocs.sort((a,b) => {
+            if (!nearbyJobsEnabled || !currentWorkerCoords) return 0;
+            const da = calculateDistanceKM(currentWorkerCoords.latitude,currentWorkerCoords.longitude,a.data.lat,a.data.lng);
+            const dbb = calculateDistanceKM(currentWorkerCoords.latitude,currentWorkerCoords.longitude,b.data.lat,b.data.lng);
+            return (da===null?999999:parseFloat(da))-(dbb===null?999999:parseFloat(dbb));
+          });
 
-          snap.forEach(doc => {
-            const j = doc.data();
+          jobDocs.forEach(item => {
+            const doc = item.doc;
+            const j = item.data;
             const timeInfo = formatTimeDetails(j.createdAt, j.isUrgent);
             if (timeInfo.isExpired || j.isClosed === true) return;
             if (filterDist && j.district !== filterDist) return;
+            let jobDistance = null;
+            if (currentWorkerCoords && j.lat && j.lng) jobDistance = parseFloat(calculateDistanceKM(currentWorkerCoords.latitude,currentWorkerCoords.longitude,j.lat,j.lng));
+            if (nearbyJobsEnabled && (jobDistance === null || jobDistance > nearbyRadiusKm)) return;
 
             const isThisTheka = j.isTheka === true;
             if (currentJobFeedTab === 'theka' && !isThisTheka) return;
@@ -4158,6 +4176,22 @@
           feed.innerHTML = "<p class='text-xs text-red-500'>काम लोड करने में समस्या आई।</p>";
         });
     }
+
+    function updateNearbyJobsUI(){
+      const row=document.getElementById("nearby-radius-row"), btn=document.getElementById("nearby-jobs-btn"), status=document.getElementById("nearby-jobs-status");
+      if(row) row.classList.toggle("hidden",!nearbyJobsEnabled);
+      if(btn) btn.innerText=nearbyJobsEnabled?"📍 Nearby ON":"📍 मेरे पास के काम";
+      if(status) status.innerText=nearbyJobsEnabled&&currentWorkerCoords?`${nearbyRadiusKm} KM के अंदर के काम पहले दिख रहे हैं।`:"अपने पास के काम देखने के लिए Location अनुमति दें।";
+    }
+    function toggleNearbyJobs(){
+      if(nearbyJobsEnabled) return disableNearbyJobs();
+      if(currentWorkerCoords){nearbyJobsEnabled=true;updateNearbyJobsUI();loadFullJobs();return;}
+      if(!navigator.geolocation) return alert("इस फोन में Location सुविधा उपलब्ध नहीं है।");
+      const status=document.getElementById("nearby-jobs-status"); if(status) status.innerText="📍 आपकी Location ली जा रही है...";
+      navigator.geolocation.getCurrentPosition(function(pos){currentWorkerCoords=pos.coords;nearbyJobsEnabled=true;updateNearbyJobsUI();loadFullJobs();},function(){if(status)status.innerText="❌ Location अनुमति नहीं मिली।";alert("Nearby Jobs के लिए Location permission जरूरी है।");},{enableHighAccuracy:true,timeout:10000,maximumAge:300000});
+    }
+    function setNearbyRadius(value){nearbyRadiusKm=parseInt(value,10)||10;nearbyJobsEnabled=true;updateNearbyJobsUI();loadFullJobs();}
+    function disableNearbyJobs(){nearbyJobsEnabled=false;updateNearbyJobsUI();loadFullJobs();}
 
     function filterByDistrict() {
       const dist = document.getElementById("home-district-filter").value;
@@ -5236,7 +5270,7 @@
 
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
-          function(pos) { currentWorkerCoords = pos.coords; },
+          function(pos) { currentWorkerCoords = pos.coords; if (nearbyJobsEnabled) { updateNearbyJobsUI(); loadFullJobs(); } },
           function() {},
           { enableHighAccuracy: true }
         );
@@ -7005,3 +7039,28 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
   });
 })();
 </script>
+
+<!-- MB NO.6 VERIFIED PROFILE V1 -->
+<script id="mb-verified-profile-v1">
+(function(){
+  'use strict';
+  function addCard(parentId, cardId, title, text, badgeId, verifiedKey, uploadSelector){
+    var p=document.getElementById(parentId); if(!p || document.getElementById(cardId)) return;
+    var c=document.createElement('div'); c.id=cardId;
+    c.className='mt-3 bg-emerald-50 border border-emerald-200 rounded-2xl p-3';
+    c.innerHTML='<div class="flex items-center justify-between gap-2"><div><div class="text-xs font-black text-slate-900">🛡️ MistriBabu Verified Profile</div><p class="text-[9px] text-slate-600 mt-0.5">'+text+'</p></div><span id="'+badgeId+'" class="text-[9px] font-black px-2 py-1 rounded-full bg-amber-100 text-amber-800">⏳ Pending</span></div>';
+    p.appendChild(c);
+  }
+  function refresh(){
+    addCard('worker-profile-view','mb-worker-verified-profile-card','Verified','ID Proof Admin verification के बाद ही Verified Badge मिलेगा.','mb-worker-verified-badge');
+    addCard('customer-professional-dashboard','mb-customer-verified-profile-card','Verified','ID Proof केवल Admin verification के लिए है; public profile में ID नहीं दिखेगी.','mb-customer-verified-badge');
+    var wb=document.getElementById('mb-worker-verified-badge');
+    if(wb){var ok=localStorage.getItem('mb_worker_id_verified')==='true';wb.textContent=ok?'🛡️ Verified':'⏳ Verification Pending';wb.className='text-[9px] font-black px-2 py-1 rounded-full '+(ok?'bg-emerald-100 text-emerald-700':'bg-amber-100 text-amber-800');}
+    var cb=document.getElementById('mb-customer-verified-badge');
+    if(cb){var p=window.MB_getCustomerProfile?window.MB_getCustomerProfile():null;var ok=!!(p&&p.aadhaarVerified===true);cb.textContent=ok?'🛡️ Verified':'⏳ Verification Pending';cb.className='text-[9px] font-black px-2 py-1 rounded-full '+(ok?'bg-emerald-100 text-emerald-700':'bg-amber-100 text-amber-800');}
+  }
+  document.addEventListener('DOMContentLoaded',function(){setTimeout(refresh,900);setTimeout(refresh,2200);});
+  window.MB_refreshVerifiedProfile=refresh;
+})();
+</script>
+<!-- END MB NO.6 VERIFIED PROFILE V1 -->
