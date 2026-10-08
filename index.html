@@ -6354,5 +6354,179 @@ document.addEventListener("DOMContentLoaded",()=>setTimeout(()=>{MB_refreshPubli
   setInterval(()=>{try{injectUserPanels();MBX.adminInstall();}catch(e){}},5000);
 })();
 </script>
+
+
+<!-- MistriBabu Phase 2: Cancellation/No-Show + Trust & Safety + Deal Documents + Advanced Admin Analytics -->
+<script id="mb-phase2-feature-pack-v1">
+(function(){
+  "use strict";
+  const esc2=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const now2=()=>firebase.firestore.FieldValue.serverTimestamp();
+  const role2=()=>localStorage.getItem('current_user_role')||localStorage.getItem('mb_device_locked_role')||'';
+  async function phone2(){try{if(window.MBX&&typeof MBX.phone==='function')return await MBX.phone();}catch(e){}return localStorage.getItem('mb_client_phone')||localStorage.getItem('mb_worker_phone')||localStorage.getItem('mb_rental_phone')||localStorage.getItem('mb_material_phone')||'';}
+
+  /* ==================== 1) CANCELLATION / NO-SHOW ==================== */
+  window.MB2_cancelDeal=async function(dealId){
+    const phone=await phone2(); if(!phone)return alert('पहले Login करें।');
+    const role=role2(); if(!['client','worker'].includes(role))return alert('यह विकल्प Customer और Mistri Deal के लिए है।');
+    const ref=db.collection('confirmed_deals').doc(dealId),snap=await ref.get(); if(!snap.exists)return alert('Deal नहीं मिली।');
+    const d=snap.data()||{}; if(['Completed','cancelled'].includes(String(d.status||d.dealStatus||'')))return alert('यह Deal अब active नहीं है।');
+    const reason=prompt('❌ Deal cancel करने का कारण लिखें:'); if(!reason)return;
+    await db.collection('deal_cancellations').add({dealId,action:'cancel',reason:reason.trim(),requestedByPhone:phone,requestedByRole:role,status:'Pending Admin Review',createdAt:now2(),updatedAt:now2()});
+    await ref.set({dealStatus:'cancel_requested',cancellationRequestedBy:role,cancellationReason:reason.trim(),updatedAt:now2()},{merge:true});
+    alert('📩 Cancellation request Admin को भेज दी गई है।');
+    if(window.MBX_loadAgreements)window.MBX_loadAgreements();
+  };
+  window.MB2_reportNoShow=async function(dealId){
+    const phone=await phone2(); if(!phone)return alert('पहले Login करें।');
+    const role=role2(); if(!['client','worker'].includes(role))return alert('यह विकल्प Customer और Mistri Deal के लिए है।');
+    const reason=prompt('🚫 No-Show का कारण लिखें: जैसे तय समय पर सामने वाला नहीं आया।'); if(!reason)return;
+    await db.collection('deal_cancellations').add({dealId,action:'no_show',reason:reason.trim(),reportedByPhone:phone,reportedByRole:role,status:'Pending Admin Review',createdAt:now2(),updatedAt:now2()});
+    alert('🚫 No-Show report Admin को भेज दी गई है।');
+  };
+  window.MB2_adminLoadCancellations=async function(){
+    const box=document.getElementById('admin-cancellations-list'); if(!box)return;
+    try{
+      const s=await db.collection('deal_cancellations').orderBy('createdAt','desc').limit(50).get();
+      if(s.empty){box.innerHTML='<p class="text-xs text-slate-400">अभी कोई Cancellation / No-Show report नहीं है।</p>';return;}
+      box.innerHTML=s.docs.map(d=>{const x=d.data()||{};return `<div class="bg-white border rounded-xl p-3 text-[9px] space-y-2"><div><b>${esc2(x.action==='no_show'?'🚫 No-Show':'❌ Cancellation')}</b> • Deal ${esc2(x.dealId||'—')} • <span class="font-black">${esc2(x.status||'Pending')}</span></div><div>${esc2(x.reason||'')}</div><div class="text-slate-500">${esc2(x.requestedByRole||x.reportedByRole||'')} • ${esc2(x.requestedByPhone||x.reportedByPhone||'')}</div><div class="grid grid-cols-3 gap-1"><button onclick="MB2_adminCancellationStatus('${d.id}','Reviewing')" class="bg-amber-50 text-amber-800 rounded py-1 font-bold">Reviewing</button><button onclick="MB2_adminCancellationStatus('${d.id}','Resolved')" class="bg-emerald-50 text-emerald-800 rounded py-1 font-bold">Resolved</button><button onclick="MB2_adminCancellationStatus('${d.id}','Rejected')" class="bg-rose-50 text-rose-800 rounded py-1 font-bold">Rejected</button></div></div>`;}).join('');
+    }catch(e){box.innerHTML='<p class="text-xs text-rose-600">Cancellation data load नहीं हुआ: '+esc2(e.message)+'</p>';}
+  };
+  window.MB2_adminCancellationStatus=async function(id,status){
+    const ref=db.collection('deal_cancellations').doc(id),s=await ref.get();if(!s.exists)return;const x=s.data()||{};
+    await ref.set({status,handledBy:(typeof currentOperator!=='undefined'?currentOperator:'Admin'),updatedAt:now2()},{merge:true});
+    if(status==='Resolved'&&x.action==='cancel'&&x.dealId){await db.collection('confirmed_deals').doc(x.dealId).set({status:'Cancelled',dealStatus:'Cancelled',cancellationStatus:'Resolved',updatedAt:now2()},{merge:true});}
+    MB2_adminLoadCancellations();
+  };
+
+  /* ==================== 2) TRUST & SAFETY CENTER ==================== */
+  window.MB2_trustHtml=async function(){
+    const r=role2(); const phone=await phone2();
+    let verified=false,complete=false,rating='—';
+    try{
+      if(r==='worker'&&phone){const q=await db.collection('workers').where('private_phone','==',phone).limit(1).get();if(!q.empty){const d=q.docs[0].data()||{};verified=!!d.isIdVerified;complete=!!d.profileComplete;rating=d.rating||'—';}}
+      else if(r==='client'&&window.MB_getCustomerProfile){const d=window.MB_getCustomerProfile()||{};verified=!!d.isVerifiedClient;complete=!!d.profileComplete;rating=d.rating||'—';}
+      else if(r==='contractor'){verified=!!localStorage.getItem('mb_contractor_verified');complete=true;}
+    }catch(e){}
+    return `<div id="mb-trust-safety-center" class="bg-emerald-50 border border-emerald-200 rounded-2xl p-3 mt-3"><div class="flex justify-between items-center"><div><b class="text-xs">🛡️ Trust & Safety Center</b><p class="text-[9px] text-slate-600">MistriBabu पर सुरक्षित Deal के लिए जरूरी checks.</p></div><span class="text-[9px] font-black text-emerald-700">${verified?'VERIFIED':'BASIC'}</span></div><div class="grid grid-cols-2 gap-2 mt-2 text-[9px]"><div class="bg-white rounded-lg p-2">🪪 ID Verification<br><b>${verified?'✅ Verified':'⏳ Pending / Optional'}</b></div><div class="bg-white rounded-lg p-2">👤 Profile<br><b>${complete?'✅ Complete':'⏳ Complete करें'}</b></div><div class="bg-white rounded-lg p-2">⭐ Rating<br><b>${esc2(rating)}</b></div><div class="bg-white rounded-lg p-2">📞 Phone Privacy<br><b>✅ Protected</b></div></div><p class="text-[8px] text-slate-500 mt-2">Customer और provider का private phone public listing में तभी दिखेगा जब existing Contact Pro rules अनुमति दें।</p></div>`;
+  };
+
+  async function installTrust(){
+    const r=role2(); if(!r)return;
+    const target=r==='client'?document.getElementById('mb-client-feature-panels'):r==='worker'?document.getElementById('mb-worker-feature-panels'):document.querySelector('#contractor-dashboard-box,#rental-provider-card,#material-provider-card');
+    if(!target||document.getElementById('mb-trust-safety-center'))return;
+    const wrap=document.createElement('div');wrap.innerHTML=await MB2_trustHtml();target.appendChild(wrap.firstElementChild);
+  }
+
+  /* ==================== 3) DEAL DOCUMENTS ==================== */
+  window.MB2_createDealDocument=async function(dealId){
+    const phone=await phone2();if(!phone)return alert('पहले Login करें।');
+    const deal=await db.collection('confirmed_deals').doc(dealId).get();if(!deal.exists)return alert('Deal नहीं मिली।');
+    const d=deal.data()||{};let a={};try{const s=await db.collection('digital_agreements').doc(dealId).get();if(s.exists)a=s.data()||{};}catch(e){}
+    let b={};try{const s=await db.collection('job_bookings').doc(dealId).get();if(s.exists)b=s.data()||{};}catch(e){}
+    const note=prompt('📁 Deal Document में कोई अतिरिक्त नोट लिखें (optional):','')||'';
+    const ref=db.collection('deal_documents').doc();
+    await ref.set({dealId,jobSixId:d.jobSixId||a.jobSixId||'',documentType:'Deal Summary',createdByPhone:phone,createdByRole:role2(),workType:d.workType||a.workType||'',amount:d.amount||a.amount||'',customerName:d.clientName||a.clientName||'',workerName:d.workerName||a.workerName||'',agreementStatus:a.status||'',customerAccepted:!!a.customerAccepted,workerAccepted:!!a.workerAccepted,bookingStatus:b.status||'',startDate:b.startDate||a.startDate||'',startTime:b.startTime||a.scheduleTime||'',duration:b.duration||a.endDate||'',note,createdAt:now2()});
+    alert('📁 Deal Document Summary सेव हो गया।');
+    MB2_loadDealDocuments(dealId);
+  };
+  window.MB2_loadDealDocuments=async function(dealId){
+    const box=document.getElementById('mb2-docs-'+dealId);if(!box)return;
+    try{const s=await db.collection('deal_documents').where('dealId','==',dealId).orderBy('createdAt','desc').limit(10).get();box.innerHTML=s.empty?'<p class="text-[8px] text-slate-400">अभी कोई Deal Document नहीं है।</p>':s.docs.map(d=>{const x=d.data()||{};return `<div class="bg-white border rounded-lg p-2 text-[8px]"><b>📄 ${esc2(x.documentType||'Deal Document')}</b><br>Agreement: ${x.customerAccepted&&x.workerAccepted?'दोनों स्वीकार':'अभी pending'} • Booking: ${esc2(x.bookingStatus||'—')}<br>📅 ${esc2(x.startDate||'—')} • ⏰ ${esc2(x.startTime||'—')} • ⏳ ${esc2(x.duration||'—')}${x.note?'<br>📝 '+esc2(x.note):''}</div>`;}).join('');}catch(e){box.innerHTML='<p class="text-[8px] text-rose-600">Documents load नहीं हुए।</p>';}
+  };
+  function docHtml(dealId){return `<div class="bg-indigo-50 border border-indigo-200 rounded-lg p-2 mt-1.5"><div class="flex justify-between items-center"><b class="text-[9px]">📁 Deal Documents</b><button type="button" onclick="MB2_createDealDocument('${dealId}')" class="text-indigo-700 font-black text-[8px]">+ Summary बनाएं</button></div><div id="mb2-docs-${dealId}" class="mt-1 space-y-1"></div><button type="button" onclick="MB2_loadDealDocuments('${dealId}')" class="text-indigo-600 underline text-[8px] mt-1">Refresh Documents</button></div>`;}
+
+  /* Add Phase-2 actions inside the existing agreement cards without replacing the existing flow. */
+  const oldAgreement=window.MBX && MBX.agreementHtml;
+  if(oldAgreement&&!oldAgreement.__mb2wrapped){
+    const wrapped=function(list){
+      const html=oldAgreement(list);
+      if(!Array.isArray(list)||!list.length)return html;
+      let i=0;
+      const out=html.replace(/<\/div><\/div>$/,'</div></div>');
+      return out;
+    };
+    wrapped.__mb2wrapped=true;
+    MBX.agreementHtml=wrapped;
+  }
+
+  /* ==================== 4) ADVANCED ADMIN ANALYTICS ==================== */
+  window.MB2_adminLoadAnalytics=async function(){
+    const box=document.getElementById('admin-analytics-content');if(!box)return;
+    box.innerHTML='<p class="text-xs text-slate-400">Analytics लोड हो रहा है...</p>';
+    const count=async(name)=>{try{const s=await db.collection(name).get();return s.size;}catch(e){return 0;}};
+    try{
+      const [jobs,quotes,deals,agreements,bookings,complaints,users,paid,contact]=await Promise.all([
+        count('job_posts'),count('job_proposals'),count('confirmed_deals'),count('digital_agreements'),count('job_bookings'),count('deal_complaints'),count('workers'),count('paid_lead_payments'),count('contact_visibility_payments')
+      ]);
+      let completed=0,activeBookings=0;
+      try{const s=await db.collection('confirmed_deals').get();s.forEach(d=>{const x=d.data()||{};if(['Completed','Cancelled'].includes(String(x.status||x.dealStatus)))completed++;});}catch(e){}
+      try{const s=await db.collection('job_bookings').get();s.forEach(d=>{const x=d.data()||{};if(x.status==='confirmed')activeBookings++;});}catch(e){}
+      const rows=[['Job Posts',jobs,'blue'],['Quotes / Rates',quotes,'indigo'],['Confirmed Deals',deals,'violet'],['Digital Agreements',agreements,'amber'],['Confirmed Bookings',activeBookings,'emerald'],['Complaints',complaints,'rose'],['Registered Mistri',users,'slate'],['Paid Lead Payments',paid,'cyan'],['Contact Pro Payments',contact,'orange']];
+      box.innerHTML=`<div class="grid grid-cols-2 sm:grid-cols-3 gap-2">${rows.map(r=>`<div class="bg-white border rounded-xl p-2"><div class="text-[9px] text-slate-500">${r[0]}</div><div class="text-xl font-black text-slate-900">${r[1]}</div></div>`).join('')}</div><div class="bg-slate-50 border rounded-xl p-3 mt-3 text-[9px]"><b>📈 Deal Funnel</b><div class="mt-2">Jobs <b>${jobs}</b> → Quotes <b>${quotes}</b> → Deals <b>${deals}</b> → Agreements <b>${agreements}</b> → Bookings <b>${activeBookings}</b></div><p class="text-slate-500 mt-2">यह operational count है। Revenue का detailed हिसाब मौजूदा Business Dashboard / Income Sources में रहेगा।</p></div>`;
+    }catch(e){box.innerHTML='<p class="text-xs text-rose-600">Analytics error: '+esc2(e.message)+'</p>';}
+  };
+
+  function installAdmin2(){
+    const anchor=document.getElementById('btn-adm-income-sources');
+    if(anchor&&!document.getElementById('btn-adm-cancellations')){
+      const add=(id,text,tab)=>{const b=document.createElement('button');b.id=id;b.className='py-1.5 rounded-lg text-slate-600';b.textContent=text;b.onclick=()=>switchAdminSubTab(tab);anchor.parentElement.appendChild(b);};
+      add('btn-adm-cancellations','❌ Cancel / No-Show','cancellations');
+      add('btn-adm-trust','🛡️ Trust & Safety','trust-safety');
+      add('btn-adm-analytics','📈 Analytics','analytics');
+    }
+    const sec=document.getElementById('sec-adm-income-sources');if(!sec)return;
+    const addSec=(id,html)=>{if(document.getElementById(id))return;const d=document.createElement('div');d.id=id;d.className='space-y-3 hidden';d.innerHTML=html;sec.parentElement.insertBefore(d,sec);};
+    addSec('sec-adm-cancellations','<div class="flex justify-between"><h3 class="font-black">❌ Cancellation / No-Show</h3><button onclick="MB2_adminLoadCancellations()" class="text-rose-600 text-[10px] font-bold">Refresh</button></div><div id="admin-cancellations-list" class="space-y-2"></div>');
+    addSec('sec-adm-trust-safety','<div><h3 class="font-black">🛡️ Trust & Safety Center</h3><p class="text-[9px] text-slate-500 mt-1">Verification, profile completeness और safety signals का admin view.</p></div><div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-[9px]">Public phone privacy: <b>Customer हमेशा private</b> • Provider public phone केवल approved Contact Pro के अनुसार.</div>');
+    addSec('sec-adm-analytics','<div class="flex justify-between"><h3 class="font-black">📈 Advanced Admin Analytics</h3><button onclick="MB2_adminLoadAnalytics()" class="text-blue-600 text-[10px] font-bold">Refresh</button></div><div id="admin-analytics-content" class="space-y-2"></div>');
+  }
+
+  const oldSwitch2=window.switchAdminSubTab;
+  if(oldSwitch2&&!oldSwitch2.__mb2wrapped){
+    const sw=function(tab){
+      const extra=['cancellations','trust-safety','analytics'];
+      extra.forEach(t=>{document.getElementById('sec-adm-'+t)?.classList.add('hidden');document.getElementById('btn-adm-'+t)?.classList.remove('bg-white','text-slate-900','shadow-xs');document.getElementById('btn-adm-'+t)?.classList.add('text-slate-600');});
+      if(extra.includes(tab)){
+        ['cancellations','trust-safety','analytics'].forEach(t=>{document.getElementById('sec-adm-'+t)?.classList.add('hidden');});
+        document.getElementById('sec-adm-'+tab)?.classList.remove('hidden');const b=document.getElementById('btn-adm-'+tab);if(b){b.classList.remove('text-slate-600');b.classList.add('bg-white','text-slate-900','shadow-xs');}
+        if(tab==='cancellations')MB2_adminLoadCancellations();else if(tab==='analytics')MB2_adminLoadAnalytics();
+        return;
+      }
+      oldSwitch2(tab);
+    };
+    sw.__mb2wrapped=true;window.switchAdminSubTab=sw;
+  }
+
+  function installPhase2(){installTrust();installAdmin2();}
+  document.addEventListener('DOMContentLoaded',()=>setTimeout(installPhase2,1400));
+  setInterval(()=>{try{installPhase2();}catch(e){}},5000);
+
+  /* Inject Phase-2 controls into the already-existing Agreement cards. */
+  async function installDealPhase2UI(){
+    try{
+      if(!window.MBX||typeof MBX.dealDocs!=='function')return;
+      const deals=await MBX.dealDocs();
+      const cards=[...document.querySelectorAll('#mb-agreement-list > div')];
+      deals.forEach(d=>{
+        const key=String(d.jobSixId||d.id||'');
+        const card=cards.find(el=>(el.textContent||'').includes(key));
+        if(!card||card.querySelector('[data-mb2-deal-actions]'))return;
+        const box=document.createElement('div');
+        box.setAttribute('data-mb2-deal-actions','1');
+        box.className='mt-1.5 space-y-1.5';
+        box.innerHTML=`<div class="grid grid-cols-2 gap-1.5"><button type="button" onclick="MB2_cancelDeal('${d.id}')" class="bg-rose-50 text-rose-700 border border-rose-200 rounded-lg py-1.5 text-[8px] font-black">❌ Deal Cancel</button><button type="button" onclick="MB2_reportNoShow('${d.id}')" class="bg-orange-50 text-orange-700 border border-orange-200 rounded-lg py-1.5 text-[8px] font-black">🚫 No-Show</button></div>${docHtml(d.id)}`;
+        card.appendChild(box);
+        setTimeout(()=>MB2_loadDealDocuments(d.id),100);
+      });
+    }catch(e){}
+  }
+  const oldLoad=window.MBX&&MBX.loadAgreements;
+  if(oldLoad&&!oldLoad.__mb2load){
+    const f=async function(){const r=await oldLoad.apply(this,arguments);setTimeout(installDealPhase2UI,250);return r;};
+    f.__mb2load=true;MBX.loadAgreements=f;window.MBX_loadAgreements=f;
+  }
+})();
+</script>
 </body>
 </html>
