@@ -1902,12 +1902,13 @@
     ];
 
     const firebaseConfig = {
-      apiKey: "AIzaSy...",
+      apiKey: "AIzaSyBiBU2ADBdeeZ7hgOtyn3aYFeXCfbQ20xQ",
       authDomain: "mistrybabu-57ddd.firebaseapp.com",
       projectId: "mistrybabu-57ddd",
-      storageBucket: "mistrybabu-57ddd.appspot.com",
-      messagingSenderId: "379307330936",
-      appId: "1:379307330936:web:..."
+      storageBucket: "mistrybabu-57ddd.firebasestorage.app",
+      messagingSenderId: "205243711402",
+      appId: "1:205243711402:web:354d21f842329168eeb5d3",
+      measurementId: "G-TYW1RV0EDR"
     };
 
     if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
@@ -3269,11 +3270,39 @@
     }
 
     function logoutWorker() {
-      if (confirm("क्या आप लॉग आउट करना चाहते हैं?")) {
-        localStorage.clear();
-        updateRegisterScreenView();
-        alert("आप लॉग आउट हो चुके हैं।");
+      if (!confirm("क्या आप लॉग आउट करना चाहते हैं?")) return;
+
+      // केवल मिस्त्री/वर्कर के लॉगिन और सेशन डेटा हटाएँ।
+      // पूरी localStorage साफ करने से theme, language, draft और दूसरे profile का डेटा भी मिट सकता था।
+      const workerSessionKeys = [
+        "mb_worker_phone",
+        "mb_worker_name",
+        "mb_worker_photo",
+        "mb_worker_photos",
+        "mb_worker_district",
+        "mb_worker_doc_id",
+        "mb_worker_id_verified",
+        "mb_worker_is_contractor",
+        "mb_worker_level",
+        "mb_worker_posts_count",
+        "mb_worker_pro_id",
+        "mb_worker_profile_complete",
+        "mb_worker_skills",
+        "mb_worker_state",
+        "mb_worker_status"
+      ];
+      workerSessionKeys.forEach(key => localStorage.removeItem(key));
+
+      if (localStorage.getItem("current_user_role") === "worker") {
+        localStorage.removeItem("current_user_role");
       }
+      if (localStorage.getItem("mb_device_locked_role") === "worker") {
+        localStorage.removeItem("mb_device_locked_role");
+      }
+
+      if (typeof updateRegisterScreenView === "function") updateRegisterScreenView();
+      if (typeof updateProfileCategoryVisibility === "function") updateProfileCategoryVisibility();
+      alert("आप लॉग आउट हो चुके हैं।");
     }
 
     // 5. एडमिन ऑपरेटर गेटवे व ऑपरेशन्स
