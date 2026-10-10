@@ -6560,18 +6560,10 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
     return digits(localStorage.getItem("mb_rental_phone")||localStorage.getItem("mb_material_phone"));
   }
   function root(){
-    const r=role();
-    if(r==="worker") return document.getElementById("worker-profile-view")||document.getElementById("page-register")||document.querySelector("main")||document.body;
-    if(r==="client") return document.getElementById("customer-professional-dashboard")||document.getElementById("client-dashboard-box")||document.getElementById("page-register")||document.querySelector("main")||document.body;
-    return document.getElementById("page-register")||document.querySelector("main")||document.body;
+    return document.getElementById("customer-professional-dashboard")||document.getElementById("worker-profile-view")||document.querySelector("main")||document.body;
   }
   function mount(id,html){
-    const existing=document.getElementById(id);
-    if(existing){
-      const r=root();
-      if(r && existing.parentElement!==r) r.appendChild(existing);
-      return existing;
-    }
+    if(document.getElementById(id)) return document.getElementById(id);
     const el=document.createElement("section"); el.id=id; el.className="mx-3 my-3"; el.innerHTML=html;
     const r=root(); r.appendChild(el); return el;
   }
@@ -6606,49 +6598,19 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
           controls=`<button class="bg-blue-600 text-white px-3 py-2 rounded-xl text-[10px] font-black" onclick="MB_correctedSetBooking('${esc(doc.id)}')">📅 फिर से Booking करें</button>`;
         }
         const date=b.date?new Date(b.date+"T00:00:00").toLocaleDateString("hi-IN"):"—";
-        html+=`<div class="border rounded-xl p-3 bg-slate-50"><div class="flex justify-between gap-2"><div><b class="text-[11px]">🤝 Deal ${esc(doc.id.slice(0,10))}</b><p class="text-[9px] text-slate-500">${esc(d.workType||d.jobWorkType||"काम")} • ₹${Number(d.amount||d.quoteAmount||0).toLocaleString("en-IN")}</p></div><span class="text-[9px] font-black ${status==='confirmed'?'text-emerald-700':'text-amber-700'}">${status==='confirmed'?'🟢 Confirmed':status==='pending'?'⏳ Pending':status==='rejected'?'❌ Rejected':'📅 Not Scheduled'}</span></div>${b.date?`<div class="mt-2 bg-white border rounded-lg p-2 text-[10px]"><b>📅 ${date}</b> • <b>⏰ ${esc(b.time||"—")}</b> • ⏳ ${esc(b.duration||"—")} ${esc(b.durationUnit||"दिन")}${b.note?`<br><span class="text-slate-500">📝 ${esc(b.note)}</span>`:""}</div>`:""}<div class="mt-2">${controls}</div></div>`;
+        html+=`<div class="border rounded-xl p-3 bg-slate-50"><div class="flex justify-between gap-2"><div><b class="text-[11px]">🤝 Deal ${esc(doc.id.slice(0,10))}</b><p class="text-[9px] text-slate-500">${esc(d.workType||d.jobWorkType||"काम")} • ₹${Number(d.amount||d.quoteAmount||0).toLocaleString("en-IN")}</p></div><span class="text-[9px] font-black ${status==='confirmed'?'text-emerald-700':'text-amber-700'}">${status==='confirmed'?'🟢 Confirmed':status==='pending'?'⏳ Pending':status==='rejected'?'❌ Rejected':'📅 Not Scheduled'}</span></div>${b.date?`<div class="mt-2 bg-white border rounded-lg p-2 text-[10px]"><b>📅 ${date}</b> • <b>⏰ ${esc(b.time||"—")}</b> • ⏳ ${esc(b.duration||"—")} दिन${b.note?`<br><span class="text-slate-500">📝 ${esc(b.note)}</span>`:""}</div>`:""}<div class="mt-2">${controls}</div></div>`;
       }
       box.innerHTML=html;
     }catch(e){box.innerHTML='<p class="text-[10px] text-rose-600">Booking लोड नहीं हुई: '+esc(e.message)+'</p>'; }
   }
-  function closeBookingModal(){document.getElementById("mb-corrected-booking-modal")?.remove();}
   window.MB_correctedSetBooking=async function(dealId){
-    if(!dealId)return;
-    closeBookingModal();
-    const modal=document.createElement("div");
-    modal.id="mb-corrected-booking-modal";
-    modal.className="fixed inset-0 z-[100] bg-slate-900/60 flex items-end sm:items-center justify-center p-3";
-    modal.innerHTML=`<div class="w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden">
-      <div class="bg-blue-50 border-b border-blue-100 px-4 py-3 flex items-center justify-between">
-        <div><h3 class="text-sm font-black text-slate-900">📅 Booking / Schedule</h3><p class="text-[9px] text-slate-500">काम शुरू होने की तारीख और समय तय करें</p></div>
-        <button type="button" onclick="document.getElementById('mb-corrected-booking-modal')?.remove()" class="w-8 h-8 rounded-full bg-white border text-slate-600 font-black">✕</button>
-      </div>
-      <form id="mb-corrected-booking-form" class="p-4 space-y-3">
-        <div><label class="block text-[10px] font-black text-slate-700 mb-1">📅 काम शुरू होने की तारीख *</label><input id="mb-booking-date" type="date" required class="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-xs font-bold"></div>
-        <div><label class="block text-[10px] font-black text-slate-700 mb-1">⏰ काम शुरू होने का समय *</label><input id="mb-booking-time" type="time" required class="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-xs font-bold"></div>
-        <div><label class="block text-[10px] font-black text-slate-700 mb-1">⏳ अनुमानित अवधि *</label><div class="grid grid-cols-2 gap-2"><input id="mb-booking-duration" type="number" min="1" max="365" value="1" required class="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-xs font-bold" placeholder="कितने दिन"><select id="mb-booking-duration-unit" class="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-xs font-bold"><option value="दिन">दिन</option><option value="हफ्ते">हफ्ते</option><option value="महीने">महीने</option></select></div></div>
-        <div><label class="block text-[10px] font-black text-slate-700 mb-1">📝 विशेष बात (वैकल्पिक)</label><textarea id="mb-booking-note" rows="3" class="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-xs" placeholder="जैसे सुबह 8 बजे साइट पर पहुँचना है"></textarea></div>
-        <div class="flex gap-2 pt-1"><button type="button" onclick="document.getElementById('mb-corrected-booking-modal')?.remove()" class="flex-1 bg-slate-100 text-slate-700 py-2.5 rounded-xl text-xs font-black">रद्द करें</button><button type="submit" class="flex-1 bg-blue-600 text-white py-2.5 rounded-xl text-xs font-black">📅 Booking Request भेजें</button></div>
-      </form>
-    </div>`;
-    document.body.appendChild(modal);
-    const today=new Date(); today.setMinutes(today.getMinutes()-today.getTimezoneOffset());
-    document.getElementById("mb-booking-date").min=today.toISOString().slice(0,10);
-    document.getElementById("mb-corrected-booking-form").addEventListener("submit",async function(e){
-      e.preventDefault();
-      const date=document.getElementById("mb-booking-date").value;
-      const time=document.getElementById("mb-booking-time").value;
-      const n=document.getElementById("mb-booking-duration").value;
-      const unit=document.getElementById("mb-booking-duration-unit").value;
-      const note=document.getElementById("mb-booking-note").value.trim();
-      const p=await phone(); if(p.length!==10){closeBookingModal();return alert("पहले Login करें।");}
-      try{
-        await db.collection("job_bookings").doc(dealId).set({dealId,date,time,duration:n,durationUnit:unit,note,requestedByPhone:"+91"+p,requestedByRole:role(),status:"pending",updatedAt:firebase.firestore.FieldValue.serverTimestamp(),createdAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
-        closeBookingModal();
-        alert("✅ Booking request भेज दी गई है। दूसरे पक्ष की confirmation बाकी है।");
-        loadBookings();
-      }catch(err){alert("Booking सेव नहीं हुई: "+err.message);}
-    });
+    const date=prompt("📅 काम शुरू होने की तारीख (YYYY-MM-DD):",""); if(!date)return;
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(date))return alert("तारीख YYYY-MM-DD में डालें।");
+    const time=prompt("⏰ काम शुरू होने का समय (जैसे 08:00 AM):",""); if(!time)return;
+    const duration=prompt("⏳ अनुमानित कितने दिन का काम है?", "1"); if(!duration)return;
+    const note=prompt("📝 कोई विशेष बात (optional):","")||"";
+    const p=await phone(); if(p.length!==10)return alert("पहले Login करें।");
+    try{await db.collection("job_bookings").doc(dealId).set({dealId,date,time,duration,note,requestedByPhone:"+91"+p,requestedByRole:role(),status:"pending",updatedAt:firebase.firestore.FieldValue.serverTimestamp(),createdAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}); alert("✅ Booking request भेज दी गई है। दूसरे पक्ष की confirmation बाकी है।"); loadBookings();}catch(e){alert("Booking सेव नहीं हुई: "+e.message);}
   };
   window.MB_correctedBookingAction=async function(dealId,status){
     try{await db.collection("job_bookings").doc(dealId).set({status,confirmedAt:status==='accepted'?firebase.firestore.FieldValue.serverTimestamp():null,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}); if(status==='accepted'){await db.collection("confirmed_deals").doc(dealId).set({bookingStatus:"confirmed",scheduled:true,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}); alert("✅ Booking Confirm हो गई।");}else{alert("❌ Booking reject हो गई।");} loadBookings();}catch(e){alert("Booking update नहीं हुई: "+e.message);}
@@ -6676,6 +6638,7 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
   function adminShell(){return `<section id="mb-corrected-admin-analytics" class="hidden mx-3 my-3"><div class="bg-white border border-slate-200 rounded-2xl p-4"><b class="text-sm">📊 Advanced Admin Analytics</b><p class="text-[9px] text-slate-500">Job → Quote → Deal → Agreement → Booking और safety records.</p><button onclick="MB_correctedAdminAnalytics()" class="mt-3 bg-slate-900 text-white px-3 py-2 rounded-xl text-[10px] font-black">🔄 Analytics Refresh</button><div id="mb-corrected-admin-analytics-list" class="grid grid-cols-2 gap-2 mt-3 text-[9px]"></div></div></section>`;}
 
   function install(){
+    if(document.getElementById("mb-corrected-booking-section"))return;
     const r=role();
     if(r==="client"||r==="worker"){
       mount("mb-corrected-booking-section",bookingShell());
@@ -6695,75 +6658,8 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
   setInterval(()=>{try{install();if(document.getElementById("mb-corrected-booking-section"))loadBookings();}catch(e){}},5000);
 })();
 </script>
-<!-- MB PHASE 1: Work Progress + Invoice/Receipt + Change Order + Smart Matching + Before/After Photos -->
-<style>
-  .mbp1-panel{margin-top:12px;background:#fff;border:1px solid #e2e8f0;border-radius:18px;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.04)}
-  .mbp1-head{padding:12px 14px;font-weight:900;font-size:13px}.mbp1-body{padding:12px}.mbp1-card{border:1px solid #e2e8f0;border-radius:14px;padding:10px;margin-bottom:9px;background:#f8fafc}.mbp1-btn{border:0;border-radius:10px;padding:8px 10px;font-size:10px;font-weight:900;cursor:pointer}.mbp1-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.mbp1-grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.mbp1-input{width:100%;border:1px solid #cbd5e1;border-radius:9px;padding:8px;font-size:11px;background:#fff}.mbp1-muted{font-size:9px;color:#64748b}.mbp1-status{height:9px;border-radius:99px;background:#e2e8f0;overflow:hidden}.mbp1-status>span{display:block;height:100%;background:#10b981}.mbp1-photo-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.mbp1-photo-grid img{width:100%;height:110px;object-fit:cover;border-radius:10px;border:1px solid #e2e8f0}.mbp1-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
-</style>
-<script id="mb-phase1-features-v1">
-(function(){
-  'use strict';
-  const C=()=>window.db||window.firestore;
-  const esc=v=>String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const d10=v=>String(v||'').replace(/\D/g,'').slice(-10);
-  function myRole(){return localStorage.getItem('current_user_role')||localStorage.getItem('mb_device_locked_role')||'';}
-  function myPhone(){let p='';try{if(typeof customerPhone==='function')p=customerPhone()||'';}catch(e){} if(!p)try{if(typeof rp==='function')p=rp()||'';}catch(e){} if(!p)p=localStorage.getItem('mb_client_phone')||localStorage.getItem('mb_customer_phone')||localStorage.getItem('mb_worker_phone')||'';return d10(p);}
-  function serverTs(){return firebase.firestore.FieldValue.serverTimestamp();}
-  function fmtDate(v){if(!v)return '—';try{let x=v&&v.toDate?v.toDate():new Date(v);return isNaN(x)?String(v):x.toLocaleDateString('hi-IN');}catch(e){return String(v);}}
-  function money(v){return '₹'+Number(v||0).toLocaleString('en-IN');}
-  function roleName(r){return r==='worker'?'मिस्त्री':'ग्राहक';}
-  async function myDeals(){
-    const db=C(); const p=myPhone(); if(!db||p.length!==10)return [];
-    const full='+91'+p; const out={};
-    for(const [field,val] of [['clientPhone',full],['customerPhone',full],['workerPhone',full]]){
-      try{const s=await db.collection('confirmed_deals').where(field,'==',val).limit(100).get();s.docs.forEach(x=>out[x.id]={id:x.id,...(x.data()||{})});}catch(e){}
-    }
-    return Object.values(out);
-  }
-  function inject(){
-    if(document.getElementById('mb-phase1-work-panel'))return;
-    const r=myRole(); if(!r)return;
-    const target=r==='client'?document.getElementById('customer-professional-dashboard'):document.getElementById('worker-profile-view');
-    if(!target)return;
-    const p=document.createElement('div');p.id='mb-phase1-work-panel';p.className='mbp1-panel';
-    p.innerHTML=`<div class="mbp1-head bg-slate-900 text-amber-400">🚀 Phase 1 — काम प्रबंधन</div><div class="mbp1-body space-y-2">
-      <div class="grid grid-cols-2 gap-2"><button class="mbp1-btn bg-blue-50 text-blue-800 border border-blue-200" onclick="MBP1_toggle('mbp1-progress')">📈 Work Progress</button><button class="mbp1-btn bg-emerald-50 text-emerald-800 border border-emerald-200" onclick="MBP1_toggle('mbp1-invoice')">🧾 Invoice / Receipt</button><button class="mbp1-btn bg-violet-50 text-violet-800 border border-violet-200" onclick="MBP1_toggle('mbp1-change')">🔄 Change Order</button><button class="mbp1-btn bg-amber-50 text-amber-800 border border-amber-200" onclick="MBP1_toggle('mbp1-photos')">📸 Before / After</button>${r==='client'?'<button class="mbp1-btn bg-cyan-50 text-cyan-800 border border-cyan-200 col-span-2" onclick="MBP1_loadMatching()">🤖 Smart Mistri Matching</button>':''}</div>
-      <div id="mbp1-progress" class="hidden"></div><div id="mbp1-invoice" class="hidden"></div><div id="mbp1-change" class="hidden"></div><div id="mbp1-photos" class="hidden"></div>${r==='client'?'<div id="mbp1-match" class="hidden"></div>':''}</div>`;
-    target.appendChild(p);
-  }
-  window.MBP1_toggle=function(id){const e=document.getElementById(id);if(!e)return;e.classList.toggle('hidden');if(!e.classList.contains('hidden')){if(id==='mbp1-progress')MBP1_loadProgress();if(id==='mbp1-invoice')MBP1_loadInvoices();if(id==='mbp1-change')MBP1_loadChanges();if(id==='mbp1-photos')MBP1_loadPhotos();}};
-  function dealSelectHtml(deals,id){return '<select id="'+id+'" class="mbp1-input"><option value="">— Deal चुनें —</option>'+deals.map(d=>'<option value="'+esc(d.id)+'">'+esc(d.workType||d.jobSixId||d.id)+' • '+money(d.amount||d.rate||0)+'</option>').join('')+'</select>';}
 
-  /* ② WORK PROGRESS */
-  window.MBP1_loadProgress=async function(){const box=document.getElementById('mbp1-progress');if(!box)return;box.innerHTML='<p class="mbp1-muted">Work Progress लोड हो रहा है…</p>';const deals=await myDeals();if(!deals.length){box.innerHTML='<p class="mbp1-muted">अभी कोई Confirmed Deal नहीं है।</p>';return;}const db=C();let html='';
-    for(const d of deals){let pr={};try{const s=await db.collection('work_progress').doc(d.id).get();if(s.exists)pr=s.data()||{};}catch(e){}let pct=Number(pr.percent||((pr.status==='completed')?100:(pr.status==='started'?50:0)));let status=pr.status||((d.dealStatus||'').toLowerCase().includes('completed')?'completed':'not_started');html+=`<div class="mbp1-card"><div class="flex justify-between gap-2"><b class="text-xs">🧱 ${esc(d.workType||'काम')} </b><span class="text-[9px] font-bold">${esc(d.jobSixId||d.id)}</span></div><div class="mbp1-status mt-2"><span style="width:${Math.max(0,Math.min(100,pct))}%"></span></div><div class="flex justify-between text-[9px] mt-1"><span>${pct}%</span><span>${status==='completed'?'✅ काम पूरा':status==='started'?'🟢 काम चल रहा है':'⏳ शुरू नहीं'}</span></div>${myRole()==='worker'?`<div class="mbp1-grid mt-2"><select id="mbp1-st-${esc(d.id)}" class="mbp1-input"><option value="not_started" ${status==='not_started'?'selected':''}>शुरू नहीं</option><option value="started" ${status==='started'?'selected':''}>काम चल रहा है</option><option value="completed" ${status==='completed'?'selected':''}>काम पूरा</option></select><input id="mbp1-pc-${esc(d.id)}" type="number" min="0" max="100" value="${pct}" class="mbp1-input" placeholder="% Progress"></div><input id="mbp1-pn-${esc(d.id)}" class="mbp1-input mt-2" placeholder="आज का काम / Progress Note" value="${esc(pr.note||'')}"><button class="mbp1-btn bg-blue-600 text-white mt-2" onclick="MBP1_saveProgress('${esc(d.id)}')">💾 Progress सेव करें</button>`:`<p class="mbp1-muted mt-2">${esc(pr.note||'मिस्त्री ने अभी Progress अपडेट नहीं किया है।')}</p>`}</div>`;}
-    box.innerHTML=html;
-  };
-  window.MBP1_saveProgress=async function(id){try{const db=C();const st=document.getElementById('mbp1-st-'+id)?.value||'not_started';let pct=Number(document.getElementById('mbp1-pc-'+id)?.value||0);if(st==='started'&&pct===0)pct=50;if(st==='completed')pct=100;await db.collection('work_progress').doc(id).set({dealId:id,status:st,percent:Math.max(0,Math.min(100,pct)),note:document.getElementById('mbp1-pn-'+id)?.value.trim()||'',updatedByPhone:'+91'+myPhone(),updatedAt:serverTs()},{merge:true});alert('✅ Work Progress सेव हो गया।');MBP1_loadProgress();}catch(e){alert('Progress सेव नहीं हुआ: '+e.message);}};
-
-  /* ③ INVOICE + RECEIPT */
-  window.MBP1_loadInvoices=async function(){const box=document.getElementById('mbp1-invoice');if(!box)return;const deals=await myDeals();if(!deals.length){box.innerHTML='<p class="mbp1-muted">अभी कोई Deal नहीं है।</p>';return;}const db=C();let html='';for(const d of deals){let inv={};try{const s=await db.collection('deal_invoices').doc(d.id).get();if(s.exists)inv=s.data()||{};}catch(e){}html+=`<div class="mbp1-card"><div class="flex justify-between"><b class="text-xs">🧾 ${esc(d.workType||'काम')}</b><span class="text-[9px]">${esc(d.jobSixId||d.id)}</span></div><p class="text-[10px] mt-1">कुल: <b>${money(inv.total||d.amount||d.rate||0)}</b> • जमा: <b>${money(inv.paid||0)}</b> • बाकी: <b>${money(Math.max(0,Number(inv.total||d.amount||d.rate||0)-Number(inv.paid||0)))}</b></p>${myRole()==='worker'?`<div class="mbp1-grid mt-2"><input id="mbp1-it-${esc(d.id)}" type="number" class="mbp1-input" value="${Number(inv.total||d.amount||d.rate||0)}" placeholder="Invoice Total"><input id="mbp1-ip-${esc(d.id)}" type="number" class="mbp1-input" value="${Number(inv.paid||0)}" placeholder="Paid"></div><input id="mbp1-in-${esc(d.id)}" class="mbp1-input mt-2" value="${esc(inv.note||'')}" placeholder="Invoice Note"><button class="mbp1-btn bg-emerald-600 text-white mt-2" onclick="MBP1_saveInvoice('${esc(d.id)}')">🧾 Invoice सेव करें</button>`:''}${inv.updatedAt?`<p class="mbp1-muted mt-2">Updated: ${fmtDate(inv.updatedAt)} ${inv.receiptNo?`• Receipt: <b>${esc(inv.receiptNo)}</b>`:''}</p>`:''}</div>`;}box.innerHTML=html;};
-  window.MBP1_saveInvoice=async function(id){try{const db=C();const total=Number(document.getElementById('mbp1-it-'+id)?.value||0),paid=Number(document.getElementById('mbp1-ip-'+id)?.value||0);if(total<0||paid<0||paid>total)return alert('कृपया Invoice और Paid amount सही डालें।');const receiptNo='MB-RCP-'+Date.now().toString().slice(-8);await db.collection('deal_invoices').doc(id).set({dealId:id,total,paid,balance:total-paid,note:document.getElementById('mbp1-in-'+id)?.value.trim()||'',receiptNo,issuedByPhone:'+91'+myPhone(),updatedAt:serverTs()},{merge:true});alert('✅ Invoice + Payment Receipt सेव हो गई। Receipt: '+receiptNo);MBP1_loadInvoices();}catch(e){alert('Invoice सेव नहीं हुई: '+e.message);}};
-
-  /* ④ CHANGE ORDER */
-  window.MBP1_loadChanges=async function(){const box=document.getElementById('mbp1-change');if(!box)return;const deals=await myDeals();if(!deals.length){box.innerHTML='<p class="mbp1-muted">अभी कोई Deal नहीं है।</p>';return;}const db=C();let html='';for(const d of deals){let arr=[];try{const s=await db.collection('deal_change_orders').where('dealId','==',d.id).limit(50).get();arr=s.docs.map(x=>({id:x.id,...(x.data()||{})}));}catch(e){}html+=`<div class="mbp1-card"><b class="text-xs">🔄 ${esc(d.workType||'काम')}</b>${arr.map(x=>`<div class="bg-white border rounded-lg p-2 mt-2"><div class="flex justify-between text-[9px]"><b>${esc(x.title||'Change')}</b><span>${esc(x.status||'Pending')}</span></div><p class="text-[9px] mt-1">${esc(x.description||'')} • ${money(x.amountChange||0)}</p></div>`).join('')}<button class="mbp1-btn bg-violet-600 text-white mt-2" onclick="MBP1_openChange('${esc(d.id)}')">➕ Change Order</button></div>`;}box.innerHTML=html;};
-  window.MBP1_openChange=function(id){const title=prompt('Change Order का नाम / नया काम:');if(!title)return;const desc=prompt('क्या बदलाव है?');if(!desc)return;const amount=prompt('अतिरिक्त (+) या कम (-) रकम:', '0');MBP1_submitChange(id,title,desc,Number(amount||0));};
-  window.MBP1_submitChange=async function(id,title,desc,amount){try{await C().collection('deal_change_orders').add({dealId:id,title,description:desc,amountChange:Number(amount||0),requestedByPhone:'+91'+myPhone(),requestedByRole:myRole(),status:'Pending',createdAt:serverTs()});alert('✅ Change Order भेज दिया गया। दूसरे पक्ष की मंजूरी जरूरी है।');MBP1_loadChanges();}catch(e){alert('Change Order सेव नहीं हुआ: '+e.message);}};
-
-  /* ⑥ BEFORE / AFTER PHOTOS */
-  window.MBP1_loadPhotos=async function(){const box=document.getElementById('mbp1-photos');if(!box)return;const deals=await myDeals();if(!deals.length){box.innerHTML='<p class="mbp1-muted">अभी कोई Deal नहीं है।</p>';return;}const db=C();let html='';for(const d of deals){let x={};try{const s=await db.collection('work_photos').doc(d.id).get();if(s.exists)x=s.data()||{};}catch(e){}html+=`<div class="mbp1-card"><b class="text-xs">📸 ${esc(d.workType||'काम')}</b><div class="mbp1-photo-grid mt-2">${x.beforePhoto?`<img src="${esc(x.beforePhoto)}" alt="Before">`:'<div class="h-28 rounded-lg bg-slate-200 flex items-center justify-center text-xs">Before नहीं</div>'}${x.afterPhoto?`<img src="${esc(x.afterPhoto)}" alt="After">`:'<div class="h-28 rounded-lg bg-slate-200 flex items-center justify-center text-xs">After नहीं</div>'}</div>${myRole()==='worker'?`<div class="mbp1-grid mt-2"><label class="text-[9px] font-bold">Before<input id="mbp1-b-${esc(d.id)}" type="file" accept="image/*" class="block w-full text-[9px]"></label><label class="text-[9px] font-bold">After<input id="mbp1-a-${esc(d.id)}" type="file" accept="image/*" class="block w-full text-[9px]"></label></div><button class="mbp1-btn bg-amber-500 text-slate-900 mt-2" onclick="MBP1_savePhotos('${esc(d.id)}')">📤 फोटो सेव करें</button>`:''}</div>`;}box.innerHTML=html;};
-  function fileData(file){return new Promise((res,rej)=>{if(!file)return res('');const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(file);});}
-  window.MBP1_savePhotos=async function(id){try{const b=await fileData(document.getElementById('mbp1-b-'+id)?.files?.[0]);const a=await fileData(document.getElementById('mbp1-a-'+id)?.files?.[0]);if(!b&&!a)return alert('कम से कम एक फोटो चुनें।');await C().collection('work_photos').doc(id).set({dealId:id,beforePhoto:b||firebase.firestore.FieldValue.delete(),afterPhoto:a||firebase.firestore.FieldValue.delete(),uploadedByPhone:'+91'+myPhone(),updatedAt:serverTs()},{merge:true});alert('✅ Before/After फोटो सेव हो गई।');MBP1_loadPhotos();}catch(e){alert('फोटो सेव नहीं हुई: '+e.message);}};
-
-  /* ⑤ SMART MISTRI MATCHING */
-  window.MBP1_loadMatching=async function(){const box=document.getElementById('mbp1-match');if(!box)return;box.classList.remove('hidden');box.innerHTML='<p class="mbp1-muted">Smart Matching मिस्त्री खोज रहा है…</p>';const p=window.MB_getCustomerProfile?window.MB_getCustomerProfile():null;const state=p?.state||'';const district=p?.district||'';try{let q=C().collection('workers').where('isBlocked','==',false).limit(100);const s=await q.get();let arr=s.docs.map(x=>({id:x.id,...(x.data()||{})}));arr=arr.filter(w=>{const loc=String(w.district||w.location||'');return !district||loc.includes(district);});arr.sort((a,b)=>Number(b.isVerified||b.verified?1:0)-Number(a.isVerified||a.verified?1:0) || Number(b.ratingAvg||b.rating||0)-Number(a.ratingAvg||a.rating||0));arr=arr.slice(0,8);box.innerHTML='<div class="mbp1-card"><b class="text-xs">🤖 Smart Mistri Matching</b><p class="mbp1-muted mt-1">पहले आपके ज़िले/स्थान और फिर Verified + Rating के आधार पर सुझाव।</p>'+ (arr.length?arr.map((w,i)=>`<div class="flex items-center gap-2 bg-white border rounded-xl p-2 mt-2"><div class="w-9 h-9 rounded-full bg-amber-100 flex items-center justify-center">👷</div><div class="flex-1"><b class="text-[10px]">${esc(w.name||'Mistri')}</b><p class="text-[9px] text-slate-500">${esc(w.district||w.location||state||'स्थान')} • ⭐ ${Number(w.ratingAvg||w.rating||0).toFixed(1)}</p></div><span class="text-[8px] bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full font-bold">${w.isVerified||w.verified?'Verified':'Available'}</span></div>`).join(''):'<p class="text-[10px] text-slate-500 mt-2">आपके क्षेत्र में अभी matching मिस्त्री नहीं मिला।');box.innerHTML+='</div>';}catch(e){box.innerHTML='<p class="text-[10px] text-rose-600">Matching लोड नहीं हुआ: '+esc(e.message)+'</p>';}};
-
-  document.addEventListener('DOMContentLoaded',function(){setTimeout(function(){try{inject();}catch(e){console.warn('Phase1 inject',e);}},1200);});
-  setInterval(function(){try{if(!document.getElementById('mb-phase1-work-panel'))inject();}catch(e){}},5000);
-})();
-</script>
-<!-- END MB PHASE 1 -->
-
+  
 <script id="mb-profile-category-visibility-fix">
 (function(){
   try {
@@ -7337,6 +7233,82 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
 <!-- END MB No.8 WORK PORTFOLIO -->
 
 
+<!-- MistriBabu Phase 1 #2: Work Progress Tracking (integrated with existing Deals/Agreements) -->
+<script id="mb-work-progress-tracker-v1">
+(function(){
+  "use strict";
+  if(window.__MB_WORK_PROGRESS_V1__) return; window.__MB_WORK_PROGRESS_V1__=true;
+  const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const role=()=>localStorage.getItem("current_user_role")||localStorage.getItem("mb_device_locked_role")||"";
+  const digits=v=>String(v||"").replace(/\D/g,"").slice(-10);
+  function phone(){
+    let r=role(),p="";
+    if(r==="client") {try{p=(window.MB_getCustomerProfile&&window.MB_getCustomerProfile()?.phone)||localStorage.getItem("mb_client_phone")||localStorage.getItem("mb_customer_phone")||"";}catch(e){}}
+    else if(r==="worker") p=localStorage.getItem("mb_worker_phone")||"";
+    else p=localStorage.getItem("mb_rental_phone")||localStorage.getItem("mb_material_phone")||"";
+    return digits(p);
+  }
+  function mount(){
+    if(document.getElementById("mb-work-progress-section"))return document.getElementById("mb-work-progress-section");
+    const agreement=document.getElementById("mb-digital-agreement-section");
+    if(!agreement)return null;
+    const el=document.createElement("section");el.id="mb-work-progress-section";el.className="max-w-2xl mx-auto px-4 py-3";
+    el.innerHTML=`<div class="bg-white border border-emerald-200 rounded-2xl shadow-sm overflow-hidden"><div class="bg-emerald-50 px-4 py-3"><b class="text-sm">📊 काम की Progress</b><p class="text-[10px] text-slate-600">Deal के अंदर काम की प्रगति, अपडेट और फोटो दर्ज करें।</p></div><div id="mb-work-progress-list" class="p-3 space-y-3"><p class="text-[10px] text-slate-400">Progress लोड हो रही है…</p></div></div>`;
+    agreement.insertAdjacentElement("afterend",el);return el;
+  }
+  function fileToData(file){return new Promise((resolve,reject)=>{if(!file)return resolve("");if(file.size>1024*1024)return reject(new Error("फोटो 1 MB से छोटी रखें।"));const r=new FileReader();r.onload=()=>resolve(String(r.result||""));r.onerror=()=>reject(new Error("फोटो पढ़ी नहीं जा सकी।"));r.readAsDataURL(file);});}
+  function progressBar(n){return `<div class="h-2.5 rounded-full bg-slate-100 overflow-hidden"><div class="h-full bg-emerald-500 rounded-full" style="width:${Math.max(0,Math.min(100,n))}%"></div></div>`;}
+  async function load(){
+    const box=document.getElementById("mb-work-progress-list");if(!box||!window.db)return;
+    const p=phone();if(p.length!==10){box.innerHTML='<p class="text-[10px] text-slate-500">काम की Progress देखने के लिए Login करें।</p>';return;}
+    box.innerHTML='<p class="text-[10px] text-slate-400">Progress लोड हो रही है…</p>';
+    try{
+      const snap=await db.collection("confirmed_deals").limit(100).get();
+      const deals=snap.docs.filter(doc=>{const d=doc.data()||{};return digits(d.clientPhone||d.customerPhone)===p||digits(d.workerPhone)===p;});
+      if(!deals.length){box.innerHTML='<p class="text-[10px] text-slate-500">अभी आपकी कोई Deal नहीं मिली।</p>';return;}
+      let html='';
+      for(const doc of deals){
+        const d=doc.data()||{};let a={},g={};
+        try{const ag=await db.collection("digital_agreements").doc(doc.id).get();if(ag.exists)a=ag.data()||{};}catch(e){}
+        try{const ps=await db.collection("work_progress").doc(doc.id).get();if(ps.exists)g=ps.data()||{};}catch(e){}
+        const status=a.workStatus||d.workStatus||"";const percent=Math.max(0,Math.min(100,Number(g.percent||0)));
+        const canUpdate=status==="work_started";
+        html+=`<article class="border border-slate-200 rounded-xl p-3 bg-slate-50"><div class="flex items-start justify-between gap-2"><div><b class="text-xs">${esc(d.jobSixId||d.jobId||doc.id)}</b><p class="text-[10px] text-slate-600 mt-1">${esc(a.workType||d.workType||"निर्माण कार्य")} • ₹${Number(a.amount||d.quoteAmount||d.amount||0).toLocaleString('en-IN')}</p></div><span class="text-[9px] font-bold px-2 py-1 rounded-full ${status==='work_completed'?'bg-emerald-100 text-emerald-800':canUpdate?'bg-blue-100 text-blue-800':'bg-amber-100 text-amber-800'}">${status==='work_completed'?'काम पूरा':canUpdate?'काम जारी':'काम शुरू होने की प्रतीक्षा'}</span></div>
+          <div class="mt-3 flex justify-between text-[10px] font-bold"><span>काम की प्रगति</span><span>${percent}%</span></div>${progressBar(percent)}
+          ${g.note?`<p class="mt-2 text-[10px] text-slate-600"><b>आखिरी अपडेट:</b> ${esc(g.note)}</p>`:''}
+          ${g.photo?`<a href="${g.photo}" target="_blank" rel="noopener" class="inline-block mt-2"><img src="${g.photo}" alt="काम की प्रगति की फोटो" class="w-24 h-20 object-cover rounded-lg border"></a>`:''}
+          ${canUpdate?`<div class="mt-3"><label class="block text-[10px] font-bold mb-1">प्रगति चुनें</label><div class="grid grid-cols-4 gap-1.5">${[25,50,75,100].map(n=>`<button type="button" onclick="MB_saveWorkProgress('${doc.id}',${n})" class="border ${percent===n?'bg-emerald-600 text-white':'bg-white'} border-emerald-200 rounded-lg py-2 text-[10px] font-black">${n}%</button>`).join('')}</div><label class="block text-[10px] font-bold mt-2 mb-1">काम का अपडेट</label><textarea id="mb-wp-note-${doc.id}" maxlength="500" class="w-full border rounded-lg p-2 text-[10px]" placeholder="जैसे: दीवार की चिनाई आधी पूरी हुई…">${esc(g.note||'')}</textarea><label class="block text-[10px] font-bold mt-2 mb-1">फोटो (वैकल्पिक, 1 MB तक)</label><input id="mb-wp-photo-${doc.id}" type="file" accept="image/*" class="w-full text-[10px]"><p class="text-[9px] text-slate-500 mt-1">Progress update दोनों पक्षों को इसी Deal में दिखाई देगा।</p></div>`:`<p class="text-[9px] text-slate-500 mt-2">${status==='work_completed'?'काम पूरा दर्ज है।':'Progress अपडेट करने के लिए पहले दोनों पक्ष Agreement स्वीकार करें और “काम शुरू” करें।'}</p>`}
+        </article>`;
+      }
+      box.innerHTML=html;
+    }catch(e){box.innerHTML='<p class="text-[10px] text-rose-600">Progress लोड नहीं हुई: '+esc(e.message||e)+'</p>';}
+  }
+  window.MB_saveWorkProgress=async function(dealId,percent){
+    if(![25,50,75,100].includes(Number(percent)))return;
+    const p=phone();if(p.length!==10)return alert('पहले Login करें।');
+    const note=(document.getElementById('mb-wp-note-'+dealId)?.value||'').trim();
+    const file=document.getElementById('mb-wp-photo-'+dealId)?.files?.[0];
+    try{
+      const deal=await db.collection('confirmed_deals').doc(dealId).get();if(!deal.exists)return alert('Deal नहीं मिली।');
+      const d=deal.data()||{};
+      if(digits(d.clientPhone||d.customerPhone)!==p&&digits(d.workerPhone)!==p)return alert('यह Deal आपके Login से जुड़ी नहीं है।');
+      const agreement=await db.collection('digital_agreements').doc(dealId).get();const a=agreement.exists?(agreement.data()||{}):{};
+      if(a.workStatus!=='work_started')return alert('Progress अपडेट करने से पहले दोनों पक्ष Agreement स्वीकार करें और काम शुरू करें।');
+      let photo='';if(file)photo=await fileToData(file);
+      const ref=db.collection('work_progress').doc(dealId);const old=await ref.get();const previous=old.exists?(old.data()||{}):{};
+      const history=Array.isArray(previous.history)?previous.history.slice(-19):[];
+      history.push({percent:Number(percent),note,photo:photo||previous.photo||'',updatedByPhone:'+91'+p,updatedByRole:role(),updatedAt:new Date().toISOString()});
+      await ref.set({dealId,jobId:d.jobSixId||d.jobId||'',customerPhone:d.clientPhone||d.customerPhone||'',workerPhone:d.workerPhone||'',percent:Number(percent),note,photo:photo||previous.photo||'',updatedByPhone:'+91'+p,updatedByRole:role(),history,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
+      alert('✅ काम की Progress '+percent+'% सेव हो गई।');load();
+    }catch(e){alert('Progress सेव नहीं हुई: '+(e.message||e));}
+  };
+  function boot(){setTimeout(()=>{if(mount())load();},1600);}
+  document.addEventListener('DOMContentLoaded',boot);
+  window.addEventListener('hashchange',()=>setTimeout(()=>{if(mount())load();},600));
+  setInterval(()=>{if(document.getElementById('mb-digital-agreement-section')&&!document.getElementById('mb-work-progress-section'))mount();},4000);
+  window.MB_loadWorkProgress=load;
+})();
+</script>
 
 </body>
 </html>
