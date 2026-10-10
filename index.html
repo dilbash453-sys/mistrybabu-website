@@ -3751,9 +3751,9 @@
             <div class="bg-white p-2.5 rounded-xl border border-slate-200 shadow-2xs space-y-1.5">
               <div class="flex justify-between items-start">
                 <div>
-                  <span class="font-bold text-slate-900">${w.name}</span>
-                  <span class="text-[9px] text-slate-400 block">${w.workerProId || 'N/A'} • 📞 ${w.private_phone}</span>
-                  <p class="text-[10px] text-slate-500">${w.state || 'बिहार'}, ${w.district} (${w.block || ''}) • ${w.experience || 0} वर्ष</p>
+                  <span class="font-bold text-slate-900">${esc(w.name || '—')}</span>
+                  <span class="text-[9px] text-slate-400 block">${esc(w.workerProId || 'N/A')} • 📞 ${esc(w.private_phone || '—')}</span>
+                  <p class="text-[10px] text-slate-500">${esc(w.state || 'बिहार')}, ${esc(w.district || '—')} (${esc(w.block || '')}) • ${esc(w.experience || 0)} वर्ष</p>
                 </div>
                 <div class="flex flex-col items-end gap-1">
                   <span class="text-[9px] font-bold px-1.5 py-0.5 rounded ${w.isBlocked ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'}">${w.isBlocked ? 'ब्लॉक' : 'सक्रिय'}</span>
@@ -3765,20 +3765,36 @@
                  <div class="pt-1 space-y-1.5">
                    <div class="text-[10px] font-bold text-slate-700">🪪 Aadhaar Card</div>
                    <div class="grid grid-cols-2 gap-2">
-                     <button type="button" onclick="adminStoreWorkerAadhaar('${docId}');openAdminAadhaarPhoto('worker_${docId}_front','Aadhaar Front')" class="text-[10px] bg-blue-600 text-white px-2 py-1.5 rounded-lg font-bold">👁️ Front देखें</button>
-                     <button type="button" onclick="adminStoreWorkerAadhaar('${docId}');openAdminAadhaarPhoto('worker_${docId}_back','Aadhaar Back')" class="text-[10px] bg-blue-700 text-white px-2 py-1.5 rounded-lg font-bold">👁️ Back देखें</button>
+                     <button type="button" data-worker-action="aadhaar-front" data-worker-doc-id="${esc(docId)}" class="text-[10px] bg-blue-600 text-white px-2 py-1.5 rounded-lg font-bold">👁️ Front देखें</button>
+                     <button type="button" data-worker-action="aadhaar-back" data-worker-doc-id="${esc(docId)}" class="text-[10px] bg-blue-700 text-white px-2 py-1.5 rounded-lg font-bold">👁️ Back देखें</button>
                    </div>
-                   <button onclick="adminToggleVerifyId('${docId}', ${!w.isIdVerified})" class="w-full text-[9px] bg-blue-600 text-white px-2 py-1.5 rounded-lg font-bold">${w.isIdVerified ? '❌ Verified Tag हटाएं' : '🛡️ Verified Tag दें'}</button>
+                   <button type="button" data-worker-action="verify-id" data-worker-doc-id="${esc(docId)}" data-verify-status="${!w.isIdVerified}" class="w-full text-[9px] bg-blue-600 text-white px-2 py-1.5 rounded-lg font-bold">${w.isIdVerified ? '❌ Verified Tag हटाएं' : '🛡️ Verified Tag दें'}</button>
                  </div>
                ` : ''}
 
               <div class="pt-1 flex gap-1.5 border-t border-slate-100">
-                <button onclick="adminDirectEditWorker('${docId}')" class="flex-1 bg-slate-900 text-amber-400 py-1 rounded text-[10px] font-bold">✏️ पूरा प्रोफ़ाइल सुधारें</button>
-                <button onclick="adminToggleBlockWorker('${docId}', ${!w.isBlocked})" class="bg-amber-100 text-amber-900 px-2 py-1 rounded text-[10px] font-bold">${w.isBlocked ? 'अनब्लॉक' : 'ब्लॉक'}</button>
-                <button onclick="adminDeleteDoc('workers', '${docId}')" class="bg-rose-100 text-rose-800 px-2 py-1 rounded text-[10px] font-bold">🗑️</button>
+                <button type="button" data-worker-action="edit" data-worker-doc-id="${esc(docId)}" class="flex-1 bg-slate-900 text-amber-400 py-1 rounded text-[10px] font-bold">✏️ पूरा प्रोफ़ाइल सुधारें</button>
+                <button type="button" data-worker-action="toggle-block" data-worker-doc-id="${esc(docId)}" data-block-status="${!w.isBlocked}" class="bg-amber-100 text-amber-900 px-2 py-1 rounded text-[10px] font-bold">${w.isBlocked ? 'अनब्लॉक' : 'ब्लॉक'}</button>
+                <button type="button" data-worker-action="delete" data-worker-doc-id="${esc(docId)}" class="bg-rose-100 text-rose-800 px-2 py-1 rounded text-[10px] font-bold">🗑️</button>
               </div>
             </div>
           `;
+        });
+        box.querySelectorAll("[data-worker-action]").forEach(btn=>{
+          if(btn.dataset.mbWorkerActionBound==="1")return;
+          btn.dataset.mbWorkerActionBound="1";
+          btn.addEventListener("click",()=>{
+            const id=btn.dataset.workerDocId||"";
+            if(!id)return alert("मिस्त्री की प्रोफ़ाइल ID नहीं मिली।");
+            const action=btn.dataset.workerAction;
+            if(action==="aadhaar-front"||action==="aadhaar-back"){
+              adminStoreWorkerAadhaar(id);
+              openAdminAadhaarPhoto("worker_"+id+(action==="aadhaar-front"?"_front":"_back"),action==="aadhaar-front"?"Aadhaar Front":"Aadhaar Back");
+            }else if(action==="verify-id")adminToggleVerifyId(id,btn.dataset.verifyStatus==="true");
+            else if(action==="edit")adminDirectEditWorker(id);
+            else if(action==="toggle-block")adminToggleBlockWorker(id,btn.dataset.blockStatus==="true");
+            else if(action==="delete")adminDeleteDoc("workers",id);
+          });
         });
       });
     }
@@ -5428,21 +5444,27 @@
         container.innerHTML="";
         if(!list.length){container.innerHTML="<p class='text-xs text-slate-500'>कोई Pending Aadhaar Verification नहीं है।</p>";return;}
         list.forEach(item=>{
-          const safeName=String(item.name||item.role).replace(/'/g,"\\'");
-          const safeId=String(item.docId||"").replace(/'/g,"\\'");
+          const safeName=String(item.name||item.role||"प्रोफ़ाइल");
+          const safeId=String(item.docId||"");
           const card=document.createElement("div");
           card.className="bg-white p-3 border border-slate-200 rounded-lg shadow-sm space-y-2";
           card.innerHTML=`
             <div class="flex justify-between items-start gap-2">
-              <div><p class="text-xs font-black text-slate-800">${item.name||item.role}</p><p class="text-[9px] text-amber-700 font-bold">${item.role}</p><p class="text-[10px] text-slate-500">${item.docId||""}</p></div>
+              <div><p class="text-xs font-black text-slate-800">${esc(safeName)}</p><p class="text-[9px] text-amber-700 font-bold">${esc(item.role||"—")}</p><p class="text-[10px] text-slate-500">${esc(safeId)}</p></div>
               <span class="text-[9px] bg-amber-100 text-amber-800 font-bold px-2 py-1 rounded-full">⏳ Pending</span>
             </div>
             <div class="grid grid-cols-2 gap-2">
-              <button type="button" ${item.front?"":"disabled"} onclick="openAdminAadhaarPhoto('${item.frontToken}','Aadhaar Front — ${safeName}')" class="${item.front?'bg-blue-600':'bg-slate-300'} text-white px-2 py-2 rounded-lg text-[10px] font-bold">👁️ Front देखें</button>
-              <button type="button" ${item.back?"":"disabled"} onclick="openAdminAadhaarPhoto('${item.backToken}','Aadhaar Back — ${safeName}')" class="${item.back?'bg-blue-700':'bg-slate-300'} text-white px-2 py-2 rounded-lg text-[10px] font-bold">👁️ Back देखें</button>
+              <button type="button" data-aadhaar-photo-token="${esc(item.frontToken)}" data-aadhaar-photo-label="Front" ${item.front?"":"disabled"} class="aadhaar-photo-open ${item.front?'bg-blue-600':'bg-slate-300'} text-white px-2 py-2 rounded-lg text-[10px] font-bold">👁️ Front देखें</button>
+              <button type="button" data-aadhaar-photo-token="${esc(item.backToken)}" data-aadhaar-photo-label="Back" ${item.back?"":"disabled"} class="aadhaar-photo-open ${item.back?'bg-blue-700':'bg-slate-300'} text-white px-2 py-2 rounded-lg text-[10px] font-bold">👁️ Back देखें</button>
             </div>
-            <button type="button" onclick="verifyUnifiedAadhaar('${item.source}','${safeId}')" class="w-full bg-emerald-600 text-white text-xs font-black py-2 rounded-lg">✅ Aadhaar सही है — Verified Tag दें</button>
+            <button type="button" data-aadhaar-source="${esc(item.source)}" data-aadhaar-doc-id="${esc(safeId)}" class="aadhaar-verify-action w-full bg-emerald-600 text-white text-xs font-black py-2 rounded-lg">✅ Aadhaar सही है — Verified Tag दें</button>
           `;
+          card.querySelectorAll(".aadhaar-photo-open").forEach(btn=>btn.addEventListener("click",()=>{
+            const side=btn.dataset.aadhaarPhotoLabel||"";
+            openAdminAadhaarPhoto(btn.dataset.aadhaarPhotoToken,"Aadhaar "+side+" — "+safeName);
+          }));
+          const verifyBtn=card.querySelector(".aadhaar-verify-action");
+          if(verifyBtn)verifyBtn.addEventListener("click",()=>verifyUnifiedAadhaar(verifyBtn.dataset.aadhaarSource,verifyBtn.dataset.aadhaarDocId));
           container.appendChild(card);
         });
       }catch(err){const errorNode=document.createElement("p");errorNode.className="text-xs text-rose-600";errorNode.textContent="Pending Aadhaar Verification नहीं खुली: "+String(err&&err.message||err||"अज्ञात त्रुटि");container.replaceChildren(errorNode);}
@@ -5958,7 +5980,7 @@
       if(d.status==="Active_Contractor"){
         d.applicationId=appId;
         const box=document.getElementById("con-active-profile-details");
-        if(box) box.innerHTML=`<div class="bg-slate-50 p-2 rounded-lg"><b>नाम</b><br>${d.name||''}</div><div class="bg-slate-50 p-2 rounded-lg"><b>मोबाइल</b><br>${d.phone||''}</div><div class="bg-slate-50 p-2 rounded-lg"><b>स्तर</b><br>${d.contractorTier==='vip'?'👑 VIP':'🔨 Small'}</div><div class="bg-slate-50 p-2 rounded-lg"><b>स्थिति</b><br>ACTIVE</div>`;
+        if(box) box.innerHTML=`<div class="bg-slate-50 p-2 rounded-lg"><b>नाम</b><br>${esc(d.name||'—')}</div><div class="bg-slate-50 p-2 rounded-lg"><b>मोबाइल</b><br>${esc(d.phone||'—')}</div><div class="bg-slate-50 p-2 rounded-lg"><b>स्तर</b><br>${d.contractorTier==='vip'?'👑 VIP':'🔨 Small'}</div><div class="bg-slate-50 p-2 rounded-lg"><b>स्थिति</b><br>ACTIVE</div>`;
         if(window.MB_renderActiveContractorDashboard) window.MB_renderActiveContractorDashboard(d);
       }
     });
@@ -6019,7 +6041,7 @@
     db.collection("contractor_applications").orderBy("createdAt","desc").limit(50).onSnapshot(snap=>{
       if(snap.empty){box.innerHTML="<p class='text-slate-400 text-center py-3'>कोई आवेदन नहीं है।</p>";return;}
       box.innerHTML=""; snap.forEach(doc=>{const c=doc.data()||{},id=doc.id; const vip=c.contractorTier==='vip';
-        const safeId=encodeURIComponent(String(id||''));
+        const safeId=esc(String(id||''));
         const safeDocUrl=(value)=>{try{const u=new URL(String(value||''),window.location.href);return u.protocol==='https:'?u.href:'';}catch(_){return '';}};
         const docLink=(label,url)=>{const href=safeDocUrl(url);return href?`<a href="${href}" target="_blank" rel="noopener noreferrer" class="block text-[9px] text-blue-700 font-bold underline">👁️ ${label}</a>`:'';};
         box.innerHTML+=`<div class="bg-white p-3 rounded-xl border border-slate-200 shadow-xs space-y-2">
@@ -6032,11 +6054,14 @@
               ${c.paymentUtr?`<p class="text-emerald-700 font-bold pt-1">💳 UTR: ${esc(c.paymentUtr)}</p>`:''}
             </div>
           </details>
-          ${c.status==='Under_Review'?`<button onclick="adminApproveContractorEligibility(decodeURIComponent('${safeId}'))" class="w-full bg-emerald-600 text-white py-2 rounded text-[10px] font-black">✓ Documents Verify करें → Payment खोलें</button>`:''}
-          ${c.status==='Payment_Submitted'?`<button onclick="adminActivateContractorPass(decodeURIComponent('${safeId}'))" class="w-full bg-blue-600 text-white py-2 rounded text-[10px] font-black">💳 Payment Confirm करें → Profile ACTIVE करें</button>`:''}
+          ${c.status==='Under_Review'?`<button type="button" data-contractor-action="approve" data-application-id="${safeId}" onclick="adminApproveContractorEligibility(this.dataset.applicationId)" class="w-full bg-emerald-600 text-white py-2 rounded text-[10px] font-black">✓ Documents Verify करें → Payment खोलें</button>`:''}
+          ${c.status==='Payment_Submitted'?`<button type="button" data-contractor-action="activate" data-application-id="${safeId}" onclick="adminActivateContractorPass(this.dataset.applicationId)" class="w-full bg-blue-600 text-white py-2 rounded text-[10px] font-black">💳 Payment Confirm करें → Profile ACTIVE करें</button>`:''}
           ${c.status==='Active_Contractor'?`<div class="text-center bg-emerald-50 text-emerald-800 py-1.5 rounded text-[10px] font-black">✓ ACTIVE / PAYMENT CONFIRMED</div>`:''}
         </div>`;
       });
+    }, err=>{
+      console.error("Admin contractor applications listener failed:",err);
+      if(box) box.innerHTML="<p class='text-rose-600 text-center py-3'>ठेकेदारों की सूची लोड नहीं हो सकी। कृपया दोबारा प्रयास करें।</p>";
     });
   };
 
@@ -6099,6 +6124,14 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
     try{return await fileToBase64(f);}catch(e){return "";}
   }
   function esc(v){return String(v||"").replace(/[&<>"']/g,function(c){return ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]);});}
+  function MB_safeImageSrc(value){
+    const raw=String(value||"").trim();
+    if(!raw)return "";
+    // Accept only HTTPS image URLs or a small allowlist of base64 image MIME types.
+    if(/^data:image\/(?:png|jpeg|jpg|webp|gif);base64,[a-z0-9+/=\s]+$/i.test(raw))return raw;
+    try{const u=new URL(raw,window.location.href);if(u.protocol==="https:"&&u.hostname)return u.href;}catch(e){}
+    return "";
+  }
   async function mbProviderSave(collection,prefix,fields,docs,photoId,cardId,declarationId){
     const data={};
     fields.forEach(([k,id])=>data[k]=(document.getElementById(id)?.value||'').trim());
@@ -6146,7 +6179,7 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
     const verified=d.aadhaarVerified===true;
     const approval=d.adminApprovalStatus==='approved';
     const proofCount=Object.keys(d).filter(k=>/Proof$/.test(k)&&d[k]).length;
-    c.innerHTML=`<div class="flex gap-3 items-center">${d.photo?`<img src="${d.photo}" class="w-16 h-16 rounded-xl object-cover border-2 border-slate-300">`:''}<div><b class="text-sm">${esc(d.name)}</b><div class="text-[10px] text-slate-500">${prefix==='rental'?'🚜 Machine / Vehicle Rental Provider':'🧱 Construction Material Seller'}</div><div class="text-[10px]">📍 ${esc(d.area)}</div><div class="text-[10px]">📄 ${proofCount} business/ownership proof saved</div></div></div>
+    c.innerHTML=`<div class="flex gap-3 items-center">${MB_safeImageSrc(d.photo)?`<img src="${esc(MB_safeImageSrc(d.photo))}" loading="lazy" referrerpolicy="no-referrer" class="w-16 h-16 rounded-xl object-cover border-2 border-slate-300">`:''}<div><b class="text-sm">${esc(d.name)}</b><div class="text-[10px] text-slate-500">${prefix==='rental'?'🚜 Machine / Vehicle Rental Provider':'🧱 Construction Material Seller'}</div><div class="text-[10px]">📍 ${esc(d.area)}</div><div class="text-[10px]">📄 ${proofCount} business/ownership proof saved</div></div></div>
     <div class="mt-2 grid grid-cols-2 gap-2"><div class="bg-white p-2 rounded-lg">${prefix==='rental'?'मशीन/गाड़ी':'Material'}<br><b>${esc(d.item||d.items)}</b></div><div class="bg-white p-2 rounded-lg">रेट<br><b>${esc(d.rate)}</b></div></div>
     <div class="mt-2 ${verified?'text-emerald-700':'text-amber-700'} font-bold">${verified?'🛡️ MistriBabu Verified':'⏳ Aadhaar/Admin Verification Pending'}</div>
     <div class="mt-2 text-[10px] text-slate-600">${approval?'✅ Profile Approved — अब marketplace में provider के रूप में दिख सकता है।':'🔎 Profile बनाया जा चुका है; Admin दस्तावेज देखकर approval करेगा।'}</div>`;
@@ -6339,7 +6372,7 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
       snap.forEach(doc=>{
         const d=doc.data()||{}, live=d.adminApprovalStatus==="approved"&&d.status==="live";
         const el=document.createElement("div"); el.className="bg-slate-50 border rounded-xl p-3";
-        el.innerHTML=`<div class="flex gap-2 items-center">${d.photo?`<img src="${d.photo}" class="w-14 h-14 rounded-lg object-cover">`:''}<div class="flex-1"><b class="text-xs">${mbEsc(d.vehicleName)}</b><p class="text-[9px] text-slate-500">${mbEsc(d.registrationNo)} • ${mbEsc(d.area)}</p><p class="text-[10px] font-bold">${mbEsc(d.rate)}</p></div><span class="text-[9px] font-black ${live?'text-emerald-700':'text-amber-700'}">${live?'🟢 LIVE':'⏳ Pending'}</span></div>`;
+        el.innerHTML=`<div class="flex gap-2 items-center">${MB_safeImageSrc(d.photo)?`<img src="${mbEsc(MB_safeImageSrc(d.photo))}" loading="lazy" referrerpolicy="no-referrer" class="w-14 h-14 rounded-lg object-cover">`:''}<div class="flex-1"><b class="text-xs">${mbEsc(d.vehicleName)}</b><p class="text-[9px] text-slate-500">${mbEsc(d.registrationNo)} • ${mbEsc(d.area)}</p><p class="text-[10px] font-bold">${mbEsc(d.rate)}</p></div><span class="text-[9px] font-black ${live?'text-emerald-700':'text-amber-700'}">${live?'🟢 LIVE':'⏳ Pending'}</span></div>`;
         box.appendChild(el);
       });
     }catch(err){box.innerHTML="<p class='text-[10px] text-rose-600'>गाड़ियाँ लोड नहीं हो सकीं।</p>";}
@@ -6388,7 +6421,7 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
     snap.forEach(doc=>{
       const d=doc.data()||{}, id=doc.id;
       const el=document.createElement("div");el.className="bg-white border rounded-xl p-3 space-y-2";
-      el.innerHTML=`<div class="flex gap-2">${d.photo?`<img src="${d.photo}" class="w-16 h-16 rounded-lg object-cover">`:''}<div><b class="text-xs">${mbEsc(d.vehicleName)}</b><p class="text-[9px] text-slate-500">${mbEsc(d.registrationNo)} • ${mbEsc(d.providerName)}</p><p class="text-[9px]">${mbEsc(d.area)} • ${mbEsc(d.rate)}</p></div></div><div class="text-[9px] space-y-1"><p>📄 RC: ${d.rcProof?'✅ उपलब्ध':'❌ नहीं'}</p><p>📄 Insurance/Fitness/Permit: ${d.legalProof?'✅':'—'}</p><p>📄 Ownership: ${d.ownershipProof?'✅':'—'}</p></div><div class="grid grid-cols-2 gap-2"><button onclick="MB_adminApproveRentalVehicle('${id}')" class="bg-emerald-600 text-white py-2 rounded-lg text-[10px] font-black">✅ Approve → LIVE</button><button onclick="MB_adminRejectRentalVehicle('${id}')" class="bg-rose-600 text-white py-2 rounded-lg text-[10px] font-black">❌ Reject</button></div>`;
+      el.innerHTML=`<div class="flex gap-2">${MB_safeImageSrc(d.photo)?`<img src="${mbEsc(MB_safeImageSrc(d.photo))}" loading="lazy" referrerpolicy="no-referrer" class="w-16 h-16 rounded-lg object-cover">`:''}<div><b class="text-xs">${mbEsc(d.vehicleName)}</b><p class="text-[9px] text-slate-500">${mbEsc(d.registrationNo)} • ${mbEsc(d.providerName)}</p><p class="text-[9px]">${mbEsc(d.area)} • ${mbEsc(d.rate)}</p></div></div><div class="text-[9px] space-y-1"><p>📄 RC: ${d.rcProof?'✅ उपलब्ध':'❌ नहीं'}</p><p>📄 Insurance/Fitness/Permit: ${d.legalProof?'✅':'—'}</p><p>📄 Ownership: ${d.ownershipProof?'✅':'—'}</p></div><div class="grid grid-cols-2 gap-2"><button onclick="MB_adminApproveRentalVehicle('${id}')" class="bg-emerald-600 text-white py-2 rounded-lg text-[10px] font-black">✅ Approve → LIVE</button><button onclick="MB_adminRejectRentalVehicle('${id}')" class="bg-rose-600 text-white py-2 rounded-lg text-[10px] font-black">❌ Reject</button></div>`;
       box.appendChild(el);
     });
   };
@@ -6410,7 +6443,8 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
     if(snap.empty){box.innerHTML="<p class='text-xs text-slate-400'>कोई Pending Promotion नहीं है।</p>";return;}
     snap.forEach(doc=>{
       const d=doc.data()||{},id=doc.id,el=document.createElement("div");el.className="bg-white border rounded-xl p-3 space-y-2";
-      el.innerHTML=`<div class="flex gap-2">${d.bannerUrl?`<img src="${d.bannerUrl}" class="w-14 h-14 rounded-lg object-cover">`:''}<div><b class="text-xs">${mbEsc(d.shopName)}</b><p class="text-[9px] text-slate-500">${mbEsc(d.location)} • ${mbEsc(d.phone)}</p><p class="text-[9px]">₹${d.amount||1000} • UTR: <b>${mbEsc(d.utr)}</b></p></div></div><div class="grid grid-cols-2 gap-2"><button onclick="MB_adminApproveMaterialAd('${id}')" class="bg-emerald-600 text-white py-2 rounded-lg text-[10px] font-black">✅ Payment सही → LIVE</button><button onclick="MB_adminRejectMaterialAd('${id}')" class="bg-rose-600 text-white py-2 rounded-lg text-[10px] font-black">❌ Reject</button></div>`;
+      const bannerSrc=MB_safeImageSrc(d.bannerUrl);
+      el.innerHTML=`<div class="flex gap-2">${bannerSrc?`<img src="${mbEsc(bannerSrc)}" loading="lazy" referrerpolicy="no-referrer" class="w-14 h-14 rounded-lg object-cover" alt="दुकान का बैनर">`:''}<div><b class="text-xs">${mbEsc(d.shopName)}</b><p class="text-[9px] text-slate-500">${mbEsc(d.location)} • ${mbEsc(d.phone)}</p><p class="text-[9px]">₹${Number(d.amount||1000).toLocaleString('en-IN')} • UTR: <b>${mbEsc(d.utr)}</b></p></div></div><div class="grid grid-cols-2 gap-2"><button onclick="MB_adminApproveMaterialAd('${mbEsc(id)}')" class="bg-emerald-600 text-white py-2 rounded-lg text-[10px] font-black">✅ Payment सही → LIVE</button><button onclick="MB_adminRejectMaterialAd('${mbEsc(id)}')" class="bg-rose-600 text-white py-2 rounded-lg text-[10px] font-black">❌ Reject</button></div>`;
       box.appendChild(el);
     });
   };
@@ -6435,8 +6469,8 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
         db.collection("material_providers").where("adminApprovalStatus","==","approved").get()
       ]);
       let html="";
-      vSnap.forEach(doc=>{const d=doc.data()||{};html+=`<div class="bg-blue-50 border border-blue-200 rounded-xl p-3"><div class="flex gap-2">${d.photo?`<img src="${d.photo}" class="w-14 h-14 rounded-lg object-cover">`:''}<div><b class="text-xs">🚜 ${mbEsc(d.vehicleName)}</b><p class="text-[9px] text-slate-600">${mbEsc(d.area)} • ${mbEsc(d.rate)}</p><p class="text-[9px] text-slate-500">Provider: ${mbEsc(d.providerName)}</p></div></div></div>`;});
-      mSnap.forEach(doc=>{const d=doc.data()||{};html+=`<div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3"><div class="flex gap-2">${d.photo?`<img src="${d.photo}" class="w-14 h-14 rounded-lg object-cover">`:''}<div><b class="text-xs">🧱 ${mbEsc(d.name)}</b><p class="text-[9px] text-slate-600">${mbEsc(d.area)} • ${mbEsc(d.items)}</p><p class="text-[9px] text-slate-500">${mbEsc(d.delivery||"Delivery जानकारी उपलब्ध")}</p></div></div></div>`;});
+      vSnap.forEach(doc=>{const d=doc.data()||{};html+=`<div class="bg-blue-50 border border-blue-200 rounded-xl p-3"><div class="flex gap-2">${MB_safeImageSrc(d.photo)?`<img src="${mbEsc(MB_safeImageSrc(d.photo))}" loading="lazy" referrerpolicy="no-referrer" class="w-14 h-14 rounded-lg object-cover">`:''}<div><b class="text-xs">🚜 ${mbEsc(d.vehicleName)}</b><p class="text-[9px] text-slate-600">${mbEsc(d.area)} • ${mbEsc(d.rate)}</p><p class="text-[9px] text-slate-500">Provider: ${mbEsc(d.providerName)}</p></div></div></div>`;});
+      mSnap.forEach(doc=>{const d=doc.data()||{};html+=`<div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3"><div class="flex gap-2">${MB_safeImageSrc(d.photo)?`<img src="${mbEsc(MB_safeImageSrc(d.photo))}" loading="lazy" referrerpolicy="no-referrer" class="w-14 h-14 rounded-lg object-cover">`:''}<div><b class="text-xs">🧱 ${mbEsc(d.name)}</b><p class="text-[9px] text-slate-600">${mbEsc(d.area)} • ${mbEsc(d.items)}</p><p class="text-[9px] text-slate-500">${mbEsc(d.delivery||"Delivery जानकारी उपलब्ध")}</p></div></div></div>`;});
       box.innerHTML=html||"<p class='text-xs text-slate-400'>अभी कोई Admin-approved Rental Vehicle या Material Seller Live नहीं है।</p>";
     }catch(e){box.innerHTML="<p class='text-xs text-rose-600'>Marketplace लोड नहीं हो पाया।</p>";}
   };
@@ -6990,7 +7024,7 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
   /* ================= TRUST & DEAL DOCUMENTS ================= */
   function trustShell(){return `<div class="bg-white border border-emerald-200 rounded-2xl p-4"><b class="text-sm">🛡️ Trust & Safety</b><div class="grid grid-cols-2 gap-2 mt-3 text-[9px]"><div class="bg-slate-50 rounded-lg p-2">🔐 Phone Privacy<br><b>Customer नंबर private</b></div><div class="bg-slate-50 rounded-lg p-2">🪪 ID Verification<br><b>Admin verification</b></div><div class="bg-slate-50 rounded-lg p-2">⭐ Rating<br><b>Deal के बाद review</b></div><div class="bg-slate-50 rounded-lg p-2">🚫 Safety<br><b>Complaint / Report</b></div></div></div>`;}
   function docsShell(){return `<div class="bg-white border border-violet-200 rounded-2xl p-4"><b class="text-sm">📁 Deal Documents</b><p class="text-[9px] text-slate-500 mt-1">Agreement, Booking और Deal record एक जगह।</p><div id="mb-corrected-doc-list" class="mt-3 text-[9px] text-slate-500">Deal documents लोड हो रहे हैं…</div></div>`;}
-  async function loadDocs(){const box=document.getElementById("mb-corrected-doc-list");if(!box)return;const p=await phone();if(p.length!==10)return;try{const q=await db.collection("confirmed_deals").limit(100).get();const a=q.docs.filter(x=>{const d=x.data()||{};return digits(d.clientPhone||d.customerPhone)===p||digits(d.workerPhone)===p;});box.innerHTML=a.length?a.map(x=>{const d=x.data()||{};return `<div class="border rounded-lg p-2 mb-2"><b>🤝 ${esc(x.id)}</b><br>💰 ₹${Number(d.amount||d.quoteAmount||0).toLocaleString("en-IN")} • ${esc(d.workType||"काम")}<br>📄 Agreement: ${d.status||"—"} • 📅 Booking: ${d.bookingStatus||"—"}</div>`}).join(""):"अभी कोई Deal Document नहीं है।";}catch(e){box.textContent="Documents लोड नहीं हुए।";}}
+  async function loadDocs(){const box=document.getElementById("mb-corrected-doc-list");if(!box)return;const p=await phone();if(p.length!==10)return;try{const q=await db.collection("confirmed_deals").limit(100).get();const a=q.docs.filter(x=>{const d=x.data()||{};return digits(d.clientPhone||d.customerPhone)===p||digits(d.workerPhone)===p;});box.innerHTML=a.length?a.map(x=>{const d=x.data()||{};return `<div class="border rounded-lg p-2 mb-2"><b>🤝 ${esc(x.id)}</b><br>💰 ₹${Number(d.amount||d.quoteAmount||0).toLocaleString("en-IN")} • ${esc(d.workType||"काम")}<br>📄 Agreement: ${esc(d.status||"—")} • 📅 Booking: ${esc(d.bookingStatus||"—")}</div>`}).join(""):"अभी कोई Deal Document नहीं है।";}catch(e){box.textContent="Documents लोड नहीं हुए।";}}
 
   /* ================= ADMIN ANALYTICS ================= */
   window.MB_correctedAdminAnalytics=async function(){
@@ -7184,15 +7218,38 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
       </div>
       <div class="mt-2 text-[10px] font-bold">${esc(statusText(a))}</div>
       <div class="flex flex-wrap gap-2 mt-3">
-        ${!accepted ? `<button onclick="MB_acceptAgreement('${dealId}','${role}')" class="bg-emerald-600 text-white px-3 py-2 rounded-lg text-[10px] font-black">✓ Agreement Accept करें</button>` : `<span class="bg-emerald-100 text-emerald-800 px-3 py-2 rounded-lg text-[10px] font-black">✓ आपकी Acceptance सेव है</span>`}
-        ${both && workStatus!=="work_started" && workStatus!=="work_completed" ? `<button onclick="MB_updateWorkStatus('${dealId}','work_started');setTimeout(MB_loadDigitalAgreements,500)" class="bg-blue-600 text-white px-3 py-2 rounded-lg text-[10px] font-black">▶ काम शुरू</button>` : ``}
-        ${both && workStatus==="work_started" ? `<button onclick="MB_updateWorkStatus('${dealId}','work_completed');setTimeout(MB_loadDigitalAgreements,500)" class="bg-amber-500 text-slate-900 px-3 py-2 rounded-lg text-[10px] font-black">✓ काम पूरा</button>` : ``}
-        ${workStatus==="work_completed" && !alreadyRated ? `<button onclick="MB_openTwoWayRating('${dealId}','${role}')" class="bg-violet-600 text-white px-3 py-2 rounded-lg text-[10px] font-black">⭐ ${role==="worker"?"ग्राहक को रेट करें":"मिस्त्री को रेट करें"}</button>` : ``}
+        ${!accepted ? `<button type="button" data-mb-ag-action="accept" data-mb-ag-deal="${esc(dealId)}" data-mb-ag-role="${esc(role)}" class="bg-emerald-600 text-white px-3 py-2 rounded-lg text-[10px] font-black">✓ Agreement Accept करें</button>` : `<span class="bg-emerald-100 text-emerald-800 px-3 py-2 rounded-lg text-[10px] font-black">✓ आपकी Acceptance सेव है</span>`}
+        ${both && workStatus!=="work_started" && workStatus!=="work_completed" ? `<button type="button" data-mb-ag-action="start" data-mb-ag-deal="${esc(dealId)}" class="bg-blue-600 text-white px-3 py-2 rounded-lg text-[10px] font-black">▶ काम शुरू</button>` : ``}
+        ${both && workStatus==="work_started" ? `<button type="button" data-mb-ag-action="complete" data-mb-ag-deal="${esc(dealId)}" class="bg-amber-500 text-slate-900 px-3 py-2 rounded-lg text-[10px] font-black">✓ काम पूरा</button>` : ``}
+        ${workStatus==="work_completed" && !alreadyRated ? `<button type="button" data-mb-ag-action="rate" data-mb-ag-deal="${esc(dealId)}" data-mb-ag-role="${esc(role)}" class="bg-violet-600 text-white px-3 py-2 rounded-lg text-[10px] font-black">⭐ ${role==="worker"?"ग्राहक को रेट करें":"मिस्त्री को रेट करें"}</button>` : ``}
         ${workStatus==="work_completed" && alreadyRated ? `<span class="bg-emerald-100 text-emerald-800 px-3 py-2 rounded-lg text-[10px] font-black">⭐ आपकी Rating सेव है</span>` : ``}
       </div>
     </div>`;
     return html;
   }
+  // Deal IDs are carried as data attributes, not interpolated into inline JavaScript.
+  document.addEventListener("click",function(event){
+    var button=event.target&&event.target.closest?event.target.closest("button[data-mb-ag-action]"):null;
+    if(!button)return;
+    var action=button.getAttribute("data-mb-ag-action")||"";
+    var dealId=button.getAttribute("data-mb-ag-deal")||"";
+    var role=button.getAttribute("data-mb-ag-role")||"";
+    if(!dealId)return alert("Deal ID नहीं मिली।");
+    if(action==="accept"){
+      if(role!=="worker"&&role!=="customer")return alert("प्रोफ़ाइल की भूमिका मान्य नहीं है।");
+      if(typeof window.MB_acceptAgreement==="function")window.MB_acceptAgreement(dealId,role);
+      else alert("Agreement सुविधा अभी उपलब्ध नहीं है।");
+    }else if(action==="start"||action==="complete"){
+      var nextStatus=action==="start"?"work_started":"work_completed";
+      if(typeof window.MB_updateWorkStatus!=="function")return alert("काम की स्थिति बदलने की सुविधा उपलब्ध नहीं है।");
+      window.MB_updateWorkStatus(dealId,nextStatus);
+      setTimeout(function(){if(typeof window.MB_loadDigitalAgreements==="function")window.MB_loadDigitalAgreements();},500);
+    }else if(action==="rate"){
+      if(role!=="worker"&&role!=="customer")return alert("प्रोफ़ाइल की भूमिका मान्य नहीं है।");
+      if(typeof window.MB_openTwoWayRating==="function")window.MB_openTwoWayRating(dealId,role);
+      else alert("Rating सुविधा अभी उपलब्ध नहीं है।");
+    }
+  });
   window.MB_loadDigitalAgreements=async function(){
     var list=document.getElementById("mb-digital-agreement-list"); if(!list)return;
     var phone=currentPhone(); if(phone.length!==10){showSection(false);return;}
@@ -7594,7 +7651,15 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
     if(empty)empty.classList.add("hidden");
     items.forEach(function(d){
       var card=document.createElement("div"); card.className="border border-slate-200 rounded-xl overflow-hidden bg-slate-50";
-      card.innerHTML=(d.photo?"<img src='"+esc(d.photo)+"' class='w-full h-28 object-cover' alt='Work'>":"<div class='w-full h-28 bg-slate-200 flex items-center justify-center text-2xl'>📸</div>")+
+      var photoSrc="";
+      try {
+        if(typeof window.MB_safeImageSrc === "function") photoSrc=window.MB_safeImageSrc(d.photo)||"";
+        else {
+          var photoUrl=new URL(String(d.photo||""),window.location.href);
+          if(photoUrl.protocol==="https:" && photoUrl.hostname && !photoUrl.username && !photoUrl.password) photoSrc=photoUrl.href;
+        }
+      } catch(photoError) { photoSrc=""; }
+      card.innerHTML=(photoSrc?"<img src='"+esc(photoSrc)+"' loading='lazy' referrerpolicy='no-referrer' class='w-full h-28 object-cover' alt='Work'>":"<div class='w-full h-28 bg-slate-200 flex items-center justify-center text-2xl'>📸</div>")+
         "<div class='p-2'><b class='text-[11px] text-slate-800'>"+esc(d.title||d.workType||"Work")+"</b><p class='text-[9px] text-slate-500'>"+esc(d.area||"")+"</p>"+
         (d.description?"<p class='text-[9px] text-slate-600 mt-1'>"+esc(d.description)+"</p>":"")+
         (d.verified?"<span class='inline-block mt-1 text-[8px] bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full font-bold'>🛡️ Verified Work</span>":"")+
@@ -7643,63 +7708,106 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
     el.innerHTML=`<div class="bg-white border border-emerald-200 rounded-2xl shadow-sm overflow-hidden"><div class="bg-emerald-50 px-4 py-3"><b class="text-sm">📊 काम की Progress</b><p class="text-[10px] text-slate-600">Deal के अंदर काम की प्रगति, अपडेट और फोटो दर्ज करें।</p></div><div id="mb-work-progress-list" class="p-3 space-y-3"><p class="text-[10px] text-slate-400">Progress लोड हो रही है…</p></div></div>`;
     agreement.insertAdjacentElement("afterend",el);return el;
   }
-  function fileToData(file){return new Promise((resolve,reject)=>{if(!file)return resolve("");if(file.size>1024*1024)return reject(new Error("फोटो 1 MB से छोटी रखें।"));const r=new FileReader();r.onload=()=>resolve(String(r.result||""));r.onerror=()=>reject(new Error("फोटो पढ़ी नहीं जा सकी।"));r.readAsDataURL(file);});}
+  function fileToData(file){return new Promise((resolve,reject)=>{if(!file)return resolve("");if(!/^image\/(png|jpeg|jpg|webp|gif)$/i.test(String(file.type||"")))return reject(new Error("कृपया PNG, JPG, WEBP या GIF फोटो चुनें।"));if(file.size>400*1024)return reject(new Error("Firestore में सुरक्षित सेव करने के लिए फोटो 400 KB से छोटी रखें।"));const r=new FileReader();r.onload=()=>{const result=String(r.result||"");if(!/^data:image\/(png|jpeg|jpg|webp|gif);base64,/i.test(result))return reject(new Error("फोटो का प्रारूप मान्य नहीं है।"));resolve(result);};r.onerror=()=>reject(new Error("फोटो पढ़ी नहीं जा सकी।"));r.readAsDataURL(file);});}
   function safeProgressPhotoUrl(value){
     const raw=String(value||"").trim();
-    if(/^https:\/\//i.test(raw)) return raw;
+    // Canonicalize URLs before interpolating them into HTML attributes.
+    // A prefix-only HTTPS check is insufficient because quotes/markup may follow it.
     if(/^data:image\/(png|jpeg|jpg|webp|gif);base64,[a-z0-9+/=]+$/i.test(raw)) return raw;
-    return "";
+    try{
+      const u=new URL(raw, window.location.href);
+      if(u.protocol!=="https:" || !u.hostname || u.username || u.password) return "";
+      return u.href;
+    }catch(e){ return ""; }
   }
   function progressBar(n){return `<div class="h-2.5 rounded-full bg-slate-100 overflow-hidden"><div class="h-full bg-emerald-500 rounded-full" style="width:${Math.max(0,Math.min(100,n))}%"></div></div>`;}
   async function load(){
-    const box=document.getElementById("mb-work-progress-list");if(!box||!window.db)return;
+    const box=document.getElementById("mb-work-progress-list");if(!box)return;
+    if(!window.db){box.textContent="डेटाबेस अभी उपलब्ध नहीं है। कृपया कुछ देर बाद दोबारा प्रयास करें।";return;}
     const p=phone();if(p.length!==10){box.innerHTML='<p class="text-[10px] text-slate-500">काम की Progress देखने के लिए Login करें।</p>';return;}
     box.innerHTML='<p class="text-[10px] text-slate-400">Progress लोड हो रही है…</p>';
     try{
-      const snap=await db.collection("confirmed_deals").limit(100).get();
-      const deals=snap.docs.filter(doc=>{const d=doc.data()||{};return digits(d.clientPhone||d.customerPhone)===p||digits(d.workerPhone)===p;});
+      // Do not fetch an arbitrary first 100 deals and filter locally: a user's deal
+      // could be outside that window. Query the known phone fields and common formats,
+      // then merge duplicate matches by document ID.
+      const phoneVariants=[p,"+91"+p,"91"+p];
+      const fields=["clientPhone","customerPhone","workerPhone"];
+      const queries=[];
+      for(const field of fields){
+        for(const value of phoneVariants){
+          queries.push(db.collection("confirmed_deals").where(field,"==",value).get());
+        }
+      }
+      const snapshots=await Promise.all(queries);
+      const uniqueDeals=new Map();
+      for(const snap of snapshots){for(const doc of snap.docs){uniqueDeals.set(doc.id,doc);}}
+      const deals=Array.from(uniqueDeals.values()).filter(doc=>{
+        const d=doc.data()||{};
+        // Check each customer-phone field independently: clientPhone may be set
+        // even when customerPhone is the field that matches the logged-in user.
+        return digits(d.clientPhone)===p||digits(d.customerPhone)===p||digits(d.workerPhone)===p;
+      });
       if(!deals.length){box.innerHTML='<p class="text-[10px] text-slate-500">अभी आपकी कोई Deal नहीं मिली।</p>';return;}
       let html='';
       for(const doc of deals){
         const d=doc.data()||{};let a={},g={};
         try{const ag=await db.collection("digital_agreements").doc(doc.id).get();if(ag.exists)a=ag.data()||{};}catch(e){}
         try{const ps=await db.collection("work_progress").doc(doc.id).get();if(ps.exists)g=ps.data()||{};}catch(e){}
-        const status=a.workStatus||d.workStatus||"";const percent=Math.max(0,Math.min(100,Number(g.percent||0)));
+        const status=a.workStatus||d.workStatus||"";const rawPercent=Number(g.percent);const percent=Number.isFinite(rawPercent)?Math.max(0,Math.min(100,rawPercent)):0;
         const progressPhoto=safeProgressPhotoUrl(g.photo);
         const canUpdate=status==="work_started";
         html+=`<article class="border border-slate-200 rounded-xl p-3 bg-slate-50"><div class="flex items-start justify-between gap-2"><div><b class="text-xs">${esc(d.jobSixId||d.jobId||doc.id)}</b><p class="text-[10px] text-slate-600 mt-1">${esc(a.workType||d.workType||"निर्माण कार्य")} • ₹${Number(a.amount||d.quoteAmount||d.amount||0).toLocaleString('en-IN')}</p></div><span class="text-[9px] font-bold px-2 py-1 rounded-full ${status==='work_completed'?'bg-emerald-100 text-emerald-800':canUpdate?'bg-blue-100 text-blue-800':'bg-amber-100 text-amber-800'}">${status==='work_completed'?'काम पूरा':canUpdate?'काम जारी':'काम शुरू होने की प्रतीक्षा'}</span></div>
           <div class="mt-3 flex justify-between text-[10px] font-bold"><span>काम की प्रगति</span><span>${percent}%</span></div>${progressBar(percent)}
           ${g.note?`<p class="mt-2 text-[10px] text-slate-600"><b>आखिरी अपडेट:</b> ${esc(g.note)}</p>`:''}
           ${progressPhoto?`<a href="${progressPhoto}" target="_blank" rel="noopener noreferrer" class="inline-block mt-2"><img src="${progressPhoto}" alt="काम की प्रगति की फोटो" class="w-24 h-20 object-cover rounded-lg border" loading="lazy" referrerpolicy="no-referrer"></a>`:''}
-          ${canUpdate?`<div class="mt-3"><label class="block text-[10px] font-bold mb-1">प्रगति चुनें</label><div class="grid grid-cols-4 gap-1.5">${[25,50,75,100].map(n=>`<button type="button" onclick="MB_saveWorkProgress('${doc.id}',${n})" class="border ${percent===n?'bg-emerald-600 text-white':'bg-white'} border-emerald-200 rounded-lg py-2 text-[10px] font-black">${n}%</button>`).join('')}</div><label class="block text-[10px] font-bold mt-2 mb-1">काम का अपडेट</label><textarea id="mb-wp-note-${doc.id}" maxlength="500" class="w-full border rounded-lg p-2 text-[10px]" placeholder="जैसे: दीवार की चिनाई आधी पूरी हुई…">${esc(g.note||'')}</textarea><label class="block text-[10px] font-bold mt-2 mb-1">फोटो (वैकल्पिक, 1 MB तक)</label><input id="mb-wp-photo-${doc.id}" type="file" accept="image/*" class="w-full text-[10px]"><p class="text-[9px] text-slate-500 mt-1">Progress update दोनों पक्षों को इसी Deal में दिखाई देगा।</p></div>`:`<p class="text-[9px] text-slate-500 mt-2">${status==='work_completed'?'काम पूरा दर्ज है।':'Progress अपडेट करने के लिए पहले दोनों पक्ष Agreement स्वीकार करें और “काम शुरू” करें।'}</p>`}
+          ${canUpdate?`<div class="mt-3"><label class="block text-[10px] font-bold mb-1">प्रगति चुनें</label><div class="grid grid-cols-4 gap-1.5">${[25,50,75,100].map(n=>`<button type="button" data-mb-wp-deal="${esc(doc.id)}" data-mb-wp-percent="${n}" class="mb-wp-progress-button border ${percent===n?'bg-emerald-600 text-white':'bg-white'} border-emerald-200 rounded-lg py-2 text-[10px] font-black">${n}%</button>`).join('')}</div><label class="block text-[10px] font-bold mt-2 mb-1">काम का अपडेट</label><textarea id="mb-wp-note-${esc(doc.id)}" maxlength="500" class="w-full border rounded-lg p-2 text-[10px]" placeholder="जैसे: दीवार की चिनाई आधी पूरी हुई…">${esc(g.note||'')}</textarea><label class="block text-[10px] font-bold mt-2 mb-1">फोटो (वैकल्पिक, अधिकतम 400 KB)</label><input id="mb-wp-photo-${esc(doc.id)}" type="file" accept="image/png,image/jpeg,image/webp,image/gif" class="w-full text-[10px]"><p class="text-[9px] text-slate-500 mt-1">Progress update दोनों पक्षों को इसी Deal में दिखाई देगा।</p></div>`:`<p class="text-[9px] text-slate-500 mt-2">${status==='work_completed'?'काम पूरा दर्ज है।':'Progress अपडेट करने के लिए पहले दोनों पक्ष Agreement स्वीकार करें और “काम शुरू” करें।'}</p>`}
         </article>`;
       }
       box.innerHTML=html;
     }catch(e){box.innerHTML='<p class="text-[10px] text-rose-600">Progress लोड नहीं हुई: '+esc(e.message||e)+'</p>';}
   }
+  const savingDeals=new Set();
   window.MB_saveWorkProgress=async function(dealId,percent){
     if(![25,50,75,100].includes(Number(percent)))return;
+    if(!window.db || !window.firebase || !firebase.firestore || !firebase.firestore.FieldValue){alert('डेटाबेस अभी उपलब्ध नहीं है। कृपया कुछ देर बाद दोबारा प्रयास करें।');return;}
+    dealId=String(dealId||"").trim();
+    if(!dealId || dealId.includes("/")){alert('Deal ID मान्य नहीं है।');return;}
+    if(savingDeals.has(dealId))return;
     const p=phone();if(p.length!==10)return alert('पहले Login करें।');
     const note=(document.getElementById('mb-wp-note-'+dealId)?.value||'').trim();
+    if(note.length>500)return alert('काम का अपडेट अधिकतम 500 अक्षरों का रखें।');
     const file=document.getElementById('mb-wp-photo-'+dealId)?.files?.[0];
+    savingDeals.add(dealId);
     try{
       const deal=await db.collection('confirmed_deals').doc(dealId).get();if(!deal.exists)return alert('Deal नहीं मिली।');
       const d=deal.data()||{};
-      if(digits(d.clientPhone||d.customerPhone)!==p&&digits(d.workerPhone)!==p)return alert('यह Deal आपके Login से जुड़ी नहीं है।');
+      if(digits(d.clientPhone)!==p&&digits(d.customerPhone)!==p&&digits(d.workerPhone)!==p)return alert('यह Deal आपके Login से जुड़ी नहीं है।');
       const agreement=await db.collection('digital_agreements').doc(dealId).get();const a=agreement.exists?(agreement.data()||{}):{};
       if(a.workStatus!=='work_started')return alert('Progress अपडेट करने से पहले दोनों पक्ष Agreement स्वीकार करें और काम शुरू करें।');
       let photo='';if(file)photo=await fileToData(file);
       const ref=db.collection('work_progress').doc(dealId);const old=await ref.get();const previous=old.exists?(old.data()||{}):{};
       const history=Array.isArray(previous.history)?previous.history.slice(-19):[];
-      history.push({percent:Number(percent),note,photo:photo||previous.photo||'',updatedByPhone:'+91'+p,updatedByRole:role(),updatedAt:new Date().toISOString()});
+      history.push({percent:Number(percent),note,photoChanged:!!photo,updatedByPhone:'+91'+p,updatedByRole:role(),updatedAt:new Date().toISOString()});
       await ref.set({dealId,jobId:d.jobSixId||d.jobId||'',customerPhone:d.clientPhone||d.customerPhone||'',workerPhone:d.workerPhone||'',percent:Number(percent),note,photo:photo||previous.photo||'',updatedByPhone:'+91'+p,updatedByRole:role(),history,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
       alert('✅ काम की Progress '+percent+'% सेव हो गई।');load();
     }catch(e){alert('Progress सेव नहीं हुई: '+(e.message||e));}
+    finally{savingDeals.delete(dealId);}
   };
+  // Use delegated listeners instead of embedding Firestore document IDs in inline JavaScript.
+  document.addEventListener("click",function(event){
+    const button=event.target&&event.target.closest?event.target.closest("button[data-mb-wp-deal][data-mb-wp-percent]"):null;
+    if(!button)return;
+    const dealId=button.getAttribute("data-mb-wp-deal")||"";
+    const percent=Number(button.getAttribute("data-mb-wp-percent"));
+    if(!dealId)return alert("Deal ID नहीं मिली।");
+    window.MB_saveWorkProgress(dealId,percent);
+  });
   function boot(){setTimeout(()=>{if(mount())load();},1600);}
-  document.addEventListener('DOMContentLoaded',boot);
+  // Also boot when this script is injected after DOMContentLoaded; otherwise the first load waits for the polling interval.
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot,{once:true});
+  else boot();
   window.addEventListener('hashchange',()=>setTimeout(()=>{if(mount())load();},600));
-  setInterval(()=>{if(document.getElementById('mb-digital-agreement-section')&&!document.getElementById('mb-work-progress-section'))mount();},4000);
+  setInterval(()=>{if(document.getElementById('mb-digital-agreement-section')&&!document.getElementById('mb-work-progress-section')){if(mount())load();}},4000);
   window.MB_loadWorkProgress=load;
 })();
 </script>
