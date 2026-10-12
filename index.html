@@ -9598,28 +9598,24 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
 </script>
 
 
-<script id="mb-worker-professional-overview-script-fix161">
+<script id="mb-worker-professional-overview-script-fix161-v3">
 (function(){
   "use strict";
   function refreshWorkerOverviewFix161(){
     try{
       var text=document.getElementById("mb-worker-profile-completion-text-fix161");
-      var panel=document.getElementById("mb-worker-professional-overview-fix161");
-      if(!text||!panel)return;
-      var role=localStorage.getItem("current_user_role")||localStorage.getItem("mb_device_locked_role")||"";
-      var workerLoggedIn=role==="worker"||!!localStorage.getItem("mb_worker_phone");
-      panel.classList.toggle("hidden",!workerLoggedIn);
-      if(!workerLoggedIn)return;
+      if(!text)return;
+      /* The overview is already inside #worker-profile-view. Let the existing
+         page/profile visibility logic control it; do not hide it based on
+         guessed localStorage role keys. */
       var complete=localStorage.getItem("mb_worker_profile_complete")==="true";
       text.textContent=complete
         ?"प्रोफाइल की मुख्य जानकारी सेव है। फोटो, हुनर और काम की जानकारी समय-समय पर अपडेट करें।"
-        :"कुछ जानकारी बाकी हो सकती है। अपडेट करें ताकि ग्राहक को आपकी सही जानकारी मिले।";
-      var planButton=document.getElementById("mb-worker-contact-plan-btn-fix161");
-      if(planButton)planButton.classList.toggle("hidden",!workerLoggedIn);
+        :"अपनी फोटो, हुनर और काम की जानकारी जाँचें। जरूरत हो तो प्रोफाइल अपडेट करें।";
     }catch(e){}
   }
-  document.addEventListener("DOMContentLoaded",function(){setTimeout(refreshWorkerOverviewFix161,350);});
-  window.addEventListener("hashchange",function(){setTimeout(refreshWorkerOverviewFix161,200);});
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",refreshWorkerOverviewFix161,{once:true});
+  else refreshWorkerOverviewFix161();
   window.MB_refreshWorkerOverviewFix161=refreshWorkerOverviewFix161;
 })();
 </script>
