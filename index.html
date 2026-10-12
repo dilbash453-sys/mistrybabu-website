@@ -897,20 +897,20 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
                 <span class="flex items-center gap-2 text-amber-800"><i class="fa-solid fa-magnifying-glass"></i><strong class="text-xs">नए काम खोजें</strong></span>
                 <span class="block text-[10px] text-slate-600 mt-1">काम देखें और रेट भेजें</span>
               </button>
-              <button type="button" onclick="document.getElementById('worker-inbox-section')?.scrollIntoView({behavior:'smooth',block:'start'})" class="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-left active:scale-[.98]">
+              <button type="button" onclick="MB_openWorkerSubpageFix163('deals')" class="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-left active:scale-[.98]">
                 <span class="flex items-center gap-2 text-emerald-800"><i class="fa-solid fa-handshake"></i><strong class="text-xs">मेरे Deals</strong></span>
                 <span class="block text-[10px] text-slate-600 mt-1">संदेश और बातचीत देखें</span>
               </button>
-              <button type="button" onclick="document.getElementById('my-portfolio-grid')?.scrollIntoView({behavior:'smooth',block:'center'})" class="rounded-xl border border-blue-200 bg-blue-50 p-3 text-left active:scale-[.98]">
+              <button type="button" onclick="MB_openWorkerSubpageFix163('portfolio')" class="rounded-xl border border-blue-200 bg-blue-50 p-3 text-left active:scale-[.98]">
                 <span class="flex items-center gap-2 text-blue-800"><i class="fa-solid fa-images"></i><strong class="text-xs">मेरा Portfolio</strong></span>
                 <span class="block text-[10px] text-slate-600 mt-1">काम की फोटो दिखाएँ</span>
               </button>
-              <button type="button" onclick="document.getElementById('mb-worker-rating-summary')?.scrollIntoView({behavior:'smooth',block:'center'})" class="rounded-xl border border-violet-200 bg-violet-50 p-3 text-left active:scale-[.98]">
+              <button type="button" onclick="MB_openWorkerSubpageFix163('reviews')" class="rounded-xl border border-violet-200 bg-violet-50 p-3 text-left active:scale-[.98]">
                 <span class="flex items-center gap-2 text-violet-800"><i class="fa-solid fa-star"></i><strong class="text-xs">रेटिंग और रिव्यू</strong></span>
                 <span class="block text-[10px] text-slate-600 mt-1">अपनी रेटिंग देखें</span>
               </button>
             </div>
-            <div class="rounded-xl border border-slate-200 bg-white p-3">
+            <div id="mb-worker-profile-completion-card-fix163" class="rounded-xl border border-slate-200 bg-white p-3">
               <div class="flex items-center justify-between gap-2">
                 <div>
                   <p class="text-[11px] font-black text-slate-800">प्रोफाइल पूरा रखें</p>
@@ -932,10 +932,10 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
             <button onclick="navTo('jobs')" class="bg-blue-50 border border-blue-200 rounded-xl p-2 text-center" type="button">
               <span class="block text-sm">💰</span><strong class="block text-[10px] text-slate-900 mt-0.5">रेट</strong><span class="text-[8px] text-slate-500">भेजें</span>
             </button>
-            <button onclick="document.getElementById('worker-inbox-section')?.scrollIntoView({behavior:'smooth'})" class="bg-emerald-50 border border-emerald-200 rounded-xl p-2 text-center" type="button">
+            <button onclick="MB_openWorkerSubpageFix163('deals')" class="bg-emerald-50 border border-emerald-200 rounded-xl p-2 text-center" type="button">
               <span class="block text-sm">🤝</span><strong class="block text-[10px] text-slate-900 mt-0.5">डील</strong><span class="text-[8px] text-slate-500">संदेश</span>
             </button>
-            <button onclick="document.getElementById('mb-worker-rating-summary')?.scrollIntoView({behavior:'smooth',block:'center'})" class="bg-violet-50 border border-violet-200 rounded-xl p-2 text-center" type="button">
+            <button onclick="MB_openWorkerSubpageFix163('reviews')" class="bg-violet-50 border border-violet-200 rounded-xl p-2 text-center" type="button">
               <span class="block text-sm">⭐</span><strong class="block text-[10px] text-slate-900 mt-0.5">रेटिंग</strong><span class="text-[8px] text-slate-500">Reviews</span>
             </button>
           </div>
@@ -1008,8 +1008,8 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
           <div class="grid grid-cols-2 gap-2">
             <button onclick="navTo('jobs')" class="bg-amber-500 text-slate-900 py-2.5 rounded-xl font-bold shadow-xs" type="button">🔎 नए काम देखें</button>
             <button onclick="navTo('jobs')" class="bg-slate-900 text-amber-400 py-2.5 rounded-xl font-bold shadow-xs" type="button">💰 Rate भेजें</button>
-            <button onclick="document.getElementById('worker-inbox-section')?.scrollIntoView({behavior:'smooth'})" class="bg-white border border-slate-200 text-slate-800 py-2.5 rounded-xl font-bold" type="button">🤝 मेरे Deals</button>
-            <button onclick="document.getElementById('mb-worker-rating-summary')?.scrollIntoView({behavior:'smooth',block:'center'})" class="bg-white border border-slate-200 text-slate-800 py-2.5 rounded-xl font-bold" type="button">⭐ Rating & Reviews</button>
+            <button onclick="MB_openWorkerSubpageFix163('deals')" class="bg-white border border-slate-200 text-slate-800 py-2.5 rounded-xl font-bold" type="button">🤝 मेरे Deals</button>
+            <button onclick="MB_openWorkerSubpageFix163('reviews')" class="bg-white border border-slate-200 text-slate-800 py-2.5 rounded-xl font-bold" type="button">⭐ Rating & Reviews</button>
           </div>
 
           <button id="btn-remaining-details" onclick="openRemainingDetailsForm()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-2.5 rounded-xl text-xs flex items-center justify-center space-x-1.5 transition-all" type="button">
@@ -9617,6 +9617,65 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",refreshWorkerOverviewFix161,{once:true});
   else refreshWorkerOverviewFix161();
   window.MB_refreshWorkerOverviewFix161=refreshWorkerOverviewFix161;
+})();
+</script>
+
+
+<!-- Fix163: dashboard shortcuts open one dedicated full-screen page; profile completion hides edit prompts. -->
+<div id="mb-worker-subpage-fix163" class="hidden fixed inset-0 z-[90] bg-slate-100 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="mb-worker-subpage-title-fix163">
+  <div class="sticky top-0 z-20 bg-white border-b border-slate-200 p-4 flex items-center gap-3 shadow-sm">
+    <button type="button" onclick="MB_closeWorkerSubpageFix163()" class="rounded-xl bg-slate-100 border border-slate-200 px-3 py-2 font-bold text-sm">← वापस</button>
+    <h2 id="mb-worker-subpage-title-fix163" class="font-black text-base text-slate-900">मिस्त्री प्रोफाइल</h2>
+  </div>
+  <div id="mb-worker-subpage-content-fix163" class="max-w-md mx-auto p-4 space-y-3"></div>
+</div>
+<script id="mb-worker-subpage-script-fix163">
+(function(){
+ 'use strict';
+ const panel=document.getElementById('mb-worker-subpage-fix163');
+ const content=document.getElementById('mb-worker-subpage-content-fix163');
+ const title=document.getElementById('mb-worker-subpage-title-fix163');
+ if(!panel||!content||!title)return;
+ let moved=[];
+ function move(el){if(!el)return;const marker=document.createComment('Fix163 restore point');el.parentNode.insertBefore(marker,el);moved.push({el,marker,wasHidden:el.classList.contains('hidden')});content.appendChild(el);el.classList.remove('hidden');}
+ function addIntro(txt){const p=document.createElement('p');p.className='text-sm text-slate-600 bg-white rounded-xl border border-slate-200 p-3';p.textContent=txt;content.appendChild(p);}
+ window.MB_openWorkerSubpageFix163=function(which){
+   window.MB_closeWorkerSubpageFix163(); content.innerHTML=''; moved=[];
+   const cfg={deals:['मेरे Deals और संदेश','ग्राहकों के संदेश और बातचीत यहाँ देखें।'],portfolio:['मेरा Portfolio','आपके पिछले काम की तस्वीरें।'],reviews:['रेटिंग और रिव्यू','आपकी उपलब्ध कुल रेटिंग।']}[which];if(!cfg)return;
+   title.textContent=cfg[0];addIntro(cfg[1]);
+   if(which==='deals')move(document.getElementById('worker-inbox-section'));
+   if(which==='portfolio'){const grid=document.getElementById('my-portfolio-grid');move(grid&&grid.parentElement);}
+   if(which==='reviews')move(document.getElementById('mb-worker-rating-summary'));
+   panel.classList.remove('hidden');document.body.style.overflow='hidden';
+ };
+ window.MB_closeWorkerSubpageFix163=function(){
+   moved.slice().reverse().forEach(x=>{if(x.marker&&x.marker.parentNode){x.marker.parentNode.insertBefore(x.el,x.marker);x.marker.parentNode.removeChild(x.marker);if(x.wasHidden)x.el.classList.add('hidden');}});
+   moved=[];if(content)content.innerHTML='';if(panel)panel.classList.add('hidden');document.body.style.overflow='';
+ };
+ // The profile update prompt should only be shown when required profile details are incomplete.
+ window.MB_refreshWorkerCompletionFix163=function(){
+   let complete=false;try{complete=localStorage.getItem('mb_worker_profile_complete')==='true';}catch(e){}
+   ['mb-worker-profile-completion-card-fix163','btn-remaining-details'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.toggle('hidden',complete);});
+   const card=document.getElementById('mb-worker-profile-completion-card-fix163');if(card)card.classList.toggle('hidden',complete);
+   const overview=document.getElementById('mb-worker-professional-overview-fix161');
+   if(overview){const old=overview.querySelector('#mb-worker-profile-completion-card-fix163');if(old)old.classList.toggle('hidden',complete);}
+ };
+ // Wrap the existing plan action so the actual payment/UTR form opens as its own page.
+ const oldPlan=window.MB_openContactVisibilityPlanFix143;
+ window.MB_openContactVisibilityPlanFix143=function(){
+   if(typeof oldPlan==='function')oldPlan();
+   const plan=document.getElementById('mb-contact-visibility-plan-fix139');
+   if(!plan||plan.classList.contains('hidden'))return;
+   window.MB_closeWorkerSubpageFix163();content.innerHTML='';moved=[];
+   title.textContent='₹1,000 मासिक नंबर दिखाने का प्लान';
+   const marker=document.createComment('Fix163 plan restore point');plan.parentNode.insertBefore(marker,plan);moved.push({el:plan,marker,wasHidden:true});
+   content.appendChild(plan);plan.classList.remove('hidden');
+   panel.classList.remove('hidden');document.body.style.overflow='hidden';
+ };
+ function refresh(){window.MB_refreshWorkerCompletionFix163();}
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',refresh,{once:true});else refresh();
+ const profile=document.getElementById('worker-profile-view');if(profile&&window.MutationObserver)new MutationObserver(refresh).observe(profile,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!panel.classList.contains('hidden'))window.MB_closeWorkerSubpageFix163();});
 })();
 </script>
 
