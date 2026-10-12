@@ -9786,7 +9786,7 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
         ${phoneAllowed&&tel?`<a href="tel:${esc(tel)}" class="block rounded-xl bg-emerald-600 p-3 text-center font-black text-white">📞 ${esc(rawPhone)} — कॉल करें</a>`:''}
         <button type="button" onclick="MB_openWorkerPrivateMessageFix165('${esc(workerId)}','${esc(w.name||'मिस्त्री').replace(/'/g,'\&#39;')}')" class="w-full rounded-xl bg-blue-600 p-3 font-black text-white">✉️ निजी संदेश भेजें</button>
         <button type="button" onclick="MB_closeWorkerBioFix166();navTo('post')" class="w-full rounded-xl bg-amber-500 p-3 font-black text-slate-900">काम दें</button>
-        <p class="text-center text-[10px] text-slate-500">फोन नंबर केवल संबंधित मिस्त्री का नंबर-दिखाने वाला प्लान सक्रिय होने पर दिखेगा।</p>`;
+        `;
     }catch(e){box.innerHTML='<p class="rounded-xl bg-rose-50 p-3 text-sm text-rose-700">'+esc(e.message||'बायोडाटा लोड नहीं हो सका।')+'</p>';}
   };
   document.addEventListener('keydown',e=>{if(e.key==='Escape')window.MB_closeWorkerBioFix166();});
@@ -9823,5 +9823,53 @@ body[data-mb-page="register"] #mb-admin-dispute-shell-fix128 {
   window.addEventListener("storage",sync);
   document.addEventListener("click",function(){setTimeout(sync,0);},true);
   new MutationObserver(sync).observe(document.body,{attributes:true,attributeFilter:["data-mb-page"]});
+})();
+</script>
+
+<!-- Fix168: repair blank monthly contact-plan subpage by moving the real interactive form safely -->
+<script id="mb-contact-plan-visible-fix168">
+(function(){
+  'use strict';
+  const planId='mb-contact-visibility-plan-fix139';
+  const panelId='mb-worker-subpage-fix163';
+  const contentId='mb-worker-subpage-content-fix163';
+  const titleId='mb-worker-subpage-title-fix163';
+  let marker=null, movedPlan=null, wasHidden=false;
+  function role(){
+    const a=String(localStorage.getItem('current_user_role')||'').trim().toLowerCase();
+    const b=String(localStorage.getItem('mb_device_locked_role')||'').trim().toLowerCase();
+    const allowed=['worker','contractor','vip_contractor','small_contractor','rental','material'];
+    if(allowed.includes(a)&&allowed.includes(b)&&a!==b)return '';
+    return allowed.includes(a)?a:(allowed.includes(b)?b:'');
+  }
+  function restore(){
+    if(movedPlan&&marker&&marker.parentNode){marker.parentNode.insertBefore(movedPlan,marker);marker.parentNode.removeChild(marker);}
+    if(movedPlan&&wasHidden)movedPlan.classList.add('hidden');
+    movedPlan=null;marker=null;
+  }
+  window.MB_openContactVisibilityPlanFix143=function(){
+    if(!role()){alert('इस प्लान के लिए पहले मिस्त्री/ठेकेदार/Rental/Shop-Material अकाउंट में Login करें।');return;}
+    const plan=document.getElementById(planId),panel=document.getElementById(panelId),content=document.getElementById(contentId),title=document.getElementById(titleId);
+    if(!plan||!panel||!content||!title){alert('प्लान फॉर्म नहीं मिला। कृपया नवीनतम वेबसाइट फाइल जाँचें।');return;}
+    if(typeof window.MB_closeWorkerSubpageFix163==='function')window.MB_closeWorkerSubpageFix163();
+    restore();
+    content.innerHTML='';
+    title.textContent='₹1,000 मासिक नंबर दिखाने का प्लान';
+    marker=document.createComment('Fix168 plan restore point');
+    if(!plan.parentNode){alert('प्लान फॉर्म का मूल स्थान नहीं मिला।');return;}
+    plan.parentNode.insertBefore(marker,plan);movedPlan=plan;wasHidden=plan.classList.contains('hidden');
+    content.appendChild(plan);plan.classList.remove('hidden');plan.removeAttribute('aria-hidden');
+    plan.style.display='block';plan.style.visibility='visible';plan.style.opacity='1';plan.style.width='100%';plan.style.maxWidth='100%';plan.style.margin='0';
+    Array.from(plan.children).forEach(el=>{el.style.display='block';el.style.visibility='visible';});
+    panel.classList.remove('hidden');panel.style.display='block';document.body.style.overflow='hidden';
+    const status=document.getElementById('mb-contact-visibility-status-card-fix146');
+    if(status&&!status.textContent.trim())status.textContent='प्लान की स्थिति जाँची जा रही है…';
+  };
+  const originalClose=window.MB_closeWorkerSubpageFix163;
+  window.MB_closeWorkerSubpageFix163=function(){
+    restore();
+    if(typeof originalClose==='function')originalClose();
+    const plan=document.getElementById(planId);if(plan){plan.style.display='';plan.style.visibility='';plan.style.opacity='';plan.style.width='';plan.style.maxWidth='';plan.style.margin='';Array.from(plan.children).forEach(el=>{el.style.display='';el.style.visibility='';});}
+  };
 })();
 </script>
