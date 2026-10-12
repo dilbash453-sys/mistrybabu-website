@@ -35,6 +35,11 @@
     .mb-dark .text-slate-900,.mb-dark .text-slate-800,.mb-dark .text-slate-700 { color:#e2e8f0 !important; }
     .mb-dark .text-slate-500,.mb-dark .text-slate-400 { color:#94a3b8 !important; }
   </style>
+<style id="mb-shop-float-strict-page-fix150">
+/* Fix150: दुकान पार्टनर का floating button केवल Home पर */
+body[data-mb-page]:not([data-mb-page="home"]) #mb-shop-partner-float { display:none !important; visibility:hidden !important; pointer-events:none !important; }
+body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:visible; pointer-events:auto; }
+</style>
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans pb-28 select-none">
 
@@ -288,6 +293,26 @@
             <select id="pc-contractor-material-new" class="rounded-lg border border-slate-300 px-2 py-2 text-xs" aria-label="Contractor material responsibility"><option value="मालिक देगा">Material मालिक देगा</option><option value="Contractor देगा">Material Contractor देगा</option><option value="दोनों बात करके">दोनों बात करके</option></select></div>
           <input id="pc-contractor-desc-new" class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs" placeholder="काम की पूरी जरूरत / शर्तें" aria-label="काम की पूरी जरूरत / शर्तें">
           <button type="button" onclick="MB_addContractorPostItem()" class="w-full bg-violet-700 text-white font-black py-2 rounded-lg text-xs">➕ Contractor Work Add करें</button>
+          
+          <!-- MistriBabu Fix 123: प्रारंभिक Estimate Calculator (client-side only) -->
+          <div id="mb-estimate-calculator" class="bg-sky-50 border border-sky-200 rounded-xl p-3 mb-3 space-y-2">
+            <div>
+              <h3 class="text-[12px] font-black text-slate-800">📊 काम का शुरुआती Estimate</h3>
+              <p class="text-[9px] text-slate-600 mt-0.5">वर्गफुट और आपके दिए रेट से अनुमान निकलेगा। यह अंतिम कोटेशन नहीं है।</p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <div><label for="mb-estimate-area" class="block text-[10px] font-bold text-slate-700 mb-1">क्षेत्रफल (वर्गफुट)</label><input id="mb-estimate-area" type="number" inputmode="decimal" min="0" max="10000000" step="0.01" class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs" placeholder="जैसे 1200" aria-describedby="mb-estimate-help"></div>
+              <div><label for="mb-estimate-labour-rate" class="block text-[10px] font-bold text-slate-700 mb-1">मजदूरी रेट (₹/वर्गफुट)</label><input id="mb-estimate-labour-rate" type="number" inputmode="decimal" min="0" max="100000" step="0.01" class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs" placeholder="जैसे 80"></div>
+              <div><label for="mb-estimate-material-rate" class="block text-[10px] font-bold text-slate-700 mb-1">सामान रेट (₹/वर्गफुट)</label><input id="mb-estimate-material-rate" type="number" inputmode="decimal" min="0" max="100000" step="0.01" class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs" placeholder="जैसे 150"></div>
+            </div>
+            <p id="mb-estimate-help" class="text-[9px] text-slate-500">यदि सामान ग्राहक देगा, तो सामान रेट 0 रखें। अपने स्थानीय रेट भरें।</p>
+            <div class="grid grid-cols-3 gap-2 text-center">
+              <div class="rounded-lg bg-white border p-2"><div class="text-[9px] text-slate-500">मजदूरी</div><output id="mb-estimate-labour-total" class="block text-[11px] font-black text-slate-800">₹0</output></div>
+              <div class="rounded-lg bg-white border p-2"><div class="text-[9px] text-slate-500">सामान</div><output id="mb-estimate-material-total" class="block text-[11px] font-black text-slate-800">₹0</output></div>
+              <div class="rounded-lg bg-white border border-sky-300 p-2"><div class="text-[9px] text-slate-500">कुल अनुमान</div><output id="mb-estimate-grand-total" aria-live="polite" class="block text-[11px] font-black text-sky-800">₹0</output></div>
+            </div>
+            <div class="flex items-center justify-between gap-2"><p id="mb-estimate-status" class="text-[9px] text-slate-500" role="status">अनुमान निकालने के लिए क्षेत्रफल और रेट भरें।</p><button id="mb-estimate-fill-budget" type="button" class="shrink-0 rounded-lg bg-sky-700 text-white px-3 py-2 text-[10px] font-bold">Budget में भरें</button></div>
+          </div>
         </div>
 
         <div id="mb-material-post-fields" class="hidden bg-emerald-50 border border-emerald-200 p-3 rounded-xl space-y-3">
@@ -343,25 +368,7 @@
   <p class="text-[9px] text-slate-500 mt-1">Paid Lead चुनने पर Mistri को Lead Unlock/Access के बाद ही Quote भेजने की अनुमति होगी।</p>
 </div>
 
-<!-- MistriBabu Fix 123: प्रारंभिक Estimate Calculator (client-side only) -->
-<div id="mb-estimate-calculator" class="bg-sky-50 border border-sky-200 rounded-xl p-3 mb-3 space-y-2">
-  <div>
-    <h3 class="text-[12px] font-black text-slate-800">📊 काम का शुरुआती Estimate</h3>
-    <p class="text-[9px] text-slate-600 mt-0.5">वर्गफुट और आपके दिए रेट से अनुमान निकलेगा। यह अंतिम कोटेशन नहीं है।</p>
-  </div>
-  <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-    <div><label for="mb-estimate-area" class="block text-[10px] font-bold text-slate-700 mb-1">क्षेत्रफल (वर्गफुट)</label><input id="mb-estimate-area" type="number" inputmode="decimal" min="0" max="10000000" step="0.01" class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs" placeholder="जैसे 1200" aria-describedby="mb-estimate-help"></div>
-    <div><label for="mb-estimate-labour-rate" class="block text-[10px] font-bold text-slate-700 mb-1">मजदूरी रेट (₹/वर्गफुट)</label><input id="mb-estimate-labour-rate" type="number" inputmode="decimal" min="0" max="100000" step="0.01" class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs" placeholder="जैसे 80"></div>
-    <div><label for="mb-estimate-material-rate" class="block text-[10px] font-bold text-slate-700 mb-1">सामान रेट (₹/वर्गफुट)</label><input id="mb-estimate-material-rate" type="number" inputmode="decimal" min="0" max="100000" step="0.01" class="w-full rounded-lg border border-slate-300 px-2 py-2 text-xs" placeholder="जैसे 150"></div>
-  </div>
-  <p id="mb-estimate-help" class="text-[9px] text-slate-500">यदि सामान ग्राहक देगा, तो सामान रेट 0 रखें। अपने स्थानीय रेट भरें।</p>
-  <div class="grid grid-cols-3 gap-2 text-center">
-    <div class="rounded-lg bg-white border p-2"><div class="text-[9px] text-slate-500">मजदूरी</div><output id="mb-estimate-labour-total" class="block text-[11px] font-black text-slate-800">₹0</output></div>
-    <div class="rounded-lg bg-white border p-2"><div class="text-[9px] text-slate-500">सामान</div><output id="mb-estimate-material-total" class="block text-[11px] font-black text-slate-800">₹0</output></div>
-    <div class="rounded-lg bg-white border border-sky-300 p-2"><div class="text-[9px] text-slate-500">कुल अनुमान</div><output id="mb-estimate-grand-total" aria-live="polite" class="block text-[11px] font-black text-sky-800">₹0</output></div>
-  </div>
-  <div class="flex items-center justify-between gap-2"><p id="mb-estimate-status" class="text-[9px] text-slate-500" role="status">अनुमान निकालने के लिए क्षेत्रफल और रेट भरें।</p><button id="mb-estimate-fill-budget" type="button" class="shrink-0 rounded-lg bg-sky-700 text-white px-3 py-2 text-[10px] font-bold">Budget में भरें</button></div>
-</div>
+
 <button type="submit" id="btn-post-job" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold py-2.5 rounded-xl text-xs shadow-xs transition">
           काम पोस्ट करें
         </button>
@@ -875,6 +882,48 @@
         </div>
 
         <div class="p-4 space-y-3 text-xs">
+
+          <!-- Fix161: Professional worker dashboard enhancements (worker profile only) -->
+          <section id="mb-worker-professional-overview-fix161" class="rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-3 space-y-3" aria-labelledby="mb-worker-overview-title-fix161">
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <h4 id="mb-worker-overview-title-fix161" class="text-sm font-black text-slate-900">मेरा प्रोफेशनल डैशबोर्ड</h4>
+                <p class="text-[10px] text-slate-500 mt-0.5">काम, ग्राहक और प्रोफाइल की जानकारी एक जगह</p>
+              </div>
+              <span class="rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 px-2 py-1 text-[9px] font-bold">मिस्त्री अकाउंट</span>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <button type="button" onclick="navTo('jobs')" class="rounded-xl border border-amber-200 bg-amber-50 p-3 text-left active:scale-[.98]">
+                <span class="flex items-center gap-2 text-amber-800"><i class="fa-solid fa-magnifying-glass"></i><strong class="text-xs">नए काम खोजें</strong></span>
+                <span class="block text-[10px] text-slate-600 mt-1">काम देखें और रेट भेजें</span>
+              </button>
+              <button type="button" onclick="MB_openWorkerSubpageFix163('deals')" class="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-left active:scale-[.98]">
+                <span class="flex items-center gap-2 text-emerald-800"><i class="fa-solid fa-handshake"></i><strong class="text-xs">मेरे Deals</strong></span>
+                <span class="block text-[10px] text-slate-600 mt-1">संदेश और बातचीत देखें</span>
+              </button>
+              <button type="button" onclick="MB_openWorkerSubpageFix163('portfolio')" class="rounded-xl border border-blue-200 bg-blue-50 p-3 text-left active:scale-[.98]">
+                <span class="flex items-center gap-2 text-blue-800"><i class="fa-solid fa-images"></i><strong class="text-xs">मेरा Portfolio</strong></span>
+                <span class="block text-[10px] text-slate-600 mt-1">काम की फोटो दिखाएँ</span>
+              </button>
+              <button type="button" onclick="MB_openWorkerSubpageFix163('reviews')" class="rounded-xl border border-violet-200 bg-violet-50 p-3 text-left active:scale-[.98]">
+                <span class="flex items-center gap-2 text-violet-800"><i class="fa-solid fa-star"></i><strong class="text-xs">रेटिंग और रिव्यू</strong></span>
+                <span class="block text-[10px] text-slate-600 mt-1">अपनी रेटिंग देखें</span>
+              </button>
+            </div>
+            <div id="mb-worker-profile-completion-card-fix163" class="rounded-xl border border-slate-200 bg-white p-3">
+              <div class="flex items-center justify-between gap-2">
+                <div>
+                  <p class="text-[11px] font-black text-slate-800">प्रोफाइल पूरा रखें</p>
+                  <p id="mb-worker-profile-completion-text-fix161" class="text-[10px] text-slate-500 mt-0.5">अपनी जानकारी पूरी और अपडेट रखें।</p>
+                </div>
+                <button type="button" onclick="openRemainingDetailsForm()" class="shrink-0 rounded-lg bg-slate-900 text-white px-3 py-2 text-[10px] font-bold">अपडेट करें</button>
+              </div>
+            </div>
+            <button type="button" id="mb-worker-contact-plan-btn-fix161" onclick="MB_openContactVisibilityPlanFix143()" class="w-full rounded-xl border border-amber-300 bg-amber-50 text-amber-950 p-3 text-left">
+              <span class="flex items-center gap-2 text-xs font-black"><i class="fa-solid fa-phone-volume"></i> ₹1,000 प्रति माह — नंबर दिखाने का प्लान</span>
+              <span class="block text-[10px] mt-1 text-amber-900">पात्र अकाउंट के लिए; Admin की मंजूरी और नियम लागू होंगे।</span>
+            </button>
+          </section>
           <!-- Quick Stats -->
           <div class="grid grid-cols-4 gap-1.5">
             <button onclick="navTo('jobs')" class="bg-amber-50 border border-amber-200 rounded-xl p-2 text-center" type="button">
@@ -883,10 +932,10 @@
             <button onclick="navTo('jobs')" class="bg-blue-50 border border-blue-200 rounded-xl p-2 text-center" type="button">
               <span class="block text-sm">💰</span><strong class="block text-[10px] text-slate-900 mt-0.5">रेट</strong><span class="text-[8px] text-slate-500">भेजें</span>
             </button>
-            <button onclick="document.getElementById('worker-inbox-section')?.scrollIntoView({behavior:'smooth'})" class="bg-emerald-50 border border-emerald-200 rounded-xl p-2 text-center" type="button">
+            <button onclick="MB_openWorkerSubpageFix163('deals')" class="bg-emerald-50 border border-emerald-200 rounded-xl p-2 text-center" type="button">
               <span class="block text-sm">🤝</span><strong class="block text-[10px] text-slate-900 mt-0.5">डील</strong><span class="text-[8px] text-slate-500">संदेश</span>
             </button>
-            <button onclick="document.getElementById('worker-inbox-section')?.scrollIntoView({behavior:'smooth'})" class="bg-violet-50 border border-violet-200 rounded-xl p-2 text-center" type="button">
+            <button onclick="MB_openWorkerSubpageFix163('reviews')" class="bg-violet-50 border border-violet-200 rounded-xl p-2 text-center" type="button">
               <span class="block text-sm">⭐</span><strong class="block text-[10px] text-slate-900 mt-0.5">रेटिंग</strong><span class="text-[8px] text-slate-500">Reviews</span>
             </button>
           </div>
@@ -959,8 +1008,8 @@
           <div class="grid grid-cols-2 gap-2">
             <button onclick="navTo('jobs')" class="bg-amber-500 text-slate-900 py-2.5 rounded-xl font-bold shadow-xs" type="button">🔎 नए काम देखें</button>
             <button onclick="navTo('jobs')" class="bg-slate-900 text-amber-400 py-2.5 rounded-xl font-bold shadow-xs" type="button">💰 Rate भेजें</button>
-            <button onclick="document.getElementById('worker-inbox-section')?.scrollIntoView({behavior:'smooth'})" class="bg-white border border-slate-200 text-slate-800 py-2.5 rounded-xl font-bold" type="button">🤝 मेरे Deals</button>
-            <button onclick="document.getElementById('worker-inbox-section')?.scrollIntoView({behavior:'smooth'})" class="bg-white border border-slate-200 text-slate-800 py-2.5 rounded-xl font-bold" type="button">⭐ Rating & Reviews</button>
+            <button onclick="MB_openWorkerSubpageFix163('deals')" class="bg-white border border-slate-200 text-slate-800 py-2.5 rounded-xl font-bold" type="button">🤝 मेरे Deals</button>
+            <button onclick="MB_openWorkerSubpageFix163('reviews')" class="bg-white border border-slate-200 text-slate-800 py-2.5 rounded-xl font-bold" type="button">⭐ Rating & Reviews</button>
           </div>
 
           <button id="btn-remaining-details" onclick="openRemainingDetailsForm()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-2.5 rounded-xl text-xs flex items-center justify-center space-x-1.5 transition-all" type="button">
@@ -4691,6 +4740,10 @@
         if (window.MB_setDigitalAgreementVisibility) {
           window.MB_setDigitalAgreementVisibility(target === 'register');
         }
+        // Work Progress is a profile-only feature; never leave it visible on other tabs.
+        if (window.MB_setWorkProgressVisibility) {
+          window.MB_setWorkProgressVisibility(target === 'register');
+        }
       } catch(e) {}
 
       if (target === 'register') {
@@ -7936,15 +7989,25 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
   document.addEventListener("DOMContentLoaded",function(){
     var p=document.getElementById("my-portfolio-grid");
     var panel=document.getElementById("mb-work-portfolio-panel");
-    if(p && panel && !p.dataset.mbNo8Linked){
-      p.dataset.mbNo8Linked="1";
-      var obs=new MutationObserver(function(){
-        var has=p.children && p.children.length;
-        if(has) panel.classList.remove("hidden");
-      });
-      obs.observe(p,{childList:true,subtree:true});
-      if(p.children.length) panel.classList.remove("hidden");
+    var profile=document.getElementById("page-register");
+    if(!panel || !profile) return;
+    // Portfolio panel belongs to Profile only, never to Home/Jobs/Workers/Post.
+    // Move it inside the profile container so it inherits that page's visibility.
+    if(panel.parentElement!==profile) profile.appendChild(panel);
+    panel.classList.add("hidden");
+    function syncPortfolioVisibility(){
+      var profileVisible=!profile.classList.contains("hidden") && getComputedStyle(profile).display!=="none";
+      var hasPortfolioItems=!!(p && p.children && p.children.length);
+      panel.classList.toggle("hidden",!(profileVisible && hasPortfolioItems));
     }
+    if(p){
+      var obs=new MutationObserver(syncPortfolioVisibility);
+      obs.observe(p,{childList:true,subtree:true,attributes:true});
+    }
+    var pageObs=new MutationObserver(syncPortfolioVisibility);
+    pageObs.observe(profile,{attributes:true,attributeFilter:["class","style"]});
+    document.addEventListener("click",function(){setTimeout(syncPortfolioVisibility,0);});
+    syncPortfolioVisibility();
   });
 })();
 </script>
@@ -7989,7 +8052,7 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
     if(document.getElementById("mb-work-progress-section"))return document.getElementById("mb-work-progress-section");
     const agreement=document.getElementById("mb-digital-agreement-section");
     if(!agreement)return null;
-    const el=document.createElement("section");el.id="mb-work-progress-section";el.className="max-w-2xl mx-auto px-4 py-3";
+    const el=document.createElement("section");el.id="mb-work-progress-section";el.className="max-w-2xl mx-auto px-4 py-3 hidden";
     el.innerHTML=`<div class="bg-white border border-emerald-200 rounded-2xl shadow-sm overflow-hidden"><div class="bg-emerald-50 px-4 py-3"><b class="text-sm">📊 काम की Progress</b><p class="text-[10px] text-slate-600">Deal के अंदर काम की प्रगति, अपडेट और फोटो दर्ज करें।</p></div><div id="mb-work-progress-list" class="p-3 space-y-3"><p class="text-[10px] text-slate-400">Progress लोड हो रही है…</p></div></div>`;
     agreement.insertAdjacentElement("afterend",el);return el;
   }
@@ -8164,11 +8227,24 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
     if(!dealId)return alert("Deal ID नहीं मिली।");
     window.MB_saveWorkProgress(dealId,percent);
   });
-  function boot(){setTimeout(()=>{if(mount())load();},1600);}
+  function profilePageIsActive(){
+    const page=String(document.body.getAttribute('data-mb-page')||location.hash.replace(/^#/, '')||'home');
+    return page==='register' && phone().length===10 && !!role();
+  }
+  function syncVisibility(shouldShow){
+    const section=document.getElementById('mb-work-progress-section');
+    if(!section)return;
+    const visible=!!shouldShow && profilePageIsActive();
+    const wasHidden=section.classList.contains('hidden');
+    section.classList.toggle('hidden',!visible);
+    if(visible && wasHidden)load();
+  }
+  window.MB_setWorkProgressVisibility=function(shouldShow){syncVisibility(shouldShow);};
+  function boot(){setTimeout(()=>{if(mount()){syncVisibility(location.hash==='#register');if(profilePageIsActive())load();}},1600);}
   // Also boot when this script is injected after DOMContentLoaded; otherwise the first load waits for the polling interval.
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot,{once:true});
   else boot();
-  window.addEventListener('hashchange',()=>setTimeout(()=>{if(mount())load();},600));
+  window.addEventListener('hashchange',()=>setTimeout(()=>{if(mount()){syncVisibility(location.hash==='#register');if(profilePageIsActive())load();}},600));
   // Retry if the Progress section was mounted before Firebase became available.
   // The old retry only ran when the section was missing, so a database-unavailable
   // message could remain forever after Firebase initialized later.
@@ -8176,7 +8252,8 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
     const agreement=document.getElementById('mb-digital-agreement-section');
     if(!agreement)return;
     const section=document.getElementById('mb-work-progress-section');
-    if(!section){if(mount())load();return;}
+    if(!section){if(mount()){syncVisibility(location.hash==='#register');if(profilePageIsActive())load();}return;}
+    syncVisibility(location.hash==='#register');
     const box=document.getElementById('mb-work-progress-list');
     if(!box)return;
     const databaseReady=window.db && typeof window.db.collection==='function';
@@ -8513,63 +8590,9 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
 })();
 </script>
 
-<section id="mb-estimate-quick-fix129" class="rounded-xl border border-indigo-200 bg-indigo-50 p-3 my-3" aria-labelledby="mb-estimate-title-fix129">
-  <h3 id="mb-estimate-title-fix129" class="text-sm font-bold text-indigo-950">📊 Construction Estimate Calculator</h3>
-  <p class="mt-1 text-[10px] text-indigo-900">क्षेत्रफल और रेट भरें। यह अनुमान है, अंतिम ठेका/मजदूरी नहीं।</p>
-  <div class="grid grid-cols-2 gap-2 mt-3">
-    <label class="text-[10px] text-slate-700">क्षेत्रफल (वर्ग फुट)
-      <input id="mb-estimate-area-fix129" type="number" min="0" step="0.01" inputmode="decimal" class="mt-1 w-full rounded-lg border border-indigo-200 bg-white px-2 py-2 text-xs" aria-label="क्षेत्रफल वर्ग फुट में">
-    </label>
-    <label class="text-[10px] text-slate-700">मजदूरी रेट (₹/वर्ग फुट)
-      <input id="mb-estimate-labour-fix129" type="number" min="0" step="0.01" inputmode="decimal" class="mt-1 w-full rounded-lg border border-indigo-200 bg-white px-2 py-2 text-xs" aria-label="मजदूरी रेट प्रति वर्ग फुट">
-    </label>
-    <label class="text-[10px] text-slate-700">सामान रेट (₹/वर्ग फुट)
-      <input id="mb-estimate-material-fix129" type="number" min="0" step="0.01" inputmode="decimal" class="mt-1 w-full rounded-lg border border-indigo-200 bg-white px-2 py-2 text-xs" aria-label="सामान रेट प्रति वर्ग फुट">
-    </label>
-    <label class="text-[10px] text-slate-700">अन्य खर्च (₹)
-      <input id="mb-estimate-other-fix129" type="number" min="0" step="0.01" inputmode="decimal" class="mt-1 w-full rounded-lg border border-indigo-200 bg-white px-2 py-2 text-xs" aria-label="अन्य खर्च रुपये में">
-    </label>
-  </div>
-  <button type="button" id="mb-estimate-calc-fix129" class="mt-3 rounded-lg bg-indigo-700 px-4 py-2 text-xs font-bold text-white">कुल अनुमान निकालें</button>
-  <p id="mb-estimate-result-fix129" class="mt-3 text-sm font-bold text-indigo-950" role="status" aria-live="polite">कुल अनुमान: ₹—</p>
-  <p class="mt-1 text-[10px] text-slate-600">गणना: (क्षेत्रफल × मजदूरी रेट) + (क्षेत्रफल × सामान रेट) + अन्य खर्च।</p>
-</section>
+<!-- Fix158 repair: removed only the duplicate global calculator; preserved Fix157 role-visibility guard and all other features. -->
 
-
-<script id="mb-estimate-quick-script-fix129">
-(function(){
-  "use strict";
-  function byId(id){return document.getElementById(id);}
-  function value(id){var n=byId(id); if(!n)return NaN; var x=Number(n.value); return Number.isFinite(x)?x:NaN;}
-  function calculate(){
-    var area=value("mb-estimate-area-fix129");
-    var labour=value("mb-estimate-labour-fix129");
-    var material=value("mb-estimate-material-fix129");
-    var otherNode=byId("mb-estimate-other-fix129");
-    var other=otherNode && otherNode.value.trim()!=="" ? value("mb-estimate-other-fix129") : 0;
-    var result=byId("mb-estimate-result-fix129");
-    if(!result)return;
-    if(!Number.isFinite(area)||!Number.isFinite(labour)||!Number.isFinite(material)||!Number.isFinite(other)||area<0||labour<0||material<0||other<0){
-      result.textContent="कृपया सभी रकम/क्षेत्रफल में शून्य या उससे अधिक सही संख्या भरें।";
-      return;
-    }
-    var total=(area*labour)+(area*material)+other;
-    if(!Number.isFinite(total)){
-      result.textContent="रकम बहुत बड़ी है। कृपया सही संख्या भरें।";
-      return;
-    }
-    result.textContent="कुल अनुमान: ₹"+total.toLocaleString("en-IN",{maximumFractionDigits:2});
-  }
-  function bind(){
-    var button=byId("mb-estimate-calc-fix129");
-    if(button&&!button.dataset.bound){button.dataset.bound="1";button.addEventListener("click",calculate);}
-  }
-  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",bind,{once:true});
-  else bind();
-})();
-</script>
-
-<section id="mb-customer-shop-order-fix133" class="rounded-xl border border-violet-200 bg-violet-50 p-3 my-3" aria-labelledby="mb-customer-shop-order-title-fix133">
+<section id="mb-customer-shop-order-fix133" class="hidden rounded-xl border border-violet-200 bg-violet-50 p-3 my-3" aria-labelledby="mb-customer-shop-order-title-fix133">
   <h3 id="mb-customer-shop-order-title-fix133" class="text-sm font-bold text-violet-950">🤝 ग्राहक–दुकानदार ऑर्डर और डील</h3>
   <p class="mt-1 text-[10px] text-violet-900">ग्राहक सामान की माँग भेजने का ड्राफ्ट बना सकता है और दुकानदार उसी डिवाइस पर रेट, डिलीवरी चार्ज व स्थिति अपडेट कर सकता है। अभी यह स्थानीय डेमो है; दूसरे मोबाइल पर ऑनलाइन नहीं जाएगा।</p>
   <div class="grid grid-cols-2 gap-2 mt-3">
@@ -8595,7 +8618,7 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
     </label>
   </div>
   <button type="button" id="mb-order-create-fix133" class="mt-3 rounded-lg bg-violet-700 px-4 py-2 text-xs font-bold text-white">सामान की माँग जोड़ें</button>
-  <div class="mt-4 border-t border-violet-200 pt-3">
+  <div id="mb-shopkeeper-order-update-panel-fix153" class="mt-4 border-t border-violet-200 pt-3">
     <h4 class="text-xs font-bold text-violet-950">दुकानदार: रेट और स्थिति अपडेट</h4>
     <p class="mt-1 text-[10px] text-violet-900">दुकानदार रेट के साथ डिलीवरी चार्ज और ग्राहक के लिए संदेश भी भर सकता है।</p>
     <div class="grid grid-cols-2 gap-2 mt-2">
@@ -8626,7 +8649,7 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
   <ul id="mb-order-workflow-list-fix133" class="mt-2 space-y-2"></ul>
 </section>
 
-<section id="mb-customer-delivery-lookup-fix132" class="rounded-xl border border-teal-200 bg-teal-50 p-3 my-3" aria-labelledby="mb-customer-delivery-title-fix132">
+<section id="mb-customer-delivery-lookup-fix132" class="hidden rounded-xl border border-teal-200 bg-teal-50 p-3 my-3" aria-labelledby="mb-customer-delivery-title-fix132">
   <h3 id="mb-customer-delivery-title-fix132" class="text-sm font-bold text-teal-950">📦 ग्राहक: अपनी डिलीवरी की स्थिति देखें</h3>
   <p class="mt-1 text-[10px] text-teal-900">अपना Order / Booking ID डालकर उपलब्ध डिलीवरी स्थिति देखें। अभी यह इसी ब्राउज़र में सेव रिकॉर्ड खोजता है; दूसरे मोबाइल से ऑनलाइन रिकॉर्ड नहीं ला सकता।</p>
   <div class="flex gap-2 mt-3">
@@ -8636,7 +8659,7 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
   <div id="mb-customer-delivery-result-fix132" class="mt-3 rounded-lg border border-teal-100 bg-white p-3 text-xs text-slate-600" role="status" aria-live="polite">अपना Order ID डालकर स्थिति देखें।</div>
 </section>
 
-<section id="mb-material-delivery-tracker-fix130" class="rounded-xl border border-cyan-200 bg-cyan-50 p-3 my-3" aria-labelledby="mb-material-delivery-title-fix130">
+<section id="mb-material-delivery-tracker-fix130" class="hidden rounded-xl border border-cyan-200 bg-cyan-50 p-3 my-3" aria-labelledby="mb-material-delivery-title-fix130">
   <h3 id="mb-material-delivery-title-fix130" class="text-sm font-bold text-cyan-950">🚚 Material Delivery Status</h3>
   <p class="mt-1 text-[10px] text-cyan-900">ऑर्डर/डिलीवरी की स्थिति यहाँ नोट करें। यह स्थानीय जानकारी है; अभी लाइव ट्रैकिंग सेवा से जुड़ा नहीं है।</p>
   <div class="grid grid-cols-2 gap-2 mt-3">
@@ -9264,7 +9287,7 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
     if(home)home.classList.remove('hidden');
     document.body.setAttribute('data-mb-page','home');
     var shopFloat=document.getElementById('mb-shop-partner-float');
-    if(shopFloat)shopFloat.classList.remove('hidden');
+    if(shopFloat)shopFloat.classList.toggle('hidden', (location.hash||'#home') !== '#home' && (location.hash||'') !== '');
     var dash=document.getElementById('mb-shopkeeper-dashboard-fix127');
     if(dash)dash.classList.add('hidden');
     // Honor an existing URL hash only when it is a known app page.
@@ -9275,6 +9298,384 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});
   else init();
+})();
+</script>
+
+
+<script id="mb-shop-float-navigation-guard-fix150">
+(function(){
+  'use strict';
+  function applyShopVisibility(page){
+    var target=String(page||document.body.getAttribute('data-mb-page')||location.hash.replace(/^#/, '')||'home');
+    if(!['home','jobs','workers','post','register'].includes(target)) target='home';
+    document.body.setAttribute('data-mb-page',target);
+    var shop=document.getElementById('mb-shop-partner-float');
+    if(shop){
+      var onHome=target==='home';
+      shop.classList.toggle('hidden',!onHome);
+      shop.setAttribute('aria-hidden',String(!onHome));
+      shop.style.display=onHome?'':'none';
+      shop.style.pointerEvents=onHome?'':'none';
+    }
+  }
+  var original=window.navTo;
+  if(typeof original==='function' && !original.__mbShopGuard150){
+    var wrapped=function(target,pushHistory){
+      var result=original.apply(this,arguments);
+      applyShopVisibility(target);
+      return result;
+    };
+    wrapped.__mbShopGuard150=true;
+    window.navTo=wrapped;
+  }
+  window.addEventListener('hashchange',function(){applyShopVisibility(location.hash.replace(/^#/,''));});
+  document.addEventListener('DOMContentLoaded',function(){applyShopVisibility(location.hash.replace(/^#/,''));});
+  if(document.readyState!=='loading') applyShopVisibility(location.hash.replace(/^#/,''));
+})();
+</script>
+
+<script id="mb-profile-role-order-tools-fix153">
+(function(){
+  'use strict';
+  function byId(id){return document.getElementById(id);}
+  function selectedRole(){
+    var raw=(byId('profile-category-tab-label')?.textContent||'').toLowerCase();
+    var saved=(localStorage.getItem('mb_device_locked_role')||localStorage.getItem('current_user_role')||'').toLowerCase();
+    // The profile selector is the current screen choice; saved role is fallback only.
+    if(raw.includes('ग्राहक')||raw.includes('customer')) return 'client';
+    if(raw.includes('shop')||raw.includes('material')||raw.includes('दुकानदार')||raw.includes('सामग्री')) return 'material';
+    if(raw.includes('मिस्त्री')||raw.includes('worker')) return 'worker';
+    if(raw.includes('rental')) return 'rental';
+    if(raw.includes('contractor')) return 'contractor';
+    return saved;
+  }
+  function place(el,parent){if(el&&parent&&el.parentElement!==parent)parent.appendChild(el);}
+  function show(el,yes){if(!el)return;el.classList.toggle('hidden',!yes);el.setAttribute('aria-hidden',String(!yes));}
+  function update(){
+    var register=byId('page-register'); if(!register)return;
+    var profileOpen=!register.classList.contains('hidden');
+    var role=selectedRole();
+    var clientBox=byId('client-dashboard-box');
+    var materialBox=byId('material-provider-box');
+    var order=byId('mb-customer-shop-order-fix133');
+    var shopPanel=byId('mb-shopkeeper-order-update-panel-fix153');
+    var delivery=byId('mb-customer-delivery-lookup-fix132');
+    var tracker=byId('mb-material-delivery-tracker-fix130');
+    // Put every tool inside the dashboard belonging to its intended role.
+    place(order,clientBox);
+    place(delivery,clientBox);
+    place(shopPanel,materialBox);
+    place(tracker,materialBox);
+    // Customer order request and delivery lookup are customer-only.
+    show(order,profileOpen&&role==='client');
+    show(delivery,profileOpen&&role==='client');
+    // Price/status updates and material delivery management are shop/material-only.
+    show(shopPanel,profileOpen&&role==='material');
+    show(tracker,profileOpen&&role==='material');
+  }
+  function start(){
+    update();
+    document.addEventListener('click',function(e){
+      if(e.target.closest('#nav-register,#profile-category-tab,#profile-category-menu')) setTimeout(update,60);
+      // Some profile selection buttons change content asynchronously.
+      if(e.target.closest('#page-register')) setTimeout(update,180);
+    });
+    ['page-home','page-jobs','page-workers','page-post','page-register','client-dashboard-box','material-provider-box'].forEach(function(id){
+      var el=byId(id); if(el)new MutationObserver(update).observe(el,{attributes:true,attributeFilter:['class']});
+    });
+    var label=byId('profile-category-tab-label');
+    if(label)new MutationObserver(update).observe(label,{childList:true,characterData:true,subtree:true});
+    window.addEventListener('hashchange',update);
+    // Short-lived polling catches existing app code that changes roles without an event.
+    var ticks=0;var timer=setInterval(function(){update();if(++ticks>=30)clearInterval(timer);},500);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+})();
+</script>
+
+
+<!-- Fix157: role-specific tools and the ₹1,000 contact plan live inside the selected eligible profile only. -->
+<style id="mb-role-page-visibility-css-fix157">
+#mb-customer-shop-order-fix133[aria-hidden="true"],
+#mb-customer-delivery-lookup-fix132[aria-hidden="true"],
+#mb-shopkeeper-order-update-panel-fix153[aria-hidden="true"],
+#mb-material-delivery-tracker-fix130[aria-hidden="true"],
+#mb-contact-visibility-plan-fix139[aria-hidden="true"] { display:none !important; }
+</style>
+<script id="mb-role-page-visibility-guard-fix157">
+(function(){
+  'use strict';
+  var ids={order:'mb-customer-shop-order-fix133',delivery:'mb-customer-delivery-lookup-fix132',shop:'mb-shopkeeper-order-update-panel-fix153',tracker:'mb-material-delivery-tracker-fix130',plan:'mb-contact-visibility-plan-fix139'};
+  function el(id){return document.getElementById(id);}
+  function visible(node){return !!node && !node.classList.contains('hidden') && getComputedStyle(node).display!=='none';}
+  function hide(node){if(!node)return;node.classList.add('hidden');node.setAttribute('aria-hidden','true');node.style.setProperty('display','none','important');node.style.setProperty('pointer-events','none','important');}
+  function show(node){if(!node)return;node.classList.remove('hidden');node.setAttribute('aria-hidden','false');node.style.removeProperty('display');node.style.removeProperty('pointer-events');}
+  function selectedRole(){
+    var label=(el('profile-category-tab-label')?.textContent||'').toLowerCase();
+    if(label.includes('ग्राहक')||label.includes('customer'))return 'client';
+    if(label.includes('shop')||label.includes('material')||label.includes('दुकानदार')||label.includes('सामग्री'))return 'material';
+    if(label.includes('rental'))return 'rental';
+    if(label.includes('contractor')||label.includes('ठेकेदार'))return 'contractor';
+    if(label.includes('मिस्त्री')||label.includes('worker'))return 'worker';
+    var r=(localStorage.getItem('mb_device_locked_role')||localStorage.getItem('current_user_role')||'').toLowerCase();
+    if(/client|customer|ग्राहक/.test(r))return 'client';
+    if(/material|shop|दुकान|सामग्री/.test(r))return 'material';
+    if(/worker|मिस्त्री/.test(r))return 'worker';
+    if(/rental/.test(r))return 'rental';
+    if(/contractor|ठेकेदार/.test(r))return 'contractor';
+    return '';
+  }
+  function update(){
+    var register=el('page-register');
+    var profileOpen=visible(register);
+    var role=selectedRole();
+    var client=el('client-dashboard-box'),material=el('material-provider-box'),worker=el('worker-dashboard-box'),rental=el('rental-provider-box'),contractor=el('contractor-dashboard-box');
+    var order=el(ids.order),delivery=el(ids.delivery),shop=el(ids.shop),tracker=el(ids.tracker),plan=el(ids.plan);
+    function place(node,parent){if(node&&parent&&node.parentElement!==parent)parent.appendChild(node);}
+    place(order,client); place(delivery,client); place(shop,material); place(tracker,material);
+    var target={worker:worker,contractor:contractor,rental:rental,material:material}[role];
+    if(target)place(plan,target); else place(plan,register);
+    [order,delivery,shop,tracker,plan].forEach(hide);
+    if(profileOpen&&role==='client'&&visible(client)){show(order);show(delivery);}
+    if(profileOpen&&role==='material'&&visible(material)){show(shop);show(tracker);}
+    if(profileOpen&&['worker','contractor','rental','material'].includes(role)&&target&&visible(target))show(plan);
+  }
+  function schedule(){update();setTimeout(update,80);setTimeout(update,250);}
+  function start(){
+    update();
+    document.addEventListener('click',schedule,true);
+    document.addEventListener('change',schedule,true);
+    window.addEventListener('hashchange',schedule);
+    window.addEventListener('storage',schedule);
+    ['page-home','page-jobs','page-workers','page-post','page-register','client-dashboard-box','material-provider-box','worker-dashboard-box','rental-provider-box','contractor-dashboard-box'].forEach(function(id){var n=el(id);if(n)new MutationObserver(schedule).observe(n,{attributes:true,attributeFilter:['class','style']});});
+    var label=el('profile-category-tab-label');if(label)new MutationObserver(schedule).observe(label,{childList:true,characterData:true,subtree:true});
+    var ticks=0;var timer=setInterval(function(){update();if(++ticks>=30)clearInterval(timer);},500);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+})();
+</script>
+
+<script id="mb-plan-placement-function-check-fix159">
+(function(){
+  "use strict";
+  if(window.__MB_PLAN_PLACEMENT_FIX159__) return;
+  window.__MB_PLAN_PLACEMENT_FIX159__=true;
+  const byId=id=>document.getElementById(id);
+  const eligibleRoles=["worker","contractor","vip_contractor","small_contractor","rental","material"];
+  function roleNow(){
+    const current=String(localStorage.getItem("current_user_role")||"").trim().toLowerCase();
+    const locked=String(localStorage.getItem("mb_device_locked_role")||"").trim().toLowerCase();
+    if(eligibleRoles.includes(current)&&eligibleRoles.includes(locked)&&current!==locked) return "";
+    return eligibleRoles.includes(locked)?locked:(eligibleRoles.includes(current)?current:"");
+  }
+  function currentPage(){
+    const attr=document.body.getAttribute("data-mb-page");
+    if(["home","jobs","workers","post","register"].includes(attr)) return attr;
+    const hash=(location.hash||"").replace(/^#/,"").split("?")[0];
+    return ["home","jobs","workers","post","register"].includes(hash)?hash:"home";
+  }
+  function placeAndSync(){
+    const plan=byId("mb-contact-visibility-plan-fix139");
+    const admin=byId("mb-contact-visibility-admin-fix139");
+    const profile=byId("page-register");
+    const adminTools=byId("mb-admin-dispute-shell-fix128");
+    if(plan&&profile&&plan.parentElement!==profile) profile.appendChild(plan);
+    if(admin&&adminTools&&admin.parentElement!==adminTools) adminTools.appendChild(admin);
+    const page=currentPage(),role=roleNow();
+    if(plan){
+      const show=page==="register"&&eligibleRoles.includes(role);
+      plan.classList.toggle("hidden",!show);
+      plan.setAttribute("aria-hidden",show?"false":"true");
+    }
+    if(admin){
+      const operator=!!String(localStorage.getItem("mb_active_operator")||"").trim();
+      const toolsOpen=!!(adminTools&&adminTools.open);
+      const show=operator&&toolsOpen&&page==="home";
+      admin.classList.toggle("hidden",!show);
+      admin.setAttribute("aria-hidden",show?"false":"true");
+    }
+  }
+  // Ensure the review card is inside the actual collapsible Admin tools, not after it.
+  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",placeAndSync,{once:true}); else placeAndSync();
+  const oldNav=window.navTo;
+  if(typeof oldNav==="function"&&!oldNav.__mbFix159Wrapped){
+    const wrapped=function(target,...args){const result=oldNav.call(this,target,...args);setTimeout(placeAndSync,0);return result;};
+    wrapped.__mbFix159Wrapped=true;window.navTo=wrapped;
+  }
+  window.addEventListener("hashchange",()=>setTimeout(placeAndSync,0));
+  window.addEventListener("storage",()=>setTimeout(placeAndSync,0));
+  document.addEventListener("click",e=>{
+    if(e.target.closest("#nav-home,#nav-jobs,#nav-post,#nav-workers,#nav-register,#mb-admin-dispute-shell-fix128 summary")) setTimeout(placeAndSync,0);
+  });
+  const observer=new MutationObserver(()=>placeAndSync());
+  observer.observe(document.body,{attributes:true,attributeFilter:["data-mb-page"]});
+  const tools=byId("mb-admin-dispute-shell-fix128");
+  if(tools) observer.observe(tools,{attributes:true,attributeFilter:["open"]});
+  // Public test hook for QA; reports visibility/placement without exposing private values.
+  window.MB_checkPlanPlacementFix159=function(){
+    const plan=byId("mb-contact-visibility-plan-fix139"),admin=byId("mb-contact-visibility-admin-fix139");
+    return {page:currentPage(),role:roleNow()||"ineligible-or-not-logged-in",planParent:plan&&plan.parentElement?plan.parentElement.id:"missing",planVisible:!!(plan&&!plan.classList.contains("hidden")),adminParent:admin&&admin.parentElement?admin.parentElement.id:"missing",adminVisible:!!(admin&&!admin.classList.contains("hidden")),adminToolsOpen:!!(adminToolsForCheck()&&adminToolsForCheck().open)};
+  };
+  function adminToolsForCheck(){return byId("mb-admin-dispute-shell-fix128");}
+})();
+</script>
+
+
+<!-- Fix160 audit repair: Work Portfolio and number plan are scoped to the correct logged-in profile role. -->
+<style id="mb-worker-profile-scope-fix160">
+#mb-work-portfolio-panel[aria-hidden="true"],
+#mb-contact-visibility-plan-fix139[aria-hidden="true"] { display:none !important; }
+</style>
+<script id="mb-worker-profile-scope-guard-fix160">
+(function(){
+  'use strict';
+  if(window.__MB_WORKER_PROFILE_SCOPE_FIX160__) return;
+  window.__MB_WORKER_PROFILE_SCOPE_FIX160__=true;
+  const $=id=>document.getElementById(id);
+  const allowedPlanRoles=new Set(['worker','contractor','vip_contractor','small_contractor','rental','material']);
+  function page(){
+    const attr=document.body.getAttribute('data-mb-page');
+    if(['home','jobs','workers','post','register'].includes(attr)) return attr;
+    const hash=(location.hash||'').replace(/^#/,'').split('?')[0];
+    return ['home','jobs','workers','post','register'].includes(hash)?hash:'home';
+  }
+  function role(){
+    const locked=String(localStorage.getItem('mb_device_locked_role')||'').trim().toLowerCase();
+    const current=String(localStorage.getItem('current_user_role')||'').trim().toLowerCase();
+    const normalize=v=>({'mistri':'worker','मिस्त्री':'worker','customer':'client','ग्राहक':'client','shop':'material','shopkeeper':'material','दुकानदार':'material','vip contractor':'vip_contractor','small contractor':'small_contractor'}[v]||v);
+    const a=normalize(locked),b=normalize(current);
+    if(a&&b&&a!==b) return '';
+    if(a) return a;
+    if(b) return b;
+    const label=String($('profile-category-tab-label')?.textContent||'').toLowerCase();
+    if(label.includes('मिस्त्री')||label.includes('worker')) return 'worker';
+    if(label.includes('shop')||label.includes('material')||label.includes('दुकानदार')||label.includes('सामग्री')) return 'material';
+    if(label.includes('rental')) return 'rental';
+    if(label.includes('contractor')||label.includes('ठेकेदार')) return 'contractor';
+    if(label.includes('ग्राहक')||label.includes('customer')) return 'client';
+    return '';
+  }
+  function hasAccount(r){
+    const keys={worker:['mb_worker_phone'],contractor:['mb_contractor_phone'],vip_contractor:['mb_contractor_phone'],small_contractor:['mb_contractor_phone'],rental:['mb_rental_phone'],material:['mb_material_phone']};
+    return (keys[r]||[]).some(k=>String(localStorage.getItem(k)||'').replace(/\D/g,'').length===10);
+  }
+  function place(node,parent){if(node&&parent&&node.parentElement!==parent) parent.appendChild(node);}
+  function setHidden(node,hide){if(!node)return;node.classList.toggle('hidden',hide);node.setAttribute('aria-hidden',String(hide));if(hide){node.style.setProperty('display','none','important');node.style.setProperty('pointer-events','none','important');}else{node.style.removeProperty('display');node.style.removeProperty('pointer-events');}}
+  function sync(){
+    const activePage=page(),r=role(),profile=$('page-register');
+    const profileOpen=!!profile&&!profile.classList.contains('hidden')&&getComputedStyle(profile).display!=='none'&&activePage==='register';
+    const workerBox=$('worker-dashboard-box');
+    const portfolio=$('mb-work-portfolio-panel');
+    const portfolioGrid=$('mb-portfolio-items');
+    // The portfolio belongs inside the Mistri dashboard, not the shared profile container.
+    place(portfolio,workerBox||profile);
+    const hasPortfolio=!!(portfolioGrid&&portfolioGrid.children&&portfolioGrid.children.length>0);
+    setHidden(portfolio,!(profileOpen&&r==='worker'&&workerBox&&getComputedStyle(workerBox).display!=='none'&&hasPortfolio));
+
+    const plan=$('mb-contact-visibility-plan-fix139');
+    const target={worker:workerBox,contractor:$('contractor-dashboard-box'),vip_contractor:$('contractor-dashboard-box'),small_contractor:$('contractor-dashboard-box'),rental:$('rental-provider-box'),material:$('material-provider-box')}[r];
+    if(plan){
+      // Keep the plan inside the selected account dashboard, so it cannot leak into another tab/profile.
+      place(plan,target||profile);
+      const showPlan=profileOpen&&allowedPlanRoles.has(r)&&hasAccount(r)&&!!target&&getComputedStyle(target).display!=='none';
+      setHidden(plan,!showPlan);
+    }
+  }
+  function schedule(){sync();setTimeout(sync,80);setTimeout(sync,260);}
+  function start(){
+    schedule();
+    document.addEventListener('click',schedule,true);
+    document.addEventListener('change',schedule,true);
+    window.addEventListener('hashchange',schedule);
+    window.addEventListener('storage',schedule);
+    ['page-home','page-jobs','page-workers','page-post','page-register','worker-dashboard-box','contractor-dashboard-box','rental-provider-box','material-provider-box','mb-portfolio-items'].forEach(id=>{const n=$(id);if(n)new MutationObserver(schedule).observe(n,{attributes:true,childList:true,subtree:id==='mb-portfolio-items',attributeFilter:id==='mb-portfolio-items'?undefined:['class','style']});});
+    const label=$('profile-category-tab-label');if(label)new MutationObserver(schedule).observe(label,{childList:true,characterData:true,subtree:true});
+    let ticks=0;const timer=setInterval(()=>{schedule();if(++ticks>=30)clearInterval(timer);},500);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+  window.MB_auditMistriProfileFix160=function(){const r=role(),p=$('mb-work-portfolio-panel'),plan=$('mb-contact-visibility-plan-fix139');return {page:page(),role:r||'unknown',portfolioParent:p?.parentElement?.id||'missing',portfolioVisible:!!p&&!p.classList.contains('hidden'),planParent:plan?.parentElement?.id||'missing',planVisible:!!plan&&!plan.classList.contains('hidden')};};
+})();
+</script>
+
+
+<script id="mb-worker-professional-overview-script-fix161-v3">
+(function(){
+  "use strict";
+  function refreshWorkerOverviewFix161(){
+    try{
+      var text=document.getElementById("mb-worker-profile-completion-text-fix161");
+      if(!text)return;
+      /* The overview is already inside #worker-profile-view. Let the existing
+         page/profile visibility logic control it; do not hide it based on
+         guessed localStorage role keys. */
+      var complete=localStorage.getItem("mb_worker_profile_complete")==="true";
+      text.textContent=complete
+        ?"प्रोफाइल की मुख्य जानकारी सेव है। फोटो, हुनर और काम की जानकारी समय-समय पर अपडेट करें।"
+        :"अपनी फोटो, हुनर और काम की जानकारी जाँचें। जरूरत हो तो प्रोफाइल अपडेट करें।";
+    }catch(e){}
+  }
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",refreshWorkerOverviewFix161,{once:true});
+  else refreshWorkerOverviewFix161();
+  window.MB_refreshWorkerOverviewFix161=refreshWorkerOverviewFix161;
+})();
+</script>
+
+
+<!-- Fix163: dashboard shortcuts open one dedicated full-screen page; profile completion hides edit prompts. -->
+<div id="mb-worker-subpage-fix163" class="hidden fixed inset-0 z-[90] bg-slate-100 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="mb-worker-subpage-title-fix163">
+  <div class="sticky top-0 z-20 bg-white border-b border-slate-200 p-4 flex items-center gap-3 shadow-sm">
+    <button type="button" onclick="MB_closeWorkerSubpageFix163()" class="rounded-xl bg-slate-100 border border-slate-200 px-3 py-2 font-bold text-sm">← वापस</button>
+    <h2 id="mb-worker-subpage-title-fix163" class="font-black text-base text-slate-900">मिस्त्री प्रोफाइल</h2>
+  </div>
+  <div id="mb-worker-subpage-content-fix163" class="max-w-md mx-auto p-4 space-y-3"></div>
+</div>
+<script id="mb-worker-subpage-script-fix163">
+(function(){
+ 'use strict';
+ const panel=document.getElementById('mb-worker-subpage-fix163');
+ const content=document.getElementById('mb-worker-subpage-content-fix163');
+ const title=document.getElementById('mb-worker-subpage-title-fix163');
+ if(!panel||!content||!title)return;
+ let moved=[];
+ function move(el){if(!el)return;const marker=document.createComment('Fix163 restore point');el.parentNode.insertBefore(marker,el);moved.push({el,marker,wasHidden:el.classList.contains('hidden')});content.appendChild(el);el.classList.remove('hidden');}
+ function addIntro(txt){const p=document.createElement('p');p.className='text-sm text-slate-600 bg-white rounded-xl border border-slate-200 p-3';p.textContent=txt;content.appendChild(p);}
+ window.MB_openWorkerSubpageFix163=function(which){
+   window.MB_closeWorkerSubpageFix163(); content.innerHTML=''; moved=[];
+   const cfg={deals:['मेरे Deals और संदेश','ग्राहकों के संदेश और बातचीत यहाँ देखें।'],portfolio:['मेरा Portfolio','आपके पिछले काम की तस्वीरें।'],reviews:['रेटिंग और रिव्यू','आपकी उपलब्ध कुल रेटिंग।']}[which];if(!cfg)return;
+   title.textContent=cfg[0];addIntro(cfg[1]);
+   if(which==='deals')move(document.getElementById('worker-inbox-section'));
+   if(which==='portfolio'){const grid=document.getElementById('my-portfolio-grid');move(grid&&grid.parentElement);}
+   if(which==='reviews')move(document.getElementById('mb-worker-rating-summary'));
+   panel.classList.remove('hidden');document.body.style.overflow='hidden';
+ };
+ window.MB_closeWorkerSubpageFix163=function(){
+   moved.slice().reverse().forEach(x=>{if(x.marker&&x.marker.parentNode){x.marker.parentNode.insertBefore(x.el,x.marker);x.marker.parentNode.removeChild(x.marker);if(x.wasHidden)x.el.classList.add('hidden');}});
+   moved=[];if(content)content.innerHTML='';if(panel)panel.classList.add('hidden');document.body.style.overflow='';
+ };
+ // The profile update prompt should only be shown when required profile details are incomplete.
+ window.MB_refreshWorkerCompletionFix163=function(){
+   let complete=false;try{complete=localStorage.getItem('mb_worker_profile_complete')==='true';}catch(e){}
+   ['mb-worker-profile-completion-card-fix163','btn-remaining-details'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.toggle('hidden',complete);});
+   const card=document.getElementById('mb-worker-profile-completion-card-fix163');if(card)card.classList.toggle('hidden',complete);
+   const overview=document.getElementById('mb-worker-professional-overview-fix161');
+   if(overview){const old=overview.querySelector('#mb-worker-profile-completion-card-fix163');if(old)old.classList.toggle('hidden',complete);}
+ };
+ // Wrap the existing plan action so the actual payment/UTR form opens as its own page.
+ const oldPlan=window.MB_openContactVisibilityPlanFix143;
+ window.MB_openContactVisibilityPlanFix143=function(){
+   if(typeof oldPlan==='function')oldPlan();
+   const plan=document.getElementById('mb-contact-visibility-plan-fix139');
+   if(!plan||plan.classList.contains('hidden'))return;
+   window.MB_closeWorkerSubpageFix163();content.innerHTML='';moved=[];
+   title.textContent='₹1,000 मासिक नंबर दिखाने का प्लान';
+   const marker=document.createComment('Fix163 plan restore point');plan.parentNode.insertBefore(marker,plan);moved.push({el:plan,marker,wasHidden:true});
+   content.appendChild(plan);plan.classList.remove('hidden');
+   panel.classList.remove('hidden');document.body.style.overflow='hidden';
+ };
+ function refresh(){window.MB_refreshWorkerCompletionFix163();}
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',refresh,{once:true});else refresh();
+ const profile=document.getElementById('worker-profile-view');if(profile&&window.MutationObserver)new MutationObserver(refresh).observe(profile,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!panel.classList.contains('hidden'))window.MB_closeWorkerSubpageFix163();});
 })();
 </script>
 
