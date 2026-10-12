@@ -5172,6 +5172,7 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
                     <span class="text-[9px] text-slate-400">${m.jobSixId || ''}</span>
                   </div>
                   <p class="text-xs text-slate-800">${m.message}</p>
+                  ${m.messageType === 'private_worker_message' && m.senderPhone ? `<button type="button" onclick="MB_openPrivateReplyFix165('${String(m.senderPhone).replace(/'/g, "\\'")}', '${String(m.senderName||'ग्राहक').replace(/'/g, "\\'")}')" class="mt-2 inline-flex rounded-lg bg-blue-600 text-white px-3 py-1.5 text-[10px] font-bold">↩️ निजी जवाब दें</button>` : ''}
                   ${m.contactNumber ? `<a href="tel:${m.contactNumber}" class="mt-1 inline-block bg-slate-900 text-amber-400 px-2 py-0.5 rounded text-[10px] font-bold"><i class="fa-solid fa-phone mr-1"></i>मालिक को कॉल करें: ${m.contactNumber}</a>` : ''}
                 </div>
               `;
@@ -5336,11 +5337,10 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
                   </div>
                 </div>
                 <div class="mt-2 text-[10px]">
-                ${contactAllowed.has(doc.id) && w.private_phone ? `<a href="tel:${String(w.private_phone).replace(/[^0-9+]/g,'')}" class="inline-flex rounded-lg bg-emerald-600 px-3 py-1.5 font-bold text-white">📞 ${String(w.private_phone).replace(/[^0-9+]/g,'')}</a>` : '<span class="text-slate-500">🔒 फोन नंबर छुपा है • ₹1,000/महीना प्लान सक्रिय होने पर दिखेगा</span>'}
+                <button type="button" onclick="MB_openWorkerPrivateMessageFix165('${doc.id}', '${String(w.name||'कारीगर').replace(/\\/g,'\\\\').replace(/'/g,"\\'")}')" class="inline-flex rounded-lg bg-blue-600 px-3 py-1.5 font-bold text-white">✉️ संदेश भेजें</button>
+                <button type="button" onclick="MB_openWorkerBioFix166('${doc.id}')" class="inline-flex rounded-lg bg-slate-900 px-3 py-1.5 font-bold text-white">👤 बायोडाटा देखें</button>
               </div>
-              <button onclick="navTo('post')" class="bg-amber-500 text-slate-900 px-3 py-1.5 rounded-lg text-[11px] font-bold shadow-xs">
-                  काम दें
-                </button>
+              ${contactAllowed.has(doc.id) && (w.private_phone || w.phone) ? `<a href="tel:${String(w.private_phone || w.phone).replace(/[^+0-9]/g,'')}" onclick="event.stopPropagation()" class="inline-flex rounded-lg bg-emerald-600 px-3 py-1.5 text-[11px] font-bold text-white">📞 कॉल करें</a>` : ''}
               </div>
 
               ${workPhotos.length > 0 ? `
@@ -7095,7 +7095,7 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
 })();
 </script>
 
-\n<!-- MB FINAL CUSTOMER PROFILE / INBOX / RATING SUMMARY PATCH -->
+<!-- MB FINAL CUSTOMER PROFILE / INBOX / RATING SUMMARY PATCH -->
 <script id="mb-final-customer-profile-polish">
 (function(){
   "use strict";
@@ -7165,7 +7165,7 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
   document.addEventListener("DOMContentLoaded",boot);
   window.addEventListener("hashchange",function(){setTimeout(function(){try{window.MB_refreshCustomerRatingSummary();}catch(e){}try{window.MB_refreshWorkerRatingSummary();}catch(e){}},300);});
 })();
-</script>\n
+</script>
 
 <!-- MistriBabu CORRECTED ADD-ON: Booking/Schedule + Phase 2
      IMPORTANT: Built on the latest Customer Profile + Rating + InboxReadFix master.
@@ -7463,7 +7463,7 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
 })();
 /* ================= END PAID LEADS FULL FLOW ================= */
 </script>
-\n<!-- MB DIGITAL AGREEMENT VISIBLE UI -->
+<!-- MB DIGITAL AGREEMENT VISIBLE UI -->
 <section id="mb-digital-agreement-section" class="max-w-2xl mx-auto px-4 py-4 hidden">
   <div class="bg-white rounded-2xl border border-amber-200 shadow-sm overflow-hidden">
     <div class="bg-slate-900 text-white px-4 py-3 flex items-center justify-between">
@@ -9679,5 +9679,149 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
 })();
 </script>
 
+
+<!-- Fix165: private in-app message composer for worker directory; no public phone-plan disclosure -->
+<div id="mb-private-message-modal-fix165" class="hidden fixed inset-0 z-[90] bg-slate-900/60 flex items-center justify-center p-4">
+  <section class="w-full max-w-md rounded-2xl bg-white shadow-2xl overflow-hidden" role="dialog" aria-modal="true" aria-labelledby="mb-private-message-title-fix165">
+    <div class="flex items-center justify-between bg-slate-900 text-white p-4"><div><h2 id="mb-private-message-title-fix165" class="font-black text-base">मिस्त्री को निजी संदेश</h2><p id="mb-private-message-recipient-fix165" class="text-xs text-slate-300">फोन नंबर साझा किए बिना संदेश भेजें</p></div><button type="button" onclick="MB_closeWorkerPrivateMessageFix165()" class="text-xl px-2" aria-label="बंद करें">×</button></div>
+    <form id="mb-private-message-form-fix165" class="p-4 space-y-3" onsubmit="MB_sendWorkerPrivateMessageFix165(event)">
+      <input type="hidden" id="mb-private-message-worker-id-fix165">
+      <label class="block text-xs font-bold">आपका नाम<input id="mb-private-message-sender-name-fix165" class="mt-1 w-full rounded-lg border p-3 text-sm" required maxlength="80" placeholder="अपना नाम"></label>
+      <label class="block text-xs font-bold">संदेश<textarea id="mb-private-message-text-fix165" class="mt-1 w-full rounded-lg border p-3 text-sm" required maxlength="1200" rows="4" placeholder="मिस्त्री से क्या पूछना चाहते हैं?"></textarea></label>
+      <p class="text-[11px] text-slate-500">आपका और मिस्त्री का फोन नंबर सार्वजनिक नहीं दिखेगा। जवाब मिस्त्रीबाबू इनबॉक्स में आएगा। संदेश भेजने के लिए लॉगिन जरूरी है।</p>
+      <button id="mb-private-message-send-fix165" type="submit" class="w-full rounded-xl bg-blue-600 text-white font-bold py-3">संदेश भेजें</button>
+      <p id="mb-private-message-status-fix165" class="text-xs" role="status"></p>
+    </form>
+  </section>
+</div>
+<script id="mb-private-messaging-script-fix165">
+(function(){
+  'use strict';
+  const $=id=>document.getElementById(id);
+  function digits(v){return String(v||'').replace(/\D/g,'').slice(-10);}
+  window.MB_openWorkerPrivateMessageFix165=async function(workerId,workerName){
+    const role=String(localStorage.getItem('current_user_role')||'').toLowerCase();
+    const phone=role==='worker'?localStorage.getItem('mb_worker_phone'):role==='client'?localStorage.getItem('mb_client_phone'):'';
+    if(!role||!digits(phone)){alert('निजी संदेश भेजने के लिए पहले अपने अकाउंट में Login करें।');return;}
+    $('mb-private-message-worker-id-fix165').value=workerId;
+    $('mb-private-message-recipient-fix165').textContent='प्राप्तकर्ता: '+String(workerName||'मिस्त्री')+' • फोन नंबर निजी रहेगा';
+    $('mb-private-message-sender-name-fix165').value=role==='worker'?(localStorage.getItem('mb_worker_name')||''): (localStorage.getItem('mb_client_name')||'');
+    $('mb-private-message-text-fix165').value='';$('mb-private-message-status-fix165').textContent='';
+    $('mb-private-message-modal-fix165').classList.remove('hidden');
+    try{const d=await db.collection('workers').doc(workerId).get();if(!d.exists)throw new Error('मिस्त्री प्रोफाइल नहीं मिली।');window.__mbPrivateMessageTarget165={id:workerId,name:workerName||'मिस्त्री',phone:String((d.data()||{}).private_phone||(d.data()||{}).phone||'')};}
+    catch(e){window.__mbPrivateMessageTarget165=null;$('mb-private-message-status-fix165').textContent='प्रोफाइल लोड नहीं हुई। दोबारा कोशिश करें।';}
+  };
+  window.MB_openPrivateReplyFix165=function(phone,name){
+    const role=String(localStorage.getItem('current_user_role')||'').toLowerCase();
+    if(role!=='worker'||!digits(localStorage.getItem('mb_worker_phone'))){alert('जवाब देने के लिए मिस्त्री अकाउंट में Login करें।');return;}
+    window.__mbPrivateMessageTarget165={id:'private-reply',name:String(name||'ग्राहक'),phone:String(phone||'')};
+    $('mb-private-message-worker-id-fix165').value='private-reply';
+    $('mb-private-message-recipient-fix165').textContent='जवाब: '+String(name||'ग्राहक')+' • फोन नंबर निजी रहेगा';
+    $('mb-private-message-sender-name-fix165').value=localStorage.getItem('mb_worker_name')||'';
+    $('mb-private-message-text-fix165').value='';$('mb-private-message-status-fix165').textContent='';
+    $('mb-private-message-modal-fix165').classList.remove('hidden');
+  };
+  window.MB_closeWorkerPrivateMessageFix165=function(){$('mb-private-message-modal-fix165').classList.add('hidden');window.__mbPrivateMessageTarget165=null;};
+  window.MB_sendWorkerPrivateMessageFix165=async function(e){
+    e.preventDefault();const status=$('mb-private-message-status-fix165'),btn=$('mb-private-message-send-fix165');
+    const role=String(localStorage.getItem('current_user_role')||'').toLowerCase();
+    const senderPhone=role==='worker'?localStorage.getItem('mb_worker_phone'):localStorage.getItem('mb_client_phone');
+    const target=window.__mbPrivateMessageTarget165;const message=$('mb-private-message-text-fix165').value.trim();
+    if(!target||!target.phone){status.textContent='मिस्त्री की निजी प्रोफाइल उपलब्ध नहीं है।';return;}
+    if(!digits(senderPhone)||!message){status.textContent='पहले Login करें और संदेश लिखें।';return;}
+    btn.disabled=true;btn.textContent='भेज रहे हैं…';
+    try{
+      await db.collection('inbox_messages').add({recipientPhone:String(target.phone),senderPhone:String(senderPhone),senderName:$('mb-private-message-sender-name-fix165').value.trim().slice(0,80),senderRole:role,title:'मिस्त्रीबाबू पर नया निजी संदेश',message:message.slice(0,1200),messageType:'private_worker_message',workerId:target.id,createdAt:firebase.firestore.FieldValue.serverTimestamp(),read:false});
+      status.textContent='संदेश भेज दिया गया। मिस्त्री अपने इनबॉक्स से जवाब दे सकता है।';$('mb-private-message-text-fix165').value='';
+    }catch(err){console.error('Private message send failed',err);status.textContent='संदेश नहीं भेजा जा सका। Firebase अनुमति/कनेक्शन जाँचें।';}
+    finally{btn.disabled=false;btn.textContent='संदेश भेजें';}
+  };
+})();
+</script>
+
+
+
+<!-- Fix166: dedicated worker biodata modal; show phone only after the worker's own plan is active -->
+<div id="mb-worker-bio-modal-fix166" class="hidden fixed inset-0 z-[95] bg-slate-900/70 p-3 flex items-center justify-center">
+  <section class="w-full max-w-md max-h-[88vh] overflow-y-auto rounded-2xl bg-white shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="mb-worker-bio-title-fix166">
+    <div class="sticky top-0 flex items-center justify-between bg-slate-900 p-4 text-white"><h2 id="mb-worker-bio-title-fix166" class="font-black">मिस्त्री का बायोडाटा</h2><button type="button" onclick="MB_closeWorkerBioFix166()" class="px-2 text-2xl" aria-label="बंद करें">×</button></div>
+    <div id="mb-worker-bio-content-fix166" class="space-y-3 p-4"><p class="text-sm text-slate-500">बायोडाटा लोड हो रहा है…</p></div>
+  </section>
+</div>
+<script id="mb-worker-bio-script-fix166">
+(function(){
+  'use strict';
+  const el=id=>document.getElementById(id);
+  const esc=v=>String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  window.MB_closeWorkerBioFix166=function(){el('mb-worker-bio-modal-fix166').classList.add('hidden');el('mb-worker-bio-content-fix166').innerHTML='';};
+  window.MB_openWorkerBioFix166=async function(workerId){
+    const modal=el('mb-worker-bio-modal-fix166'), box=el('mb-worker-bio-content-fix166');
+    modal.classList.remove('hidden');box.innerHTML='<p class="text-sm text-slate-500">बायोडाटा लोड हो रहा है…</p>';
+    try{
+      const snap=await db.collection('workers').doc(workerId).get();
+      if(!snap.exists)throw new Error('प्रोफाइल नहीं मिली');
+      const w=snap.data()||{};
+      if(w.isBlocked)throw new Error('यह प्रोफाइल उपलब्ध नहीं है।');
+      const rawPhone=String(w.private_phone||w.phone||'');
+      let phoneAllowed=false;
+      if(rawPhone && typeof window.MB_contactVisibilityPhoneAllowedFix140==='function'){
+        phoneAllowed=await window.MB_contactVisibilityPhoneAllowedFix140(rawPhone);
+      }
+      const photos=Array.isArray(w.workPhotos)?w.workPhotos:[];
+      const skills=Array.isArray(w.skills)?w.skills:(w.skill?[w.skill]:[]);
+      const proId=w.workerProId||('#MB-PRO-'+workerId.substring(0,6).toUpperCase());
+      const tel=rawPhone.replace(/[^+0-9]/g,'');
+      box.innerHTML=`
+        <div class="text-center rounded-xl bg-slate-900 p-5 text-white">
+          <img src="${esc(w.photo||'logo.png')}" onerror="this.src='logo.png'" class="mx-auto h-24 w-24 rounded-full border-4 border-amber-400 object-cover" alt="मिस्त्री की फोटो">
+          <h3 id="mb-worker-bio-title-fix166" class="mt-2 text-lg font-black">${esc(w.name||'मिस्त्री')}</h3>
+          <p class="mt-1 text-xs text-amber-300">${esc(proId)}</p>
+          <p class="mt-2 text-xs">${esc(w.state||'')} • ${esc(w.district||'')} ${w.block?'• '+esc(w.block):''}</p>
+          <p class="mt-1 text-xs">${esc(w.experience||0)} साल अनुभव</p>
+          <p class="mt-2 text-xs font-bold">${w.liveStatus==='busy'?'काम में व्यस्त 🔴':'काम के लिए उपलब्ध 🟢'}</p>
+        </div>
+        <div class="rounded-xl border p-3"><h4 class="font-bold text-sm">🛠️ हुनर / काम</h4><div class="mt-2 flex flex-wrap gap-2">${(skills.length?skills:['कारीगर']).map(x=>`<span class="rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-900">${esc(x)}</span>`).join('')}</div></div>
+        ${w.bio||w.about||w.description?`<div class="rounded-xl border p-3"><h4 class="font-bold text-sm">मेरे बारे में</h4><p class="mt-1 whitespace-pre-wrap text-sm text-slate-700">${esc(w.bio||w.about||w.description)}</p></div>`:''}
+        <div class="rounded-xl border p-3"><h4 class="font-bold text-sm">📷 मेरे काम की तस्वीरें</h4>${photos.length?`<div class="mt-2 grid grid-cols-3 gap-2">${photos.map(src=>`<img loading="lazy" src="${esc(src)}" class="h-24 w-full rounded-lg border object-cover" alt="काम की फोटो">`).join('')}</div>`:'<p class="mt-1 text-xs text-slate-500">अभी कोई फोटो उपलब्ध नहीं है।</p>'}</div>
+        ${phoneAllowed&&tel?`<a href="tel:${esc(tel)}" class="block rounded-xl bg-emerald-600 p-3 text-center font-black text-white">📞 ${esc(rawPhone)} — कॉल करें</a>`:''}
+        <button type="button" onclick="MB_openWorkerPrivateMessageFix165('${esc(workerId)}','${esc(w.name||'मिस्त्री').replace(/'/g,'\&#39;')}')" class="w-full rounded-xl bg-blue-600 p-3 font-black text-white">✉️ निजी संदेश भेजें</button>
+        <button type="button" onclick="MB_closeWorkerBioFix166();navTo('post')" class="w-full rounded-xl bg-amber-500 p-3 font-black text-slate-900">काम दें</button>
+        <p class="text-center text-[10px] text-slate-500">फोन नंबर केवल संबंधित मिस्त्री का नंबर-दिखाने वाला प्लान सक्रिय होने पर दिखेगा।</p>`;
+    }catch(e){box.innerHTML='<p class="rounded-xl bg-rose-50 p-3 text-sm text-rose-700">'+esc(e.message||'बायोडाटा लोड नहीं हो सका।')+'</p>';}
+  };
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')window.MB_closeWorkerBioFix166();});
+})();
+</script>
+
 </body>
 </html>
+
+
+<style id="mb-workers-page-cleanup-fix164">
+/* Fix164: keep admin tools out of public pages; remove accidental visible escape-text */
+body[data-mb-page="workers"] #mb-admin-dispute-shell-fix128,
+body[data-mb-page="jobs"] #mb-admin-dispute-shell-fix128,
+body[data-mb-page="post"] #mb-admin-dispute-shell-fix128,
+body[data-mb-page="register"] #mb-admin-dispute-shell-fix128 {
+  display:none !important;
+}
+</style>
+<script id="mb-workers-page-cleanup-script-fix164">
+(function(){
+  "use strict";
+  function sync(){
+    var shell=document.getElementById("mb-admin-dispute-shell-fix128");
+    if(!shell) return;
+    var page=(document.body.getAttribute("data-mb-page")||location.hash.replace(/^#/,"").split("?")[0]||"home");
+    var operator=!!String(localStorage.getItem("mb_active_operator")||"").trim();
+    var allowed=page==="home"&&operator;
+    shell.style.display=allowed?"":"none";
+    shell.setAttribute("aria-hidden",allowed?"false":"true");
+  }
+  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",sync,{once:true}); else sync();
+  window.addEventListener("hashchange",sync);
+  window.addEventListener("storage",sync);
+  document.addEventListener("click",function(){setTimeout(sync,0);},true);
+  new MutationObserver(sync).observe(document.body,{attributes:true,attributeFilter:["data-mb-page"]});
+})();
+</script>
