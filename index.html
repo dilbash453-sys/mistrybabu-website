@@ -79,20 +79,14 @@
       <button onclick="openTermsModal();closeMainMenu()" class="w-full text-left p-3 rounded-xl bg-slate-50" type="button">📄 नियम व शर्तें</button>
     </div>
   </aside>
-  <!-- साइड खींचने वाला बटन (दुकान पार्टनर विज्ञापन) -->
-  <div class="fixed right-0 top-1/2 -translate-y-1/2 z-40">
+  <!-- साइड खींचने वाला बटन (दुकान पार्टनर विज्ञापन): केवल Home पर -->
+  <div id="mb-shop-partner-float" class="fixed right-0 top-1/2 -translate-y-1/2 z-40">
     <button onclick="openShopDrawer()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs py-3 px-2 rounded-l-2xl shadow-xl flex flex-col items-center gap-1 border-y border-l border-blue-300 transition-transform active:scale-95 animate-pulse" type="button">
       <i class="fa-solid fa-arrow-left text-xs"></i>
       <span class="[writing-mode:vertical-rl] tracking-wider text-[11px] font-black">🏪 दुकान पार्टनर यहाँ है</span>
     </button>
   </div>
 
-  <!-- Anti-Fraud Advance Payment Notice -->
-  <div class="max-w-md mx-auto px-4 pt-3">
-    <div class="bg-red-50 border-l-4 border-red-500 p-2.5 rounded-r-xl text-[11px] text-red-900 flex items-center justify-between">
-      <span>⚠️ <strong>सुरक्षा सूचना:</strong> काम शुरू होने से पहले ऑनलाइन एडवांस न दें। साइट पर काम देखकर ही भुगतान करें।</span>
-    </div>
-  </div>
   <!-- ==================== PAGE 1: HOME SCREEN ==================== -->
   <section id="page-home" class="max-w-md mx-auto px-4 py-4 space-y-5 block">
     <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-xs space-y-2">
@@ -153,18 +147,6 @@
       <div class="flex justify-between items-center">
         <div><h3 class="text-xs font-black text-slate-900 uppercase">🛒 Rental & Material Marketplace</h3><p class="text-[10px] text-slate-500">Admin-approved providers और approved गाड़ियाँ</p></div>
       </div>
-      <section id="mb-shopkeeper-dashboard-fix127" class="rounded-xl border border-amber-200 bg-amber-50 p-3 mb-3" aria-labelledby="mb-shopkeeper-dashboard-title-fix127">
-        <div class="flex items-center justify-between gap-2">
-          <h3 id="mb-shopkeeper-dashboard-title-fix127" class="text-sm font-bold text-amber-950">🏪 Shopkeeper Dashboard</h3>
-          <button type="button" id="mb-shopkeeper-refresh-fix127" class="rounded-lg border border-amber-300 bg-white px-3 py-1.5 text-xs font-semibold" aria-label="Shopkeeper Dashboard के आँकड़े फिर से लोड करें">↻ Refresh</button>
-        </div>
-        <p class="mt-1 text-[10px] text-amber-900">आपके उपलब्ध Material Listings और Marketplace की स्थिति</p>
-        <div class="grid grid-cols-2 gap-2 mt-3">
-          <div class="rounded-lg bg-white p-2 border border-amber-100"><p class="text-[10px] text-slate-500">आपकी Listings</p><p id="mb-shopkeeper-own-count-fix127" class="text-lg font-bold" aria-live="polite">—</p></div>
-          <div class="rounded-lg bg-white p-2 border border-amber-100"><p class="text-[10px] text-slate-500">Approved / Live</p><p id="mb-shopkeeper-approved-count-fix127" class="text-lg font-bold" aria-live="polite">—</p></div>
-        </div>
-        <p id="mb-shopkeeper-status-fix127" class="mt-2 text-[10px] text-slate-600" role="status" aria-live="polite">डैशबोर्ड खोलने पर स्थिति लोड होगी।</p>
-      </section>
       <div id="mb-marketplace-filters" class="grid grid-cols-2 gap-2">
         <input id="mb-marketplace-search" type="search" class="col-span-2 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs" placeholder="सामान, दुकान, मशीन या इलाका खोजें" aria-label="सामान, दुकान, मशीन या इलाका खोजें">
         <select id="mb-marketplace-kind" class="w-full rounded-lg border border-slate-200 bg-white px-2 py-2 text-xs" aria-label="Marketplace श्रेणी चुनें">
@@ -241,6 +223,10 @@
   </section>
   <!-- ==================== PAGE 4: POST A JOB SCREEN ==================== -->
   <section id="page-post" class="max-w-md mx-auto px-4 py-4 hidden">
+    <!-- सुरक्षा सूचना केवल काम पोस्ट करने वाले पेज पर -->
+    <div class="mb-3 bg-red-50 border-l-4 border-red-500 p-2.5 rounded-r-xl text-[11px] text-red-900">
+      ⚠️ <strong>सुरक्षा सूचना:</strong> काम शुरू होने से पहले ऑनलाइन एडवांस न दें। साइट पर काम देखकर ही भुगतान करें।
+    </div>
     <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
       <div class="text-center mb-4 border-b border-slate-100 pb-3">
         <h2 class="text-base font-black text-slate-900">नया काम पोस्ट करें</h2>
@@ -383,7 +369,7 @@
     </div>
   </section>
   <!-- =================== PAGE 5: DASHBOARD =================== -->
-  <section id="page-register" class="max-w-md mx-auto px-4 py-4 space-y-4">
+  <section id="page-register" class="max-w-md mx-auto px-4 py-4 space-y-4 hidden">
     <!-- एक ही प्रोफाइल/रजिस्ट्रेशन टैब: क्लिक करने पर 5 विकल्प खुलेंगे -->
     <div class="relative mb-3">
       <button type="button" id="profile-category-tab" onclick="toggleProfileCategoryMenu()" class="w-full bg-slate-200 border border-slate-300 rounded-xl px-4 py-3 flex items-center justify-between text-xs font-black text-slate-800 shadow-xs">
@@ -399,6 +385,20 @@
         <button type="button" onclick="selectProfileCategory('material')" class="w-full text-left px-4 py-3 text-xs font-bold hover:bg-amber-50">🧱 Shop / Material में रजिस्टर / Login</button>
       </div>
     </div>
+
+    <!-- Shopkeeper का निजी dashboard Home marketplace में नहीं, केवल Material/Shop account में -->
+    <section id="mb-shopkeeper-dashboard-fix127" class="hidden rounded-xl border border-amber-200 bg-amber-50 p-3 mb-3" aria-labelledby="mb-shopkeeper-dashboard-title-fix127">
+      <div class="flex items-center justify-between gap-2">
+        <h3 id="mb-shopkeeper-dashboard-title-fix127" class="text-sm font-bold text-amber-950">🏪 Shopkeeper Dashboard</h3>
+        <button type="button" id="mb-shopkeeper-refresh-fix127" class="rounded-lg border border-amber-300 bg-white px-3 py-1.5 text-xs font-semibold" aria-label="Shopkeeper Dashboard के आँकड़े फिर से लोड करें">↻ Refresh</button>
+      </div>
+      <p class="mt-1 text-[10px] text-amber-900">आपके उपलब्ध Material Listings और Marketplace की स्थिति</p>
+      <div class="grid grid-cols-2 gap-2 mt-3">
+        <div class="rounded-lg bg-white p-2 border border-amber-100"><p class="text-[10px] text-slate-500">आपकी Listings</p><p id="mb-shopkeeper-own-count-fix127" class="text-lg font-bold" aria-live="polite">—</p></div>
+        <div class="rounded-lg bg-white p-2 border border-amber-100"><p class="text-[10px] text-slate-500">Approved / Live</p><p id="mb-shopkeeper-approved-count-fix127" class="text-lg font-bold" aria-live="polite">—</p></div>
+      </div>
+      <p id="mb-shopkeeper-status-fix127" class="mt-2 text-[10px] text-slate-600" role="status" aria-live="polite">डैशबोर्ड खोलने पर स्थिति लोड होगी।</p>
+    </section>
 
     <!-- 1. CUSTOMER DASHBOARD -->
     <div id="client-dashboard-box" class="space-y-4 block">
@@ -4665,6 +4665,16 @@
 
       const targetEl = document.getElementById('page-' + target);
       if (targetEl) targetEl.classList.remove('hidden');
+
+      // Keep floating/page-specific extras scoped to the page where they are useful.
+      document.body.setAttribute('data-mb-page', target);
+      const shopFloat = document.getElementById('mb-shop-partner-float');
+      if (shopFloat) shopFloat.classList.toggle('hidden', target !== 'home');
+      const shopDashboard = document.getElementById('mb-shopkeeper-dashboard-fix127');
+      if (shopDashboard) {
+        const roleNow = String(localStorage.getItem('current_user_role') || localStorage.getItem('mb_device_locked_role') || '').toLowerCase();
+        shopDashboard.classList.toggle('hidden', !(target === 'register' && roleNow === 'material'));
+      }
 
       const activeBtn = document.getElementById('nav-' + target);
       if (activeBtn) {
@@ -9237,6 +9247,36 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
 })();
 </script>
 <!-- Fix146 Step 4: show the signed-in provider's plan status, expiry date, pending approval, expired state and renewal instructions. Actual enforcement still depends on the shared public phone gate and Firebase rules. -->
+
+
+
+<!-- Fix147: page-scoped UI cleanup. Keep Home extras on Home, posting safety notice on Post, and shopkeeper dashboard on Material account only. -->
+<script id="mb-page-scoped-ui-fix147">
+(function(){
+  'use strict';
+  function init(){
+    // The public landing page is the only initial page; hide every other main page.
+    ['jobs','workers','post','register'].forEach(function(name){
+      var el=document.getElementById('page-'+name);
+      if(el)el.classList.add('hidden');
+    });
+    var home=document.getElementById('page-home');
+    if(home)home.classList.remove('hidden');
+    document.body.setAttribute('data-mb-page','home');
+    var shopFloat=document.getElementById('mb-shop-partner-float');
+    if(shopFloat)shopFloat.classList.remove('hidden');
+    var dash=document.getElementById('mb-shopkeeper-dashboard-fix127');
+    if(dash)dash.classList.add('hidden');
+    // Honor an existing URL hash only when it is a known app page.
+    var target=(location.hash||'').replace(/^#/,'');
+    if(['home','jobs','workers','post','register'].includes(target) && target!=='home' && typeof window.navTo==='function'){
+      window.navTo(target,false);
+    }
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});
+  else init();
+})();
+</script>
 
 </body>
 </html>
