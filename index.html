@@ -2193,6 +2193,8 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
 
     async function saveClientJob(e) {
       e.preventDefault();
+      // Double taps / slow network must not create duplicate job posts.
+      if (window.__mbClientPostBusy) return alert("आपकी पोस्ट पहले से सबमिट हो रही है। कृपया प्रतीक्षा करें।");
 
       const profile = window.MB_getCustomerProfile ? window.MB_getCustomerProfile() : null;
       if (!profile || !profile.phone || !profile.name || !profile.selfie ||
@@ -2205,6 +2207,8 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
           }
         } catch (draftErr) {
           console.warn("Post draft save:", draftErr);
+          alert("आपका Form Draft में सुरक्षित नहीं हो सका। कृपया फ़ोटो हटाकर या फॉर्म छोटा करके फिर Submit करें। अभी Signup/Login पर नहीं भेजा गया है, ताकि भरी जानकारी खोने का जोखिम न हो।");
+          return;
         }
         alert("आपका काम का Form सुरक्षित हो गया है। अब पहले Customer Sign Up / Login करें। Profile पूरी होने के बाद Draft वापस आएगा; तब आप Post कर सकेंगे।");
         navTo('register');
@@ -2224,7 +2228,9 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
       }
 
       const btn = document.getElementById("btn-post-job");
-      btn.innerText = "काम पोस्ट हो रहा है...";
+      window.__mbClientPostBusy = true;
+      if (btn) { btn.disabled = true; btn.innerText = "काम पोस्ट हो रहा है..."; }
+      const resetPostSubmit = () => { window.__mbClientPostBusy = false; if (btn) { btn.disabled = false; btn.innerText = "काम पोस्ट करें"; } };
 
       const nameEl = document.getElementById("pc-name");
       const phoneEl = document.getElementById("pc-phone");
@@ -2237,18 +2243,27 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
       const postCategory = document.getElementById("pc-post-category")?.value || "mistri";
       const isTheka = postCategory === "mistri" && (document.getElementById("pc-is-theka")?.value === "true");
       const isFactoryJob = postCategory === "mistri" && document.getElementById("pc-factory-job")?.checked === true;
-      const rentalItems = JSON.parse(document.getElementById("pc-rental-items-json")?.value || "[]");
-      const contractorItems = JSON.parse(document.getElementById("pc-contractor-items-json")?.value || "[]");
-      const materialItems = JSON.parse(document.getElementById("pc-material-items-json")?.value || "[]");
-      if (postCategory === "rental" && !rentalItems.length) { btn.innerText = "काम पोस्ट करें"; return alert("पहले कम से कम एक गाड़ी / मशीन Add करें।"); }
-      if (postCategory === "contractor" && !contractorItems.length) { btn.innerText = "काम पोस्ट करें"; return alert("पहले कम से कम एक Contractor Work Add करें।"); }
-      if (postCategory === "material" && !materialItems.length) { btn.innerText = "काम पोस्ट करें"; return alert("पहले कम से कम एक Material Item Add करें।"); }
+      // हर category की सूची draft/फॉर्म में बनी रह सकती है, लेकिन प्रकाशित पोस्ट में
+      // केवल चुनी हुई category का डेटा भेजें—पुरानी category का सामान/मशीन/contractor leak न हो।
+      let savedRentalItems = [], savedContractorItems = [], savedMaterialItems = [];
+      try { savedRentalItems = JSON.parse(document.getElementById("pc-rental-items-json")?.value || "[]"); } catch(err) { savedRentalItems = []; }
+      try { savedContractorItems = JSON.parse(document.getElementById("pc-contractor-items-json")?.value || "[]"); } catch(err) { savedContractorItems = []; }
+      try { savedMaterialItems = JSON.parse(document.getElementById("pc-material-items-json")?.value || "[]"); } catch(err) { savedMaterialItems = []; }
+      if (!Array.isArray(savedRentalItems)) savedRentalItems = [];
+      if (!Array.isArray(savedContractorItems)) savedContractorItems = [];
+      if (!Array.isArray(savedMaterialItems)) savedMaterialItems = [];
+      const rentalItems = postCategory === "rental" ? savedRentalItems : [];
+      const contractorItems = postCategory === "contractor" ? savedContractorItems : [];
+      const materialItems = postCategory === "material" ? savedMaterialItems : [];
+      if (postCategory === "rental" && !rentalItems.length) { resetPostSubmit(); return alert("पहले कम से कम एक गाड़ी / मशीन Add करें।"); }
+      if (postCategory === "contractor" && !contractorItems.length) { resetPostSubmit(); return alert("पहले कम से कम एक Contractor Work Add करें।"); }
+      if (postCategory === "material" && !materialItems.length) { resetPostSubmit(); return alert("पहले कम से कम एक Material Item Add करें।"); }
 
       let sitePhoto = "";
       const siteFile = document.getElementById("pc-site-photo").files[0];
       if (siteFile) {
         try { sitePhoto = await fileToBase64(siteFile); }
-        catch(err) { btn.innerText = "काम पोस्ट करें"; return alert("काम की फ़ोटो पढ़ी नहीं जा सकी। कृपया दूसरी फ़ोटो चुनें या फ़ोटो हटाकर फिर प्रयास करें।"); }
+        catch(err) { resetPostSubmit(); return alert("काम की फ़ोटो पढ़ी नहीं जा सकी। कृपया दूसरी फ़ोटो चुनें या फ़ोटो हटाकर फिर प्रयास करें।"); }
       }
       // अगर नया यूजर Sign Up से पहले Form भरकर आया था, तो Draft में सुरक्षित
       // साइट फोटो को भी final Post में इस्तेमाल करें।
@@ -2281,12 +2296,13 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
         rentalItems: rentalItems,
         contractorItems: contractorItems,
         materialItems: materialItems,
-        rentalItem: document.getElementById("pc-rental-item")?.value.trim() || "",
-        rentalDuration: document.getElementById("pc-rental-duration")?.value.trim() || "",
-        rentalDesc: document.getElementById("pc-rental-desc")?.value.trim() || "",
-        materialItem: document.getElementById("pc-material-item")?.value.trim() || "",
-        materialQty: document.getElementById("pc-material-qty")?.value.trim() || "",
-        materialDesc: document.getElementById("pc-material-desc")?.value.trim() || "",
+        // पुराने scalar fields compatibility के लिए रखें, लेकिन category से बाहर खाली रहें।
+        rentalItem: postCategory === "rental" ? (document.getElementById("pc-rental-item")?.value.trim() || "") : "",
+        rentalDuration: postCategory === "rental" ? (document.getElementById("pc-rental-duration")?.value.trim() || "") : "",
+        rentalDesc: postCategory === "rental" ? (document.getElementById("pc-rental-desc")?.value.trim() || "") : "",
+        materialItem: postCategory === "material" ? (document.getElementById("pc-material-item")?.value.trim() || "") : "",
+        materialQty: postCategory === "material" ? (document.getElementById("pc-material-qty")?.value.trim() || "") : "",
+        materialDesc: postCategory === "material" ? (document.getElementById("pc-material-desc")?.value.trim() || "") : "",
         providerTarget: document.getElementById("pc-post-category")?.value === "contractor" ? "vip_small_contractor" : (document.getElementById("pc-post-category")?.value === "rental" ? "rental_provider" : (document.getElementById("pc-post-category")?.value === "material" ? "material_provider" : "mistri")),
         workType: postCategory === "mistri" ? (document.getElementById("pc-work")?.value || "") : (postCategory === "contractor" ? "Contractor चाहिए" : postCategory === "rental" ? "Machine/Vehicle Rental चाहिए" : "Construction Material चाहिए"),
         duration: postCategory === "mistri" ? (document.getElementById("pc-duration")?.value || "") : "",
@@ -2319,11 +2335,11 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
         localStorage.removeItem("mb_pending_post_draft");
         localStorage.removeItem("mb_pending_post_draft_restored");
         alert(`बधाई हो! ${isTheka ? 'पेटी-ठेका' : 'काम'} तुरंत लाइव पोस्ट हो गया है।\nकाम ID: ${sixDigitId}`);
-        btn.innerText = "काम पोस्ट करें";
+        resetPostSubmit();
         navTo('jobs');
       }).catch(err => {
         alert("त्रुटि: " + err.message);
-        btn.innerText = "काम पोस्ट करें";
+        resetPostSubmit();
       });
     }
 
@@ -3080,19 +3096,24 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
       localStorage.setItem("mb_worker_status", firebaseLiveStatus);
       localStorage.setItem("current_user_role", "worker");
       localStorage.setItem("mb_worker_level", wData.level || "कुशल कारीगर");
-      localStorage.setItem("mb_worker_photos", JSON.stringify(wData.workPhotos || []));
+      const normalizedWorkPhotos = Array.isArray(wData.workPhotos)
+        ? wData.workPhotos.filter(photo => typeof photo === "string" && photo.trim())
+        : [];
+      localStorage.setItem("mb_worker_photos", JSON.stringify(normalizedWorkPhotos));
       localStorage.setItem("mb_worker_id_verified", wData.isIdVerified ? "true" : "false");
-      // प्रोफ़ाइल को केवल Firebase के वास्तविक required fields से COMPLETE मानें।
-      // पुराने/stale profileComplete=true पर भरोसा नहीं करें। ID/Aadhaar verification वैकल्पिक है।
+      // प्रोफ़ाइल को Firebase के वास्तविक fields से COMPLETE मानें।
+      // पुराने records में singular skill field हो तो ऊपर normalizedSkills में fallback लिया गया है;
+      // completion भी उसी normalized list को माने, वरना skill दिखने पर भी profile अधूरी रहती थी।
+      // ID/Aadhaar verification वैकल्पिक है।
       const profileComplete = !!(
         wData.name &&
         wData.private_phone &&
         wData.state &&
         wData.district &&
         wData.block &&
-        Array.isArray(wData.skills) && wData.skills.length > 0 &&
+        normalizedSkills.length > 0 &&
         wData.photo &&
-        Array.isArray(wData.workPhotos) && wData.workPhotos.length > 0
+        normalizedWorkPhotos.length > 0
       );
       localStorage.setItem("mb_worker_profile_complete", profileComplete ? "true" : "false");
       
@@ -5805,71 +5826,87 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
   }
   window.MB_getCustomerProfile=function(){var p=read();return complete(p)?p:null;};
 
-  function draftFieldIds(){
-    return ["pc-is-theka","pc-state","pc-district","pc-block",
-      "gps-site-confirm-check","pc-lat","pc-lng","pc-work","pc-duration","pc-worker-count",
-      "pc-material","pc-urgency-type","pc-desc","pc-voice-note"];
+  // Draft में पोस्ट फॉर्म के सभी नामित controls रखें, केवल कुछ चुनिंदा फ़ील्ड नहीं।
+  // इससे category बदलने पर Rental/Material/Contractor के भरे हुए विकल्प भी नहीं खोते।
+  function draftControls(){
+    var form=document.getElementById("form-post-job");
+    if(!form)return [];
+    return Array.from(form.querySelectorAll("input[id],select[id],textarea[id]"))
+      .filter(function(el){return !["file","password","submit","button","reset"].includes((el.type||"").toLowerCase());});
   }
 
   window.MB_savePendingPostDraft = async function(){
-    var draft = {};
-    draftFieldIds().forEach(function(id){
-      var el=document.getElementById(id);
-      if(!el)return;
-      draft[id] = (el.type === "checkbox") ? !!el.checked : (el.value || "");
+    var draft={version:2, fields:{}};
+    draftControls().forEach(function(el){
+      if(el.type==="checkbox" || el.type==="radio") draft.fields[el.id]={type:el.type,checked:!!el.checked,value:el.value};
+      else draft.fields[el.id]={type:el.tagName.toLowerCase(),value:el.value==null?"":el.value};
     });
-
-    // Site photo is optional; if selected, preserve it in the draft as a compressed data URL.
-    var photo = document.getElementById("pc-site-photo")?.files?.[0];
+    // Browser file inputs restore नहीं कर सकता; photo को draft में data URL के रूप में रखें।
+    var photo=document.getElementById("pc-site-photo")?.files?.[0];
     if(photo){
-      try { draft.sitePhoto = await fileData(photo); } catch(e) { draft.sitePhoto = ""; }
-    } else {
-      draft.sitePhoto = "";
+      try{draft.sitePhoto=await fileData(photo);}catch(e){draft.sitePhoto="";draft.photoSaveError=true;}
+    }else{
+      // पुराने draft में फोटो हो तो बिना नई फ़ाइल चुने उसे न मिटाएँ।
+      try{var old=JSON.parse(localStorage.getItem("mb_pending_post_draft")||"null");draft.sitePhoto=old&&old.sitePhoto||"";}catch(e){draft.sitePhoto="";}
     }
-
-    draft.savedAt = Date.now();
-    localStorage.setItem("mb_pending_post_draft", JSON.stringify(draft));
-    return draft;
+    draft.savedAt=Date.now();
+    try{
+      localStorage.setItem("mb_pending_post_draft",JSON.stringify(draft));
+      return draft;
+    }catch(storageErr){
+      // Storage quota/blocked storage होने पर झूठा दावा न करें कि draft सुरक्षित है।
+      throw new Error("Draft इस डिवाइस में सुरक्षित नहीं हो सका। फ़ोटो हटाकर या फॉर्म छोटा करके फिर कोशिश करें।");
+    }
   };
 
   window.MB_restorePendingPostDraft = function(){
-    var raw = localStorage.getItem("mb_pending_post_draft");
+    var raw;
+    try{raw=localStorage.getItem("mb_pending_post_draft");}catch(e){return false;}
     if(!raw)return false;
     var draft;
-    try { draft = JSON.parse(raw); } catch(e) { return false; }
-
-    draftFieldIds().forEach(function(id){
-      var el=document.getElementById(id);
-      if(!el || draft[id] === undefined)return;
-      if(el.type === "checkbox") {
-        el.checked = !!draft[id];
-        if(id === "gps-site-confirm-check") {
-          try { toggleSiteGpsButton(el.checked); } catch(e) {}
-        }
-      } else {
-        el.value = draft[id];
+    try{draft=JSON.parse(raw);}catch(e){return false;}
+    if(!draft || typeof draft!=="object")return false;
+    var fields=draft.fields&&typeof draft.fields==="object"?draft.fields:draft;
+    // पहले category खोलें ताकि उसी category के controls मौजूद/दिखाई दें।
+    var category=fields["pc-post-category"];
+    var categoryValue=category&&typeof category==="object"?category.value:category;
+    if(categoryValue && typeof window.MB_switchPostCategory==="function"){
+      var catEl=document.getElementById("pc-post-category");
+      if(catEl)catEl.value=categoryValue;
+      try{window.MB_switchPostCategory(categoryValue);}catch(e){}
+    }
+    Object.keys(fields).forEach(function(id){
+      var entry=fields[id];
+      var legacy=entry===null || typeof entry!=="object";
+      var value=legacy?entry:entry.value;
+      if(!legacy && !Object.prototype.hasOwnProperty.call(entry,"value"))return;
+      var el=document.getElementById(id);if(!el)return;
+      if(el.type==="file" || el.type==="password")return;
+      if(el.type==="checkbox" || el.type==="radio")el.checked=legacy?!!value:!!entry.checked;
+      else el.value=value==null?"":String(value);
+      if(id==="gps-site-confirm-check"){
+        try{toggleSiteGpsButton(el.checked);}catch(e){}
       }
     });
-
-    try {
-      if(document.getElementById("pc-state")?.value) {
+    // State बदलने से district/block options दोबारा बनते हैं; उन्हें options बनने के बाद चुनें।
+    try{
+      var state=document.getElementById("pc-state");
+      if(state&&state.value){
         handleStateChange("pc-state","pc-district","pc-block");
         setTimeout(function(){
-          var d=document.getElementById("pc-district");
-          if(d && draft["pc-district"]) {
-            d.value=draft["pc-district"];
-            try { updateBlocks("pc-district","pc-block","pc-state"); } catch(e) {}
-            setTimeout(function(){
-              var b=document.getElementById("pc-block");
-              if(b && draft["pc-block"]) b.value=draft["pc-block"];
-            },50);
-          }
-        },50);
+          var district=document.getElementById("pc-district");
+          var dEntry=fields["pc-district"];
+          var dValue=dEntry&&typeof dEntry==="object"?dEntry.value:dEntry;
+          if(district&&dValue){district.value=dValue;try{updateBlocks("pc-district","pc-block","pc-state");}catch(e){}}
+          setTimeout(function(){
+            var block=document.getElementById("pc-block");
+            var bEntry=fields["pc-block"];
+            var bValue=bEntry&&typeof bEntry==="object"?bEntry.value:bEntry;
+            if(block&&bValue)block.value=bValue;
+          },80);
+        },80);
       }
-    } catch(e) {}
-
-    // File inputs cannot be programmatically restored by the browser.
-    // The selected site photo was preserved in the draft; use it at final Post time.
+    }catch(e){console.warn("Post draft location restore:",e);}
     localStorage.setItem("mb_pending_post_draft_restored","true");
     return true;
   };
@@ -6463,29 +6500,79 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
   const MB_postField=id=>document.getElementById(id);
   const MB_postValue=(id,trim=true)=>{const e=MB_postField(id);const v=e&&e.value!=null?String(e.value):'';return trim?v.trim():v;};
   window.MB_addRentalPostItem=function(){
-    const item=MB_postValue('pc-rental-item-new'),qty=MB_postValue('pc-rental-qty-new')||'1',dur=MB_postValue('pc-rental-duration-new'),date=MB_postValue('pc-rental-date-new'),cap=MB_postValue('pc-rental-capacity-new'),driver=MB_postValue('pc-rental-driver-new',false),desc=MB_postValue('pc-rental-desc-new');
-    if(!item||!dur)return alert('गाड़ी/मशीन और कितने घंटे/दिन की जरूरत है, दोनों भरें।');
-    MB_postItems.rental.push({title:item,detail:`${qty} गाड़ी • ${dur}${date?' • '+date:''}${cap?' • '+cap:''} • Driver: ${driver}${desc?' • '+desc:''}`});MB_renderPostItems('rental');
-    ['pc-rental-item-new','pc-rental-duration-new','pc-rental-date-new','pc-rental-capacity-new','pc-rental-desc-new'].forEach(id=>{const e=MB_postField(id);if(e)e.value='';});const q=MB_postField('pc-rental-qty-new');if(q)q.value=1;
+    const item=MB_postValue('pc-rental-item-new'),qtyText=MB_postValue('pc-rental-qty-new')||'1',dur=MB_postValue('pc-rental-duration-new'),date=MB_postValue('pc-rental-date-new'),cap=MB_postValue('pc-rental-capacity-new'),driver=MB_postValue('pc-rental-driver-new',false),desc=MB_postValue('pc-rental-desc-new');
+    const qty=Number(qtyText);
+    if(!item){MB_postField('pc-rental-item-new')?.focus();return alert('गाड़ी/मशीन का नाम भरें। उदाहरण: JCB, Tractor, Mixer।');}
+    if(!Number.isFinite(qty)||!Number.isInteger(qty)||qty<1){MB_postField('pc-rental-qty-new')?.focus();return alert('गाड़ी/मशीन की संख्या कम-से-कम 1 की सही पूर्ण संख्या में भरें।');}
+    if(!dur){MB_postField('pc-rental-duration-new')?.focus();return alert('कितने घंटे या दिन के लिए मशीन चाहिए, यह भरें।');}
+    MB_postItems.rental.push({title:item,detail:`${qty} गाड़ी • ${dur}${date?' • तारीख: '+date:''}${cap?' • '+cap:''} • Driver: ${driver}${desc?' • '+desc:''}`});MB_renderPostItems('rental');
+    ['pc-rental-item-new','pc-rental-duration-new','pc-rental-date-new','pc-rental-capacity-new','pc-rental-desc-new'].forEach(id=>{const e=MB_postField(id);if(e)e.value='';});const q=MB_postField('pc-rental-qty-new');if(q)q.value='1';
   };
   window.MB_addContractorPostItem=function(){
-    const type=MB_postValue('pc-contractor-type-new',false),area=MB_postValue('pc-contractor-area-new'),floors=MB_postValue('pc-contractor-floors-new'),budget=MB_postValue('pc-contractor-budget-new'),mat=MB_postValue('pc-contractor-material-new',false),desc=MB_postValue('pc-contractor-desc-new');
-    if(!area)return alert('Contractor काम का Area भरें।');
-    MB_postItems.contractor.push({title:type,detail:`Area: ${area}${floors?' • Floors: '+floors:''}${budget?' • Budget: '+budget:''} • ${mat}${desc?' • '+desc:''}`});MB_renderPostItems('contractor');
+    const type=MB_postValue('pc-contractor-type-new',false),areaText=MB_postValue('pc-contractor-area-new'),floorsText=MB_postValue('pc-contractor-floors-new'),budget=MB_postValue('pc-contractor-budget-new'),mat=MB_postValue('pc-contractor-material-new',false),desc=MB_postValue('pc-contractor-desc-new');
+    const area=Number(areaText), floors= floorsText==='' ? null : Number(floorsText);
+    if(!type){MB_postField('pc-contractor-type-new')?.focus();return alert('Contractor काम का प्रकार चुनें।');}
+    if(!areaText){MB_postField('pc-contractor-area-new')?.focus();return alert('Contractor काम का Area भरें।');}
+    if(!Number.isFinite(area)||area<=0||area>10000000){MB_postField('pc-contractor-area-new')?.focus();return alert('Area वर्गफुट में 0 से अधिक और 1 करोड़ से कम सही संख्या में भरें।');}
+    if(floorsText!==''&&(!Number.isInteger(floors)||floors<1||floors>200)){MB_postField('pc-contractor-floors-new')?.focus();return alert('मंजिलों की संख्या 1 से 200 के बीच पूर्ण संख्या में भरें।');}
+    if(budget && (!/^[0-9,₹\s.]+$/.test(budget)||Number(budget.replace(/[₹,\s]/g,''))<0||!Number.isFinite(Number(budget.replace(/[₹,\s]/g,''))))){MB_postField('pc-contractor-budget-new')?.focus();return alert('Budget में केवल सही रकम भरें, जैसे 850000 या ₹8,50,000।');}
+    if(desc.length>1000){MB_postField('pc-contractor-desc-new')?.focus();return alert('काम की शर्तें 1000 अक्षरों से कम रखें।');}
+    const safeMat=['मालिक देगा','Contractor देगा','दोनों बात करके'].includes(mat)?mat:'दोनों बात करके';
+    MB_postItems.contractor.push({title:type,detail:`Area: ${areaText} वर्गफुट${floorsText?' • Floors: '+floorsText:''}${budget?' • Budget: '+budget:''} • ${safeMat}${desc?' • '+desc:''}`});MB_renderPostItems('contractor');
     ['pc-contractor-area-new','pc-contractor-floors-new','pc-contractor-budget-new','pc-contractor-desc-new'].forEach(id=>{const e=MB_postField(id);if(e)e.value='';});
+    MB_postField('pc-contractor-area-new')?.focus();
   };
   window.MB_addMaterialPostItem=function(){
-    const item=MB_postValue('pc-material-item-new'),qty=MB_postValue('pc-material-qty-new'),unit=MB_postValue('pc-material-unit-new'),brand=MB_postValue('pc-material-brand-new'),delivery=MB_postValue('pc-material-delivery-new',false),desc=MB_postValue('pc-material-desc-new');
-    if(!item||!qty)return alert('Material का नाम और मात्रा भरें।');
-    MB_postItems.material.push({title:item,detail:`${qty}${unit?' '+unit:''}${brand?' • '+brand:''} • ${delivery}${desc?' • '+desc:''}`});MB_renderPostItems('material');
+    const item=MB_postValue('pc-material-item-new'),qtyText=MB_postValue('pc-material-qty-new'),unit=MB_postValue('pc-material-unit-new'),brand=MB_postValue('pc-material-brand-new'),delivery=MB_postValue('pc-material-delivery-new',false),desc=MB_postValue('pc-material-desc-new');
+    // Reject empty or implausibly long entries before adding them to the post.
+    if(!item){MB_postField('pc-material-item-new')?.focus();return alert('सामान का नाम भरें। उदाहरण: सीमेंट, सरिया, बालू या ईंट।');}
+    if(!qtyText){MB_postField('pc-material-qty-new')?.focus();return alert('सामान की मात्रा भरें।');}
+    const qty=Number(qtyText);
+    if(!Number.isFinite(qty)||qty<=0||qty>100000000){MB_postField('pc-material-qty-new')?.focus();return alert('मात्रा 0 से अधिक और मान्य संख्या में भरें।');}
+    if(item.length>120||unit.length>30||brand.length>80||desc.length>500){return alert('सामान, Unit, Brand या विवरण बहुत लंबा है। कृपया छोटा करके भरें।');}
+    const safeDelivery=['Home Delivery चाहिए','खुद Pickup करेंगे'].includes(delivery)?delivery:'Home Delivery चाहिए';
+    MB_postItems.material.push({title:item,detail:`${qtyText}${unit?' '+unit:''}${brand?' • '+brand:''} • ${safeDelivery}${desc?' • '+desc:''}`});
+    MB_renderPostItems('material');
     ['pc-material-item-new','pc-material-qty-new','pc-material-unit-new','pc-material-brand-new','pc-material-desc-new'].forEach(id=>{const e=MB_postField(id);if(e)e.value='';});
+    const qtyField=MB_postField('pc-material-qty-new');if(qtyField)qtyField.value='';
+    MB_postField('pc-material-item-new')?.focus();
   };
   window.MB_switchPostCategory=function(v){
     const ids={mistri:'mb-mistri-post-fields',rental:'mb-rental-post-fields',material:'mb-material-post-fields',contractor:'mb-contractor-post-fields'};
-    Object.entries(ids).forEach(([k,id])=>document.getElementById(id)?.classList.toggle('hidden',v!==k));
-    const h=document.getElementById('mb-post-category-help');const msg={mistri:'घर बनाने के लिए सही मिस्त्री चुनें।',rental:'सिर्फ गाड़ी / मशीन की जरूरत का पोस्ट भरें।',material:'सिर्फ Construction Material की जरूरत का पोस्ट भरें।',contractor:'सिर्फ Contractor की जरूरत का पोस्ट भरें।'};if(h)h.textContent=msg[v]||'';
-    const work=document.getElementById('pc-work');if(work&&v==='mistri'&&typeof window.populateWorkTypes==='function')window.populateWorkTypes();
+    // Unknown/empty values must not leave every category hidden or show an arbitrary form.
+    if(!Object.prototype.hasOwnProperty.call(ids,v)) v='mistri';
+    const select=document.getElementById('pc-post-category');
+    if(select && select.value!==v) select.value=v;
+    Object.entries(ids).forEach(([k,id])=>{
+      const panel=document.getElementById(id);
+      if(!panel)return;
+      const active=(k===v);
+      panel.classList.toggle('hidden',!active);
+      panel.setAttribute('aria-hidden',active?'false':'true');
+      // Prevent keyboard focus into fields belonging to a different category.
+      panel.querySelectorAll('input,select,textarea,button').forEach(el=>{
+        if(el.type==='hidden')return;
+        if(!active){el.setAttribute('data-mb-category-disabled','1');el.disabled=true;}
+        else if(el.hasAttribute('data-mb-category-disabled')){el.disabled=false;el.removeAttribute('data-mb-category-disabled');}
+      });
+    });
+    const h=document.getElementById('mb-post-category-help');
+    const msg={mistri:'घर बनाने के लिए सही मिस्त्री चुनें।',rental:'सिर्फ गाड़ी / मशीन की जरूरत का पोस्ट भरें।',material:'सिर्फ Construction Material की जरूरत का पोस्ट भरें।',contractor:'सिर्फ Contractor की जरूरत का पोस्ट भरें।'};
+    if(h)h.textContent=msg[v];
+    const work=document.getElementById('pc-work');
+    if(work&&v==='mistri'&&typeof window.populateWorkTypes==='function'){
+      const previous=work.value;
+      window.populateWorkTypes();
+      if(previous && Array.from(work.options).some(o=>o.value===previous))work.value=previous;
+    }
+    return v;
   };
+  // Set the correct category panel on initial load, including when a saved draft
+  // or browser-restored select value is present.
+  document.addEventListener('DOMContentLoaded',function(){
+    const select=document.getElementById('pc-post-category');
+    window.MB_switchPostCategory(select&&select.value?select.value:'mistri');
+  });
 })();
 </script>
 
