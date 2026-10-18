@@ -10362,7 +10362,7 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
     while((node=walker.nextNode())){
       var value=String(node.nodeValue||'');
       // Remove standalone visible strings such as "\\n \\n \\n", without touching real whitespace or code.
-      if(/^\s*(?:\\\\n\s*){2,}$/.test(value) || /^\s*\\\\n\s*\\\\n\s*\\\\n\s*$/.test(value)) nodes.push(node);
+      if(/^\s*(?:\\n\s*){2,}$/.test(value) || /^\s*\\n\s*\\n\s*\\n\s*$/.test(value)) nodes.push(node);
     }
     nodes.forEach(function(n){n.nodeValue='';});
   }
