@@ -709,7 +709,8 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
           <p>UPI ID: <span class="font-bold text-amber-700 select-all">mistrybabu@upi</span></p>
           <p>खाता नाम: MistryBabu Services</p>
         </div>
-        <input id="material-ad-utr" maxlength="20" class="w-full rounded-lg border px-3 py-2 text-xs" placeholder="Payment UTR नंबर *" aria-label="Payment UTR नंबर *">
+        <input id="material-ad-utr" maxlength="12" inputmode="numeric" pattern="[0-9]{12}" class="w-full rounded-lg border px-3 py-2 text-xs" placeholder="12 अंकों का Payment UTR *" aria-label="12 अंकों का Payment UTR *">
+        <label class="block text-[10px] font-bold">भुगतान स्क्रीनशॉट (वैकल्पिक, JPG/PNG/WebP, अधिकतम 500 KB)<input id="material-ad-screenshot" type="file" accept="image/jpeg,image/png,image/webp" class="mt-1 block w-full text-xs" onchange="MB_previewPaymentScreenshot(this,'material-ad-screenshot-preview')"></label><img id="material-ad-screenshot-preview" class="hidden max-h-48 max-w-full rounded-lg border" alt="भुगतान स्क्रीनशॉट प्रीव्यू">
         <button type="button" onclick="MB_submitMaterialPromotion()" class="w-full bg-amber-500 text-slate-900 font-black py-2.5 rounded-xl text-xs">₹1,000 Payment के बाद Promotion भेजें</button>
         <p id="material-ad-status" class="text-[9px] text-slate-500"></p>
       </div>
@@ -1155,6 +1156,7 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
             <label class="block text-[11px] font-bold text-slate-700 mb-1">12-अंकों का UPI UTR No. *</label>
             <input type="text" id="con-pay-utr" required maxlength="12" placeholder="12 अंकों का UTR नंबर" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs uppercase focus:outline-none font-bold text-center" pattern="[0-9]{12}" inputmode="numeric" aria-label="12 अंकों का UTR नंबर">
           </div>
+          <label class="block text-[11px] font-bold text-slate-700">भुगतान स्क्रीनशॉट (वैकल्पिक, JPG/PNG/WebP, अधिकतम 500 KB)<input id="con-pay-screenshot" type="file" accept="image/jpeg,image/png,image/webp" class="mt-1 block w-full text-xs" onchange="MB_previewPaymentScreenshot(this,'con-pay-screenshot-preview')"></label><img id="con-pay-screenshot-preview" class="hidden max-h-48 max-w-full rounded-lg border" alt="भुगतान स्क्रीनशॉट प्रीव्यू">
           <button type="submit" id="btn-con-pay-submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-2.5 rounded-xl text-xs shadow-xs">
             पेमेंट पुष्टि करें व सदस्यता सक्रिय करें
           </button>
@@ -2440,7 +2442,7 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
           const amountLabel = document.getElementById("con-pay-amount-label");
           if (docBox) docBox.classList.add("hidden");
           if (payBox) payBox.classList.remove("hidden");
-          const amt = d.contractorTier === "vip" ? "₹14,999 (VIP जॉइनिंग)" : "₹3,000 (स्मॉल जॉइनिंग)";
+          const amt = d.contractorTier === "vip" ? "₹14,999 (VIP प्लान • 30 दिन)" : "₹3,000 (स्मॉल प्लान • 30 दिन)";
           if (amountLabel) amountLabel.innerText = `भुगतान राशि: ${amt}`;
         }
       }, err => {
@@ -2462,6 +2464,7 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
       try {
         await db.collection("contractor_applications").doc(appId).update({
           paymentUtr: utr,
+          paymentScreenshot: paymentScreenshot,
           status: "Payment_Submitted"
         });
         alert("✅ UTR दर्ज हो गया! एडमिन द्वारा पुष्टि होते ही आपका पास सक्रिय हो जाएगा।");
@@ -3573,6 +3576,23 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
       finally{if(btn){btn.disabled=false;btn.innerText='✅ OTP Verify करके PIN बदलें';}}
     }
 
+    function MB_clearConflictingRoleSessions(activeRole) {
+      // लॉगिन बदलते समय केवल दूसरे role के session identifiers हटाएँ;
+      // drafts, भाषा, theme और दूसरे गैर-session preferences सुरक्षित रहें।
+      const roleKeys = {
+        client: ["mb_worker_phone","mb_worker_name","mb_worker_photo","mb_worker_photos","mb_worker_district","mb_worker_doc_id","mb_worker_id_verified","mb_worker_is_contractor","mb_worker_level","mb_worker_posts_count","mb_worker_pro_id","mb_worker_profile_complete","mb_worker_skills","mb_worker_state","mb_worker_status","mb_contractor_days_left","mb_post_permission_approved","mb_contractor_app_id","mb_contractor_app_tier","mb_contractor_phone","mb_rental_phone","mb_rental_profile_id","mb_material_phone","mb_material_profile_id"],
+        worker: ["mb_client_phone","mb_client_name","mb_client_avatar","mb_client_id_photo","mb_client_is_kyc","mb_customer_profile","mb_customer_phone","mb_contractor_app_id","mb_contractor_app_tier","mb_contractor_phone","mb_rental_phone","mb_rental_profile_id","mb_material_phone","mb_material_profile_id"],
+        contractor: ["mb_client_phone","mb_client_name","mb_client_avatar","mb_client_id_photo","mb_client_is_kyc","mb_customer_profile","mb_customer_phone","mb_worker_phone","mb_worker_name","mb_worker_photo","mb_worker_photos","mb_worker_district","mb_worker_doc_id","mb_worker_id_verified","mb_worker_is_contractor","mb_worker_level","mb_worker_posts_count","mb_worker_pro_id","mb_worker_profile_complete","mb_worker_skills","mb_worker_state","mb_worker_status","mb_contractor_days_left","mb_post_permission_approved","mb_rental_phone","mb_rental_profile_id","mb_material_phone","mb_material_profile_id"],
+        rental: ["mb_client_phone","mb_client_name","mb_client_avatar","mb_client_id_photo","mb_client_is_kyc","mb_customer_profile","mb_customer_phone","mb_worker_phone","mb_worker_name","mb_worker_photo","mb_worker_photos","mb_worker_district","mb_worker_doc_id","mb_worker_id_verified","mb_worker_is_contractor","mb_worker_level","mb_worker_posts_count","mb_worker_pro_id","mb_worker_profile_complete","mb_worker_skills","mb_worker_state","mb_worker_status","mb_contractor_days_left","mb_post_permission_approved","mb_contractor_app_id","mb_contractor_app_tier","mb_contractor_phone","mb_material_phone","mb_material_profile_id"],
+        material: ["mb_client_phone","mb_client_name","mb_client_avatar","mb_client_id_photo","mb_client_is_kyc","mb_customer_profile","mb_customer_phone","mb_worker_phone","mb_worker_name","mb_worker_photo","mb_worker_photos","mb_worker_district","mb_worker_doc_id","mb_worker_id_verified","mb_worker_is_contractor","mb_worker_level","mb_worker_posts_count","mb_worker_pro_id","mb_worker_profile_complete","mb_worker_skills","mb_worker_state","mb_worker_status","mb_contractor_days_left","mb_post_permission_approved","mb_contractor_app_id","mb_contractor_app_tier","mb_contractor_phone","mb_rental_phone","mb_rental_profile_id"]
+      };
+      Object.entries(roleKeys).forEach(([role, keys]) => {
+        if (role !== activeRole) keys.forEach(key => localStorage.removeItem(key));
+      });
+      localStorage.setItem("current_user_role", activeRole);
+      localStorage.setItem("mb_device_locked_role", activeRole);
+    }
+
     async function loginWithPhone() {
       const phoneInput = (document.getElementById("quick-login-phone")?.value||"").replace(/\D/g,"").slice(-10);
       const pin = (document.getElementById("quick-login-pin")?.value||"").trim();
@@ -3590,24 +3610,24 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
           db.collection("material_providers").where("phone","==",fullPhone).limit(1).get()
         ]);
         if(c.exists && c.data()?.pinHash===pinHash){
-          const p=c.data(); saveLocal(p); show(p); localStorage.setItem("current_user_role","client"); localStorage.setItem("mb_device_locked_role","client");
+          const p=c.data(); MB_clearConflictingRoleSessions("client"); saveLocal(p); show(p); localStorage.setItem("current_user_role","client"); localStorage.setItem("mb_device_locked_role","client");
           navTo("register"); selectProfileCategory("client");
           return alert("✅ Customer Profile खुल गई।");
         }
         if(!w.empty && w.docs[0].data()?.pinHash===pinHash){
-          const data=w.docs[0].data(); data.id=w.docs[0].id; setLoggedInWorker(data); navTo("register"); selectProfileCategory("worker");
+          const data=w.docs[0].data(); MB_clearConflictingRoleSessions("worker"); data.id=w.docs[0].id; setLoggedInWorker(data); navTo("register"); selectProfileCategory("worker");
           return alert("✅ Mistri Profile खुल गई।");
         }
         if(!con.empty && con.docs[0].data()?.pinHash===pinHash){
-          const d=con.docs[0].data(); localStorage.setItem("mb_contractor_app_id",con.docs[0].id); localStorage.setItem("mb_contractor_app_tier",d.contractorTier||""); localStorage.setItem("mb_contractor_phone",d.phone||fullPhone); localStorage.setItem("current_user_role","contractor"); localStorage.setItem("mb_device_locked_role","contractor"); navTo("register"); selectProfileCategory("contractor");
+          const d=con.docs[0].data(); MB_clearConflictingRoleSessions("contractor"); localStorage.setItem("mb_contractor_app_id",con.docs[0].id); localStorage.setItem("mb_contractor_app_tier",d.contractorTier||""); localStorage.setItem("mb_contractor_phone",d.phone||fullPhone); localStorage.setItem("current_user_role","contractor"); localStorage.setItem("mb_device_locked_role","contractor"); navTo("register"); selectProfileCategory("contractor");
           return alert("✅ Contractor Profile खुल गई।");
         }
         if(!r.empty && r.docs[0].data()?.pinHash===pinHash){
-          const d=r.docs[0].data(); localStorage.setItem("mb_rental_phone",d.phone||fullPhone); localStorage.setItem("mb_rental_profile_id",r.docs[0].id); localStorage.setItem("current_user_role","rental"); localStorage.setItem("mb_device_locked_role","rental"); navTo("register"); selectProfileCategory("rental");
+          const d=r.docs[0].data(); MB_clearConflictingRoleSessions("rental"); localStorage.setItem("mb_rental_phone",d.phone||fullPhone); localStorage.setItem("mb_rental_profile_id",r.docs[0].id); localStorage.setItem("current_user_role","rental"); localStorage.setItem("mb_device_locked_role","rental"); navTo("register"); selectProfileCategory("rental");
           return alert("✅ Rental Profile खुल गई।");
         }
         if(!m.empty && m.docs[0].data()?.pinHash===pinHash){
-          const d=m.docs[0].data(); localStorage.setItem("mb_material_phone",d.phone||fullPhone); localStorage.setItem("mb_material_profile_id",m.docs[0].id); localStorage.setItem("current_user_role","material"); localStorage.setItem("mb_device_locked_role","material"); navTo("register"); selectProfileCategory("material");
+          const d=m.docs[0].data(); MB_clearConflictingRoleSessions("material"); localStorage.setItem("mb_material_phone",d.phone||fullPhone); localStorage.setItem("mb_material_profile_id",m.docs[0].id); localStorage.setItem("current_user_role","material"); localStorage.setItem("mb_device_locked_role","material"); navTo("register"); selectProfileCategory("material");
           return alert("✅ Shop / Material Profile खुल गई।");
         }
         alert("❌ मोबाइल नंबर या PIN गलत है।");
@@ -4209,11 +4229,12 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
           const c = doc.data() || {};
           const docId = mbEscapeHtml(doc.id);
           const status = String(c.status || "Unknown");
-          const tierLabel = c.contractorTier === "vip" ? "👑 VIP ठेकेदार (₹14,999)" : "🔨 स्मॉल ठेकेदार (₹3,000)";
+          const tierLabel = c.contractorTier === "vip" ? "👑 VIP ठेकेदार (₹14,999 • 30 दिन)" : "🔨 स्मॉल ठेकेदार (₹3,000 • 30 दिन)";
           const safeDocProof = typeof c.docProof === "string" && (/^https:\/\//i.test(c.docProof) || /^data:image\/(png|jpeg|jpg|webp);base64,/i.test(c.docProof)) ? c.docProof : "";
           const docLink = safeDocProof ? `<a href="${mbEscapeHtml(safeDocProof)}" target="_blank" rel="noopener noreferrer" class="text-[10px] text-blue-600 font-bold block">📄 जमा किए गए दस्तावेज़ देखें</a>` : "";
           const approveButton = status === "Under_Review" ? `<div class="pt-1 flex gap-2"><button onclick="adminApproveContractorEligibility('${docId}')" class="flex-1 bg-emerald-600 text-white py-1.5 rounded text-[10px] font-black">✓ कागज़ात पास करें (पेमेंट की अनुमति दें)</button></div>` : "";
-          const activateButton = status === "Payment_Submitted" ? `<p class="text-[10px] text-amber-800 font-bold">UTR: ${mbEscapeHtml(c.paymentUtr)}</p><button onclick="adminActivateContractorPass('${docId}')" class="w-full bg-blue-600 text-white py-1.5 rounded text-[10px] font-black">👑 सदस्यता पास सक्रिय करें</button>` : "";
+          const paymentShotLink = typeof c.paymentScreenshot === "string" && /^data:image\/(png|jpeg|webp);base64,/i.test(c.paymentScreenshot) ? `<a href="${mbEscapeHtml(c.paymentScreenshot)}" target="_blank" rel="noopener noreferrer" class="text-[10px] text-blue-600 font-bold block">🧾 भुगतान स्क्रीनशॉट देखें</a>` : `<span class="text-[10px] text-slate-500">भुगतान स्क्रीनशॉट नहीं दिया</span>`;
+          const activateButton = status === "Payment_Submitted" ? `<p class="text-[10px] text-amber-800 font-bold">UTR: ${mbEscapeHtml(c.paymentUtr)}</p>${paymentShotLink}<button onclick="adminActivateContractorPass('${docId}')" class="w-full bg-blue-600 text-white py-1.5 rounded text-[10px] font-black">👑 सदस्यता पास सक्रिय करें</button>` : "";
           box.insertAdjacentHTML("beforeend", `<div class="bg-white p-2.5 rounded-xl border border-slate-200 shadow-2xs space-y-1.5"><div class="flex justify-between items-center"><span class="font-bold text-slate-900">${mbEscapeHtml(c.name)} (${tierLabel})</span><span class="text-[9px] bg-slate-200 px-1.5 py-0.5 rounded font-bold">${mbEscapeHtml(status)}</span></div><p class="text-[10px] text-slate-600">📞 ${mbEscapeHtml(c.phone)} | लेबर: ${mbEscapeHtml(c.laborCapacity)} | अनुभव: ${mbEscapeHtml(c.experience)} वर्ष</p>${docLink}${approveButton}${activateButton}</div>`);
         });
       }, err => {
@@ -5282,23 +5303,21 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
     }
 
     function promptMistriBoost49() {
-      const utr = prompt("⚡ ₹49 टॉप प्रोफ़ाइल प्लान:\n7 दिन तक लिस्ट में सबसे ऊपर दिखें।\n\nUPI (mistrybabu@upi) पर ₹49 भेजकर 12-अंकों का UTR नंबर यहाँ दर्ज करें:");
-      if (!utr || utr.trim().length !== 12) return alert("अमान्य UTR! कृपया 12 अंकों का वैध UTR नंबर दर्ज करें।");
-      
-      const phone = localStorage.getItem("mb_worker_phone");
-      db.collection("contractor_payments").add({
-        contractorName: localStorage.getItem("mb_worker_name") || "मिस्त्री",
-        phone: "+91" + phone,
-        planType: "worker_top_49",
-        amount: 49,
-        validityDays: 7,
-        utrNumber: utr.trim(),
-        status: "Pending",
-        handledBy: "",
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      }).then(() => {
-        alert("✅ आपका ₹49 टॉप-प्लान अनुरोध दर्ज हो गया है! एडमिन द्वारा सत्यापन होते ही आपकी प्रोफ़ाइल 7 दिनों के लिए टॉप पर आ जाएगी।");
-      });
+      const phone=localStorage.getItem("mb_worker_phone");
+      if(!phone)return alert("पहले Mistri Login करें।");
+      document.getElementById("mb-worker-boost49-modal")?.remove();
+      const modal=document.createElement("div");modal.id="mb-worker-boost49-modal";modal.className="fixed inset-0 z-[9999] bg-black/60 flex items-center justify-center p-3";
+      modal.innerHTML=`<div class="w-full max-w-md rounded-2xl bg-white p-4 space-y-3"><div class="flex items-center justify-between"><b>⚡ ₹49 टॉप प्रोफ़ाइल प्लान</b><button type="button" id="mb-worker-boost49-close" class="text-2xl">×</button></div><p class="text-xs text-slate-600">7 दिनों तक लिस्ट में सबसे ऊपर दिखें। UPI: <b class="select-all">mistrybabu@upi</b></p><label class="block text-xs font-bold">12 अंकों का UTR<input id="mb-worker-boost49-utr" inputmode="numeric" maxlength="12" pattern="[0-9]{12}" class="mt-1 w-full rounded-lg border p-2" placeholder="UTR नंबर"></label><label class="block text-xs font-bold">भुगतान स्क्रीनशॉट (वैकल्पिक, अधिकतम 500 KB)<input id="mb-worker-boost49-screenshot" type="file" accept="image/jpeg,image/png,image/webp" class="mt-1 block w-full" onchange="MB_previewPaymentScreenshot(this,'mb-worker-boost49-preview')"></label><img id="mb-worker-boost49-preview" class="hidden max-h-48 rounded-lg border" alt="भुगतान स्क्रीनशॉट प्रीव्यू"><button type="button" id="mb-worker-boost49-submit" class="w-full rounded-xl bg-amber-500 p-3 font-black">₹49 भुगतान अनुरोध भेजें</button><p class="text-[10px] text-slate-500">Admin वास्तविक UPI भुगतान सत्यापित करने के बाद ही प्लान सक्रिय करेगा।</p></div>`;
+      document.body.appendChild(modal);
+      document.getElementById("mb-worker-boost49-close").onclick=()=>modal.remove();
+      document.getElementById("mb-worker-boost49-submit").onclick=async function(){
+        const btn=this,utr=(document.getElementById("mb-worker-boost49-utr")?.value||"").trim();
+        if(!/^\d{12}$/.test(utr))return alert("कृपया 12 अंकों का वैध UTR दर्ज करें।");
+        let paymentScreenshot="";try{paymentScreenshot=await window.MB_readPaymentScreenshot("mb-worker-boost49-screenshot");}catch(e){return alert(e.message||"स्क्रीनशॉट जाँचें।");}
+        btn.disabled=true;btn.textContent="अनुरोध भेज रहे हैं…";
+        try{await db.collection("contractor_payments").add({contractorName:localStorage.getItem("mb_worker_name")||"मिस्त्री",phone:"+91"+phone,planType:"worker_top_49",amount:49,validityDays:7,utrNumber:utr,paymentScreenshot:paymentScreenshot,status:"Pending",handledBy:"",createdAt:firebase.firestore.FieldValue.serverTimestamp()});modal.remove();alert("₹49 का अनुरोध Admin को भेज दिया गया है। वास्तविक भुगतान जाँच के बाद ही प्लान सक्रिय होगा.");}
+        catch(e){btn.disabled=false;btn.textContent="₹49 भुगतान अनुरोध भेजें";alert("अनुरोध जमा नहीं हुआ: "+String(e.message||e));}
+      };
     }
 
     function loadFullWorkers(filterSkill = "") {
@@ -5306,9 +5325,22 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
       db.collection("workers").orderBy("createdAt", "desc").limit(50).get().then(async snap => {
         if (snap.empty) return grid.innerHTML = "<p class='text-xs text-slate-400'>कोई कारीगर नहीं मिला।</p>";
         grid.innerHTML = "";
+        // Audit 32: ₹49 boost is time-limited; rank only currently active boosts first.
+        const boostExpiryMs = value => {
+          if (value && typeof value.toMillis === "function") return value.toMillis();
+          if (value && typeof value.toDate === "function") return value.toDate().getTime();
+          if (value instanceof Date) return value.getTime();
+          if (typeof value === "number") return value;
+          return Date.parse(String(value || "")) || 0;
+        };
+        const nowMs = Date.now();
+        const isActiveBoost = worker => worker.topProfilePlan === "worker_top_49" &&
+          worker.topProfilePaymentStatus === "Confirmed" && boostExpiryMs(worker.topProfileUntil) > nowMs;
         const docs = snap.docs.slice().sort((a,b) => {
+          const wa=a.data()||{}, wb=b.data()||{};
+          const boostDiff = Number(isActiveBoost(wb)) - Number(isActiveBoost(wa));
+          if (boostDiff) return boostDiff;
           if (!currentWorkerCoords) return 0;
-          const wa=a.data(), wb=b.data();
           const da=calculateDistanceKM(currentWorkerCoords.latitude,currentWorkerCoords.longitude,wa.lat,wa.lng);
           const dbb=calculateDistanceKM(currentWorkerCoords.latitude,currentWorkerCoords.longitude,wb.lat,wb.lng);
           return (da === null ? 999999 : parseFloat(da)) - (dbb === null ? 999999 : parseFloat(dbb));
@@ -5333,7 +5365,7 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
           const isBusy = w.liveStatus === 'busy';
           const workPhotos = w.workPhotos || [];
           const proId = w.workerProId || ("#MB-PRO-" + doc.id.substring(0, 6).toUpperCase());
-          const isTopBoosted = w.isBoostedTop === true;
+          const isTopBoosted = isActiveBoost(w);
 
           grid.innerHTML += `
             <div class="bg-white p-3.5 rounded-2xl border ${isTopBoosted ? 'border-2 border-amber-500 shadow-md' : 'border-slate-200 shadow-2xs'} space-y-2">
@@ -6028,6 +6060,7 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
       const enteredHash=await MB_hashPin(pin);
       if(!p.pinHash || p.pinHash!==enteredHash)return alert("मोबाइल नंबर या PIN गलत है।");
       if(!complete(p))return alert("Customer Profile अधूरी है।");
+      MB_clearConflictingRoleSessions("client");
       saveLocal(p);show(p);
       // सभी लॉगिन रास्तों में Customer role/session state एक जैसा रखें।
       try{localStorage.setItem("current_user_role","client");localStorage.setItem("mb_device_locked_role","client");localStorage.setItem("mb_client_phone",p.phone||("+91"+p10));}catch(sessionErr){}
@@ -6188,17 +6221,22 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
   function set(id, v){ const e=document.getElementById(id); if(e) e.innerText=v; }
   function show(id, yes){ const e=document.getElementById(id); if(e) e.classList.toggle("hidden", !yes); }
 
+  window.__MB_contractorAppSubmitting = window.__MB_contractorAppSubmitting || false;
   window.submitContractorApplication = async function(e){
-    e.preventDefault();
-    const tier=val("con-app-tier");
-    const name=val("con-app-name"), phone=val("con-app-phone"), capacity=val("con-app-capacity"), exp=val("con-app-exp");
-    const pinCheck=MB_validPinFields("con-app-pin","con-app-pin-confirm");
-    if(!tier||!name||!phone||!capacity||!exp) return alert("कृपया सभी जरूरी जानकारी भरें।");
-    if(!pinCheck.ok) return alert(pinCheck.msg);
-    const pinHash=await MB_hashPin(pinCheck.pin);
+    if(e && typeof e.preventDefault === "function") e.preventDefault();
+    // Lock synchronously before any hashing/file read/network await to block rapid double-clicks.
+    if(window.__MB_contractorAppSubmitting) return;
     const btn=document.getElementById("btn-con-app-submit");
-    if(btn){btn.disabled=true;btn.innerText="दस्तावेज़ सुरक्षित किए जा रहे हैं...";}
+    const tier=val("con-app-tier");
+    const name=val("con-app-name"), phone=val("con-app-phone").replace(/\D/g,""), capacity=val("con-app-capacity"), exp=val("con-app-exp");
+    const pinCheck=MB_validPinFields("con-app-pin","con-app-pin-confirm");
+    if(!["small","vip"].includes(tier)||!name||name.length>100||!/^\d{10}$/.test(phone)||!capacity||capacity.length>60||!exp||exp.length>3) return alert("कृपया सही नाम, 10 अंकों का मोबाइल, लेबर क्षमता और अनुभव सहित सभी जरूरी जानकारी भरें।");
+    if(!pinCheck.ok) return alert(pinCheck.msg);
+    if(typeof db==="undefined"||!db||typeof firebase==="undefined"||!firebase.firestore) return alert("डेटाबेस उपलब्ध नहीं है। इंटरनेट जाँचकर फिर प्रयास करें।");
+    window.__MB_contractorAppSubmitting=true;
+    if(btn){btn.disabled=true;btn.innerText="दस्तावेज़ जाँचे और सुरक्षित किए जा रहे हैं...";}
     try{
+      const pinHash=await MB_hashPin(pinCheck.pin);
       let docs={};
       if(tier==='small'){
         docs.aadhaarFront=await b64("con-app-small-aadhaar-front");
@@ -6212,6 +6250,8 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
         docs.aadhaarBack=await b64("con-app-vip-aadhaar-back");
         if(!docs.govDoc||!docs.panDoc||!docs.bankDoc||!docs.aadhaarFront||!docs.aadhaarBack) throw new Error("VIP ठेकेदार के सभी जरूरी दस्तावेज़, Aadhaar Front/Back सहित, अपलोड करें।");
       }
+      const requiredFileIds=tier==='small'?['con-app-small-aadhaar-front','con-app-small-aadhaar-back']:['con-app-gov-doc','con-app-pan-doc','con-app-bank-doc','con-app-vip-aadhaar-front','con-app-vip-aadhaar-back'];
+      for(const fileId of requiredFileIds){const input=document.getElementById(fileId),file=input&&input.files&&input.files[0];if(!file)throw new Error('सभी अनिवार्य दस्तावेज़ अपलोड करें।');if(file.size>5*1024*1024)throw new Error('हर दस्तावेज़ की फ़ाइल 5 MB से छोटी होनी चाहिए।');}
       const data={contractorTier:tier,name,phone:"+91"+phone,pinHash,laborCapacity:capacity,experience:exp,
         aadhaarFront:docs.aadhaarFront,aadhaarBack:docs.aadhaarBack,
         govDoc:docs.govDoc||"",panDoc:docs.panDoc||"",bankDoc:docs.bankDoc||"",
@@ -6224,79 +6264,331 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
       alert("✅ आवेदन Admin को भेज दिया गया है। Admin पूरा form और सभी documents देखकर verification करेगा। Verification के बाद इसी application में payment option खुलेगा।");
       if(btn){btn.innerText="⏳ Admin Verification के लिए जमा है";}
     }catch(err){
-      alert("❌ "+err.message);
+      console.error("Contractor application submission failed:",err);
+      window.__MB_contractorAppSubmitting=false;
+      alert("❌ आवेदन जमा होने की पुष्टि नहीं हो सकी: "+(err&&err.message?err.message:"नेटवर्क त्रुटि")+"। दोबारा भेजने से पहले आवेदन की स्थिति जाँचें, ताकि डुप्लिकेट आवेदन न बने।");
       if(btn){btn.disabled=false;btn.innerText="दस्तावेज़ सत्यापन हेतु जमा करें";}
     }
   };
 
+  // Step 19 helper: expiry is reflected separately from the historical application status.
+  // Best-effort metadata only; UI enforcement remains local until server rules/functions enforce it.
+  window.MB_setContractorSubscriptionState = async function(state,appId,expiryDate){
+    if(!["active","expired"].includes(String(state)) || !appId || !window.db || typeof window.db.collection!=="function") return false;
+    try{
+      const patch={subscriptionState:String(state),subscriptionCheckedAt:firebase.firestore.FieldValue.serverTimestamp()};
+      if(expiryDate instanceof Date && Number.isFinite(expiryDate.getTime())) patch.validUntil=firebase.firestore.Timestamp.fromDate(expiryDate);
+      await window.db.collection("contractor_applications").doc(appId).update(patch);
+      await window.db.collection("contractor_profiles").doc(appId).update(patch);
+      return true;
+    }catch(err){console.warn("Contractor subscription state metadata could not be saved:",err);return false;}
+  };
+  let contractorStatusUnsubscribe = null;
   window.checkContractorStatus = function(){
-    const appId=localStorage.getItem("mb_contractor_app_id"); if(!appId||!window.db) return;
-    db.collection("contractor_applications").doc(appId).onSnapshot(doc=>{
-      if(!doc.exists) return; const d=doc.data();
-      show("con-step-doc-box", !(d.status && ["Approved_For_Payment","Payment_Submitted","Active_Contractor"].includes(d.status)));
-      show("con-step-pay-box", d.status==="Approved_For_Payment");
-      show("con-step-active-box", d.status==="Active_Contractor");
-      if(d.status==="Approved_For_Payment"){
-        const amt=d.contractorTier==='vip'?'₹14,999 (VIP जॉइनिंग)':'₹3,000 (स्मॉल जॉइनिंग)';
+    const appId=localStorage.getItem("mb_contractor_app_id");
+    if(!appId || !window.db || typeof db.collection!=="function") return;
+    // Role tab बार-बार खोलने पर duplicate Firestore listeners/alerts न बनें।
+    if(contractorStatusUnsubscribe){try{contractorStatusUnsubscribe();}catch(_e){} contractorStatusUnsubscribe=null;}
+    const docBox=document.getElementById("con-step-doc-box");
+    if(docBox) docBox.setAttribute("aria-busy","true");
+    contractorStatusUnsubscribe=db.collection("contractor_applications").doc(appId).onSnapshot(async doc=>{
+      if(!doc.exists){
+        show("con-step-doc-box",true); show("con-step-pay-box",false); show("con-step-active-box",false);
+        const btn=document.getElementById("btn-con-app-submit");
+        if(btn){btn.disabled=false;btn.innerText="दस्तावेज़ सत्यापन हेतु जमा करें";}
+        if(docBox) docBox.removeAttribute("aria-busy");
+        return;
+      }
+      const d=doc.data()||{};
+      const status=String(d.status||"Under_Review");
+      // Step 24: never expose payment until both document flags and the approval status agree.
+      const documentsApproved=d.isEligible===true && d.documentVerified===true;
+      const paymentAllowed=status==="Approved_For_Payment" && documentsApproved;
+      const knownStatuses=["Under_Review","Approved_For_Payment","Payment_Submitted","Activation_In_Progress","Active_Contractor"];
+      show("con-step-doc-box", status==="Under_Review" || !knownStatuses.includes(status) || (status==="Approved_For_Payment" && !documentsApproved));
+      show("con-step-pay-box", paymentAllowed);
+      // Active UI remains hidden until the matching profile and payment records are verified below.
+      show("con-step-active-box", false);
+      if(status==="Approved_For_Payment" && !documentsApproved){
+        alertOnce("contractor_docs_not_verified_"+appId,"दस्तावेज़ सत्यापन की पुष्टि नहीं मिली। भुगतान विकल्प खोलने से पहले Admin से आवेदन जाँच कराएँ।");
+      }
+      if(docBox) docBox.removeAttribute("aria-busy");
+      if(paymentAllowed){
+        const amt=d.contractorTier==='vip'?'₹14,999 (VIP प्लान • 30 दिन)':'₹3,000 (स्मॉल प्लान • 30 दिन)';
         set("con-pay-amount-label",`भुगतान राशि: ${amt}`);
       }
-      if(d.status==="Payment_Submitted") alertOnce("payment_submitted_"+appId,"✅ आपका payment/UTR Admin को मिल गया है। Admin payment confirm करेगा।");
-      if(d.status==="Active_Contractor"){
-        d.applicationId=appId;
+      if(status==="Payment_Submitted") alertOnce("payment_submitted_"+appId,"✅ आपका payment/UTR Admin को मिल गया है। Admin payment confirm करेगा।");
+      if(status==="Active_Contractor"){
         const box=document.getElementById("con-active-profile-details");
-        if(box) box.innerHTML=`<div class="bg-slate-50 p-2 rounded-lg"><b>नाम</b><br>${esc(d.name||'—')}</div><div class="bg-slate-50 p-2 rounded-lg"><b>मोबाइल</b><br>${esc(d.phone||'—')}</div><div class="bg-slate-50 p-2 rounded-lg"><b>स्तर</b><br>${d.contractorTier==='vip'?'👑 VIP':'🔨 Small'}</div><div class="bg-slate-50 p-2 rounded-lg"><b>स्थिति</b><br>ACTIVE</div>`;
-        if(window.MB_renderActiveContractorDashboard) window.MB_renderActiveContractorDashboard(d);
+        try{
+          // Step 16: reconcile the application with the actual active profile before rendering it.
+          const profileSnap=await db.collection("contractor_profiles").doc(appId).get();
+          if(!profileSnap.exists) throw new Error("ACTIVE_PROFILE_MISSING");
+          const profile=profileSnap.data()||{};
+          if(String(profile.applicationId||"")!==String(appId) || profile.profileStatus!=="Active" || profile.paymentStatus!=="Confirmed") throw new Error("ACTIVE_PROFILE_MISMATCH");
+          if(String(profile.phone||"")!==String(d.phone||"") || String(profile.contractorTier||"")!==String(d.contractorTier||"")) throw new Error("ACTIVE_PROFILE_MISMATCH");
+          // Step 18: both separate Contractor plans have a fixed 30-day validity.
+          // Older active records without a stored expiry are not silently treated as unlimited.
+          const contractorExpiryValue=profile.validUntil||profile.expiresAt||profile.contractorExpiry||d.validUntil||d.expiresAt||d.contractorExpiry||null;
+          const contractorExpiryDate=(()=>{if(!contractorExpiryValue)return null;try{if(typeof contractorExpiryValue.toDate==="function")return contractorExpiryValue.toDate();const parsed=new Date(contractorExpiryValue);return Number.isNaN(parsed.getTime())?null:parsed;}catch(_e){return null;}})();
+          if(!contractorExpiryDate){
+            show("con-step-active-box",true);
+            if(box) box.innerHTML='<p class="text-amber-800 font-bold">इस पुराने Contractor रिकॉर्ड में सदस्यता की समाप्ति तारीख नहीं मिली। सही अवधि तय करने के लिए Admin से रिकॉर्ड जाँच कराएँ।</p>';
+            if(window.MB_renderActiveContractorDashboard) window.MB_renderActiveContractorDashboard(null);
+            return;
+          }
+          if(contractorExpiryDate.getTime()<=Date.now()){
+            // Step 19/24: show renewal instructions but keep paid dashboard features hidden.
+            // Keep the application status intact for audit/renewal history; mark subscription state separately.
+            show("con-step-active-box",true);
+            if(box) box.innerHTML=`<div class="space-y-3"><p class="text-amber-800 font-bold">आपकी Contractor सदस्यता ${contractorExpiryDate.toLocaleDateString('hi-IN')} को समाप्त हो गई है। Paid Contractor सुविधाएँ बंद हैं। नवीनीकरण के लिए उसी प्लान का भुगतान करें।</p><p class="text-xs font-bold text-slate-700">आपका प्लान: ${profile.contractorTier==='vip'?'VIP ₹14,999':'Small ₹3,000'} · नई अवधि Admin की मंज़ूरी के बाद 30 दिन</p><form onsubmit="MB_submitContractorRenewal(event)" class="space-y-2"><label for="mb-con-renewal-utr" class="block text-xs font-bold">नवीनीकरण का 12-अंकों का UTR</label><input id="mb-con-renewal-utr" required maxlength="12" inputmode="numeric" pattern="[0-9]{12}" class="w-full rounded-lg border px-3 py-2 text-sm" placeholder="12 अंकों का UTR"><label class="block text-xs font-bold">भुगतान स्क्रीनशॉट (वैकल्पिक, अधिकतम 500 KB)<input id="mb-con-renewal-screenshot" type="file" accept="image/jpeg,image/png,image/webp" class="mt-1 block w-full" onchange="MB_previewPaymentScreenshot(this,'mb-con-renewal-screenshot-preview')"></label><img id="mb-con-renewal-screenshot-preview" class="hidden max-h-40 rounded-lg border" alt="भुगतान स्क्रीनशॉट प्रीव्यू"><button type="submit" id="mb-con-renewal-submit" class="w-full rounded-lg bg-amber-600 px-3 py-2 text-white font-bold">नवीनीकरण अनुरोध भेजें</button></form><p id="mb-con-renewal-status" class="text-xs" aria-live="polite"></p></div>`;
+            if(window.MB_renderActiveContractorDashboard) window.MB_renderActiveContractorDashboard(null);
+            if(window.MB_setContractorSubscriptionState) window.MB_setContractorSubscriptionState("expired",appId,contractorExpiryDate);
+            return;
+          }
+          const activeData={...d,...profile,applicationId:appId,profileId:d.profileId||appId,contractorExpiry:contractorExpiryDate.toISOString(),subscriptionState:"active",planDurationDays:30};
+          show("con-step-active-box",true);
+          // Best-effort sync; do not delay rendering if metadata write is denied by rules.
+          if(String(d.subscriptionState||profile.subscriptionState||"")!=="active") window.MB_setContractorSubscriptionState("active",appId,contractorExpiryDate);
+          const safeText=v=>String(v==null?'—':v).replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[c]));
+          const planAmount=activeData.contractorTier==='vip'?14999:3000;
+          const planName=activeData.contractorTier==='vip'?'VIP ₹14,999':'Small ₹3,000';
+          if(box) box.innerHTML=`<div class="bg-slate-50 p-2 rounded-lg"><b>नाम</b><br>${safeText(activeData.name)}</div><div class="bg-slate-50 p-2 rounded-lg"><b>मोबाइल</b><br>${safeText(activeData.phone)}</div><div class="bg-slate-50 p-2 rounded-lg"><b>प्लान</b><br>${planName} · ₹${planAmount.toLocaleString('en-IN')}</div><div class="bg-slate-50 p-2 rounded-lg"><b>वैधता</b><br>30 दिन · समाप्ति: ${safeText(contractorExpiryDate.toLocaleDateString('hi-IN'))}</div><div class="bg-slate-50 p-2 rounded-lg"><b>स्थिति</b><br>ACTIVE · PAYMENT CONFIRMED</div>`;
+          if(window.MB_renderActiveContractorDashboard) window.MB_renderActiveContractorDashboard(activeData);
+        }catch(profileErr){
+          console.error("Contractor application/profile mismatch:",profileErr);
+          show("con-step-active-box",true);
+          if(window.MB_renderActiveContractorDashboard) window.MB_renderActiveContractorDashboard(null);
+          if(box) box.innerHTML='<p class="text-amber-700 font-bold">प्रोफ़ाइल रिकॉर्ड की पुष्टि नहीं हो सकी। Admin से जाँच कराएँ; दोबारा भुगतान न करें।</p>';
+          window.alertOnce?.("contractor_profile_reconcile_"+appId,"आवेदन Active है, लेकिन प्रोफ़ाइल/भुगतान रिकॉर्ड का मिलान नहीं हुआ। Admin से जाँच कराएँ; दोबारा भुगतान न करें।");
+        }
       }
+    },err=>{
+      if(docBox) docBox.removeAttribute("aria-busy");
+      console.error("Contractor status could not be loaded:",err);
+      show("con-step-doc-box",true); show("con-step-pay-box",false); show("con-step-active-box",false);
+      alert("ठेकेदार आवेदन की स्थिति लोड नहीं हो सकी। इंटरनेट जाँचकर फिर प्रयास करें।");
     });
   };
 
   window.submitContractorFinalPayment = async function(e){
     if (e && typeof e.preventDefault === "function") e.preventDefault();
     const utr = String(val("con-pay-utr") || "").trim();
+    let paymentScreenshot="";try{paymentScreenshot=await window.MB_readPaymentScreenshot("con-pay-screenshot");}catch(screenshotErr){return alert(screenshotErr.message||"स्क्रीनशॉट जाँचें।");}
     const appId = localStorage.getItem("mb_contractor_app_id");
     if (!appId) return alert("Application नहीं मिली।");
-    // UTR must contain exactly 12 digits; avoid the escaped-regex bug.
     if (!/^\d{12}$/.test(utr)) return alert("12 अंकों का वैध UTR नंबर दर्ज करें!");
     if (typeof db === "undefined" || !db || typeof firebase === "undefined" || !firebase.firestore) {
       return alert("डेटाबेस अभी उपलब्ध नहीं है। कुछ देर बाद फिर कोशिश करें।");
     }
     const btn = document.getElementById("btn-con-pay-submit");
     const oldText = btn ? btn.innerText : "";
-    if (btn) { btn.disabled = true; btn.innerText = "जमा हो रहा है..."; }
+    if(btn && btn.disabled) return;
+    if (btn) { btn.disabled = true; btn.setAttribute("aria-busy","true"); btn.innerText = "जमा हो रहा है..."; }
     try {
-      await db.collection("contractor_applications").doc(appId).update({
-        paymentUtr: utr,
-        status: "Payment_Submitted",
-        paymentStatus: "Submitted",
-        paymentSubmittedAt: firebase.firestore.FieldValue.serverTimestamp()
+      const appRef = db.collection("contractor_applications").doc(appId);
+      await db.runTransaction(async tx => {
+        const appSnap = await tx.get(appRef);
+        if (!appSnap.exists) throw new Error("APPLICATION_NOT_FOUND");
+        const app = appSnap.data() || {};
+        if (app.status !== "Approved_For_Payment" || app.isEligible !== true || app.documentVerified !== true) throw new Error("NOT_APPROVED_FOR_PAYMENT");
+        if (!["small", "vip"].includes(String(app.contractorTier || ""))) throw new Error("INVALID_TIER");
+        const expectedAmount = app.contractorTier === "vip" ? 14999 : 3000;
+        if ((app.planAmount != null && Number(app.planAmount) !== expectedAmount) || (app.planDurationDays != null && Number(app.planDurationDays) !== 30)) throw new Error("PLAN_MISMATCH");
+        const existingUtr = String(app.paymentUtr || "").trim();
+        if (app.status === "Payment_Submitted" || app.paymentStatus === "Submitted" || app.paymentStatus === "Confirmed") throw new Error("PAYMENT_ALREADY_SUBMITTED");
+        const duplicateQuery = db.collection("contractor_applications").where("paymentUtr", "==", utr);
+        const duplicateSnap = await tx.get(duplicateQuery);
+        if (duplicateSnap.docs.some(doc => doc.id !== appId && ["Submitted", "Confirmed"].includes(String((doc.data() || {}).paymentStatus || "")))) throw new Error("UTR_ALREADY_USED");
+        tx.update(appRef, {
+          paymentUtr: utr,
+          paymentScreenshot: paymentScreenshot,
+          planAmount: expectedAmount,
+          planDurationDays: 30,
+          paymentStatus: "Submitted",
+          status: "Payment_Submitted",
+          paymentSubmittedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
       });
-      alert("✅ Payment request Admin को भेज दी गई है। Payment confirm होने के बाद यही profile Active होगी।");
+      alert("✅ भुगतान अनुरोध Admin को भेज दिया गया है। चुने गए प्लान की राशि और 30 दिन की अवधि के अनुसार Admin भुगतान सत्यापित करेगा।");
     } catch (err) {
       console.error("Contractor UTR submission failed:", err);
-      alert("❌ UTR जमा नहीं हुआ। इंटरनेट और आवेदन की स्थिति जाँचकर फिर कोशिश करें।");
+      const messages = {
+        APPLICATION_NOT_FOUND: "आवेदन नहीं मिला।",
+        NOT_APPROVED_FOR_PAYMENT: "दस्तावेज़ सत्यापन पूरा होने और Admin की भुगतान अनुमति के बाद ही UTR जमा करें।",
+        INVALID_TIER: "Contractor प्लान सही नहीं है। Admin से संपर्क करें।",
+        PLAN_MISMATCH: "आवेदन की कीमत या 30-दिन की अवधि रिकॉर्ड से मेल नहीं खाती। Admin से जाँच कराएँ।",
+        PAYMENT_ALREADY_SUBMITTED: "इस आवेदन का भुगतान अनुरोध पहले ही जमा हो चुका है। दोबारा UTR न भेजें।",
+        UTR_ALREADY_USED: "यह UTR दूसरे Contractor आवेदन में पहले से दर्ज है। भुगतान रिकॉर्ड जाँचें।"
+      };
+      alert(messages[err.message] || "UTR जमा नहीं हुआ। इंटरनेट और आवेदन की स्थिति जाँचकर फिर कोशिश करें।");
     } finally {
-      if (btn) { btn.disabled = false; btn.innerText = oldText || "UTR जमा करें"; }
+      if (btn) { btn.disabled = false; btn.removeAttribute("aria-busy"); btn.innerText = oldText || "UTR जमा करें"; }
     }
   };
-  window.adminApproveContractorEligibility = function(id){
-    db.collection("contractor_applications").doc(id).update({status:"Approved_For_Payment",isEligible:true,documentVerified:true,verifiedAt:firebase.firestore.FieldValue.serverTimestamp(),approvedBy:currentOperator})
-      .then(()=>{alert("✅ पूरा application और documents verify हो गए। अब payment की अनुमति है।");});
+
+  window.adminApproveContractorEligibility = async function(id){
+    if(!id || typeof db==="undefined" || !db || typeof firebase==="undefined") return alert("डेटाबेस या आवेदन ID उपलब्ध नहीं है।");
+    try{
+      const ref=db.collection("contractor_applications").doc(id);
+      await db.runTransaction(async tx=>{
+        const snap=await tx.get(ref);
+        if(!snap.exists) throw new Error("APPLICATION_NOT_FOUND");
+        const c=snap.data()||{};
+        if(c.status!=="Under_Review") throw new Error("APPLICATION_NOT_PENDING");
+        tx.update(ref,{status:"Approved_For_Payment",isEligible:true,documentVerified:true,verifiedAt:firebase.firestore.FieldValue.serverTimestamp(),approvedBy:typeof currentOperator!=="undefined"?currentOperator:"Admin"});
+      });
+      alert("✅ पूरा application और documents verify हो गए। अब payment की अनुमति है।");
+    }catch(err){
+      console.error("Contractor eligibility approval failed:",err);
+      alert(err.message==="APPLICATION_NOT_FOUND"?"आवेदन नहीं मिला।":err.message==="APPLICATION_NOT_PENDING"?"यह आवेदन पहले ही आगे बढ़ चुका है। सूची Refresh करें।":"आवेदन Approve नहीं हुआ। Firebase अनुमति और आवेदन की स्थिति जाँचें।");
+    }
   };
 
   window.adminActivateContractorPass = async function(id){
-    const ref=db.collection("contractor_applications").doc(id); const snap=await ref.get();
-    if(!snap.exists) return alert("Application नहीं मिली!");
-    const c=snap.data();
-    if(c.status!=="Payment_Submitted") return alert("पहले payment/UTR submit होना जरूरी है।");
+    if(!id || typeof db==="undefined" || !db || typeof firebase==="undefined") return alert("डेटाबेस या आवेदन ID उपलब्ध नहीं है।");
+    const ref=db.collection("contractor_applications").doc(id);
+    let c=null,claimed=false;
     try{
-      const profile={applicationId:id,contractorTier:c.contractorTier,name:c.name,phone:c.phone,laborCapacity:c.laborCapacity,experience:c.experience,
-        aadhaarFront:c.aadhaarFront||"",aadhaarBack:c.aadhaarBack||"",govDoc:c.govDoc||"",panDoc:c.panDoc||"",bankDoc:c.bankDoc||"",
-        verified:true,profileStatus:"Active",paymentStatus:"Confirmed",paymentUtr:c.paymentUtr||"",createdAt:c.createdAt||firebase.firestore.FieldValue.serverTimestamp(),activatedAt:firebase.firestore.FieldValue.serverTimestamp(),activatedBy:currentOperator};
-      const p=await db.collection("contractor_profiles").add(profile);
-      await ref.update({status:"Active_Contractor",profileStatus:"Active",paymentStatus:"Confirmed",paymentConfirmedAt:firebase.firestore.FieldValue.serverTimestamp(),activatedBy:currentOperator,profileId:p.id});
-      alert("🎉 Payment confirm हो गया और Contractor Profile ACTIVE कर दिया गया है। अब form दोबारा नहीं भरना होगा।");
-      loadAdminContractors();
-    }catch(err){alert("❌ Profile activate नहीं हो पाया: "+err.message);}
+      await db.runTransaction(async tx=>{
+        const snap=await tx.get(ref);
+        if(!snap.exists) throw new Error("APPLICATION_NOT_FOUND");
+        const current=snap.data()||{};
+        if(current.status==="Active_Contractor" && current.profileId) throw new Error("ALREADY_ACTIVE");
+        if(current.status!=="Payment_Submitted") throw new Error("PAYMENT_NOT_SUBMITTED");
+        if(!/^\d{12}$/.test(String(current.paymentUtr||""))) throw new Error("INVALID_UTR");
+        if(!["vip","small"].includes(String(current.contractorTier||""))) throw new Error("INVALID_TIER");
+        const expectedPlanAmount=current.contractorTier==="vip"?14999:3000;
+        if(Number(current.planAmount)!==expectedPlanAmount||Number(current.planDurationDays)!==30) throw new Error("PLAN_MISMATCH");
+        if(current.paymentStatus!=="Submitted") throw new Error("PAYMENT_NOT_SUBMITTED");
+        if(!current.name || !/^\+91\d{10}$/.test(String(current.phone||""))) throw new Error("INVALID_PROFILE");
+        c=current;
+        tx.update(ref,{status:"Activation_In_Progress",activationStartedAt:firebase.firestore.FieldValue.serverTimestamp(),activationStartedBy:typeof currentOperator!=="undefined"?currentOperator:"Admin"});
+        claimed=true;
+      });
+      if(!claimed || !c) return alert("आवेदन सक्रिय करने की अनुमति नहीं मिली।");
+      if(!confirm("क्या आपने बैंक/UPI ऐप में UTR की वास्तविक जाँच करके भुगतान की पुष्टि कर ली है? केवल UTR दर्ज होना भुगतान का प्रमाण नहीं है।")){
+        await ref.update({status:"Payment_Submitted",activationStartedAt:firebase.firestore.FieldValue.delete(),activationStartedBy:firebase.firestore.FieldValue.delete()});
+        return;
+      }
+      // Fix15: use a stable profile ID and atomically activate the application.
+      // This prevents duplicate contractor profiles if a retry happens after a partial failure.
+      const profileRef=db.collection("contractor_profiles").doc(id);
+      const activatedBy=typeof currentOperator!=="undefined"?currentOperator:"Admin";
+      await db.runTransaction(async tx=>{
+        const appSnap=await tx.get(ref);
+        if(!appSnap.exists) throw new Error("APPLICATION_NOT_FOUND");
+        const latest=appSnap.data()||{};
+        if(latest.status==="Active_Contractor" && latest.profileId===id) return;
+        if(latest.status!=="Activation_In_Progress") throw new Error("ACTIVATION_STATE_CHANGED");
+        const profileSnap=await tx.get(profileRef);
+        if(profileSnap.exists && String((profileSnap.data()||{}).applicationId||"")!==String(id)) throw new Error("PROFILE_ID_CONFLICT");
+        // Both Small (₹3,000) and VIP (₹14,999) are separate 30-day plans.
+        // Start validity when Admin confirms payment and activates the plan.
+        const activationDate=new Date();
+        const expiryDate=new Date(activationDate.getTime()+30*24*60*60*1000);
+        const activatedAtTimestamp=firebase.firestore.Timestamp.fromDate(activationDate);
+        const validUntilTimestamp=firebase.firestore.Timestamp.fromDate(expiryDate);
+        if(!profileSnap.exists){
+          const profile={applicationId:id,contractorTier:c.contractorTier,planAmount:c.contractorTier==="vip"?14999:3000,planDurationDays:30,
+            name:c.name,phone:c.phone,laborCapacity:c.laborCapacity,experience:c.experience,
+            aadhaarFront:c.aadhaarFront||"",aadhaarBack:c.aadhaarBack||"",govDoc:c.govDoc||"",panDoc:c.panDoc||"",bankDoc:c.bankDoc||"",
+            verified:true,profileStatus:"Active",paymentStatus:"Confirmed",paymentUtr:c.paymentUtr,validFrom:activatedAtTimestamp,validUntil:validUntilTimestamp,contractorExpiry:validUntilTimestamp,
+            createdAt:c.createdAt||firebase.firestore.FieldValue.serverTimestamp(),activatedAt:activatedAtTimestamp,activatedBy};
+          tx.set(profileRef,profile);
+        }
+        tx.update(ref,{status:"Active_Contractor",profileStatus:"Active",paymentStatus:"Confirmed",paymentConfirmedAt:activatedAtTimestamp,
+          planAmount:c.contractorTier==="vip"?14999:3000,planDurationDays:30,validFrom:activatedAtTimestamp,validUntil:validUntilTimestamp,contractorExpiry:validUntilTimestamp,activatedBy,profileId:id});
+      });
+      alert("🎉 भुगतान की पुष्टि दर्ज हुई और Contractor Profile ACTIVE हो गई।");
+      if(typeof loadAdminContractors==="function") loadAdminContractors();
+    }catch(err){
+      console.error("Contractor payment approval/activation failed:",err);
+      if(claimed){try{const latest=await ref.get();if(latest.exists&&latest.data().status==="Activation_In_Progress")await ref.update({status:"Payment_Submitted",activationStartedAt:firebase.firestore.FieldValue.delete(),activationStartedBy:firebase.firestore.FieldValue.delete()});}catch(rollbackErr){console.error("Contractor activation recovery failed:",rollbackErr);}}
+      const messages={APPLICATION_NOT_FOUND:"आवेदन नहीं मिला।",ALREADY_ACTIVE:"यह Contractor पहले से Active है। दोबारा Profile नहीं बनाई गई।",PAYMENT_NOT_SUBMITTED:"पहले UTR submit होना और payment status Submitted होना जरूरी है।",INVALID_UTR:"12 अंकों का UTR सही नहीं है।",INVALID_TIER:"Contractor का प्लान सही नहीं है।",PLAN_MISMATCH:"प्लान की कीमत या 30 दिन की अवधि रिकॉर्ड से मेल नहीं खाती। Admin से जाँच कराएँ।",INVALID_PROFILE:"Contractor का नाम या मोबाइल नंबर सही नहीं है।",ACTIVATION_STATE_CHANGED:"आवेदन की स्थिति बदल गई है। सूची Refresh करके फिर जाँचें।",PROFILE_ID_CONFLICT:"इस आवेदन ID से अलग प्रोफ़ाइल मौजूद है। Admin से जाँच कराएँ."};
+      alert(messages[err.message]||("Profile Active नहीं हुई। Firebase अनुमति और आवेदन की स्थिति जाँचें।"));
+    }
+  };
+
+  // Step 20: Contractor renewal request and Admin-approved 30-day extension.
+  window.MB_submitContractorRenewal = async function(e){
+    if(e&&typeof e.preventDefault==="function")e.preventDefault();
+    const appId=localStorage.getItem("mb_contractor_app_id");
+    const utr=String(document.getElementById("mb-con-renewal-utr")?.value||"").trim();
+    let paymentScreenshot="";try{paymentScreenshot=await window.MB_readPaymentScreenshot("mb-con-renewal-screenshot");}catch(screenshotErr){return (document.getElementById("mb-con-renewal-status")||{}).textContent=screenshotErr.message||"स्क्रीनशॉट जाँचें।";}
+    const statusEl=document.getElementById("mb-con-renewal-status");
+    const btn=document.getElementById("mb-con-renewal-submit");
+    const say=m=>{if(statusEl)statusEl.textContent=m;};
+    if(!appId)return say("आवेदन नहीं मिला। Admin से संपर्क करें।");
+    if(!/^\d{12}$/.test(utr))return say("कृपया 12 अंकों का सही UTR दर्ज करें।");
+    if(!window.db||!window.firebase||!firebase.firestore)return say("डेटाबेस उपलब्ध नहीं है। बाद में प्रयास करें।");
+    if(btn){btn.disabled=true;btn.textContent="अनुरोध भेज रहे हैं…";}
+    try{
+      const ref=db.collection("contractor_applications").doc(appId);
+      await db.runTransaction(async tx=>{
+        const snap=await tx.get(ref);if(!snap.exists)throw new Error("APPLICATION_NOT_FOUND");
+        const d=snap.data()||{};
+        if(d.status!=="Active_Contractor")throw new Error("APPLICATION_NOT_ACTIVE");
+        if(d.renewalPaymentStatus==="Submitted")throw new Error("RENEWAL_ALREADY_PENDING");
+        // Step 22: reject unknown/mismatched plans before accepting a renewal payment request.
+        if(!["vip","small"].includes(String(d.contractorTier||"")))throw new Error("INVALID_TIER");
+        const expectedAmount=d.contractorTier==="vip"?14999:3000;
+        if((d.planAmount!=null&&Number(d.planAmount)!==expectedAmount)||(d.planDurationDays!=null&&Number(d.planDurationDays)!==30))throw new Error("APPLICATION_PLAN_MISMATCH");
+        const profileRef=db.collection("contractor_profiles").doc(appId);
+        const profileSnap=await tx.get(profileRef);
+        if(!profileSnap.exists)throw new Error("PROFILE_MISSING");
+        const profile=profileSnap.data()||{};
+        if(String(profile.applicationId||"")!==String(appId)||profile.profileStatus!=="Active")throw new Error("PROFILE_MISMATCH");
+        if(String(profile.contractorTier||"")!==String(d.contractorTier)||Number(profile.planAmount)!==expectedAmount||Number(profile.planDurationDays)!==30)throw new Error("PROFILE_PLAN_MISMATCH");
+        const end=d.validUntil||d.contractorExpiry||profile.validUntil||profile.contractorExpiry;
+        let endDate=null;try{endDate=end&&typeof end.toDate==="function"?end.toDate():new Date(end);}catch(_e){}
+        if(!endDate||!Number.isFinite(endDate.getTime())||endDate.getTime()>Date.now())throw new Error("NOT_EXPIRED");
+        // Reject a UTR already recorded on another application to reduce accidental duplicate claims.
+        const duplicateQuery=db.collection("contractor_applications").where("renewalPaymentUtr","==",utr);
+        const duplicateSnap=await tx.get(duplicateQuery);
+        if(duplicateSnap.docs.some(doc=>doc.id!==appId&&String((doc.data()||{}).renewalPaymentStatus||"")==="Submitted"))throw new Error("UTR_ALREADY_USED");
+        tx.update(ref,{renewalPaymentUtr:utr,renewalPaymentScreenshot:paymentScreenshot,renewalPaymentStatus:"Submitted",renewalRequestedAt:firebase.firestore.FieldValue.serverTimestamp(),renewalPlanAmount:expectedAmount,renewalPlanDurationDays:30});
+      });
+      say("नवीनीकरण अनुरोध Admin को भेज दिया गया है। भुगतान की जाँच और मंज़ूरी तक सुविधाएँ बंद रहेंगी।");
+      if(btn){btn.disabled=true;btn.textContent="नवीनीकरण अनुरोध जमा है";}
+    }catch(err){
+      const messages={APPLICATION_NOT_FOUND:"आवेदन नहीं मिला।",APPLICATION_NOT_ACTIVE:"आवेदन Active नहीं है; Admin से संपर्क करें।",RENEWAL_ALREADY_PENDING:"नवीनीकरण पहले से Admin की जाँच में है।",NOT_EXPIRED:"नवीनीकरण केवल अवधि समाप्त होने के बाद भेज सकते हैं।",INVALID_TIER:"Contractor प्लान की पहचान सही नहीं है। Admin से जाँच कराएँ।",APPLICATION_PLAN_MISMATCH:"आवेदन में प्लान की कीमत या अवधि गलत है। Admin से जाँच कराएँ।",PROFILE_MISSING:"Contractor Profile नहीं मिली। दोबारा भुगतान न करें; Admin से संपर्क करें।",PROFILE_MISMATCH:"आवेदन और Contractor Profile का मिलान नहीं हुआ। Admin से जाँच कराएँ।",PROFILE_PLAN_MISMATCH:"आवेदन और Profile के प्लान/कीमत/30-दिन की अवधि अलग हैं। Admin से जाँच कराएँ।",UTR_ALREADY_USED:"यह UTR किसी दूसरे नवीनीकरण अनुरोध में पहले से दर्ज है। भुगतान रिकॉर्ड जाँचें।"};
+      say(messages[err.message]||"नवीनीकरण अनुरोध जमा नहीं हुआ। इंटरनेट और आवेदन की स्थिति जाँचें।");
+      if(btn){btn.disabled=false;btn.textContent="नवीनीकरण अनुरोध भेजें";}
+    }
+  };
+
+  window.adminApproveContractorRenewal = async function(id){
+    if(!id||!window.db||!window.firebase||!firebase.firestore)return alert("डेटाबेस या आवेदन ID उपलब्ध नहीं है।");
+    if(!confirm("क्या आपने बैंक/UPI में Renewal UTR की वास्तविक पुष्टि कर ली है? मंज़ूरी के बाद इसी प्लान की अवधि 30 दिन के लिए बढ़ेगी।"))return;
+    const appRef=db.collection("contractor_applications").doc(id),profileRef=db.collection("contractor_profiles").doc(id);
+    try{
+      await db.runTransaction(async tx=>{
+        const appSnap=await tx.get(appRef);if(!appSnap.exists)throw new Error("APPLICATION_NOT_FOUND");
+        const a=appSnap.data()||{};
+        if(a.status!=="Active_Contractor"||a.renewalPaymentStatus!=="Submitted")throw new Error("RENEWAL_NOT_PENDING");
+        if(!/^\d{12}$/.test(String(a.renewalPaymentUtr||"")))throw new Error("INVALID_UTR");
+        if(!["vip","small"].includes(String(a.contractorTier||"")))throw new Error("INVALID_TIER");
+        const expectedAmount=a.contractorTier==="vip"?14999:3000;
+        if(Number(a.renewalPlanAmount)!==expectedAmount||Number(a.renewalPlanDurationDays)!==30)throw new Error("RENEWAL_PLAN_MISMATCH");
+        const profileSnap=await tx.get(profileRef);if(!profileSnap.exists)throw new Error("PROFILE_MISSING");
+        const p=profileSnap.data()||{};
+        if(String(p.applicationId||"")!==String(id)||p.profileStatus!=="Active")throw new Error("PROFILE_MISMATCH");
+        if(String(p.contractorTier||"")!==String(a.contractorTier||"")||Number(p.planAmount)!==expectedAmount)throw new Error("PROFILE_PLAN_MISMATCH");
+        const now=new Date(),until=new Date(now.getTime()+30*24*60*60*1000);
+        const fromTs=firebase.firestore.Timestamp.fromDate(now),untilTs=firebase.firestore.Timestamp.fromDate(until);
+        const by=typeof currentOperator!=="undefined"?currentOperator:"Admin";
+        tx.update(profileRef,{validFrom:fromTs,validUntil:untilTs,contractorExpiry:untilTs,planDurationDays:30,subscriptionState:"active",paymentStatus:"Confirmed",renewalPaymentUtr:a.renewalPaymentUtr,renewalConfirmedAt:fromTs,renewalApprovedBy:by});
+        tx.update(appRef,{validFrom:fromTs,validUntil:untilTs,contractorExpiry:untilTs,planDurationDays:30,subscriptionState:"active",paymentStatus:"Confirmed",renewalPaymentStatus:"Confirmed",renewalConfirmedAt:fromTs,renewalApprovedBy:by,renewalPlanAmount:a.contractorTier==="vip"?14999:3000});
+      });
+      alert("नवीनीकरण मंज़ूर हुआ। Contractor का संबंधित प्लान 30 दिन के लिए फिर सक्रिय है।");
+      if(typeof loadAdminContractors==="function")loadAdminContractors();
+      if(typeof window.checkContractorStatus==="function")window.checkContractorStatus();
+    }catch(err){
+      console.error("Contractor renewal approval failed:",err);
+      const messages={APPLICATION_NOT_FOUND:"आवेदन नहीं मिला।",RENEWAL_NOT_PENDING:"नवीनीकरण अनुरोध Pending नहीं है।",INVALID_UTR:"Renewal UTR सही नहीं है।",INVALID_TIER:"प्लान सही नहीं है।",RENEWAL_PLAN_MISMATCH:"Renewal राशि या 30-दिन की अवधि रिकॉर्ड से मेल नहीं खाती। Admin से जाँच कराएँ।",PROFILE_MISSING:"Contractor Profile नहीं मिली।",PROFILE_MISMATCH:"आवेदन और Profile का मिलान नहीं हुआ। Admin से जाँच कराएँ।",PROFILE_PLAN_MISMATCH:"आवेदन और Profile के प्लान/कीमत अलग हैं। Admin से जाँच कराएँ।"};
+      alert(messages[err.message]||"नवीनीकरण मंज़ूर नहीं हुआ। Firebase अनुमति और रिकॉर्ड जाँचें।");
+    }
   };
 
   window.loadAdminContractors = function(){
@@ -6316,11 +6608,13 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
               <p><b>नाम:</b> ${esc(c.name||'—')}</p><p><b>मोबाइल:</b> ${esc(c.phone||'—')}</p><p><b>स्तर:</b> ${vip?'VIP':'Small'}</p><p><b>लेबर क्षमता:</b> ${esc(c.laborCapacity||'—')}</p><p><b>अनुभव:</b> ${esc(c.experience||'—')} वर्ष</p>
               <div class="border-t pt-1 mt-1"><b>Documents:</b>${docLink('Aadhaar Front',c.aadhaarFront)}${docLink('Aadhaar Back',c.aadhaarBack)}${vip?docLink('GST/Udyam/PWD',c.govDoc):''}${vip?docLink('Firm PAN',c.panDoc):''}${vip?docLink('Bank/Cancelled Cheque',c.bankDoc):''}</div>
               ${c.paymentUtr?`<p class="text-emerald-700 font-bold pt-1">💳 UTR: ${esc(c.paymentUtr)}</p>`:''}
+              ${typeof c.paymentScreenshot==='string'&&/^data:image\/(png|jpeg|webp);base64,/i.test(c.paymentScreenshot)?`<a href="${esc(c.paymentScreenshot)}" target="_blank" rel="noopener noreferrer" class="block text-[9px] text-blue-700 font-bold underline">🧾 शुरुआती भुगतान स्क्रीनशॉट देखें</a>`:`<p class="text-[9px] text-slate-500">शुरुआती भुगतान स्क्रीनशॉट नहीं दिया</p>`}
             </div>
           </details>
           ${c.status==='Under_Review'?`<button type="button" data-contractor-action="approve" data-application-id="${safeId}" onclick="adminApproveContractorEligibility(this.dataset.applicationId)" class="w-full bg-emerald-600 text-white py-2 rounded text-[10px] font-black">✓ Documents Verify करें → Payment खोलें</button>`:''}
-          ${c.status==='Payment_Submitted'?`<button type="button" data-contractor-action="activate" data-application-id="${safeId}" onclick="adminActivateContractorPass(this.dataset.applicationId)" class="w-full bg-blue-600 text-white py-2 rounded text-[10px] font-black">💳 Payment Confirm करें → Profile ACTIVE करें</button>`:''}
-          ${c.status==='Active_Contractor'?`<div class="text-center bg-emerald-50 text-emerald-800 py-1.5 rounded text-[10px] font-black">✓ ACTIVE / PAYMENT CONFIRMED</div>`:''}
+          ${c.status==='Payment_Submitted'?`${typeof c.paymentScreenshot==='string'&&/^data:image\/(png|jpeg|webp);base64,/i.test(c.paymentScreenshot)?`<a href="${esc(c.paymentScreenshot)}" target="_blank" rel="noopener noreferrer" class="block text-[10px] text-blue-700 font-bold underline">🧾 शुरुआती भुगतान स्क्रीनशॉट देखें</a>`:`<p class="text-[9px] text-slate-500">शुरुआती भुगतान स्क्रीनशॉट नहीं दिया</p>`}<button type="button" data-contractor-action="activate" data-application-id="${safeId}" onclick="adminActivateContractorPass(this.dataset.applicationId)" class="w-full bg-blue-600 text-white py-2 rounded text-[10px] font-black">💳 Payment Confirm करें → Profile ACTIVE करें</button>`:''}
+          ${c.renewalPaymentStatus==='Submitted'?`<div class="rounded bg-amber-50 p-2 text-[10px] font-bold text-amber-900">Renewal UTR: ${esc(c.renewalPaymentUtr||'—')} · प्लान: ${vip?'VIP ₹14,999':'Small ₹3,000'} · 30 दिन</div>${typeof c.renewalPaymentScreenshot==='string'&&/^data:image\/(png|jpeg|webp);base64,/i.test(c.renewalPaymentScreenshot)?`<a href="${esc(c.renewalPaymentScreenshot)}" target="_blank" rel="noopener noreferrer" class="block text-[10px] text-blue-600 font-bold">🧾 नवीनीकरण भुगतान स्क्रीनशॉट देखें</a>`:`<p class="text-[10px] text-slate-500">नवीनीकरण स्क्रीनशॉट नहीं दिया</p>`}<button type="button" data-application-id="${safeId}" onclick="adminApproveContractorRenewal(this.dataset.applicationId)" class="w-full bg-amber-600 text-white py-2 rounded text-[10px] font-black">🔄 Renewal Payment जाँचकर 30 दिन बढ़ाएँ</button>`:''}
+          ${c.status==='Active_Contractor'?`<div class="text-center bg-emerald-50 text-emerald-800 py-1.5 rounded text-[10px] font-black">✓ ACTIVE / PAYMENT CONFIRMED</div><div class="rounded bg-slate-50 p-2 text-[10px] text-slate-700">प्लान: ${vip?'VIP ₹14,999':'Small ₹3,000'} · अवधि: ${Number(c.planDurationDays)===30?'30 दिन':'अवधि रिकॉर्ड जाँचें'} · समाप्ति: ${esc((()=>{const v=c.validUntil||c.contractorExpiry;try{const dt=v&&typeof v.toDate==='function'?v.toDate():new Date(v);return Number.isFinite(dt.getTime())?dt.toLocaleDateString('hi-IN'):'तारीख उपलब्ध नहीं';}catch(_){return 'तारीख उपलब्ध नहीं';}})())}</div>`:''}
         </div>`;
       });
     }, err=>{
@@ -6358,10 +6652,11 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
     if(typeEl) typeEl.textContent=tier==='vip'?"👑 VIP Contractor":"🔨 Small Contractor";
     if(idEl) idEl.textContent="Contractor ID: "+id;
     if(locEl) locEl.textContent="📍 "+(d.district||d.city||d.state||"क्षेत्र सुरक्षित");
+    const safeSummaryText=v=>String(v==null||v===""?"—":v).replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[c]));
     if(summary) summary.innerHTML=[
       ["नाम",d.name||"—"],["मोबाइल",d.phone||"—"],["लेबर क्षमता",d.laborCapacity||"—"],["अनुभव",d.experience?d.experience+" वर्ष":"—"],
       ["Aadhaar","✓ Verified"],["Membership",tier==='vip'?"VIP Contractor":"Small Contractor"]
-    ].map(x=>`<div class="bg-slate-50 rounded-lg p-2"><span class="block text-slate-400">${x[0]}</span><b class="text-slate-800">${x[1]}</b></div>`).join("");
+    ].map(x=>`<div class="bg-slate-50 rounded-lg p-2"><span class="block text-slate-400">${x[0]}</span><b class="text-slate-800">${safeSummaryText(x[1])}</b></div>`).join("");
     if(vip) vip.classList.toggle("hidden",tier!=="vip");
     const badge=document.getElementById("con-active-verified-badge");
     if(badge) badge.textContent=tier==='vip'?"✓ Verified VIP Contractor":"✓ Verified Small Contractor";
@@ -6714,16 +7009,19 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
   window.MB_submitMaterialPromotion=async function(){
     const phone=localStorage.getItem("mb_material_phone"); if(!phone)return alert("पहले Material Seller Profile/Login करें।");
     const utr=(document.getElementById("material-ad-utr")?.value||"").trim();
-    if(!utr)return alert("Payment UTR नंबर डालें।");
+    let paymentScreenshot="";try{paymentScreenshot=await window.MB_readPaymentScreenshot("material-ad-screenshot");}catch(screenshotErr){return alert(screenshotErr.message||"स्क्रीनशॉट जाँचें।");}
+    if(!/^\d{12}$/.test(utr))return alert("कृपया 12 अंकों का सही Payment UTR नंबर डालें।");
     const prov=await mbExistingProvider("material_providers",phone);
     if(!prov||prov.data.adminApprovalStatus!=="approved")return alert("पहले Material Seller Profile Admin से Approved होना चाहिए।");
     const existing=await db.collection("material_ad_requests").where("providerId","==",prov.id).where("status","==","pending").limit(1).get();
     if(!existing.empty)return alert("आपका एक Promotion Request पहले से Pending है।");
+    const duplicateUtr=await db.collection("material_ad_requests").where("utr","==",utr).limit(1).get();
+    if(!duplicateUtr.empty)return alert("यह UTR पहले किसी Promotion Request में इस्तेमाल हो चुका है। सही Transaction ID जाँचें।");
     await db.collection("material_ad_requests").add({
       providerId:prov.id,providerPhone:phone,shopName:prov.data.name||"",
       location:prov.data.area||"",description:prov.data.description||prov.data.items||"",
       phone:prov.data.phone||phone,material:prov.data.items||"",
-      amount:1000,utr,status:"pending",bannerUrl:prov.data.photo||"",
+      amount:1000,utr,paymentScreenshot,status:"pending",bannerUrl:prov.data.photo||"",
       createdAt:firebase.firestore.FieldValue.serverTimestamp()
     });
     const st=document.getElementById("material-ad-status"); if(st)st.textContent="⏳ Payment request Admin के पास भेज दी गई है। Payment verify होने पर प्रचार Live होगा।";
@@ -6762,17 +7060,35 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
     snap.forEach(doc=>{
       const d=doc.data()||{},id=doc.id,el=document.createElement("div");el.className="bg-white border rounded-xl p-3 space-y-2";
       const bannerSrc=MB_safeImageSrc(d.bannerUrl);
-      el.innerHTML=`<div class="flex gap-2">${bannerSrc?`<img src="${mbEsc(bannerSrc)}" loading="lazy" referrerpolicy="no-referrer" class="w-14 h-14 rounded-lg object-cover" alt="दुकान का बैनर">`:''}<div><b class="text-xs">${mbEsc(d.shopName)}</b><p class="text-[9px] text-slate-500">${mbEsc(d.location)} • ${mbEsc(d.phone)}</p><p class="text-[9px]">₹${Number(d.amount||1000).toLocaleString('en-IN')} • UTR: <b>${mbEsc(d.utr)}</b></p></div></div><div class="grid grid-cols-2 gap-2"><button onclick="MB_adminApproveMaterialAd('${mbEsc(id)}')" class="bg-emerald-600 text-white py-2 rounded-lg text-[10px] font-black">✅ Payment सही → LIVE</button><button onclick="MB_adminRejectMaterialAd('${mbEsc(id)}')" class="bg-rose-600 text-white py-2 rounded-lg text-[10px] font-black">❌ Reject</button></div>`;
+      const paymentShot=typeof d.paymentScreenshot==="string"&&/^data:image\/(png|jpeg|webp);base64,/i.test(d.paymentScreenshot)?`<a href="${mbEsc(d.paymentScreenshot)}" target="_blank" rel="noopener noreferrer" class="text-[10px] text-blue-600 font-bold">🧾 भुगतान स्क्रीनशॉट देखें</a>`:`<p class="text-[10px] text-slate-500">भुगतान स्क्रीनशॉट नहीं दिया</p>`;
+      el.innerHTML=`<div class="flex gap-2">${bannerSrc?`<img src="${mbEsc(bannerSrc)}" loading="lazy" referrerpolicy="no-referrer" class="w-14 h-14 rounded-lg object-cover" alt="दुकान का बैनर">`:''}<div><b class="text-xs">${mbEsc(d.shopName)}</b><p class="text-[9px] text-slate-500">${mbEsc(d.location)} • ${mbEsc(d.phone)}</p><p class="text-[9px]">₹${Number(d.amount||1000).toLocaleString('en-IN')} • UTR: <b>${mbEsc(d.utr)}</b></p>${paymentShot}</div></div><div class="grid grid-cols-2 gap-2"><button onclick="MB_adminApproveMaterialAd('${mbEsc(id)}')" class="bg-emerald-600 text-white py-2 rounded-lg text-[10px] font-black">✅ Payment सही → LIVE</button><button onclick="MB_adminRejectMaterialAd('${mbEsc(id)}')" class="bg-rose-600 text-white py-2 rounded-lg text-[10px] font-black">❌ Reject</button></div>`;
       box.appendChild(el);
     });
   };
   window.MB_adminApproveMaterialAd=async function(id){
-    const ref=db.collection("material_ad_requests").doc(id),snap=await ref.get();if(!snap.exists)return;
-    const d=snap.data()||{};
-    const now=Date.now(), ends=new Date(now+30*24*60*60*1000);
-    await db.collection("shop_ads").add({shopName:d.shopName,phone:d.phone,location:d.location,description:d.description,material:d.material||"",planAmount:"1000",bannerUrl:d.bannerUrl||"",isActive:true,source:"material_provider_promotion",providerId:d.providerId,promotionStart:firebase.firestore.FieldValue.serverTimestamp(),promotionEnd:ends.toISOString(),createdBy:typeof currentOperator!=="undefined"?currentOperator:"Admin",createdAt:firebase.firestore.FieldValue.serverTimestamp()});
-    await ref.update({status:"approved",approvedAt:firebase.firestore.FieldValue.serverTimestamp(),handledBy:typeof currentOperator!=="undefined"?currentOperator:"Admin"});
-    MB_adminLoadMaterialAds();
+    if(!id||typeof id!=="string")return alert("Promotion request ID नहीं मिला।");
+    if(!confirm("क्या आपने बैंक/UPI में ₹1,000 का वास्तविक भुगतान और UTR सत्यापित कर लिया है? पुष्टि के बाद ही Promotion Live होगा।"))return;
+    const ref=db.collection("material_ad_requests").doc(id);
+    const adRef=db.collection("shop_ads").doc();
+    const operator=typeof currentOperator!=="undefined"?currentOperator:(localStorage.getItem("mb_active_operator")||"Admin");
+    try{
+      await db.runTransaction(async tx=>{
+        const snap=await tx.get(ref);if(!snap.exists)throw new Error("REQUEST_NOT_FOUND");
+        const d=snap.data()||{};
+        if(String(d.status||"").toLowerCase()!=="pending")throw new Error("REQUEST_NOT_PENDING");
+        if(Number(d.amount)!==1000||!/^\d{12}$/.test(String(d.utr||"")))throw new Error("INVALID_PAYMENT_RECORD");
+        const duplicate=await tx.get(db.collection("material_ad_requests").where("utr","==",String(d.utr)));
+        if(duplicate.docs.some(doc=>doc.id!==id))throw new Error("UTR_ALREADY_USED");
+        const ends=new Date(Date.now()+30*24*60*60*1000);
+        tx.set(adRef,{shopName:d.shopName||"",phone:d.phone||"",location:d.location||"",description:d.description||"",material:d.material||"",planAmount:"1000",bannerUrl:d.bannerUrl||"",isActive:true,source:"material_provider_promotion",providerId:d.providerId||"",promotionStart:firebase.firestore.FieldValue.serverTimestamp(),promotionEnd:ends.toISOString(),createdBy:operator,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+        tx.update(ref,{status:"approved",approvedAt:firebase.firestore.FieldValue.serverTimestamp(),handledBy:operator,shopAdId:adRef.id});
+      });
+      alert("Promotion भुगतान रिकॉर्ड सत्यापित करके LIVE कर दिया गया।");
+      MB_adminLoadMaterialAds();
+    }catch(e){
+      const messages={REQUEST_NOT_FOUND:"Promotion request नहीं मिला।",REQUEST_NOT_PENDING:"यह अनुरोध पहले ही संभाला जा चुका है। सूची Refresh करें।",INVALID_PAYMENT_RECORD:"राशि ₹1,000 या 12-अंकों का UTR गलत है। Approve नहीं हुआ।",UTR_ALREADY_USED:"यह UTR दूसरे अनुरोध में भी है। भुगतान रिकॉर्ड जाँचें।"};
+      alert(messages[e&&e.message]||( "Promotion approve नहीं हुआ: "+String(e&&e.message||e||"अज्ञात त्रुटि")));
+    }
   };
   window.MB_adminRejectMaterialAd=async function(id){
     await db.collection("material_ad_requests").doc(id).update({status:"rejected",handledBy:typeof currentOperator!=="undefined"?currentOperator:"Admin"});
@@ -6838,36 +7154,38 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
 
   const oldLoadR=window.MB_loadRentalProvider;
   window.MB_loadRentalProvider=async function(){
-    const form=document.getElementById("rental-provider-form");
+    const form=document.getElementById("rental-provider-form"),card=document.getElementById("rental-provider-card"),mgr=document.getElementById("rental-vehicle-manager");
+    const resetToForm=()=>{if(form)form.classList.remove("hidden");if(card){card.classList.add("hidden");card.replaceChildren();}if(mgr)mgr.classList.add("hidden");};
     try{
       if(typeof oldLoadR==="function") await oldLoadR();
       const phone=localStorage.getItem("mb_rental_phone");
-      if(!phone){if(form)form.classList.remove("hidden");return;}
-      if(typeof db==="undefined"||!db){if(form)form.classList.remove("hidden");console.warn("Rental provider: database unavailable");return;}
+      if(!phone){resetToForm();return;}
+      if(typeof db==="undefined"||!db){resetToForm();console.warn("Rental provider: database unavailable");return;}
       const q=await db.collection("rental_providers").where("phone","==",phone).limit(1).get();
-      if(q.empty){if(form)form.classList.remove("hidden");return;}
+      if(q.empty){resetToForm();return;}
       if(form)form.classList.add("hidden");
       const d=q.docs[0].data()||{};
-      const card=document.getElementById("rental-provider-card");if(card)card.classList.remove("hidden");
-      const mgr=document.getElementById("rental-vehicle-manager");
+      if(card)card.classList.remove("hidden");
       if(mgr)mgr.classList.toggle("hidden",d.adminApprovalStatus!=="approved");
       if(d.adminApprovalStatus==="approved"&&typeof window.MB_loadRentalVehiclesForProvider==="function") await window.MB_loadRentalVehiclesForProvider();
-    }catch(err){console.warn("Rental provider load failed:",err);if(form)form.classList.remove("hidden");}
+    }catch(err){console.warn("Rental provider load failed:",err);resetToForm();}
   };
   const oldLoadM=window.MB_loadMaterialProvider;
   window.MB_loadMaterialProvider=async function(){
-    const form=document.getElementById("material-provider-form");
+    const form=document.getElementById("material-provider-form"),card=document.getElementById("material-provider-card"),ad=document.getElementById("material-promotion-box");
+    const resetToForm=()=>{if(form)form.classList.remove("hidden");if(card){card.classList.add("hidden");card.replaceChildren();}if(ad)ad.classList.add("hidden");};
     try{
       if(typeof oldLoadM==="function") await oldLoadM();
       const phone=localStorage.getItem("mb_material_phone");
-      if(!phone){if(form)form.classList.remove("hidden");return;}
-      if(typeof db==="undefined"||!db){if(form)form.classList.remove("hidden");console.warn("Material provider: database unavailable");return;}
+      if(!phone){resetToForm();return;}
+      if(typeof db==="undefined"||!db){resetToForm();console.warn("Material provider: database unavailable");return;}
       const q=await db.collection("material_providers").where("phone","==",phone).limit(1).get();
-      if(q.empty){if(form)form.classList.remove("hidden");return;}
+      if(q.empty){resetToForm();return;}
       if(form)form.classList.add("hidden");
       const d=q.docs[0].data()||{};
-      const ad=document.getElementById("material-promotion-box");if(ad)ad.classList.toggle("hidden",d.adminApprovalStatus!=="approved");
-    }catch(err){console.warn("Material provider load failed:",err);if(form)form.classList.remove("hidden");}
+      if(card)card.classList.remove("hidden");
+      if(ad)ad.classList.toggle("hidden",d.adminApprovalStatus!=="approved");
+    }catch(err){console.warn("Material provider load failed:",err);resetToForm();}
   };
 })();
 </script>
@@ -7485,16 +7803,18 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
           <div class="bg-slate-50 border rounded-xl p-3 text-center"><div class="text-[10px] text-slate-500">UPI ID</div><div class="font-black text-amber-700 select-all">${MB_PAID_LEAD_UPI}</div></div>
           <a href="${upiLink}" class="block text-center bg-emerald-600 text-white font-black rounded-xl py-3">📲 UPI App से ₹${FEE} Pay करें</a>
           <div><label class="block text-[10px] font-bold text-slate-700 mb-1">Payment UTR / Reference नंबर</label><input id="mb-paid-lead-utr" maxlength="22" class="w-full border border-slate-300 rounded-xl px-3 py-3 text-sm font-bold" placeholder="Payment के बाद UTR डालें"></div>
+          <label class="block text-[10px] font-bold">भुगतान स्क्रीनशॉट (वैकल्पिक, अधिकतम 500 KB)<input id="mb-paid-lead-screenshot" type="file" accept="image/jpeg,image/png,image/webp" class="mt-1 block w-full" onchange="MB_previewPaymentScreenshot(this,'mb-paid-lead-screenshot-preview')"></label><img id="mb-paid-lead-screenshot-preview" class="hidden max-h-48 mx-auto rounded-lg border" alt="भुगतान स्क्रीनशॉट प्रीव्यू">
           <button type="button" id="mb-paid-lead-submit" class="w-full bg-slate-950 text-white rounded-xl py-3 font-black">✅ UTR Submit करके Verification भेजें</button>
           <p class="text-[9px] text-slate-500 text-center">Admin payment verify करने के बाद ही Lead Unlock होगी।</p>
         </div></div>`;
       document.body.appendChild(modal);
       document.getElementById("mb-paid-lead-submit").onclick=async function(){
         const btn=this,utr=(document.getElementById("mb-paid-lead-utr")?.value||"").trim();
+        let paymentScreenshot="";try{paymentScreenshot=await window.MB_readPaymentScreenshot("mb-paid-lead-screenshot");}catch(screenshotErr){return alert(screenshotErr.message||"स्क्रीनशॉट जाँचें।");}
         if(!utr || !/^[A-Za-z0-9]{8,22}$/.test(utr))return alert("कृपया सही UTR / Reference नंबर डालें (8–22 अक्षर/अंक)।");
         btn.disabled=true;btn.innerText="भेजा जा रहा है...";
         try{
-          await db.collection("paid_lead_access").add({jobId:jobId,jobSixId:sixId,workerPhone:wp,clientPhone:clientPhone||"",workType:workType||"",amount:FEE,upiId:MB_PAID_LEAD_UPI,utr:utr,status:"pending",paymentStatus:"submitted",unlocked:false,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+          await db.collection("paid_lead_access").add({jobId:jobId,jobSixId:sixId,workerPhone:wp,clientPhone:clientPhone||"",workType:workType||"",amount:FEE,upiId:MB_PAID_LEAD_UPI,utr:utr,paymentScreenshot:paymentScreenshot,status:"pending",paymentStatus:"submitted",unlocked:false,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
           mbClosePaidLeadPayment();
           alert("✅ Payment/UTR Admin को भेज दिया गया है। Verification के बाद Lead Unlock होगी।");
         }catch(e){btn.disabled=false;btn.innerText="✅ UTR Submit करके Verification भेजें";alert("Request नहीं भेजी गई: "+e.message);}
@@ -7523,6 +7843,7 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
         const title=document.createElement("b");title.textContent="💳 "+String(d.jobSixId||d.jobId||"Lead");el.appendChild(title);
         const details=document.createElement("p");details.className="text-[10px]";details.textContent="Mistri: "+String(d.workerPhone||"—")+" • काम: "+String(d.workType||"—");el.appendChild(details);
         const payment=document.createElement("p");payment.className="text-[10px]";payment.textContent="UTR: "+String(d.utr||"—")+" • ₹"+String(d.amount==null?FEE:d.amount)+" • "+st.toUpperCase();el.appendChild(payment);
+        if(typeof d.paymentScreenshot==="string"&&/^data:image\/(png|jpeg|webp);base64,/i.test(d.paymentScreenshot)){const link=document.createElement("a");link.href=d.paymentScreenshot;link.target="_blank";link.rel="noopener noreferrer";link.className="block text-[10px] text-blue-600 font-bold mt-1";link.textContent="🧾 भुगतान स्क्रीनशॉट देखें";el.appendChild(link);}else{const noShot=document.createElement("p");noShot.className="text-[10px] text-slate-500";noShot.textContent="भुगतान स्क्रीनशॉट नहीं दिया";el.appendChild(noShot);}
         if(st==="pending"){
           const actions=document.createElement("div");actions.className="flex gap-2 mt-2";
           const approve=document.createElement("button");approve.type="button";approve.className="flex-1 bg-emerald-600 text-white rounded p-1 text-[10px]";approve.textContent="✓ Approve / Unlock";approve.addEventListener("click",function(){window.MB_adminApprovePaidLead(doc.id);});
@@ -7535,15 +7856,30 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
   };
   window.MB_adminApprovePaidLead=async function(id){
     if(typeof id!=="string"||!id.trim())return alert("Paid Lead Request ID नहीं मिला।");
-    if(!confirm("Paid Lead Approve करके Unlock करें?"))return;
-    try{await db.collection("paid_lead_access").doc(id).update({status:"approved",unlocked:true,approvedAt:firebase.firestore.FieldValue.serverTimestamp(),approvedBy:localStorage.getItem("mb_active_operator")||"admin"});await MB_adminLoadPaidLeads();}
-    catch(e){alert("Paid Lead approve नहीं हुई: "+String(e&&e.message||e||"अज्ञात त्रुटि"));}
+    if(!confirm("क्या आपने बैंक/UPI में वास्तविक भुगतान और UTR सत्यापित कर लिया है? पुष्टि के बाद ही Lead Unlock होगी।"))return;
+    try{
+      const ref=db.collection("paid_lead_access").doc(id);
+      const operator=localStorage.getItem("mb_active_operator")||"admin";
+      await db.runTransaction(async tx=>{
+        const snap=await tx.get(ref);if(!snap.exists)throw new Error("REQUEST_NOT_FOUND");
+        const d=snap.data()||{};
+        if(String(d.status||"").toLowerCase()!=="pending"||d.unlocked===true)throw new Error("REQUEST_NOT_PENDING");
+        if(!d.jobId||!/^\+?91?\d{10}$/.test(String(d.workerPhone||""))||!Number.isFinite(Number(d.amount))||Number(d.amount)<=0||!/^[A-Za-z0-9]{8,22}$/.test(String(d.utr||"")))throw new Error("INVALID_PAYMENT_RECORD");
+        const duplicate=await tx.get(db.collection("paid_lead_access").where("utr","==",String(d.utr)));
+        if(duplicate.docs.some(x=>x.id!==id))throw new Error("UTR_ALREADY_USED");
+        tx.update(ref,{status:"approved",unlocked:true,approvedAt:firebase.firestore.FieldValue.serverTimestamp(),approvedBy:operator});
+      });
+      await MB_adminLoadPaidLeads();
+    }catch(e){const messages={REQUEST_NOT_FOUND:"Paid Lead अनुरोध नहीं मिला।",REQUEST_NOT_PENDING:"यह अनुरोध पहले ही संभाला जा चुका है।",INVALID_PAYMENT_RECORD:"भुगतान रिकॉर्ड, राशि, फोन या UTR गलत है। मंज़ूरी रोकी गई।",UTR_ALREADY_USED:"यह UTR दूसरे अनुरोध में भी इस्तेमाल हुआ है। भुगतान रिकॉर्ड जाँचें।"};alert(messages[e&&e.message]||("Paid Lead approve नहीं हुई: "+String(e&&e.message||e||"अज्ञात त्रुटि")));}
   };
   window.MB_adminRejectPaidLead=async function(id){
     if(typeof id!=="string"||!id.trim())return alert("Paid Lead Request ID नहीं मिला।");
     if(!confirm("Paid Lead Request Reject करें?"))return;
-    try{await db.collection("paid_lead_access").doc(id).update({status:"rejected",unlocked:false,rejectedAt:firebase.firestore.FieldValue.serverTimestamp(),rejectedBy:localStorage.getItem("mb_active_operator")||"admin"});await MB_adminLoadPaidLeads();}
-    catch(e){alert("Paid Lead reject नहीं हुई: "+String(e&&e.message||e||"अज्ञात त्रुटि"));}
+    try{
+      const ref=db.collection("paid_lead_access").doc(id);
+      await db.runTransaction(async tx=>{const snap=await tx.get(ref);if(!snap.exists)throw new Error("REQUEST_NOT_FOUND");const d=snap.data()||{};if(String(d.status||"").toLowerCase()!=="pending"||d.unlocked===true)throw new Error("REQUEST_NOT_PENDING");tx.update(ref,{status:"rejected",unlocked:false,rejectedAt:firebase.firestore.FieldValue.serverTimestamp(),rejectedBy:localStorage.getItem("mb_active_operator")||"admin"});});
+      await MB_adminLoadPaidLeads();
+    }catch(e){alert(e&&e.message==="REQUEST_NOT_PENDING"?"यह अनुरोध पहले ही संभाला जा चुका है।":"Paid Lead reject नहीं हुई: "+String(e&&e.message||e||"अज्ञात त्रुटि"));}
   };
   function addCard(){const h=document.getElementById("worker-profile-view");if(!h||document.getElementById("mb-paid-lead-dashboard-card"))return;const c=document.createElement("div");c.id="mb-paid-lead-dashboard-card";c.className="mx-3 mb-3 bg-amber-50 border border-amber-200 rounded-xl p-3";c.innerHTML="<b class='text-xs'>💳 Paid Leads</b><p class='text-[9px] text-slate-500'>Approved Access के बाद ही Paid Lead पर Rate भेजें।</p>";h.insertBefore(c,h.firstChild);}
   document.addEventListener("DOMContentLoaded",addCard);
@@ -8619,7 +8955,7 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
 })();
 </script>
 
-<details id="mb-admin-dispute-shell-fix128" class="my-3"><summary class="cursor-pointer text-xs font-semibold">Admin tools</summary><section id="mb-admin-dispute-overview-fix128" class="rounded-xl border border-rose-200 bg-rose-50 p-3 my-3" aria-labelledby="mb-admin-dispute-title-fix128">
+<details id="mb-admin-dispute-shell-fix128" class="my-3 hidden" aria-hidden="true"><summary class="cursor-pointer text-xs font-semibold">Admin tools</summary><section id="mb-admin-dispute-overview-fix128" class="rounded-xl border border-rose-200 bg-rose-50 p-3 my-3" aria-labelledby="mb-admin-dispute-title-fix128">
   <div class="flex items-center justify-between gap-2">
     <h3 id="mb-admin-dispute-title-fix128" class="text-sm font-bold text-rose-950">⚠️ Complaint / Dispute Overview</h3>
     <button type="button" id="mb-admin-dispute-refresh-fix128" class="rounded-lg border border-rose-300 bg-white px-3 py-1.5 text-xs font-semibold" aria-label="Complaint और Dispute की गिनती फिर से लोड करें">↻ Refresh</button>
@@ -9073,6 +9409,7 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
     </div>
     <label for="mb-contact-visibility-utr-fix139" class="mt-3 block text-xs font-bold">भुगतान UTR / Transaction ID</label>
     <input id="mb-contact-visibility-utr-fix139" type="text" maxlength="80" autocomplete="off" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" placeholder="पेमेंट का UTR नंबर डालें">
+    <label class="mt-3 block text-xs font-bold">भुगतान स्क्रीनशॉट (वैकल्पिक, अधिकतम 500 KB)<input id="mb-contact-visibility-screenshot-fix139" type="file" accept="image/jpeg,image/png,image/webp" class="mt-1 block w-full" onchange="MB_previewPaymentScreenshot(this,'mb-contact-visibility-screenshot-preview-fix139')"></label><img id="mb-contact-visibility-screenshot-preview-fix139" class="hidden max-h-48 rounded-lg border" alt="भुगतान स्क्रीनशॉट प्रीव्यू">
     <button id="mb-contact-visibility-submit-fix139" type="button" class="mt-3 w-full rounded-xl bg-amber-500 px-4 py-3 text-sm font-black text-slate-900">₹1,000 का अनुरोध भेजें</button>
     <p id="mb-contact-visibility-status-fix139" class="mt-2 text-xs text-slate-600" role="status" aria-live="polite"></p>
   </div>
@@ -9137,6 +9474,7 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
     if(!eligible(role))return setStatus("यह प्लान ग्राहक के लिए नहीं है। पहले मिस्त्री/ठेकेदार/Rental/Shop-Material अकाउंट में Login करें।");
     const phone=digits(accountPhone(role));
     const utrRaw=($("mb-contact-visibility-utr-fix139")?.value||"").trim();
+    let paymentScreenshot="";try{paymentScreenshot=await window.MB_readPaymentScreenshot("mb-contact-visibility-screenshot-fix139");}catch(screenshotErr){return setStatus(screenshotErr.message||"स्क्रीनशॉट जाँचें।");}
     const utr=utrRaw.replace(/\s+/g,"").toUpperCase();
     if(phone.length!==10)return setStatus("इस प्रोफ़ाइल का मोबाइल नंबर नहीं मिला। कृपया सही अकाउंट में Login करें।");
     if(!/^[A-Z0-9]{8,30}$/.test(utr))return setStatus("UTR / Transaction ID 8 से 30 अक्षरों का होना चाहिए; केवल अंग्रेज़ी अक्षर और अंक डालें।");
@@ -9151,7 +9489,7 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
       if(!duplicateUtr.empty){setStatus("यह UTR पहले इस्तेमाल हो चुका है। अपने भुगतान की सही Transaction ID जाँचें।");return;}
       await window.db.collection("contact_visibility_payments").add({
         phone:"+91"+phone,role:role,amount:1000,durationMonths:1,planType:"public_contact_visibility",
-        utr:utr,status:"pending",createdAt:firebase.firestore.FieldValue.serverTimestamp()
+        utr:utr,paymentScreenshot:paymentScreenshot,status:"pending",createdAt:firebase.firestore.FieldValue.serverTimestamp()
       });
       setStatus("अनुरोध जमा हो गया। Admin भुगतान जाँचेगा। मंज़ूरी से पहले नंबर सार्वजनिक नहीं होंगे।");
       const input=$("mb-contact-visibility-utr-fix139");if(input)input.value="";
@@ -9173,6 +9511,7 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
         const d=doc.data()||{},card=document.createElement("div");
         card.className="rounded-xl border border-slate-200 p-3";
         card.innerHTML='<p><b>फोन:</b> '+esc(d.phone||"")+' · <b>Role:</b> '+esc(d.role||"")+'</p><p><b>राशि:</b> ₹'+esc(d.amount||1000)+' · <b>UTR:</b> '+esc(d.utr||"")+'</p><p class="mt-1 text-slate-500">भुगतान वास्तव में जाँचने के बाद ही Approve करें।</p>';
+        if(typeof d.paymentScreenshot==="string"&&/^data:image\/(png|jpeg|webp);base64,/i.test(d.paymentScreenshot)){const shot=document.createElement("a");shot.href=d.paymentScreenshot;shot.target="_blank";shot.rel="noopener noreferrer";shot.className="mt-2 inline-block text-xs font-bold text-blue-600";shot.textContent="🧾 भुगतान स्क्रीनशॉट देखें";card.appendChild(shot);}else{const noShot=document.createElement("p");noShot.className="mt-1 text-xs text-slate-500";noShot.textContent="भुगतान स्क्रीनशॉट नहीं दिया";card.appendChild(noShot);}
         const approve=document.createElement("button");approve.type="button";approve.className="mt-2 rounded-lg bg-emerald-600 px-3 py-2 font-bold text-white";approve.textContent="भुगतान सत्यापित करके Approve";
         approve.addEventListener("click",()=>approveRequest(doc.id,d));
         const reject=document.createElement("button");reject.type="button";reject.className="ml-2 mt-2 rounded-lg border border-rose-200 px-3 py-2 font-bold text-rose-700";reject.textContent="Reject";
@@ -9187,6 +9526,11 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
     if(!/^[A-Z0-9]{8,30}$/.test(String(data.utr||"")))return alert("UTR का प्रारूप सही नहीं है। अनुरोध की जाँच करें।");
     if(!confirm("क्या आपने बैंक/UPI ऐप में इस UTR से ₹1,000 का भुगतान वास्तव में सत्यापित कर लिया है? केवल स्क्रीनशॉट देखकर Approve न करें।"))return;
     try{
+      // Audit 33: reject a UTR already used by any other contact-visibility request.
+      const duplicateSnap=await window.db.collection("contact_visibility_payments").where("utr","==",String(data.utr||"")).limit(100).get();
+      let duplicateUtr=false;
+      duplicateSnap.forEach(item=>{if(item.id!==id){const other=item.data()||{};if(["pending","approved"].includes(String(other.status||"")))duplicateUtr=true;}});
+      if(duplicateUtr)throw new Error("DUPLICATE_UTR");
       const ref=window.db.collection("contact_visibility_payments").doc(id);
       const operator=localStorage.getItem("mb_active_operator")||"Admin";
       await window.db.runTransaction(async tx=>{
@@ -9205,7 +9549,7 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
       if(typeof window.MB_contactVisibilityInvalidateCacheFix140==="function")window.MB_contactVisibilityInvalidateCacheFix140(data.phone);
       alert("भुगतान अनुरोध Approve हो गया। अब 30 दिन की वैधता शुरू हुई है। सार्वजनिक नंबर-लिस्टिंग की जाँच अगले चरण में होगी।");
       refreshAdmin();
-    }catch(err){console.error(err);alert(err && err.message==="REQUEST_NOT_PENDING" ? "यह अनुरोध पहले ही संभाला जा चुका है। सूची Refresh करें।" : "Approve नहीं हुआ। Firebase/Firestore अनुमति और अनुरोध की स्थिति जाँचें।");}
+    }catch(err){console.error(err);alert(err && err.message==="REQUEST_NOT_PENDING" ? "यह अनुरोध पहले ही संभाला जा चुका है। सूची Refresh करें।" : err && err.message==="DUPLICATE_UTR" ? "यह UTR दूसरे Pending/Approved अनुरोध में इस्तेमाल है। भुगतान रिकॉर्ड जाँचें; मंज़ूरी रोक दी गई है।" : "Approve नहीं हुआ। Firebase/Firestore अनुमति और अनुरोध की स्थिति जाँचें।");}
   }
   async function rejectRequest(id){
     if(!localStorage.getItem("mb_active_operator"))return alert("Admin Login आवश्यक है।");
@@ -9766,5 +10110,205 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
 })();
 </script>
 
+<!-- Audit 30: Paid Lead admin approval/rejection now re-checks current pending state transactionally, validates payment fields, and blocks a reused UTR before unlocking. Static checks only; verify Firestore rules and live payment manually. -->
+<!-- Audit 33: Contact-visibility Admin approval checks for reused UTRs before transactional approval; public visibility helper requires approved status and a future validUntil. Live Firebase/security-rule verification remains required. -->
+
+
+<!-- Audit 34: Keep worker-only Agreement, Progress and Portfolio sections out of the public Home page. -->
+<script id="mb-homepage-role-section-placement-audit34">
+(function(){
+  'use strict';
+  if(window.__MB_HOMEPAGE_ROLE_SECTION_AUDIT34__)return;
+  window.__MB_HOMEPAGE_ROLE_SECTION_AUDIT34__=true;
+  const byId=id=>document.getElementById(id);
+  function activePage(){
+    const attr=String(document.body.getAttribute('data-mb-page')||'').trim();
+    if(['home','jobs','workers','post','register'].includes(attr))return attr;
+    const hash=String(location.hash||'').replace(/^#/,'').split('?')[0];
+    return ['home','jobs','workers','post','register'].includes(hash)?hash:'home';
+  }
+  function move(node,parent){if(node&&parent&&node.parentElement!==parent)parent.appendChild(node);}
+  function sync(){
+    const workerProfile=byId('worker-profile-view');
+    const agreement=byId('mb-digital-agreement-section');
+    const progress=byId('mb-work-progress-section');
+    const portfolio=byId('mb-work-portfolio-panel');
+    const workerDashboard=byId('worker-dashboard-box');
+    // These are account tools, never homepage content. Keep Agreement and Progress together
+    // in the worker profile; the existing feature logic still controls their in-profile visibility.
+    if(workerProfile){move(agreement,workerProfile);move(progress,workerProfile);}
+    if(workerDashboard)move(portfolio,workerDashboard);
+    const onWorkerProfile=activePage()==='register' && !!workerProfile && !workerProfile.classList.contains('hidden') && getComputedStyle(workerProfile).display!=='none';
+    [agreement,progress,portfolio].forEach(node=>{
+      if(!node)return;
+      const hide=!onWorkerProfile;
+      if(hide){node.classList.add('hidden');node.setAttribute('aria-hidden','true');node.style.setProperty('display','none','important');node.style.setProperty('pointer-events','none','important');}
+      else{node.removeAttribute('aria-hidden');node.style.removeProperty('display');node.style.removeProperty('pointer-events');}
+    });
+  }
+  function schedule(){sync();setTimeout(sync,100);setTimeout(sync,300);}
+  function start(){
+    schedule();
+    document.addEventListener('click',schedule,true);
+    document.addEventListener('change',schedule,true);
+    window.addEventListener('hashchange',schedule);
+    window.addEventListener('storage',schedule);
+    ['page-home','page-jobs','page-workers','page-post','page-register','worker-profile-view','worker-dashboard-box'].forEach(id=>{const node=byId(id);if(node&&window.MutationObserver)new MutationObserver(schedule).observe(node,{attributes:true,childList:true,attributeFilter:['class','style']});});
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+  window.MB_auditHomepageRoleSections34=function(){return {page:activePage(),agreementParent:byId('mb-digital-agreement-section')?.parentElement?.id||'missing',progressParent:byId('mb-work-progress-section')?.parentElement?.id||'not-mounted',portfolioParent:byId('mb-work-portfolio-panel')?.parentElement?.id||'missing',agreementVisible:!!byId('mb-digital-agreement-section')&&!byId('mb-digital-agreement-section').classList.contains('hidden'),progressVisible:!!byId('mb-work-progress-section')&&!byId('mb-work-progress-section').classList.contains('hidden'),portfolioVisible:!!byId('mb-work-portfolio-panel')&&!byId('mb-work-portfolio-panel').classList.contains('hidden')};};
+})();
+</script>
+
 </body>
+
+<!-- Fix26 completion: Admin review queue for ₹49 worker top-profile payments. -->
+<script id="mb-fix26-worker-boost49-admin-review">
+(function(){
+  "use strict";
+  const esc=v=>String(v==null?"":v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  function panelHtml(){return `<section id="mb-worker-boost49-admin-panel" class="mx-3 my-3 rounded-2xl border border-amber-200 bg-white p-4 space-y-3"><div class="flex items-center justify-between gap-2"><div><b class="text-sm">⚡ ₹49 टॉप प्रोफ़ाइल भुगतान</b><p class="text-[10px] text-slate-500">UTR और वैकल्पिक स्क्रीनशॉट जाँचें। भुगतान वास्तविक रूप से सत्यापित करने के बाद ही मंज़ूरी दें।</p></div><button type="button" onclick="MB_adminLoadWorkerBoost49Payments()" class="rounded-lg bg-slate-900 px-3 py-2 text-[10px] font-bold text-white">Refresh</button></div><div id="mb-worker-boost49-admin-list" class="space-y-2 text-xs">भुगतान अनुरोध लोड हो रहे हैं…</div></section>`;}
+  function install(){
+    const admin=document.getElementById('admin-main-view');
+    if(!admin||document.getElementById('mb-worker-boost49-admin-panel'))return;
+    const holder=document.createElement('div');holder.innerHTML=panelHtml();
+    admin.appendChild(holder.firstElementChild);
+    window.MB_adminLoadWorkerBoost49Payments();
+  }
+  window.MB_adminLoadWorkerBoost49Payments=async function(){
+    const box=document.getElementById('mb-worker-boost49-admin-list');if(!box)return;
+    if(typeof db==='undefined'||!db||!db.collection){box.textContent='डेटाबेस उपलब्ध नहीं है।';return;}
+    box.textContent='भुगतान अनुरोध लोड हो रहे हैं…';
+    try{
+      const snap=await db.collection('contractor_payments').where('planType','==','worker_top_49').limit(200).get();
+      const docs=snap.docs.slice().sort((a,b)=>{const x=a.data()||{},y=b.data()||{};const xt=x.createdAt&&x.createdAt.toMillis?x.createdAt.toMillis():0,yt=y.createdAt&&y.createdAt.toMillis?y.createdAt.toMillis():0;return yt-xt;});
+      if(!docs.length){box.textContent='अभी कोई ₹49 टॉप प्रोफ़ाइल भुगतान अनुरोध नहीं है।';return;}
+      box.innerHTML=docs.map(doc=>{const d=doc.data()||{},status=String(d.status||'Pending'),shot=typeof d.paymentScreenshot==='string'&&/^data:image\/(png|jpeg|webp);base64,/i.test(d.paymentScreenshot)?`<a href="${esc(d.paymentScreenshot)}" target="_blank" rel="noopener noreferrer" class="block mt-2 font-bold text-blue-700">🧾 भुगतान स्क्रीनशॉट देखें</a>`:'<p class="mt-2 text-slate-500">स्क्रीनशॉट नहीं दिया गया</p>',actions=status==='Pending'?`<div class="mt-2 grid grid-cols-2 gap-2"><button type="button" onclick="MB_adminReviewWorkerBoost49('${esc(doc.id)}','approve')" class="rounded-lg bg-emerald-600 p-2 font-bold text-white">भुगतान सत्यापित → मंज़ूर</button><button type="button" onclick="MB_adminReviewWorkerBoost49('${esc(doc.id)}','reject')" class="rounded-lg bg-rose-600 p-2 font-bold text-white">Reject</button></div>`:'';return `<article class="rounded-xl border p-3"><div class="flex items-start justify-between gap-2"><b>${esc(d.contractorName||'मिस्त्री')}</b><span class="rounded bg-slate-100 px-2 py-1 text-[10px]">${esc(status)}</span></div><p class="mt-1">मोबाइल: ${esc(d.phone||'—')} • राशि: ₹${esc(d.amount==null?49:d.amount)} • अवधि: ${esc(d.validityDays==null?7:d.validityDays)} दिन</p><p class="mt-1 break-all">UTR: <b>${esc(d.utrNumber||'—')}</b></p>${shot}${d.handledBy?`<p class="mt-1 text-slate-500">Handled by: ${esc(d.handledBy)}</p>`:''}${actions}</article>`;}).join('');
+    }catch(e){box.textContent='भुगतान अनुरोध लोड नहीं हुए। Admin access और Firebase permissions जाँचें।';}
+  };
+  window.MB_adminReviewWorkerBoost49=async function(id,action){
+    if(!['approve','reject'].includes(action))return;
+    if(!confirm(action==='approve'?'क्या आपने बैंक/UPI में ₹49 भुगतान और UTR वास्तव में सत्यापित कर लिया है? स्क्रीनशॉट अकेले पर्याप्त नहीं है।':'क्या इस ₹49 भुगतान अनुरोध को Reject करना है?'))return;
+    const btns=document.querySelectorAll(`[onclick*="MB_adminReviewWorkerBoost49('${id}'"]`);btns.forEach(b=>b.disabled=true);
+    try{
+      const ref=db.collection('contractor_payments').doc(id);
+      await db.runTransaction(async tx=>{
+        const snap=await tx.get(ref);if(!snap.exists)throw new Error('NOT_FOUND');
+        const d=snap.data()||{};if(d.planType!=='worker_top_49'||Number(d.amount)!==49||Number(d.validityDays)!==7)throw new Error('PLAN_MISMATCH');
+        if(String(d.status||'Pending')!=='Pending')throw new Error('ALREADY_HANDLED');
+        const utr=String(d.utrNumber||'').trim();
+        if(!/^\d{12}$/.test(utr))throw new Error('INVALID_UTR');
+        // Audit 31: check for a reused UTR in the same payment collection before changing status.
+        const duplicateSnap=await tx.get(db.collection('contractor_payments').where('utrNumber','==',utr));
+        if(duplicateSnap.docs.some(item=>item.id!==id))throw new Error('DUPLICATE_UTR');
+        tx.update(ref,{status:action==='approve'?'Approved':'Rejected',handledBy:'admin',handledAt:firebase.firestore.FieldValue.serverTimestamp(),paymentStatus:action==='approve'?'Confirmed':'Rejected'});
+      });
+      if(action==='approve'){
+        const raw=String((await db.collection('contractor_payments').doc(id).get()).data()?.phone||'');
+        const digits=raw.replace(/\D/g,'').slice(-10);
+        if(digits.length===10){
+          const candidates=[];
+          for(const field of ['phone','private_phone','mobile']){try{const q=await db.collection('workers').where(field,'==',raw).limit(5).get();q.docs.forEach(x=>candidates.push(x));}catch(e){}}
+          for(const field of ['phone','private_phone','mobile']){try{const q=await db.collection('workers').where(field,'==',digits).limit(5).get();q.docs.forEach(x=>candidates.push(x));}catch(e){}}
+          const unique=new Map(candidates.map(x=>[x.id,x]));
+          const until=new Date(Date.now()+7*24*60*60*1000);
+          for(const worker of unique.values())await worker.ref.set({topProfileUntil:firebase.firestore.Timestamp.fromDate(until),topProfilePlan:'worker_top_49',topProfilePaymentId:id,topProfilePaymentStatus:'Confirmed',topProfileActivatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
+        }
+      }
+      alert(action==='approve'?'₹49 भुगतान अनुरोध मंज़ूर किया गया। प्रोफ़ाइल में 7-दिन की boost अवधि दर्ज करने का प्रयास किया गया।':'₹49 भुगतान अनुरोध Reject किया गया।');
+      window.MB_adminLoadWorkerBoost49Payments();
+    }catch(e){const messages={NOT_FOUND:'भुगतान अनुरोध नहीं मिला।',PLAN_MISMATCH:'प्लान की राशि या अवधि रिकॉर्ड से मेल नहीं खाती।',ALREADY_HANDLED:'यह अनुरोध पहले ही process हो चुका है।',INVALID_UTR:'12 अंकों का UTR सही नहीं है.',DUPLICATE_UTR:'यह UTR किसी दूसरे भुगतान अनुरोध में भी दर्ज है। पहले इसकी जाँच करें; मंज़ूरी नहीं दी गई।'};alert(messages[e.message]||'कार्रवाई पूरी नहीं हुई। Admin permissions और Firebase रिकॉर्ड जाँचें।');window.MB_adminLoadWorkerBoost49Payments();}
+  };
+  document.addEventListener('DOMContentLoaded',()=>setTimeout(install,1500));
+  setInterval(()=>{try{install();}catch(e){}},4000);
+})();
+</script>
+
 </html>
+
+<!-- Step 21 audit: Contractor dashboard/admin card now display plan price, fixed 30-day duration and expiry date; renewal approval validates requested tier amount/duration against both application and profile records. Live Firebase behavior still requires deployment testing. -->
+
+<!-- Step 22 audit: renewal request now validates tier, exact plan amount, 30-day duration, matching active profile, expiry, and duplicate submitted renewal UTR before accepting request. Live Firebase transaction/security behavior still requires deployment testing. -->
+
+<!-- Step 23 audit: initial Contractor payment submission now requires approved application, exact tier-derived amount and 30-day duration, rejects repeated submissions and checks duplicate submitted/confirmed UTRs; Admin activation validates stored plan amount/duration and payment status. Live Firebase/Rules testing remains required. -->
+
+<!-- Step 25 audit: Contractor application submission locks synchronously before async work, validates required identity fields and 5MB per-document limit, and improves ambiguous network-error guidance; payment button now exposes aria-busy while in flight. Firebase live/network ambiguity and server-side idempotency still require deployment testing. -->
+
+<!-- Step 26: optional payment screenshot upload/preview for payment forms. Images are size-limited before storing with the request; admin must still verify actual bank/UPI transaction. -->
+<script>
+(function(){
+  const MAX_PAYMENT_SCREENSHOT_BYTES=500*1024;
+  window.MB_readPaymentScreenshot=async function(inputId){
+    const input=document.getElementById(inputId); if(!input||!input.files||!input.files[0])return '';
+    const file=input.files[0];
+    if(!/^image\/(jpeg|png|webp)$/i.test(file.type))throw new Error('स्क्रीनशॉट JPG, PNG या WebP इमेज होना चाहिए।');
+    if(file.size>MAX_PAYMENT_SCREENSHOT_BYTES)throw new Error('स्क्रीनशॉट 500 KB से छोटा होना चाहिए।');
+    return await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(String(r.result||''));r.onerror=()=>reject(new Error('स्क्रीनशॉट पढ़ा नहीं जा सका।'));r.readAsDataURL(file);});
+  };
+  window.MB_previewPaymentScreenshot=async function(input,previewId){
+    const img=document.getElementById(previewId);if(!img)return;
+    if(!input||!input.files||!input.files[0]){img.removeAttribute('src');img.classList.add('hidden');return;}
+    try{const data=await window.MB_readPaymentScreenshot(input.id);img.src=data;img.classList.remove('hidden');}
+    catch(e){input.value='';img.removeAttribute('src');img.classList.add('hidden');alert(e.message||'स्क्रीनशॉट सही नहीं है।');}
+  };
+})();
+</script>
+
+<!-- Step 27 audit: initial Contractor payment now persists optional screenshot with UTR, and the active Admin contractor list exposes the screenshot link for review; live Firebase testing remains required. -->
+<!-- Step 28 audit: Material Promotion now requires a 12-digit UTR at submission and rechecks pending status, ₹1,000 amount, UTR format, and explicit manual payment confirmation before approval. -->
+
+<!-- Step 29 audit: Material Promotion blocks reused UTRs at submission and uses one Firestore transaction to atomically mark the request approved and create its shop_ad, preventing double-click duplicate ads; Firebase transaction/rules behavior still requires live deployment testing. -->
+
+<!-- Audit 31: ₹49 worker boost Admin approval now checks for a reused 12-digit UTR in contractor_payments inside the transaction; live Firebase verification remains required. -->
+
+<!-- Audit 32: Worker directory now sorts active, confirmed worker_top_49 boosts ahead of other workers and displays TOP only while topProfileUntil is in the future. Static validation only; verify Firestore matching and live listing after deployment. -->
+
+<!-- Home cleanup audit: keep Admin-only review panels collapsed on initial home load and remove visible escaped newline artifacts. -->
+<script id="mb-home-admin-cleanup-audit">
+(function(){
+  "use strict";
+  if(window.__MB_HOME_ADMIN_CLEANUP_AUDIT__)return;
+  window.__MB_HOME_ADMIN_CLEANUP_AUDIT__=true;
+  function currentPage(){
+    var attr=String(document.body.getAttribute("data-mb-page")||"").trim();
+    if(attr)return attr;
+    return String(location.hash||"#home").replace(/^#/,"").split("?")[0]||"home";
+  }
+  function cleanVisibleEscapes(){
+    var walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
+    var nodes=[],n;
+    while((n=walker.nextNode())){
+      if(/^(?:\\n[ \t]*){2,}$/.test(n.nodeValue||""))nodes.push(n);
+      else if((n.nodeValue||"").trim()==="\\n \\n \\n")nodes.push(n);
+    }
+    nodes.forEach(function(node){node.nodeValue="";});
+  }
+  function sync(){
+    cleanVisibleEscapes();
+    var page=currentPage();
+    var shell=document.getElementById("mb-admin-dispute-shell-fix128");
+    if(shell){
+      var isOperator=!!String(localStorage.getItem("mb_active_operator")||"").trim();
+      var adminPage=(page==="home" && isOperator);
+      shell.classList.toggle("hidden",!adminPage);
+      shell.setAttribute("aria-hidden",adminPage?"false":"true");
+      if(!adminPage){shell.removeAttribute("open");delete shell.dataset.userOpened;}
+      else if(!shell.dataset.userOpened){shell.removeAttribute("open");}
+    }
+    var summary=shell&&shell.querySelector(":scope > summary");
+    if(summary && !summary.dataset.homeCleanupBound){
+      summary.dataset.homeCleanupBound="1";
+      summary.addEventListener("click",function(){
+        if(shell.open)shell.dataset.userOpened="1";
+        else delete shell.dataset.userOpened;
+      });
+    }
+  }
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",sync,{once:true});else sync();
+  window.addEventListener("hashchange",function(){setTimeout(sync,0);});
+  document.addEventListener("click",function(e){if(e.target.closest("#nav-home,#nav-jobs,#nav-post,#nav-workers,#nav-register"))setTimeout(sync,0);});
+  window.addEventListener("storage",function(){setTimeout(sync,0);});
+})();
+</script>
+
+<!-- Audit follow-up: Admin complaint and contact-visibility review panels are hidden on all pages for non-operators and on non-home pages; visibility is re-synced on navigation/session storage changes. -->
