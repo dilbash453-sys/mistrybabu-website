@@ -10288,8 +10288,9 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
     var walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
     var nodes=[],n;
     while((n=walker.nextNode())){
-      if(/^(?:\\n[ \t]*){2,}$/.test(n.nodeValue||""))nodes.push(n);
-      else if((n.nodeValue||"").trim()==="\\n \\n \\n")nodes.push(n);
+      var value=String(n.nodeValue||"");
+      // Remove any text-only artifact made of literal backslash-n tokens and whitespace.
+      if(value.indexOf("\\n")!==-1 && value.replace(/\\n/g,"").replace(/[\s\u00a0]/g,"")=="")nodes.push(n);
     }
     nodes.forEach(function(node){node.nodeValue="";});
   }
@@ -10362,7 +10363,7 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
     while((node=walker.nextNode())){
       var value=String(node.nodeValue||'');
       // Remove standalone visible strings such as "\\n \\n \\n", without touching real whitespace or code.
-      if(/^\s*(?:\\n\s*){2,}$/.test(value) || /^\s*\\n\s*\\n\s*\\n\s*$/.test(value)) nodes.push(node);
+      if(value.indexOf('\\n')!==-1 && value.replace(/\\n/g,'').replace(/[\s\u00a0]/g,'')==='') nodes.push(node);
     }
     nodes.forEach(function(n){n.nodeValue='';});
   }
@@ -10373,3 +10374,5 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
   new MutationObserver(function(){cleanLiteralNewlineText();}).observe(document.documentElement,{childList:true,subtree:true,characterData:true});
 })();
 </script>
+
+<!-- Follow-up: remove whitespace-only text nodes containing literal escaped newline tokens even when injected dynamically. -->
