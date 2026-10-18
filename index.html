@@ -10287,9 +10287,13 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
     cleanVisibleEscapes();
     var page=currentPage();
     var shell=document.getElementById("mb-admin-dispute-shell-fix128");
+    var adminView=document.getElementById("admin-main-view");
     if(shell){
+      // Admin-only review tools belong inside the Admin dashboard, never the public page flow.
+      if(adminView && shell.parentElement!==adminView) adminView.appendChild(shell);
       var isOperator=!!String(localStorage.getItem("mb_active_operator")||"").trim();
-      var adminPage=(page==="home" && isOperator);
+      var adminViewOpen=!!(adminView && !adminView.classList.contains("hidden"));
+      var adminPage=isOperator && adminViewOpen;
       shell.classList.toggle("hidden",!adminPage);
       shell.setAttribute("aria-hidden",adminPage?"false":"true");
       if(!adminPage){shell.removeAttribute("open");delete shell.dataset.userOpened;}
@@ -10308,7 +10312,22 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
   window.addEventListener("hashchange",function(){setTimeout(sync,0);});
   document.addEventListener("click",function(e){if(e.target.closest("#nav-home,#nav-jobs,#nav-post,#nav-workers,#nav-register"))setTimeout(sync,0);});
   window.addEventListener("storage",function(){setTimeout(sync,0);});
+  // Watch for admin view open/close and dynamically inserted escaped newline text.
+  var observer=new MutationObserver(function(){
+    if(!document.body)return;
+    cleanVisibleEscapes();
+    var shell=document.getElementById("mb-admin-dispute-shell-fix128");
+    var view=document.getElementById("admin-main-view");
+    if(shell && view && shell.parentElement!==view) sync();
+    else if(shell){
+      var allowed=!!String(localStorage.getItem("mb_active_operator")||"").trim() && !view.classList.contains("hidden");
+      shell.classList.toggle("hidden",!allowed);
+      shell.setAttribute("aria-hidden",allowed?"false":"true");
+      if(!allowed)shell.removeAttribute("open");
+    }
+  });
+  observer.observe(document.body,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:["class","data-mb-page"]});
 })();
 </script>
 
-<!-- Audit follow-up: Admin complaint and contact-visibility review panels are hidden on all pages for non-operators and on non-home pages; visibility is re-synced on navigation/session storage changes. -->
+<!-- Audit follow-up: Admin review shell is relocated to admin-main-view and remains hidden unless an operator session and visible Admin dashboard are both present; escaped newline cleanup watches dynamically inserted text. -->
