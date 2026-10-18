@@ -212,7 +212,7 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
       </div>
     </div>
 
-    <div class="bg-amber-100 border border-amber-300 rounded-2xl p-3 flex justify-between items-center shadow-xs">
+    <div id="mb-worker-boost49-banner" class="bg-amber-100 border border-amber-300 rounded-2xl p-3 flex justify-between items-center shadow-xs">
       <div>
         <span class="text-[10px] font-black text-amber-900 uppercase block">⚡ मिस्त्री टॉप प्रोफ़ाइल प्लान</span>
         <p class="text-[11px] text-slate-700">मात्र <strong>₹49 में 7 दिनों</strong> तक अपने ज़िले में सबसे ऊपर दिखें!</p>
@@ -2320,12 +2320,22 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
         leadAccessStatus: "locked",
         leadAccessNote: "Paid Lead access requires Mistri request + Admin/payment verification.",
         isVerifiedClient: isVerified,
+        // नई ग्राहक पोस्ट तुरंत सार्वजनिक जॉब फीड में दिखनी चाहिए।
+        status: "live",
+        publicationStatus: "live",
         isClosed: false,
         deviceFingerprint: getDeviceFingerprint(),
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       };
 
-      db.collection("job_posts").add(data).then(() => {
+      db.collection("job_posts").add(data).then(async (postRef) => {
+        // सफलता का संदेश देने से पहले Firestore से रिकॉर्ड वापस पढ़कर पुष्टि करें।
+        const savedPost = await postRef.get();
+        if (!savedPost.exists) throw new Error("पोस्ट सेव हुई लेकिन रिकॉर्ड वापस नहीं मिला। कृपया ग्राहक डैशबोर्ड में जाँचें।");
+        const savedData = savedPost.data() || {};
+        if (savedData.status !== "live" || savedData.publicationStatus !== "live") {
+          throw new Error("पोस्ट सेव हुई है, लेकिन Live स्थिति की पुष्टि नहीं हुई। Admin/Firebase जाँच आवश्यक है।");
+        }
         localStorage.setItem("mb_client_phone", fullPhone);
         localStorage.setItem("mb_client_name", profile.name);
         localStorage.setItem("mb_device_locked_role", "client");
@@ -2336,7 +2346,7 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
 
         localStorage.removeItem("mb_pending_post_draft");
         localStorage.removeItem("mb_pending_post_draft_restored");
-        alert(`बधाई हो! ${isTheka ? 'पेटी-ठेका' : 'काम'} तुरंत लाइव पोस्ट हो गया है।\nकाम ID: ${sixDigitId}`);
+        alert(`बधाई हो! ${isTheka ? 'पेटी-ठेका' : 'काम'} Firestore में Live के रूप में सेव और सत्यापित हुआ।\nकाम ID: ${sixDigitId}`);
         resetPostSubmit();
         navTo('jobs');
       }).catch(err => {
@@ -10331,3 +10341,35 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
 </script>
 
 <!-- Audit follow-up: Admin review shell is relocated to admin-main-view and remains hidden unless an operator session and visible Admin dashboard are both present; escaped newline cleanup watches dynamically inserted text. -->
+
+<!-- Audit follow-up: move the ₹49 worker boost offer out of public worker search and into the signed-in worker dashboard; clean visible escaped-newline artifacts robustly. -->
+<script id="mb-worker-boost-placement-and-text-cleanup">
+(function(){
+  "use strict";
+  function moveBoostOffer(){
+    var banner=document.getElementById('mb-worker-boost49-banner');
+    var dashboard=document.getElementById('worker-dashboard-box');
+    if(banner && dashboard && banner.parentElement!==dashboard){
+      dashboard.insertBefore(banner,dashboard.firstChild);
+    }
+    if(banner){
+      banner.classList.remove('hidden');
+      banner.setAttribute('aria-label','मिस्त्री के अपने डैशबोर्ड में ₹49 टॉप प्रोफ़ाइल प्लान');
+    }
+  }
+  function cleanLiteralNewlineText(){
+    var walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT),nodes=[],node;
+    while((node=walker.nextNode())){
+      var value=String(node.nodeValue||'');
+      // Remove standalone visible strings such as "\\n \\n \\n", without touching real whitespace or code.
+      if(/^\s*(?:\\\\n\s*){2,}$/.test(value) || /^\s*\\\\n\s*\\\\n\s*\\\\n\s*$/.test(value)) nodes.push(node);
+    }
+    nodes.forEach(function(n){n.nodeValue='';});
+  }
+  function run(){moveBoostOffer();cleanLiteralNewlineText();}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run,{once:true});else run();
+  document.addEventListener('click',function(e){if(e.target.closest('#nav-register,#nav-home,#nav-workers'))setTimeout(run,0);});
+  window.addEventListener('hashchange',function(){setTimeout(run,0);});
+  new MutationObserver(function(){cleanLiteralNewlineText();}).observe(document.documentElement,{childList:true,subtree:true,characterData:true});
+})();
+</script>
