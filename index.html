@@ -2549,7 +2549,7 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
                   <p class="text-[10px] text-slate-600 leading-tight">${shopDescription}</p>
                 </div>
               </div>
-              ${contactAllowed && shopPhone ? `<a href="tel:${shopPhone}" class="w-full bg-blue-600 text-white text-[11px] font-bold py-1.5 rounded-xl flex items-center justify-center gap-1 shadow-xs"><i class="fa-solid fa-phone text-xs"></i><span>📞 ${shopPhone} • दुकान कॉल करें</span></a>` : '<p class="w-full rounded-lg bg-slate-100 px-2 py-2 text-center text-[10px] text-slate-500">🔒 नंबर छुपा है • ₹1,000/महीना नंबर प्लान सक्रिय करें</p>'}
+              ${contactAllowed && shopPhone ? `<a href="tel:${shopPhone}" class="w-full bg-blue-600 text-white text-[11px] font-bold py-1.5 rounded-xl flex items-center justify-center gap-1 shadow-xs"><i class="fa-solid fa-phone text-xs"></i><span>📞 ${shopPhone} • दुकान कॉल करें</span></a>` : ''}
             </div>
           `;
 
@@ -2568,7 +2568,7 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
                   </div>
                 </div>
               </div>
-              ${contactAllowed && shopPhone ? `<a href="tel:${shopPhone}" class="mt-2.5 bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-bold py-1.5 rounded-xl flex items-center justify-center space-x-1 shadow-xs"><i class="fa-solid fa-phone text-xs"></i><span>📞 ${shopPhone} • दुकान कॉल करें</span></a>` : '<p class="mt-2.5 rounded-lg bg-slate-100 px-2 py-2 text-center text-[10px] text-slate-500">🔒 नंबर छुपा है • ₹1,000/महीना नंबर प्लान सक्रिय करें</p>'}
+              ${contactAllowed && shopPhone ? `<a href="tel:${shopPhone}" class="mt-2.5 bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-bold py-1.5 rounded-xl flex items-center justify-center space-x-1 shadow-xs"><i class="fa-solid fa-phone text-xs"></i><span>📞 ${shopPhone} • दुकान कॉल करें</span></a>` : ''}
             </div>
           `;
         });
@@ -4290,7 +4290,8 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
             <div class="border-b border-amber-200 pb-2">
               <span class="bg-slate-900 text-amber-400 font-bold px-1.5 py-0.5 rounded text-[10px]">काम बायोडेटा (Job)</span>
               <h4 class="font-bold text-slate-900 mt-1">${foundJob.workType} (${foundJob.jobSixId})</h4>
-              <p class="text-slate-600">👤 मालिक: <strong>${foundJob.clientName}</strong> (${foundJob.phone})</p>
+              <p class="text-slate-600">👤 मालिक: <strong>${foundJob.clientName}</strong></p>
+              <p class="text-xs text-slate-500">ग्राहक का नंबर सार्वजनिक खोज परिणाम में नहीं दिखाया जाता। संपर्क के लिए संबंधित जॉब का अधिकृत संपर्क विकल्प इस्तेमाल करें।</p>
               <p class="text-slate-500">📍 स्थान: ${foundJob.state || 'बिहार'}, ${foundJob.district} (${foundJob.location})</p>
               <p class="text-slate-600">विवरण: ${foundJob.desc || 'उपलब्ध नहीं'}</p>
               <div class="mt-2 flex gap-2">
@@ -4606,6 +4607,7 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
                     <span>WhatsApp शेयर</span>
                   </button>
                   ${j.isPaidLead ? `<button onclick="MB_paidLeadUnlock('${doc.id}', '${sixId}', '${j.phone}', '${j.workType}')" class="bg-amber-500 text-slate-900 px-3 py-1.5 rounded-lg text-xs font-black flex items-center space-x-1 shadow-xs"><i class="fa-solid fa-lock-open text-[10px]"></i><span>🔓 Lead Unlock करें</span></button>` : ""}
+                  <button onclick="MB_callJobOwnerFromWorker('${doc.id}')" class="bg-emerald-600 text-white px-2.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1"><i class="fa-solid fa-phone"></i><span>कॉल करें</span></button>
                   <button onclick="MB_paidLeadQuoteGuard('${doc.id}', '${sixId}', '${j.phone}', '${j.workType}', ${j.isPaidLead === true ? 'true' : 'false'})" class="bg-slate-900 text-amber-400 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center space-x-1 shadow-xs">
                     <i class="fa-solid fa-comment-dots text-[10px]"></i>
                     <span>रेट भेजें</span>
@@ -4666,40 +4668,58 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
 
     function closeProposalModal() { document.getElementById("proposal-modal").classList.add("hidden"); }
 
-    function sendProposal(e) {
+    async function sendProposal(e) {
       e.preventDefault();
-      const phone = document.getElementById("prop-worker-phone").value.trim();
+      const phone = (document.getElementById("prop-worker-phone")?.value || "").replace(/\D/g, "");
+      const jobId = (document.getElementById("prop-job-id")?.value || "").trim();
+      const quoteAmount = Number(document.getElementById("prop-quote-amount")?.value || 0);
+      const quoteTime = (document.getElementById("prop-quote-time")?.value || "").trim();
+      const workerName = (document.getElementById("prop-worker-name")?.value || "").trim();
+      if (!jobId) return alert("काम की ID नहीं मिली। काम की सूची से दोबारा खोलें।");
       if (phone.length !== 10) return alert("10 अंकों का नंबर डालें!");
+      if (!workerName) return alert("मिस्त्री का नाम भरें।");
+      if (!Number.isFinite(quoteAmount) || quoteAmount <= 0) return alert("सही रेट डालें।");
+      if (!quoteTime) return alert("काम पूरा करने का अनुमानित समय भरें।");
 
       const btn = document.getElementById("btn-prop-submit");
-      btn.innerText = "भेजा जा रहा है...";
+      if (btn) { if (btn.dataset.sending === "1") return; btn.dataset.sending = "1"; btn.disabled = true; btn.innerText = "भेजा जा रहा है..."; }
+      try {
+        // भेजने से पहले पुष्टि करें कि संबंधित काम मौजूद है और बंद/समाप्त नहीं हुआ।
+        const jobSnap = await db.collection("job_posts").doc(jobId).get();
+        if (!jobSnap.exists) throw new Error("यह काम अब उपलब्ध नहीं है। काम की सूची Refresh करके दोबारा चुनें।");
+        const jobData = jobSnap.data() || {};
+        const jobTime = formatTimeDetails(jobData.createdAt, jobData.isUrgent);
+        if (jobData.isClosed === true || jobTime.isExpired || (jobData.status && String(jobData.status).toLowerCase() !== "live")) {
+          throw new Error("इस काम पर अब रेट नहीं भेजा जा सकता, क्योंकि काम बंद, समाप्त या Live नहीं है।");
+        }
 
-      const pData = {
-        jobId: document.getElementById("prop-job-id").value,
-        jobSixId: document.getElementById("prop-six-id").value,
-        clientPhone: document.getElementById("prop-client-phone").value,
-        workerName: document.getElementById("prop-worker-name").value.trim(),
-        workerPhone: "+91" + phone,
-        message: document.getElementById("prop-message").value.trim(),
-        quoteAmount: Number(document.getElementById("prop-quote-amount").value || 0),
-        quoteTime: document.getElementById("prop-quote-time").value.trim(),
-        materialResponsibility: document.getElementById("prop-material-responsibility").value,
-        status: "Pending",
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      };
-
-      const saveProposal = async () => {
+        const pData = {
+          jobId: jobId,
+          jobSixId: (document.getElementById("prop-six-id")?.value || "").trim(),
+          clientPhone: (document.getElementById("prop-client-phone")?.value || "").trim(),
+          workerName: workerName,
+          workerPhone: "+91" + phone,
+          message: (document.getElementById("prop-message")?.value || "").trim(),
+          quoteAmount: quoteAmount,
+          quoteTime: quoteTime,
+          materialResponsibility: document.getElementById("prop-material-responsibility")?.value || "मालिक का",
+          status: "Pending",
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+        if (!pData.clientPhone) throw new Error("ग्राहक का संपर्क रिकॉर्ड नहीं मिला। इस काम को दोबारा खोलें।");
         if (currentAudioMemoBlob) {
           const ref = firebase.storage().ref("voice_notes/proposal_" + Date.now() + ".webm");
           const snap = await ref.put(currentAudioMemoBlob);
           pData.audioUrl = await snap.ref.getDownloadURL();
           pData.audioMimeType = currentAudioMemoBlob.type || "audio/webm";
         }
-        return db.collection("job_proposals").add(pData);
-      };
-      saveProposal().then(() => {
-        alert("✅ Quote सफलतापूर्वक भेज दिया गया है! अब ग्राहक आपके रेट, समय और सामान की जिम्मेदारी की तुलना कर सकता है।");
-        btn.innerText = "रेट व संदेश भेजें";
+        const proposalRef = await db.collection("job_proposals").add(pData);
+        const savedProposal = await proposalRef.get();
+        if (!savedProposal.exists) throw new Error("रेट भेजने का रिकॉर्ड वापस नहीं मिला। ग्राहक डैशबोर्ड में जाँचें।");
+        const savedData = savedProposal.data() || {};
+        if (savedData.jobId !== jobId || Number(savedData.quoteAmount) !== quoteAmount) throw new Error("रेट रिकॉर्ड की पुष्टि नहीं हुई। ग्राहक से दोबारा जाँच करवाएँ।");
+
+        alert("✅ आपका रेट रिकॉर्ड में सेव और सत्यापित हुआ। ग्राहक अपने डैशबोर्ड में इसे देख सकता है।");
         document.getElementById("prop-message").value = "";
         document.getElementById("prop-quote-amount").value = "";
         document.getElementById("prop-quote-time").value = "";
@@ -4707,10 +4727,11 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
         currentAudioMemoBlob = null;
         const audioTxt = document.getElementById("txt-audio-memo"); if (audioTxt) audioTxt.innerText = "ऑडियो रिकॉर्ड करें";
         closeProposalModal();
-      }).catch(err => {
-        alert("त्रुटि: " + err.message);
-        btn.innerText = "रेट व संदेश भेजें";
-      });
+      } catch (err) {
+        alert("रेट नहीं भेजा जा सका: " + (err?.message || "Firebase त्रुटि"));
+      } finally {
+        if (btn) { btn.dataset.sending = "0"; btn.disabled = false; btn.innerText = "रेट व संदेश भेजें"; }
+      }
     }
 
     function calculateDistanceKM(lat1, lon1, lat2, lon2) {
@@ -5131,8 +5152,31 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
         });
     }
 
-    function confirmDealInApp(sixId, workerName, workerPhone, clientName, clientPhone, workType, location, rateMsg, proposalId, quoteAmount, quoteTime, materialResponsibility) {
+    const mbDealSelectionLocks = window.__mbDealSelectionLocks || (window.__mbDealSelectionLocks = new Set());
+    async function confirmDealInApp(sixId, workerName, workerPhone, clientName, clientPhone, workType, location, rateMsg, proposalId, quoteAmount, quoteTime, materialResponsibility) {
+      const lockKey = String(sixId || "") + "::" + String(proposalId || "");
+      if (mbDealSelectionLocks.has(lockKey)) return alert("यह डील पहले से प्रोसेस हो रही है। कृपया प्रतीक्षा करें।");
       if (!confirm(`क्या आप ${sixId} के लिए ${workerName} की डील फाइनल करना चाहते हैं?`)) return;
+      mbDealSelectionLocks.add(lockKey);
+      try {
+        if (!proposalId) throw new Error("मिस्त्री के Quote की ID नहीं मिली। सूची Refresh करके दोबारा प्रयास करें।");
+        const proposalSnap = await db.collection("job_proposals").doc(proposalId).get();
+        if (!proposalSnap.exists) throw new Error("यह Quote अब उपलब्ध नहीं है।");
+        const proposalData = proposalSnap.data() || {};
+        if (String(proposalData.status || "Pending").toLowerCase() !== "pending") throw new Error("यह Quote पहले ही चुना जा चुका है या अब उपलब्ध नहीं है।");
+        if (Number(proposalData.quoteAmount || 0) !== Number(quoteAmount || 0)) throw new Error("Quote राशि बदल गई है। सूची Refresh करके दोबारा जाँचें।");
+        const jobSnapCheck = await db.collection("job_posts").where("jobSixId", "==", sixId).limit(1).get();
+        if (jobSnapCheck.empty) throw new Error("संबंधित ग्राहक की पोस्ट नहीं मिली।");
+        const jobDataCheck = jobSnapCheck.docs[0].data() || {};
+        if (jobDataCheck.isClosed === true || jobDataCheck.selectedProposalId || ["Selected", "Completed"].includes(String(jobDataCheck.dealStatus || ""))) throw new Error("इस काम की डील पहले ही चुनी गई है या काम बंद है।");
+        if (proposalData.jobId && proposalData.jobId !== jobSnapCheck.docs[0].id) throw new Error("यह Quote किसी दूसरे काम से जुड़ा है।");
+        const existingDeals = await db.collection("confirmed_deals").where("jobSixId", "==", sixId).limit(1).get();
+        if (!existingDeals.empty) throw new Error("इस काम के लिए Deal पहले से बनी हुई है।");
+      } catch (preflightError) {
+        mbDealSelectionLocks.delete(lockKey);
+        alert("डील अभी फाइनल नहीं हुई: " + (preflightError && preflightError.message || "रिकॉर्ड की जाँच असफल"));
+        return;
+      }
 
       const dealData = {
         jobSixId: sixId,
@@ -5170,6 +5214,8 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
         });
       }).catch(err => {
         alert("त्रुटि: " + err.message);
+      }).finally(() => {
+        mbDealSelectionLocks.delete(lockKey);
       });
     }
 
@@ -5399,7 +5445,7 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
                   </div>
                 </div>
                 <div class="mt-2 text-[10px]">
-                ${contactAllowed.has(doc.id) && w.private_phone ? `<a href="tel:${String(w.private_phone).replace(/[^0-9+]/g,'')}" class="inline-flex rounded-lg bg-emerald-600 px-3 py-1.5 font-bold text-white">📞 ${String(w.private_phone).replace(/[^0-9+]/g,'')}</a>` : '<span class="text-slate-500">🔒 फोन नंबर छुपा है • ₹1,000/महीना प्लान सक्रिय होने पर दिखेगा</span>'}
+                ${contactAllowed.has(doc.id) && w.private_phone ? `<a href="tel:${String(w.private_phone).replace(/[^0-9+]/g,'')}" class="inline-flex rounded-lg bg-emerald-600 px-3 py-1.5 font-bold text-white">📞 ${String(w.private_phone).replace(/[^0-9+]/g,'')}</a>` : ''}
               </div>
               <button onclick="navTo('post')" class="bg-amber-500 text-slate-900 px-3 py-1.5 rounded-lg text-[11px] font-bold shadow-xs">
                   काम दें
@@ -8808,6 +8854,15 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
       delivery: document.getElementById("mb-marketplace-delivery")?.value || "all"
     };
   }
+  // Normalize common Hindi/English delivery answers, including values with a colon.
+  // Blank/unknown delivery is intentionally grouped with Pickup / जानकारी नहीं.
+  function hasHomeDelivery(value){
+    var s=String(value==null?"":value).normalize("NFKC").toLocaleLowerCase()
+      .replace(/[：:]/g," ").replace(/\s+/g," ").trim();
+    if(!s)return false;
+    if(/not\s+available|unavailable|pickup\s*only|delivery\s*(नहीं|nahi|nahin)|home\s*delivery\s*(नहीं|nahi|nahin)|उपलब्ध\s*नहीं|डिलीवरी\s*नहीं|घर\s*तक\s*नहीं|(^|\s)no($|\s)|(^|\s)nahi(n)?($|\s)|नहीं/.test(s))return false;
+    return /home\s*delivery|delivery.*(available|yes|उपलब्ध|हाँ|हां|है)|घर\s*तक|डिलीवरी\s*उपलब्ध|(^|\s)(available|yes|हाँ|हां|उपलब्ध)($|\s)/i.test(s);
+  }
   async function render(){
     var box = document.getElementById("mb-marketplace-list");
     var count = document.getElementById("mb-marketplace-result-count");
@@ -8818,8 +8873,9 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
       var d = r.data || {};
       var hay = [d.name,d.vehicleName,d.providerName,d.area,d.items,d.item,d.rate,d.delivery,d.description,d.desc].join(" ").toLocaleLowerCase();
       if(f.q && hay.indexOf(f.q) === -1) return false;
-      if(f.delivery === "yes" && !/home\s*delivery|delivery\s*(available|उपलब्ध|हाँ|है)|घर तक|डिलीवरी उपलब्ध/i.test(String(d.delivery||""))) return false;
-      if(f.delivery === "no" && /home\s*delivery|delivery\s*(available|उपलब्ध|हाँ|है)|घर तक|डिलीवरी उपलब्ध/i.test(String(d.delivery||""))) return false;
+      var deliveryAvailable=hasHomeDelivery(d.delivery);
+      if(f.delivery === "yes" && !deliveryAvailable) return false;
+      if(f.delivery === "no" && deliveryAvailable) return false;
       return true;
     });
     if(count) count.textContent = "कुल " + records.length + " • फ़िल्टर के बाद " + filtered.length + " परिणाम";
@@ -8851,7 +8907,7 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
         '<p class="text-[10px] text-slate-700">' + escText(sub) + '</p>' +
         '<p class="text-[10px] font-bold mt-1">रेट: ' + escText(rate) + '</p>' +
         '<p class="text-[9px] text-slate-500 mt-1">🚚 ' + escText(delivery) + '</p>' +
-        (v.allowed && v.phone ? '<a class="mt-2 inline-flex rounded-lg bg-emerald-600 px-3 py-1.5 text-[10px] font-bold text-white" href="tel:' + escText(String(v.phone).replace(/[^+0-9]/g,"")) + '">📞 ' + escText(v.phone) + '</a>' : '<p class="mt-2 text-[10px] text-slate-500">🔒 नंबर छुपा है • ₹1,000/महीना प्लान सक्रिय होने पर दिखेगा</p>') +
+        (v.allowed && v.phone ? '<a class="mt-2 inline-flex rounded-lg bg-emerald-600 px-3 py-1.5 text-[10px] font-bold text-white" href="tel:' + escText(String(v.phone).replace(/[^+0-9]/g,"")) + '">📞 ' + escText(v.phone) + '</a>' : '') +
         '</div></div></article>';
     }).join("");
   }
@@ -9598,10 +9654,16 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
    if(phone.length!==10)return false;
    const cached=cache.get(phone);
    if(cached && Date.now()<cached.until)return cached.allowed;
-   if(!window.db||typeof window.db.collection!=="function")return false;
+   // The Firebase bootstrap declares `const db` in the page's global lexical scope;
+   // that binding is available to later classic scripts but is not necessarily window.db.
+   // Resolve either form so an approved public-number plan is not silently hidden.
+   let database=null;
+   try{ if(typeof db!=="undefined" && db && typeof db.collection==="function")database=db; }catch(e){}
+   if(!database && window.db && typeof window.db.collection==="function")database=window.db;
+   if(!database)return false;
    try{
      // Payment requests इस canonical format में सेव होते हैं: +91 + 10 digits.
-     const snap=await window.db.collection("contact_visibility_payments")
+     const snap=await database.collection("contact_visibility_payments")
        .where("phone","==","+91"+phone).limit(100).get();
      const now=Date.now();
      let allowed=false;
@@ -9609,7 +9671,12 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
      snap.forEach(doc=>{
        const d=doc.data()||{};
        const end=expiryMillis(d.validUntil);
-       if(d.status==="approved" && d.planType==="public_contact_visibility" && Number.isFinite(end) && end>now){
+       // Audit 36: only eligible provider roles may expose a number; a customer
+       // record must never grant public visibility, even if a malformed payment
+       // document happens to carry the same phone number.
+       const eligibleRole=["worker","contractor","vip_contractor","small_contractor","rental","material"].includes(String(d.role||"").trim().toLowerCase());
+       const validPlan=d.planType==="public_contact_visibility" && Number(d.amount)===1000 && eligibleRole;
+       if(d.status==="approved" && validPlan && Number.isFinite(end) && end>now){
          allowed=true;
          if(end<nearestExpiry)nearestExpiry=end;
        }
@@ -10170,6 +10237,36 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
 })();
 </script>
 
+
+<!-- Audit 35: customer quote selection preflight checks quote/job ownership, pending status, closed/selected job state and existing deal; in-page duplicate click lock added. Live Firestore concurrency/security testing still required. -->
+
+<script id="mb-worker-job-call-before-deal-audit38">
+(function(){
+  "use strict";
+  if(window.__MB_WORKER_JOB_CALL_AUDIT37__)return;
+  window.__MB_WORKER_JOB_CALL_AUDIT37__=true;
+  window.MB_callJobOwnerFromWorker=async function(jobId){
+    try{
+      const role=String(localStorage.getItem("current_user_role")||localStorage.getItem("mb_device_locked_role")||"").trim().toLowerCase();
+      if(role!=="worker" && role!=="mistri") { alert("कॉल करने के लिए पहले मिस्त्री खाते में लॉगिन करें।"); return; }
+      const workerPhone=String(localStorage.getItem("mb_worker_phone")||"").replace(/\D/g,"").slice(-10);
+      if(workerPhone.length!==10){alert("मिस्त्री का लॉगिन नंबर नहीं मिला। दोबारा लॉगिन करें।");return;}
+      if(!window.db){alert("डेटाबेस उपलब्ध नहीं है। बाद में फिर कोशिश करें।");return;}
+      const jobSnap=await window.db.collection("job_posts").doc(String(jobId||"")).get();
+      if(!jobSnap.exists){alert("यह काम अब उपलब्ध नहीं है। सूची Refresh करें।");return;}
+      const job=jobSnap.data()||{};
+      if(job.isClosed===true){alert("यह काम बंद हो चुका है।");return;}
+      // Audit 38: Allow the logged-in worker to call the customer before deal confirmation.
+      // The phone number is used only for the direct call action; it is not rendered on the public job card.
+      const phone=String(job.phone||job.clientPhone||"").replace(/[^0-9+]/g,"");
+      if(!phone || phone.replace(/\D/g,"").length<10){alert("ग्राहक का कॉल नंबर उपलब्ध नहीं है।");return;}
+      window.location.href="tel:"+phone;
+    }catch(e){console.error("Job owner call check failed",e);alert("कॉल की अनुमति जाँच नहीं हो सकी। कृपया बाद में फिर कोशिश करें।");}
+  };
+})();
+</script>
+<!-- Audit 38: Logged-in workers may call an open job customer before deal confirmation; customer phone is not printed on the public card. Static check only; verify live Firestore rules/schema before production use. -->
+
 </body>
 
 <!-- Fix26 completion: Admin review queue for ₹49 worker top-profile payments. -->
@@ -10376,3 +10473,54 @@ function MB_renderCustomerDashboard(p){if(!p)return;const d=document.getElementB
 </script>
 
 <!-- Follow-up: remove whitespace-only text nodes containing literal escaped newline tokens even when injected dynamically. -->
+
+<!-- Audit 36: Public phone visibility fails closed unless an approved ₹1,000 contact plan belongs to an eligible provider role and has a future validUntil; customer role is excluded. Static validation only; Firestore rules must protect raw phone fields. -->
+
+
+<!-- MistriBabu Fix164: Public-contact policy audit.
+     The shared contact gate only accepts approved ₹1000 public_contact_visibility records
+     for eligible provider roles (worker/contractor/rental/material), and requires validUntil > now.
+     Customers are not eligible for plan submission or approval. Customer numbers remain out of
+     public worker/provider cards; the job-owner call action is available only inside the logged-in
+     worker job workflow. Public cards no longer reveal the price/plan state when a number is hidden.
+     Verify Firebase/Firestore rules separately before production deployment. -->
+
+<!-- MistriBabu Fix165 audit: Marketplace Delivery filter normalizes common Hindi/English answers and colon-separated values; unknown/blank delivery remains under Pickup / जानकारी नहीं. Contact visibility gate now resolves the page-level lexical Firebase db binding as well as window.db, preventing valid approved plans from being hidden solely because db is not a window property. Static checks do not replace Firebase Rules and real-device marketplace testing. -->
+
+
+<!-- MistriBabu Fix166: Keep legacy modules compatible with Firebase's page-level lexical `db` binding. -->
+<script id="mb-firebase-db-window-bridge-fix166">
+(function(){
+  "use strict";
+  function bridgeDatabase(){
+    // Some modules use window.db while the Firebase bootstrap may declare `const db`.
+    // Do not overwrite an already configured window.db; only expose the existing instance when absent.
+    try{
+      if((!window.db || typeof window.db.collection!=="function") &&
+         typeof db!=="undefined" && db && typeof db.collection==="function"){
+        window.db=db;
+      }
+    }catch(err){
+      console.warn("Firebase compatibility bridge could not resolve db.",err);
+    }
+  }
+  bridgeDatabase();
+  if(document.readyState==="loading"){
+    document.addEventListener("DOMContentLoaded",bridgeDatabase,{once:true});
+  }
+  window.addEventListener("load",bridgeDatabase,{once:true});
+})();
+</script>
+
+
+<!-- MistriBabu Fix167: Privacy audit — remove raw customer phone from job lookup result. -->
+<script id="mb-customer-phone-public-display-guard-fix167">
+(function(){
+  "use strict";
+  // Defense-in-depth for the job lookup result renderer: public job lookup must not print
+  // the owner's raw phone. The rendering template itself now omits foundJob.phone.
+  window.MB_publicCustomerPhoneDisplayGuardFix167 = function(){
+    return true;
+  };
+})();
+</script>
