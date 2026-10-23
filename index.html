@@ -750,7 +750,12 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
               <input type="tel" id="quick-login-phone" maxlength="10" inputmode="numeric" pattern="[0-9]{10}" autocomplete="tel-national" placeholder="10 अंकों का नंबर" class="w-full rounded-lg border border-amber-300 px-2.5 py-1.5 text-xs bg-white focus:outline-none" aria-label="10 अंकों का नंबर">
               <input type="password" id="quick-login-pin" maxlength="4" inputmode="numeric" pattern="[0-9]{4}" placeholder="4 अंकों का PIN" class="w-full rounded-lg border border-amber-300 px-2.5 py-1.5 text-xs bg-white focus:outline-none" aria-label="4 अंकों का PIN">
             </div>
-            <button type="button" onclick="loginWithPhone()" id="btn-quick-login" class="bg-slate-900 text-amber-400 text-xs font-bold px-3 py-1.5 rounded-lg shadow-xs">खोलें</button>
+            <button type="button" onclick="loginWithPhone()" id="btn-quick-login" class="bg-slate-900 text-amber-400 text-xs font-bold px-3 py-1.5 rounded-lg shadow-xs">OTP भेजें</button>
+          </div>
+          <div id="quick-login-otp-panel" class="hidden mt-2 space-y-2">
+            <p class="text-[11px] text-slate-600">आपके मोबाइल पर आया 6 अंकों का OTP डालें।</p>
+            <input type="tel" id="quick-login-otp" maxlength="6" inputmode="numeric" autocomplete="one-time-code" placeholder="6 अंकों का OTP" class="w-full rounded-lg border border-amber-300 px-3 py-2 text-xs" aria-label="6 अंकों का OTP">
+            <div id="quick-login-recaptcha"></div>
           </div>
         </div>
 
@@ -1802,6 +1807,8 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
     let currentOperator = localStorage.getItem("mb_active_operator") || "व्यवस्थापक";
 
     const ALLOWED_ADMIN_USERS = ["dilbas", "lehari", "monu"];
+    // केवल अधिकृत Firebase एडमिन ईमेल रखें; खाली सूची में प्रवेश बंद रहेगा।
+    const ALLOWED_ADMIN_EMAILS = ["dilbash453@gmail.com"];
 
     // 1. बिहार (38 ज़िले), उत्तर प्रदेश (75 ज़िले), दिल्ली व हरियाणा का संपूर्ण डेटाबेस
     const multiStateData = {
@@ -3492,7 +3499,12 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
       a.value=p;
       b.value=pin;
       closeBottomSignin();
-      await loginWithPhone();
+      // OTP input is on the shared profile sign-in area; show that area before sending OTP.
+      navTo("register");
+      setTimeout(function(){
+        try { document.getElementById("page-register")?.scrollIntoView({behavior:"smooth",block:"start"}); } catch(e) {}
+        loginWithPhone();
+      },120);
     }
     function openForgotPinFromBottom(){
       const p=document.getElementById('bottom-login-phone')?.value||'';
@@ -3603,15 +3615,42 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
       localStorage.setItem("mb_device_locked_role", activeRole);
     }
 
+    // सामान्य Sign In: पहले Firebase Phone OTP, फिर पुराने PIN से प्रोफ़ाइल की पुष्टि।
+    // सफल लॉगिन के बाद Firebase UID को प्रोफ़ाइल से जोड़ते हैं ताकि आगे Firestore Rules उसे जाँच सकें।
+    window.mbQuickLoginConfirmation = null;
+    window.mbQuickLoginPhone = "";
     async function loginWithPhone() {
       const phoneInput = (document.getElementById("quick-login-phone")?.value||"").replace(/\D/g,"").slice(-10);
       const pin = (document.getElementById("quick-login-pin")?.value||"").trim();
+      const otpPanel = document.getElementById("quick-login-otp-panel");
+      const otp = (document.getElementById("quick-login-otp")?.value||"").replace(/\D/g,"");
       if(phoneInput.length!==10)return alert("10 अंकों का मोबाइल नंबर डालें!");
       if(!/^\d{4}$/.test(pin))return alert("4 अंकों का PIN डालें!");
       const btn=document.getElementById("btn-quick-login");
-      if(btn){btn.disabled=true;btn.innerText="जाँच...";}
+      if(btn){btn.disabled=true;btn.innerText=window.mbQuickLoginConfirmation ? "OTP जाँच..." : "OTP भेज रहे हैं...";}
       try{
-        const fullPhone="+91"+phoneInput, pinHash=await MB_hashPin(pin);
+        const fullPhone="+91"+phoneInput;
+        if (!window.mbQuickLoginConfirmation) {
+          if (!window.mbQuickLoginRecaptcha) {
+            window.mbQuickLoginRecaptcha = new firebase.auth.RecaptchaVerifier("quick-login-recaptcha", {size:"invisible"});
+          }
+          window.mbQuickLoginConfirmation = await auth.signInWithPhoneNumber(fullPhone, window.mbQuickLoginRecaptcha);
+          window.mbQuickLoginPhone = phoneInput;
+          if(otpPanel) otpPanel.classList.remove("hidden");
+          if(btn) btn.innerText="OTP सत्यापित करें";
+          alert("📲 OTP भेज दिया गया है। OTP डालकर फिर बटन दबाएँ।");
+          return;
+        }
+        if (window.mbQuickLoginPhone !== phoneInput) {
+          try { await auth.signOut(); } catch(e) {}
+          window.mbQuickLoginConfirmation = null;
+          throw new Error("मोबाइल नंबर बदल गया है। कृपया नए नंबर पर OTP भेजें।");
+        }
+        if(otp.length!==6)return alert("6 अंकों का OTP डालें।");
+        const credential = await window.mbQuickLoginConfirmation.confirm(otp);
+        const user = credential.user;
+        if(!user || user.phoneNumber !== fullPhone) throw new Error("Firebase ने मोबाइल नंबर की पुष्टि नहीं की।");
+        const pinHash=await MB_hashPin(pin);
         const [c,w,con,r,m]=await Promise.all([
           db.collection("customer_profiles").doc(fullPhone).get(),
           db.collection("workers").where("private_phone","==",fullPhone).limit(1).get(),
@@ -3619,30 +3658,49 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
           db.collection("rental_providers").where("phone","==",fullPhone).limit(1).get(),
           db.collection("material_providers").where("phone","==",fullPhone).limit(1).get()
         ]);
-        if(c.exists && c.data()?.pinHash===pinHash){
-          const p=c.data(); MB_clearConflictingRoleSessions("client"); saveLocal(p); show(p); localStorage.setItem("current_user_role","client"); localStorage.setItem("mb_device_locked_role","client");
+        let matched=null, role="";
+        if(c.exists && c.data()?.pinHash===pinHash){matched={ref:c.ref,data:c.data()};role="client";}
+        else if(!w.empty && w.docs[0].data()?.pinHash===pinHash){matched={ref:w.docs[0].ref,data:w.docs[0].data(),id:w.docs[0].id};role="worker";}
+        else if(!con.empty && con.docs[0].data()?.pinHash===pinHash){matched={ref:con.docs[0].ref,data:con.docs[0].data(),id:con.docs[0].id};role="contractor";}
+        else if(!r.empty && r.docs[0].data()?.pinHash===pinHash){matched={ref:r.docs[0].ref,data:r.docs[0].data(),id:r.docs[0].id};role="rental";}
+        else if(!m.empty && m.docs[0].data()?.pinHash===pinHash){matched={ref:m.docs[0].ref,data:m.docs[0].data(),id:m.docs[0].id};role="material";}
+        if(!matched){try{await auth.signOut();}catch(e){};throw new Error("OTP सही है, लेकिन चुने गए मोबाइल नंबर और PIN का पुराना अकाउंट मेल नहीं खाता।");}
+        // UID binding is only a migration marker until matching Firestore Rules are deployed.
+        await matched.ref.update({authUid:user.uid, authPhoneVerifiedAt:firebase.firestore.FieldValue.serverTimestamp()});
+        const d=matched.data;
+        MB_clearConflictingRoleSessions(role);
+        if(role==="client"){
+          saveLocal(d); show(d); localStorage.setItem("current_user_role","client"); localStorage.setItem("mb_device_locked_role","client"); localStorage.setItem("mb_client_phone",d.phone||fullPhone);
           navTo("register"); selectProfileCategory("client");
-          return alert("✅ Customer Profile खुल गई।");
+        } else if(role==="worker"){
+          d.id=matched.id; setLoggedInWorker(d); navTo("register"); selectProfileCategory("worker");
+        } else if(role==="contractor"){
+          localStorage.setItem("mb_contractor_app_id",matched.id); localStorage.setItem("mb_contractor_app_tier",d.contractorTier||""); localStorage.setItem("mb_contractor_phone",d.phone||fullPhone); localStorage.setItem("current_user_role","contractor"); localStorage.setItem("mb_device_locked_role","contractor"); navTo("register"); selectProfileCategory("contractor");
+        } else if(role==="rental"){
+          localStorage.setItem("mb_rental_phone",d.phone||fullPhone); localStorage.setItem("mb_rental_profile_id",matched.id); localStorage.setItem("current_user_role","rental"); localStorage.setItem("mb_device_locked_role","rental"); navTo("register"); selectProfileCategory("rental");
+        } else {
+          localStorage.setItem("mb_material_phone",d.phone||fullPhone); localStorage.setItem("mb_material_profile_id",matched.id); localStorage.setItem("current_user_role","material"); localStorage.setItem("mb_device_locked_role","material"); navTo("register"); selectProfileCategory("material");
         }
-        if(!w.empty && w.docs[0].data()?.pinHash===pinHash){
-          const data=w.docs[0].data(); MB_clearConflictingRoleSessions("worker"); data.id=w.docs[0].id; setLoggedInWorker(data); navTo("register"); selectProfileCategory("worker");
-          return alert("✅ Mistri Profile खुल गई।");
-        }
-        if(!con.empty && con.docs[0].data()?.pinHash===pinHash){
-          const d=con.docs[0].data(); MB_clearConflictingRoleSessions("contractor"); localStorage.setItem("mb_contractor_app_id",con.docs[0].id); localStorage.setItem("mb_contractor_app_tier",d.contractorTier||""); localStorage.setItem("mb_contractor_phone",d.phone||fullPhone); localStorage.setItem("current_user_role","contractor"); localStorage.setItem("mb_device_locked_role","contractor"); navTo("register"); selectProfileCategory("contractor");
-          return alert("✅ Contractor Profile खुल गई।");
-        }
-        if(!r.empty && r.docs[0].data()?.pinHash===pinHash){
-          const d=r.docs[0].data(); MB_clearConflictingRoleSessions("rental"); localStorage.setItem("mb_rental_phone",d.phone||fullPhone); localStorage.setItem("mb_rental_profile_id",r.docs[0].id); localStorage.setItem("current_user_role","rental"); localStorage.setItem("mb_device_locked_role","rental"); navTo("register"); selectProfileCategory("rental");
-          return alert("✅ Rental Profile खुल गई।");
-        }
-        if(!m.empty && m.docs[0].data()?.pinHash===pinHash){
-          const d=m.docs[0].data(); MB_clearConflictingRoleSessions("material"); localStorage.setItem("mb_material_phone",d.phone||fullPhone); localStorage.setItem("mb_material_profile_id",m.docs[0].id); localStorage.setItem("current_user_role","material"); localStorage.setItem("mb_device_locked_role","material"); navTo("register"); selectProfileCategory("material");
-          return alert("✅ Shop / Material Profile खुल गई।");
-        }
-        alert("❌ मोबाइल नंबर या PIN गलत है।");
-      }catch(err){alert("Login में समस्या: "+err.message);}
-      finally{if(btn){btn.disabled=false;btn.innerText="खोलें";}}
+        window.mbQuickLoginConfirmation=null;
+        try{if(window.mbQuickLoginRecaptcha){window.mbQuickLoginRecaptcha.clear();window.mbQuickLoginRecaptcha=null;}}catch(e){}
+        if(otpPanel)otpPanel.classList.add("hidden");
+        const otpField=document.getElementById("quick-login-otp");if(otpField)otpField.value="";
+        alert("✅ मोबाइल OTP और PIN सत्यापित। आपका पुराना अकाउंट खुल गया।");
+      }catch(err){
+        console.error("MistriBabu OTP login failed",err);
+        // Failed PIN / OTP / profile update must not leave a partial authenticated session.
+        try { if(auth.currentUser) await auth.signOut(); } catch(signOutErr) { console.warn("Failed login cleanup sign-out failed",signOutErr); }
+        window.mbQuickLoginConfirmation=null;
+        window.mbQuickLoginPhone="";
+        try { if(window.mbQuickLoginRecaptcha){window.mbQuickLoginRecaptcha.clear();window.mbQuickLoginRecaptcha=null;} } catch(cleanupErr) {}
+        if(otpPanel)otpPanel.classList.add("hidden");
+        const otpField=document.getElementById("quick-login-otp");if(otpField)otpField.value="";
+        if (/expired|invalid|code/i.test(String(err.code||err.message||""))) {
+          alert("OTP गलत या एक्सपायर हो गया है, या लॉगिन विवरण मेल नहीं खाता। कृपया दोबारा OTP भेजें।");
+        } else alert("Login में समस्या: "+(err.message||"कृपया फिर कोशिश करें।"));
+      }finally{
+        if(btn){btn.disabled=false;if(!window.mbQuickLoginConfirmation)btn.innerText="OTP भेजें";else btn.innerText="OTP सत्यापित करें";}
+      }
     }
 
     function logoutWorker() {
@@ -3713,17 +3771,26 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
       return;
     }
 
-    function verifyAdminPin() {
-      const opName = (prompt("गुप्त एडमिन यूज़रनेम दर्ज करें") || "").replace(/[,.\s]/g, '').toLowerCase();
+    async function verifyAdminPin() {
+      // साझा hard-coded पासवर्ड run1 हटाया गया है।
+      const opName = (prompt("अधिकृत एडमिन ऑपरेटर नाम (dilbas / lehari / monu)") || "").replace(/[,\.\s]/g, '').toLowerCase();
       if (!opName) return;
-      const entered = prompt("गुप्त एडमिन पासवर्ड दर्ज करें") || "";
-
-      if (!ALLOWED_ADMIN_USERS.includes(opName)) {
-        alert("⛔ अनाधिकृत एडमिन प्रवेश।");
-        return;
+      if (!ALLOWED_ADMIN_USERS.includes(opName)) return alert("⛔ अनाधिकृत एडमिन ऑपरेटर।");
+      if (!Array.isArray(ALLOWED_ADMIN_EMAILS) || ALLOWED_ADMIN_EMAILS.length === 0) {
+        return alert("🔒 एडमिन प्रवेश बंद है। ALLOWED_ADMIN_EMAILS में अपने Firebase एडमिन खाते का वास्तविक ईमेल जोड़ना आवश्यक है।");
       }
-
-      if (entered.toLowerCase() === "run1") {
+      if (typeof auth === "undefined" || !auth) return alert("Firebase Authentication उपलब्ध नहीं है।");
+      const email = (prompt("Firebase एडमिन ईमेल दर्ज करें") || "").trim().toLowerCase();
+      if (!email) return;
+      const password = prompt("Firebase एडमिन पासवर्ड दर्ज करें") || "";
+      if (!password) return;
+      try {
+        const credential = await auth.signInWithEmailAndPassword(email, password);
+        const signedInEmail = String((credential.user && credential.user.email) || "").trim().toLowerCase();
+        if (!signedInEmail || !ALLOWED_ADMIN_EMAILS.map(x => String(x).trim().toLowerCase()).includes(signedInEmail)) {
+          await auth.signOut();
+          return alert("⛔ यह Firebase खाता एडमिन सूची में अधिकृत नहीं है।");
+        }
         currentOperator = opName;
         localStorage.setItem("mb_active_operator", opName);
         document.getElementById("lbl-active-operator").innerText = opName;
@@ -3732,13 +3799,15 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
         loadAdminDeals();
         loadAdminContractors();
         loadAdminShopAdsList();
-      } else {
-        alert("❌ गलत एडमिन पासवर्ड।");
+      } catch (err) {
+        console.error("Firebase admin sign-in failed:", err);
+        alert("❌ Firebase लॉगिन नहीं हुआ। ईमेल/पासवर्ड और Authentication सेटिंग जाँचें।");
       }
     }
 
-    function adminLogout() {
-      // Admin UI बंद करने के साथ स्थानीय operator session भी साफ करें।
+    async function adminLogout() {
+      // Firebase login और स्थानीय operator session दोनों बंद करें।
+      try { if (typeof auth !== "undefined" && auth.currentUser) await auth.signOut(); } catch (e) { console.warn("Firebase sign-out failed:", e); }
       try { localStorage.removeItem("mb_active_operator"); } catch (e) {}
       currentOperator = "व्यवस्थापक";
       const operatorLabel = document.getElementById("lbl-active-operator");
