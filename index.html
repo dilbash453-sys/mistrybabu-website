@@ -752,11 +752,11 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
             </div>
             <button type="button" onclick="loginWithPhone()" id="btn-quick-login" class="bg-slate-900 text-amber-400 text-xs font-bold px-3 py-1.5 rounded-lg shadow-xs">OTP भेजें</button>
           </div>
-          <div id="quick-login-otp-panel" class="hidden mt-2 space-y-2">
-            <p class="text-[11px] text-slate-600">आपके मोबाइल पर आया 6 अंकों का OTP डालें।</p>
+          <div id="quick-login-otp-panel" class="hidden mt-2 space-y-2" aria-live="polite">
+            <p id="quick-login-otp-status" class="text-[11px] font-bold text-emerald-700">OTP भेज दिया गया है। नीचे 6 अंकों का OTP डालें।</p>
             <input type="tel" id="quick-login-otp" maxlength="6" inputmode="numeric" autocomplete="one-time-code" placeholder="6 अंकों का OTP" class="w-full rounded-lg border border-amber-300 px-3 py-2 text-xs" aria-label="6 अंकों का OTP">
-            <div id="quick-login-recaptcha"></div>
           </div>
+          <div id="quick-login-recaptcha" aria-hidden="true"></div>
         </div>
 
         <form onsubmit="saveWorkerProfile(event)" class="space-y-3">
@@ -3638,7 +3638,12 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
           window.mbQuickLoginPhone = phoneInput;
           if(otpPanel) otpPanel.classList.remove("hidden");
           if(btn) btn.innerText="OTP सत्यापित करें";
-          alert("📲 OTP भेज दिया गया है। OTP डालकर फिर बटन दबाएँ।");
+          const otpBox=document.getElementById("quick-login-otp");
+          setTimeout(function(){
+            try { otpPanel?.scrollIntoView({behavior:"smooth",block:"center"}); } catch(e) {}
+            try { otpBox?.focus({preventScroll:true}); } catch(e) { try { otpBox?.focus(); } catch(e2) {} }
+          },150);
+          alert("📲 OTP भेजने का अनुरोध सफल हुआ। SMS आने पर नीचे खुले OTP बॉक्स में 6 अंक डालें।");
           return;
         }
         if (window.mbQuickLoginPhone !== phoneInput) {
@@ -3695,6 +3700,7 @@ body[data-mb-page="home"] #mb-shop-partner-float { display:block; visibility:vis
         try { if(window.mbQuickLoginRecaptcha){window.mbQuickLoginRecaptcha.clear();window.mbQuickLoginRecaptcha=null;} } catch(cleanupErr) {}
         if(otpPanel)otpPanel.classList.add("hidden");
         const otpField=document.getElementById("quick-login-otp");if(otpField)otpField.value="";
+        const otpStatus=document.getElementById("quick-login-otp-status");if(otpStatus)otpStatus.textContent="OTP सत्यापन पूरा नहीं हुआ। दोबारा प्रयास करें।";
         if (/expired|invalid|code/i.test(String(err.code||err.message||""))) {
           alert("OTP गलत या एक्सपायर हो गया है, या लॉगिन विवरण मेल नहीं खाता। कृपया दोबारा OTP भेजें।");
         } else alert("Login में समस्या: "+(err.message||"कृपया फिर कोशिश करें।"));
